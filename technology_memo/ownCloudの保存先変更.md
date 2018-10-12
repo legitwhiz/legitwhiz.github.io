@@ -1,51 +1,51 @@
-# ownCloud10.0.9�̃f�[�^�ۑ���ύX
+# ownCloud10.0.9のデータ保存先変更
 
-## �T�v
+## 概要
 
-Ubuntu16.04 LTS��owncloud10.0.9�ɂ�
-���܂Ńf�t�H���g�ł���A[/var/www/owncloud/data/]�z����
-�f�[�^���i�[���Ă܂������A�ʐ^���A�b�v���[�h���悤�Ƃ����Ƃ���A
-�󂫗e�ʕs���ŃA�b�v���[�h�ł��Ȃ��ƃ��b�Z�[�W��...�B
+Ubuntu16.04 LTSでowncloud10.0.9にて
+今までデフォルトである、[/var/www/owncloud/data/]配下に
+データを格納してましたが、写真をアップロードしようとしたところ、
+空き容量不足でアップロードできないとメッセージが...。
 
-�󂫗e�ʂ��m�F�����[/]������85%��...(�E�B�E;
+空き容量を確認すると[/]が既に85%に...(・。・;
 
-�}篁A�i�[��̕ύX���������˂΁B
-�������ƃO�O���ĕۑ����ύX���܂����Ƃ��������̋L���ł����ǁB
+急遽、格納先の変更を検討せねば。
+ちょろっとググって保存先を変更しましたというだけの記事ですけど。
 
-## ownCloud�̕ۑ���ύX
+## ownCloudの保存先変更
 
-ownCloud�̐ݒ�t�@�C�����C��
+ownCloudの設定ファイルを修正
 
 ```
 vi /var/www/owncloud/config/config.php
 ```
-�C���ӏ��͈ȉ��ƂȂ�B
+修正箇所は以下となる。
 
 'datadirectory' => '/var/www/owncloud/data',
-��
+↓
 'datadirectory' => '/share/owncloud/data',
 
 'installed' => true,
-��
+↓
 'installed' => false,
 
 
-## ownCloud�̕ۑ���f�B���N�g���̍쐬
+## ownCloudの保存先ディレクトリの作成
 
 ```
 mkdir -m 755 /share/owncloud/data
 sudo chown www-data:www-data /share/owncloud/data
 ```
 
-## �[������u���E�U�ŃA�N�Z�X�������Z�b�g�A�b�v�����{
+## 端末からブラウザでアクセスし初期セットアップを実施
 
-�����Z�b�g�A�b�v���@�ɂ��ẮA�ȗ�
-�������Z�b�g�A�b�v�Ȃ��ł��ۑ���ύX�Ȃ�Ăł���������
-�f�[�^�ēǍ��R�}���h�����s���Ă��Â��t�H���_���Q�Ƃ��Ă��܂����߁B
+初期セットアップ方法については、省略
+※初期セットアップなしでも保存先変更なんてできそうだが
+データ再読込コマンドを実行しても古いフォルダを参照してしまうため。
 
-## �f�[�^�ڍs
+## データ移行
 
-[/var/www/owncloud/data]�z���̃f�[�^��[/share/owncloud/data]�Ɉړ��B
+[/var/www/owncloud/data]配下のデータを[/share/owncloud/data]に移動。
 
 ```
 sudo cp -R /var/www/owncloud/data /share/owncloud/data
@@ -54,7 +54,7 @@ sudo chown -R apache:apache /share/owncloud/data
 sudo chmod -R 755 /share/owncloud/data
 ```
 
-## ownCloud�ɍēǍ����蓮���s
+## ownCloudに再読込を手動実行
 
 ```
 sudo -u www-data php /var/www/owncloud/occ files:scan <owncloud user name>
@@ -68,5 +68,6 @@ Starting scan for user 1 out of 1 (<owncloud user name>)
 | 91      | 5885  | 00:00:21     |
 +---------+-------+--------------+
 ```
-���`��A�t�@�C���X�L���������̂͂�������
-owncloud��̃^�C���X�^���v���X�V���ꂿ�Ⴄ�񂾂�...�B���ē�����O��w
+う～ん、ファイルスキャン早いのはいいけど
+owncloud上のタイムスタンプも更新されちゃうんだね...。って当たり前かw
+ 
