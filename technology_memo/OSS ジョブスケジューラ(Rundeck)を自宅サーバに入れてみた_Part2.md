@@ -37,7 +37,7 @@ $
 ※記述は、<ユーザ名>: <暗号化方式>:<暗号化パスワード>となるが注意点として[<ユーザ名>:]と[<暗号化方式>]の間に***スペース***があります。
 
 ```
-# sudo vi /etc/rundeck/rundeck-config.properties
+# sudo vi /etc/rundeck/realm.properties
 
 admin:admin,user,admin,architect,deploy,build
 ↓↓↓
