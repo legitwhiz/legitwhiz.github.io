@@ -5,6 +5,13 @@
 
 前回のPart1は、[OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた](https://qiita.com/legitwhiz/items/d3402d3c8bcb0bbed8eb)を参照。
 
+## 0.検証環境
+
+OS:Ubuntu 16.04 LTS
+OS:CentOS 7.5
+ミドルウェア:Rundeck 3.0.7 (20181008)
+前提ミドルウェア:JRE 1.8.0
+
 ## 1.ジョブ実行環境構築
 
 ### 1.1.管理者パスワードの変更
