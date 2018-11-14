@@ -5,6 +5,12 @@
 
 検証する環境は、Ubuntu16.04LTSとCentOS7.5
 
+## 0.検証環境
+
+OS:Ubuntu 16.04 LTS  
+OS:CentOS 7.5  
+ミドルウェア:Rundeck 3.0.7 (20181008)  
+前提ミドルウェア:JRE 1.8.0  
 
 ## 1.Rundeckとは
 
