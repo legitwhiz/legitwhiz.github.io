@@ -187,6 +187,8 @@ rundeck.api.tokens.duration.max = 0
 
 ### 2.1.Rundeck cliインストール
 
+■Ubuntu 16.04 LTS
+
 ```
 # echo "deb https://dl.bintray.com/rundeck/rundeck-deb /" | sudo tee -a /etc/apt/sources.list
 # curl "https://bintray.com/user/downloadSubjectPublicKey?username=bintray" > /tmp/bintray.gpg.key
@@ -195,6 +197,15 @@ rundeck.api.tokens.duration.max = 0
 # apt -y update
 # apt -y install rundeck-cli
 # apt -y install jq
+```
+
+■CentOS 7.5
+
+```
+# wget https://bintray.com/rundeck/rundeck-rpm/rpm -O bintray.repo
+# mv bintray.repo /etc/yum.repos.d/
+# yum install rundeck-cli
+# yum install jq
 ```
 
 ### 2.2.環境変数設定
@@ -468,7 +479,7 @@ by:
 
 description: Project settings for ProjectAope user
 context:
-  project: 'Root-JobNet' # 対象Projectに対する権限の設定
+  project: '<Project Name>' # 対象Projectに対する権限の設定
 for:
   resource:
     - equals:
@@ -521,7 +532,7 @@ Rundeckのジョブ実行ログは、ログファイル、DBの両方に出力�
 ログファイルは、ジョブ実行単位でファイルが作成されるので、ファイルの更新日を見て古いファイル(7日より古いファイル)は削除するようにしました。
 
 ```
-find /var/lib/rundeck/logs/rundeck/Root-JobNet/job/ -mtime +7 -type f | xargs -I{} rm {}
+find /var/lib/rundeck/logs/rundeck/<Project Name>/job/ -mtime +7 -type f | xargs -I{} rm {}
 ```
 
 DBは、APIもしくはcliを介して削除します。(GUIでは鬱陶しいので)
@@ -552,11 +563,18 @@ do
         echo "$project deletebulk is failed."
         exit 1
     fi
+    find /var/lib/rundeck/logs/rundeck/${local_project}/job/ -mtime +7 -type f | xargs -I{} rm {}
     loop_count=$((loop_count-1))
     sleep 1s
 done
 }
 
+# delete executions for each project
+for p in $(RD_FORMAT=json rd projects list | jq -r .[]); do
+    del_executions $p
+done
+
+exit 0
 ```
 
 ### 3.3.Rundeckシステムバックアップ
@@ -596,7 +614,7 @@ RD_HTTP_TIMEOUT=300
 RundeckJob_Backup_TMP=/tmp/backup
 RundeckJob_Backup_Name=jobconf_`date "+%Y%m%d"`.xml
 Projects=`RD_FORMAT=json rd projects list | jq -r .[]`
-ShellLog_PATH=/var/lib/rundeck/shell
+ShellLog_PATH=/tmp
 ShellLog=${ShellLog_PATH}/$(basename ${0%.*})_`date "+%Y%m%d"`.log
 BackupDir=/tmp
 BackupTarFile=${BackupDir}/$(basename ${0%.*})_`date "+%Y%m%d"`.tar.gz
@@ -643,4 +661,6 @@ exit 0
 
 一旦、Rundeckについては、調査・検証はこれで完了とします。
 また、何か気付いた点や機能で検証してみたいと思うことがあれば検証してみます。
+
+
 
