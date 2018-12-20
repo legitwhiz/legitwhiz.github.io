@@ -13,7 +13,7 @@
 GUIクライアントソフトを使う前に上記でコマンド操作を演習しておくべきかと思います。
 
 ### 1.3. 最低限の運用フロー
-![git-flow](/images/git-flow.png)
+![git-flow](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow.png)
 
 | ブランチ名  | 説明     |
 |:-----------|:---------|
@@ -62,13 +62,13 @@ git環境を使えるようにするため初期設定及びmaster,releaseブラ
 
 右上の[＋]を選択し、[New repository]をクリック 。
 
-![new_repository001](/images/new_repository001.png)
+![new_repository001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/new_repository001.png)
 
 
 
 [Repository name]を入力し、[Description]にレポジトリの説明を入力し[Create repository]をクリック。
 
-![new_repository002](/images/new_repository002.png)
+![new_repository002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/new_repository002.png)
 
 
 
@@ -318,62 +318,62 @@ $ git branch -D branchname
 
 1. [Git for Windows]にアクセスし、[Download]をクリック。
 
-    ![Git_for_Windows001](/images/Git_for_Windows001.png)
+    ![Git_for_Windows001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows001.png)
 
 2. ダウンロードした、[Git-2.20.1-64-bit.exe]を実行する。
 
 3. Setup画面で[Next]をクリック。
 
-    ![Git_for_Windows002](/images/Git_for_Windows002.png)
+    ![Git_for_Windows002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows002.png)
 
 4. インストールするディレクトリを選択し、[Next]をクリック。
 
-    ![Git_for_Windows003](/images/Git_for_Windows003.png)
+    ![Git_for_Windows003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows003.png)
 
 5. 必要なコンポーネントを選択し、[Next]をクリック。
     ​    最低限[Windows Exploere integration],[Git Bash Here],[Git GUI Here],[Git LFS]は必要かと
 
 
-![Git_for_Windows004](/images/Git_for_Windows004.png)
+![Git_for_Windows004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows004.png)
 
 
 6. スタートメニューフォルダーを入力し、[Next]をクリック。
 
-    ![Git_for_Windows005](/images/Git_for_Windows005.png)
+    ![Git_for_Windows005](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows005.png)
 
 7. 使用するエディタを選択し、[Next]をクリック。
 
-    ![Git_for_Windows006](/images/Git_for_Windows006.png)
+    ![Git_for_Windows006](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows006.png)
 
 8. 環境変数では[Use Git from Git Bash only]を選択し、[Next]をクリック。
      ここで[Use Git from the Windows Command Prompt]にしてしまうと、
        コマンドプロンプトがGitBashに乗っ取られて非常に使いづらくなる。
 
 
-![Git_for_Windows007](/images/Git_for_Windows007.png)
+![Git_for_Windows007](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows007.png)
 
 
 
 
 9. HTTPS接続時に使用するSSLコンポーネントは、[Use the OpenSSL library]を選択し、[Next]をクリック。
 
-    ![Git_for_Windows008](/images/Git_for_Windows008.png)
+    ![Git_for_Windows008](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows008.png)
 
 10. 改行コードの変換動作については、勝手に改行コードを変えてほしくないので[Checkout as-is, commit as-is]を選択し、[Next]をクリック。
 
-    ![Git_for_Windows009](/images/Git_for_Windows009.png)
+    ![Git_for_Windows009](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows009.png)
 
 11. ターミナルエミュレータの選択は、[Use MinTTY]を選択し、[Next]をクリック
 
-    ![Git_for_Windows010](/images/Git_for_Windows010.png)
+    ![Git_for_Windows010](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows010.png)
 
 12. その他のオプションについては特に変更せず、[Install]をクリック
 
-    ![Git_for_Windows011](/images/Git_for_Windows011.png)
+    ![Git_for_Windows011](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows011.png)
 
 13. [Finish]をクリック
 
-    ![Git_for_Windows012](/images/Git_for_Windows012.png)
+    ![Git_for_Windows012](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Git_for_Windows012.png)
 
 
 
@@ -382,47 +382,47 @@ $ git branch -D branchname
 
 1. ブラウザで[TortoiseGit]にアクセスし[Download]をクリック。
 
-![TortoiseGit_Install001](/images/TortoiseGit_install001.png)
+![TortoiseGit_Install001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install001.png)
 
 2. 端末の環境に合わせて[for 32-bit Windows]もしくは[for 64-bit Windows]を選択しダウンロードする。
 
-![TortoiseGit_Install002](/images/TortoiseGit_install002.png)
+![TortoiseGit_Install002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install002.png)
 
 3. 日本語パッケージをダウンロードするために、以下の[JapaneseのSetup]をクリック。
 
-![TortoiseGit_Install003](/images/TortoiseGit_install003.png)
+![TortoiseGit_Install003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install003.png)
 
 4. ダウンロードした[TortoiseGit-2.7.0.0-64bit.msi]を実行し、インストールウィザードで[Next]をクリック
 
-![TortoiseGit_Install004](/images/TortoiseGit_install004.png)
+![TortoiseGit_Install004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install004.png)
 
 5. ライセンス情報を一読し[Next]をクリック
 
-![TortoiseGit_Install005](/images/TortoiseGit_install005.png)
+![TortoiseGit_Install005](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install005.png)
 
 6. SSHクライアントは[TortoiseGitPlink...]を選択し[Next]をクリック
 
-![TortoiseGit_Install006](/images/TortoiseGit_install006.png)
+![TortoiseGit_Install006](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install006.png)
 
 7. インストール先はそのままにし、[Next]をクリック
 
-![TortoiseGit_Install007](/images/TortoiseGit_install007.png)
+![TortoiseGit_Install007](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install007.png)
 
 8. [Install]をクリック
 
-![TortoiseGit_Install008](/images/TortoiseGit_install008.png)
+![TortoiseGit_Install008](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install008.png)
 
 9. チェックを外し[Finish]をクリック
 
-![TortoiseGit_Install009](/images/TortoiseGit_install009.png)
+![TortoiseGit_Install009](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install009.png)
 
 10. 日本語化パッケージである[TortoiseGit-LanguagePack-2.7.0.0-64bit-ja.msi]を実行。
 
-![TortoiseGit_Install010](/images/TortoiseGit_install010.png)
+![TortoiseGit_Install010](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install010.png)
 
 11. セットアップが完了したら[Configure TortoiseGit to use this language]にチェックを入れ、セットアップを完了する。
 
-![TortoiseGit_Install011](/images/TortoiseGit_install011.png)
+![TortoiseGit_Install011](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install011.png)
 
 ### 4.3. 公開鍵の生成
 
@@ -430,23 +430,23 @@ GUIクライアントから公開鍵認証によるSSH接続を行うため、�
 
 1. プログラム一覧のTortoiseGitの中にある"PuTTYgen"を起動し、キー生成を開始する。
 
-   ![TortoiseGit_Install012](/images/TortoiseGit_install012.png)
+   ![TortoiseGit_Install012](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install012.png)
 
 
 
 2. 上部のゲージがいっぱいになるまで、空白部分上でマウスカーソルを動かす。
 
-   ![TortoiseGit_Install013](/images/TortoiseGit_install013.png)
+   ![TortoiseGit_Install013](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install013.png)
 
 3. 公開鍵が生成されて表示されるので、すべてコピーしておく。その後[Save private key]を押して秘密鍵の保存ダイアログを開く。[Key passphrese]にパスフレーズを入力することで、秘密鍵にパスワードを掛けることができるが今回は空白としている。
 
-![TortoiseGit_Install014](/images/TortoiseGit_install014.png)
+![TortoiseGit_Install014](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install014.png)
 
 4. パスフレーズをかけていない場合警告が出るが、無視して"はい"で進める。
 
 ​      適当な場所に保存する。ファイル名も任意で良い。
 
-![TortoiseGit_Install015](/images/TortoiseGit_install015.png)
+![TortoiseGit_Install015](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/TortoiseGit_install015.png)
 
 
 
@@ -458,33 +458,33 @@ GUIクライアントから公開鍵認証によるSSH接続を行うため、�
 
 1. ローカルリポジトリを作成するディレクトリを適当なところに作成し、エクスプローラーからディレクトリを右クリックし[Git ここにリポジトリを作成]をクリック。
 
-![git_clone001](/images/git_clone001.png)
+![git_clone001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone001.png)
 
 2. チェックはそのまま(外れた状態)にして[OK]ボタンをクリック
 
-![git_clone002](/images/git_clone002.png)
+![git_clone002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone002.png)
 
 3. [OK]ボタンをクリック
 
-![git_clone003](/images/git_clone003.png)
+![git_clone003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone003.png)
 
 #### リモートリポジトリの同期
 
 1. ローカルリポジトリのディレクトリを右クリックし、[Git 同期]をクリック。
 
-![git_clone000](/images/git_clone000.png)
+![git_clone000](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone000.png)
 
 2. リモートブランチに[master]を入力し、リモートの[管理]ボタンをクリック。
 
-![git_clone004](/images/git_clone004.png)
+![git_clone004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone004.png)
 
 3. URLを入力し[新規に追加/保存]をクリックし、[OK]ボタンをクリック
 
-![git_clone005](/images/git_clone005.png)
+![git_clone005](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone005.png)
 
 4. Git同期画面で[プル]ボタンをクリックし"成功"となることを確認し、[閉じる]ボタンをクリック。
 
-![git_clone006](/images/git_clone006.png)
+![git_clone006](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_clone006.png)
 
 
 
@@ -492,7 +492,7 @@ GUIクライアントから公開鍵認証によるSSH接続を行うため、�
 
 1. エクスプローラーでローカルリポジトリのディレクトリを右クリックし、[TortoiseGit]-[ブランチを作成]をクリック。
 
-![git-flow_gui_branch001](/images/git-flow_gui_branch001.png)
+![git-flow_gui_branch001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui_branch001.png)
 
 
 
@@ -500,13 +500,13 @@ GUIクライアントから公開鍵認証によるSSH接続を行うため、�
 
    ブランチ名は、"<作業者の名前>/<改修内容>"とする。
 
-![git-flow_gui_branch002](/images/git-flow_gui_branch002.png)
+![git-flow_gui_branch002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui_branch002.png)
 
 
 
 Gitコマンド実行中画面で"成功"と出力されたことを確認し、[閉じる]ボタンをクリック。
 
-![git-flow_gui_branch003](/images/git-flow_gui_branch003.png)
+![git-flow_gui_branch003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui_branch003.png)
 
 
 
@@ -516,19 +516,19 @@ Gitコマンド実行中画面で"成功"と出力されたことを確認し、
 
 ローカルリポジトリに対象ファイルをコピーし、エクスプローラーで対象ファイルを右クリックし、[TortoiseGit]-[追加]をクリック。
 
-![git-flow_gui001](/images/git-flow_gui001.png)
+![git-flow_gui001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui001.png)
 
 
 
 追加終了画面で成功となっていることを確認し、[OK]をクリック。
 
-![git-flow_gui002](/images/git-flow_gui002.png)
+![git-flow_gui002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui002.png)
 
 
 
 エクスプローラーで追加した対象ファイルのアイコンに＋マークが付けば追加(add)された状態となります。
 
-![git-flow_gui003](/images/git-flow_gui003.png)
+![git-flow_gui003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui003.png)
 
 
 
@@ -536,25 +536,25 @@ Gitコマンド実行中画面で"成功"と出力されたことを確認し、
 
 追加した対象ファイルを右クリックし、[Gitコミット]をクリック。
 
-![git-flow_gui004](/images/git-flow_gui004.png)
+![git-flow_gui004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui004.png)
 
 
 
 コミット画面でメッセージを入力し、[著述日時を設定する]、[作者を設定]にチェックを入れ、[コミット]ボタンをクリック。
 
-![git-flow_gui005](/images/git-flow_gui005.png)
+![git-flow_gui005](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui005.png)
 
 
 
 Gitコマンド実行中画面で"成功"と出力されたことを確認し、[閉じる]ボタンをクリック。
 
-![git-flow_gui006](/images/git-flow_gui006.png)
+![git-flow_gui006](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui006.png)
 
 
 
 ファイルのアイコンが＋マークからチェックマークに変わればCommitされた状態となります。
 
-![git-flow_gui007](/images/git-flow_gui007.png)
+![git-flow_gui007](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui007.png)
 
 
 
@@ -574,49 +574,49 @@ Gitコマンド実行中画面で"成功"と出力されたことを確認し、
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[切り替え]をクリック。
 
-![branch_marge001](/images/branch_marge001.png)
+![branch_marge001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge001.png)
 
 
 
 ブランチを選択し、プルダウンメニューから"master"を選択し、[OK]をクリック。
 
-![branch_marge002](/images/branch_marge002.png)
+![branch_marge002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge002.png)
 
 
 
 Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンをクリック。
 
-![branch_marge003](/images/branch_marge003.png)
+![branch_marge003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge003.png)
 
 
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[マージ]をクリック。
 
-![branch_marge001](/images/branch_marge001.png)
+![branch_marge001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge001.png)
 
 
 
 ブランチを選択し、[...]ボタンを押す
 
-![branch_marge004](/images/branch_marge002.png)
+![branch_marge004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge002.png)
 
 
 
 左ペインから[refs]-[heads]-[<ブランチ名の/区切りで前半部分>]を選択し、右ペインから[<ブランチ名の/区切りで後半部分>]を選択し、[OK]ボタンをクリック。
 
-![branch_marge005](/images/branch_marge005.png)
+![branch_marge005](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge005.png)
 
 
 
 ブランチに5.1で作成したブランチ名が記載されていることを確認し、[OK]ボタンをクリック。
 
-  ![branch_marge006](/images/branch_marge006.png)
+  ![branch_marge006](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge006.png)
 
 
 
 Gitコマンド実行中画面で"成功"が出力されたことを確認し、[閉じる]ボタンをクリック。
 
-![branch_marge007](/images/branch_marge007.png)
+![branch_marge007](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/branch_marge007.png)
 
 
 
@@ -624,25 +624,25 @@ Gitコマンド実行中画面で"成功"が出力されたことを確認し、
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[プッシュ]をクリック。
 
-![git-flow_gui008](/images/git-flow_gui008.png)
+![git-flow_gui008](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui008.png)
 
 
 
 [ローカル]で[master]を選択し、[リモート]で[master]を選択し、[OK]をクリック。
 
-![git-flow_gui009](/images/git-flow_gui009.png)
+![git-flow_gui009](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui009.png)
 
 
 
 Git Credential Manager for WindowsでGitBucketのユーザ、パスワードを入力し、[OK]をクリック。
 
-![git-flow_gui010](/images/git-flow_gui010.png)
+![git-flow_gui010](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui010.png)
 
 
 
 Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンをクリック。
 
-![git-flow_gui011](/images/git-flow_gui011.png)
+![git-flow_gui011](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui011.png)
 
 
 
@@ -652,19 +652,19 @@ Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンを�
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[ログを表示]をクリック。
 
-![release_pull001](/images/release_pull001.png)
+![release_pull001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_pull001.png)
 
 
 
 リモートで"origin"を選択し、リモートブランチで"master"を選択し、[OK]ボタンをクリック。
 
-![release_pull002](/images/release_pull002.png)
+![release_pull002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_pull002.png)
 
 
 
 Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンをクリック。
 
-![release_pull003](/images/release_pull003.png)
+![release_pull003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_pull003.png)
 
 
 
@@ -674,13 +674,13 @@ Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンを�
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[ログを表示]をクリック。
 
-![release_log001](/images/release_log001.png)
+![release_log001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_log001.png)
 
 
 
 出力されたログメッセージを確認する。
 
-![release_log002](/images/release_log002.png)
+![release_log002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_log002.png)
 
 
 
@@ -688,13 +688,13 @@ Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンを�
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[タグを作成]をクリック。
 
-![release_tag001](/images/release_tag001.png)
+![release_tag001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_tag001.png)
 
 
 
 タグにタグ名を入力し、メッセージにタグの詳細を入力し、[OK]ボタンをクリック。
 
-![release_tag002](/images/release_tag002.png)
+![release_tag002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_tag002.png)
 
 
 
@@ -706,19 +706,19 @@ Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンを�
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[プル]をクリック。
 
-![release_brunch_pull000](/images/release_brunch_pull000.png)
+![release_brunch_pull000](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_pull000.png)
 
 
 
 リモートを選択し、リモートブランチで[release]を選択し、[OK]をクリック。
 
-![release_brunch_pull001](/images/release_brunch_pull001.png)
+![release_brunch_pull001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_pull001.png)
 
 
 
 Gitコマンド実行中画面で"成功"と出力されていることを確認し、[閉じる]をクリック。
 
-![release_brunch_pull002](/images/release_brunch_pull002.png)
+![release_brunch_pull002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_pull002.png)
 
 
 
@@ -726,43 +726,39 @@ Gitコマンド実行中画面で"成功"と出力されていることを確認
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[マージ]をクリック。
 
-![release_brunch_marge001](/images/release_brunch_marge001.png)
+![release_brunch_marge001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_marge001.png)
 
 
 
 ブランチで"remote/origin/release"を選択し、[OK]をクリック。
 
-![release_brunch_marge002](/images/release_brunch_marge002.png)
+![release_brunch_marge002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_marge002.png)
 
 
 
 Gitコマンド実行中画面で"成功"と出力されていることを確認し、[閉じる]をクリック。
 
-![release_brunch_marge003](/images/release_brunch_marge003.png)
+![release_brunch_marge003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_marge003.png)
 
 3. push
 
 エクスプローラーでローカルリポジトリディレクトリを右クリックし、[TortoiseGit]-[プッシュ]をクリック。
 
-![release_brunch_push001](/images/release_brunch_push001.png)
+![release_brunch_push001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_push001.png)
 
 
 
 [ローカル]で[master]を選択し、[リモート]で[release]を選択し、[OK]をクリック。
 
-![release_brunch_push002](/images/release_brunch_push002.png)
+![release_brunch_push002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_push002.png)
 
 
 
 Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンをクリック。
 
-![release_brunch_push003](/images/release_brunch_push003.png)
+![release_brunch_push003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/release_brunch_push003.png)
 
 
 
 以上
-
-
-
-
 
