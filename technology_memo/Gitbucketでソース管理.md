@@ -78,10 +78,10 @@ git init
 git remote add origin http://localhost:8080/git/root/SSO.git
 vi README.md
 git add README.md
-git config --global user.name "Daisuke Sakamoto"      #username
-git config --global user.email "sakamoto@aaabbb.com"  #email
-git config --global core.editor vi                    #editor
-git config --global merge.tool vimdiff                #diff tool
+git config --global user.name "<氏名>"                 #username
+git config --global user.email "<e-mail address>"     #email
+git config --global core.editor vi                    #editor config
+git config --global merge.tool vimdiff                #diff tool config
 git config --list
 
 git commit -m "first commit"
