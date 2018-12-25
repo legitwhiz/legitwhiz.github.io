@@ -91,7 +91,23 @@ git push origin release
 ```
 
 ## 3.コマンドでのワークフロー
+※gitコマンドを導入済みのLinux環境で運用したい場合、コマンドでのワークフローで運用して下さい。
+
+※Windows端末でのワークフローを運用する場合は、次節の「GUIクライアントでのワークフロー」を参照。
+
 ### 3.1. 準備
+
+- リモートクライアント環境の環境設定
+
+```
+git init
+git remote add origin http://<GitBucketサーバIPアドレス>:8080/git/root/SSO.git
+git config --global user.name "<氏名>"                 #username
+git config --global user.email "<e-mail address>"     #email
+git config --global core.editor vi                    #editor config
+git config --global merge.tool vimdiff                #diff tool config
+git config --list                                     #設定確認
+```
 
 - ローカルのmasterに移動する
 
@@ -530,9 +546,6 @@ Gitコマンド実行中画面で"成功"と出力されたことを確認し、
 ![git-flow_gui003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui003.png)
 
 
-
-2. commit
-
 追加した対象ファイルを右クリックし、[Gitコミット]をクリック。
 
 ![git-flow_gui004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui004.png)
@@ -555,6 +568,37 @@ Gitコマンド実行中画面で"成功"と出力されたことを確認し、
 
 ![git-flow_gui007](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git-flow_gui007.png)
 
+2. 変更(modify)
+
+ローカルのリポジトリディレクトリに更新したファイルコピーするとエクスプローラーでアイコンにエクスラメーションマークが付きます。
+
+エクスラメーションマークが付いたアイコンを右クリックし、[TortoiseGit]-[差分]をクリック。
+
+
+
+![git_GUI_modify001](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_GUI_modify001.png)
+
+
+
+前のバージョンとファイルを比較し、想定通りの差分であることを確認し右上の「×」ボタンで画面と閉じる。
+
+![git_GUI_modify002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_GUI_modify002.png)
+
+
+
+エクスラメーションマークが付いたアイコンを右クリックし、[Gitコミット]をクリック。
+
+![git_GUI_modify003](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_GUI_modify003.png)
+
+コミット画面でメッセージに改修内容を入力し、[著述日時を設定する]、[作者を設定]にチェックを入れ、[コミット]ボタンをクリック。
+
+![git_GUI_modify004](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_GUI_modify004.png)
+
+
+
+Gitコマンド実行中画面で"成功"と出力されたことを確認し、[閉じる]ボタンをクリック。
+
+![git_GUI_modify005](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/git_GUI_modify005.png)
 
 
 ### 5.3 マージ
@@ -760,3 +804,8 @@ Gitコマンド実行中画面で"成功"を確認し、[閉じる]ボタンを�
 
 
 以上
+
+
+
+
+
