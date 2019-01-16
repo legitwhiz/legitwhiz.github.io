@@ -1,0 +1,2 @@
+gnome-terminal では、localedef -i ja_JP -f WINDOWS-31J ja_JP.SJIS
+でロケール設定する事でフォントが対応していれば表示可能

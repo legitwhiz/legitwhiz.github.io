@@ -1,0 +1,112 @@
+### 1/9 ###
+su -
+ps aux | grep mail
+ps aux | grep sa1
+
+コメントアウト
+/etc/cron.d/sendmail
+/etc/cron.d/sysstat
+
+負荷がかかっているプロセスなし
+grep . -r /sys/firmware/acpi/interrupts
+
+未対応
+echo disable > /sys/firmware/acpi/interrupts/gpeXX
+
+uname -a
+
+未対応
+cp -p /etc/samba/smb.conf /etc/samba/smb.conf_20190107
+
+vi /etc/samba/smb.conf
+[global]
+name resolve order = wins lmhosts bcast
+
+
+Ubuntu 16.04 が最近頻繁に フリーズする様になって使えないと思ったら、
+Intel のドライバがバグっていました。
+
+迂回策は、ここ
+https://askubuntu.com/questions/778045/ubuntu-16-04-freezes-often/7...
+何とか、起動するカーネルで起動してから、
+/etc/default/grub
+の
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+の行を
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash intel_idle.max_cstate=1"
+に変更して、
+sudo update-grub
+で再起動で直ります。
+
+これは、Ubuntu のプロジェクトが知ってて放置しているのかな？
+だとすると、長期サポート版が、きいてあきれますよね？
+### NG ###
+
+
+
+##### 1/10
+crontabコメントアウト
+
+#13,23,33,43,53 * * * * root perl /usr/local/IP_Set_ie2.pl
+#camera
+#05,15,25,35,45,55 * * * * /home/sakamoto/captureImage.bash
+
+
+sudo systemctl stop clamav-freshclam
+sudo systemctl disable clamav-freshclam
+
+sudo systemctl stop clamav-daemon
+sudo systemctl disable clamav-daemon
+
+### NG ###
+割り込み再マッピングが有効なときに ESXi 5.x で VM デバイスが応答を停止する
+
+一部のサーバーで割り込み再マッピングを有効にすると、ESXi 5.x 仮想マシン (VM) ホストで問題が発生します。
+
+症状
+以下の一部またはすべての症状が見られます。
+ESXi ホストが応答しない。
+仮想マシンが応答しない。
+ホスト・バス・アダプター (HBAs) が応答を停止する。
+その他の Peripheral Component Interconnect (PVI) デバイスが応答を停止する。
+vCenter Server で次のようなアラートを受け取る。
+不明デバイスの不正パス (Degraded path for an Unknown Device)
+問題の解決
+問題を解決するには、以下の手順を実行してください。
+次のコマンドを使用して、ホストで割り込み再マッピングを無効にします。
+
+esxcli system settings kernel list -o iovDisableIR
+
+esxcli system settings kernel set --setting=iovDisableIR -v TRUE
+
+
+
+サーバーを再始動します。
+esxcli system settings kernel list -o netNetqueueEnabled
+
+esxcli system settings kernel set --setting=netNetqueueEnabled -v FALSE
+
+
+### NG ###
+
+### 1/14 ###
+modinfo vmxnet3
+
+grep vmxnet3 /etc/vmware-tools/manifest.txt
+
+/usr/bin/vmware-config-tools.pl --clobber-kernel-modules=vmxnet3
+
+
+### NG ###
+### 1/15 ###
+sudo apt-cache search open-vm-tools
+
+
+lsb_release -c
+
+sudo apt update
+sudo apt install open-vm-tools
+sudo apt install open-vm-tools-desktop
+sudo apt install open-vm-tools-dkms
+
+esxcli network ip interface set -e false -i vmk0; esxcli network ip interface set -e true -i vmk0

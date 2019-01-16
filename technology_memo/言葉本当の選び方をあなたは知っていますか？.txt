@@ -1,0 +1,244 @@
+■本当の言葉の選び方をあなたは知っていますか？
+文章を書くうえで、適切な言葉を選ばないと伝わるものも100%相手には伝わりません。
+最近、【語彙力】という言葉をよく見かけるようになりましたが、表現するチカラが乏しいと読み手も伝わらないし、とりとめのない文章では飽きてしまいます。
+文章を印象深く鮮やかにするため、私は以下のリンク先を利用しています。
+
+
+■各種辞書
+
+連想類語辞典
+https://renso-ruigo.com/
+日本語表現インフォ
+https://hyogen.info/
+対義語・反対語辞典
+http://hanntaigo.main.jp/
+反対語大辞典
+https://hantaigo.com/
+オノマトペ辞典
+http://sura-sura.com/
+英語の擬音語・擬態語
+https://www.rondely.com/zakkaya/dic5/index.htm
+
+
+■Chrome拡張機能「Context Menu Search」
+更に操作性を高めるため、Chrome拡張機能である「Context Menu Search」を使うことで、簡単に言葉を検索することができるようにしています。
+
+登録方法は、「Context Menu Search 使い方」でググれば先人達が使い方を披露していますので参考にするとよいでしょう。
+
+Weblio類語辞典
+http://thesaurus.weblio.jp/content/TESTSEARCH
+連想類語辞典
+http://renso-ruigo.com/word/TESTSEARCH
+weblio辞書
+http://www.weblio.jp/content/%s
+weblio英和・和英辞典
+http://ejje.weblio.jp/content/%s
+Wikipedia
+http://ja.wikipedia.org/wiki/%s
+IT用語辞典
+http://e-words.jp/w/%s.html
+対義語・反対語辞典
+https://hantaigo.com/word/TESTSEARCH
+
+
+
+■Bookmarklet
+javascript:var d=document; var tx=d.selection?d.selection.createRange().text:d.getSelection(); var subw=window.open('http://thesaurus.weblio.jp/content/'+tx).document;
+
+
+
+■キャッチコピー自動作成
+文章を書く上で題目を意外と
+
+コピーメカ/キャッチコピー自動作成サイト
+http://www.copymecha.com/index.php
+自分で作るキャッチコピー - キャッチコピー制作装置
+https://imu-net.jp/word/copywriting.php
+バカ売れキャッチコピーを作成！プロ直伝のタイトルメーカー「メガトリ」
+https://rakuzanet.jp/megatori/
+キャッチコピー自動生成サービス「Copita AI」
+http://copita.jpn.org/ai/
+
+
+俺の最強検索ツール
+https://github.com/dodonki1223/Bookmarklets/tree/master/MyStrongestSearchTool
+
+javascript:(function() {
+    var menuLists = {
+            "GoogleSearch"        : "Google検索" ,
+            "GoogleServiceSearch" : "Googleサービス検索" ,
+            "ImageSearch"         : "画像検索" ,
+            "DictionarySearch"    : "辞書検索" ,
+            "TwitterSearch"       : "Twitter検索" ,
+            "EventSearch"         : "イベント検索" ,
+            "BookSearch"          : "本検索" ,
+            "BlogSearch"          : "ブログ検索" ,
+            "SlideSearch"         : "スライド検索" ,
+            "ProgrammingSearch"   : "プログラミング検索" ,
+            "OtherSearch"         : "その他検索" ,
+        } ,
+        subMenuLists = {
+            "GoogleSearch" : {
+                "I'm feelilng lucky検索" : "javascript:(function(){var title='Im feeling lucky検索\n ※単語のみの検索しか対応していません',defaultStr='検索したい文字列を入力してください',inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?btnI&q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "Google期間指定検索"     : "javascript:(function(){var searchStr=window.prompt(decodeURIComponent('期間指定検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(searchStr==decodeURIComponent('検索したい文字列を入力して下さい')||searchStr==''||searchStr==null)return false;var nowDate=getCurrentTime();var startKikan=window.prompt(decodeURIComponent('期間指定検索\n 　※mm/dd/yyyy形式で開始日付を入力して下さい'),nowDate);if(!startKikan.match(/^\\d{2}\\/\\d{2}\\/\\d{4}$/))return false;var endKikan=window.prompt(decodeURIComponent('期間指定検索\n 　※mm/dd/yyyy形式で終了日付を入力して下さい'),nowDate);if(!endKikan.match(/^\\d{2}\\/\\d{2}\\/\\d{4}$/))return false;window.open('https://www.google.co.jp/search?q='+searchStr+'&source=lnt&tbs=cdr:1,cd_min:'+startKikan+',cd_max:'+endKikan);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));function getCurrentTime(){var now=new Date();var res=''+padZero(now.getMonth()+1)+'/'+padZero(now.getDate())+'/'+now.getFullYear();return res;}function padZero(num){var result;if(num<10){result='0'+num;}else{result=''+num;}return result;}})();" ,
+                "サイト内検索"           : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('サイト内検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var encodeStr   =encodeURIComponent(inputStr),pageLocation=location.href;window.open('https://www.google.co.jp/search?q=site:'+pageLocation+' '+encodeStr);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "似たサイトを検索"       : "javascript:(function(){window.open('https://www.google.co.jp/search?q=related:'+location.href);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "GoogleServiceSearch" : {
+                "Google翻訳（日本語→英語）" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Google翻訳（日本語→英語）'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='https://translate.google.co.jp/?hl=ja#ja/en/'+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Google翻訳（英語→日本語）" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Google翻訳（英語→日本語）'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='https://translate.google.co.jp/?hl=ja#en/ja/'+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "GoogleMap検索"              : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('GoogleMap検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/maps/place/'+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "GoogleMapルート検索"        : "javascript:(function(){var departure=window.prompt(decodeURIComponent('GoogleMapルート検索'),decodeURIComponent('出発地点を入力して下さい'));if(departure==decodeURIComponent('出発地点を入力して下さい')||departure==''||departure==null)return false;var arrival  =window.prompt(decodeURIComponent('GoogleMapルート検索'),decodeURIComponent('到着地点を入力して下さい'));if(arrival==decodeURIComponent('到着地点を入力して下さい')||arrival==''||arrival==null)return false;window.open('https://www.google.co.jp/maps/dir/'+departure+'/'+arrival+'/');document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "ImageSearch" : {
+                "画像検索"                     : "javascript:(function(){var title='画像検索\n \n タブ１：Flickr(商用利用可能)、タブ２：Flickr、\n タブ３：Bing画像、タブ４：Google画像',defaultStr='検索したい文字列を入力してください',inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var FlickrCommURL='http://flickr.com/search/?l=comm&q=' +encodeURIComponent(inputStr),FlickrURL='http://flickr.com/search/?q='   +encodeURIComponent(inputStr),BingURL ='https://www.bing.com/images/search?&q='   +encodeURIComponent(inputStr),GoogleURL='https://www.google.co.jp/search?newwindow=1&site=&tbm=isch&source=hp&q='+encodeURIComponent(inputStr);window.open(FlickrCommURL);window.open(FlickrURL);window.open(BingURL);window.open(GoogleURL);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}())" ,
+                "Bing画像検索"                 : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Bing画像検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='https://www.bing.com/images/search?&q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Flickr画像検索"               : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Flickr検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='http://flickr.com/search/?q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Flickr(商用利用可能)画像検索" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Flickr(商用利用可能)検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='http://flickr.com/search/?l=comm&q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Google画像検索"               : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Google画像検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?newwindow=1&site=&tbm=isch&source=hp&q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "DictionarySearch" : {
+                "IT用語辞典検索"  : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('IT%E7%94%A8%E8%AA%9E%E8%BE%9E%E5%85%B8%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='http://e-words.jp/?cx=partner-pub-1175263777233757%3Axelkt7-c6j8&cof=FORID%3A10&ie=Shift_JIS&q='+encodeURIComponent(inputStr)+'&r=opensearch';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Weblio辞書検索"  : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Weblio%E8%BE%9E%E6%9B%B8%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='http://www.weblio.jp/content/'+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Wikitionary検索" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Wikitionary%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://ja.wiktionary.org/wiki/'+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Wikipedia検索"   : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Wikipedia%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://ja.wikipedia.org/wiki/'+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "TwitterSearch" : {
+                "Twitter検索（ツイート）"         : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Twitter%E6%A4%9C%E7%B4%A2%EF%BC%88%E3%83%84%E3%82%A4%E3%83%BC%E3%83%88%EF%BC%89'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://twitter.com/search?q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));   })();" ,
+                "Twitter日付指定検索（ツイート）" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Twitter%E6%97%A5%E4%BB%98%E6%8C%87%E5%AE%9A%E6%A4%9C%E7%B4%A2%EF%BC%88%E3%83%84%E3%82%A4%E3%83%BC%E3%83%88%EF%BC%89'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false; var nowTime=getCurrentTime();var fromDay=window.prompt(decodeURIComponent('Twitter%E6%97%A5%E4%BB%98%E6%8C%87%E5%AE%9A%E6%A4%9C%E7%B4%A2%EF%BC%88%E3%83%84%E3%82%A4%E3%83%BC%E3%83%88%EF%BC%89\n %E3%80%80%E2%97%8B%E2%97%8B%E6%97%A5%E4%BB%A5%E9%99%8D%E3%81%AE%E3%83%84%E3%82%A4%E3%83%BC%E3%83%88%E3%82%92%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%BE%E3%81%99%E3%80%82\n %E3%80%8C%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%97%A5%E4%BB%98%E3%82%92%E3%80%8Cyyyy-mm-dd%E3%80%8D%E5%BD%A2%E5%BC%8F%E3%81%A7%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84\n %E3%80%80%E2%80%BB%E6%97%A5%E4%BB%98%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%81%AF%E3%81%97%E3%81%AA%E3%81%84%E3%81%AE%E3%81%A7%E6%AD%A3%E3%81%97%E3%81%84%E5%BD%A2%E5%BC%8F%E3%81%A7%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'),nowTime);if(fromDay==''||fromDay==null)return false;var fromConditions=' since:'+fromDay;var url='https://twitter.com/search?q='+encodeURIComponent(inputStr)+encodeURIComponent(fromConditions);window.open(url);function getCurrentTime(){var now=new Date();var res=''+now.getFullYear()+'-'+padZero(now.getMonth()+1)+'-'+padZero(now.getDate());return res;} function padZero(num){var result;if(num<10){result='0'+num;}else{result=''+num;}return result;}document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Twitter検索（ハッシュタグ）"     : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Twitter%E6%A4%9C%E7%B4%A2%EF%BC%88%E3%83%8F%E3%83%83%E3%82%B7%E3%83%A5%E3%82%BF%E3%82%B0%EF%BC%89'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://twitter.com/search?q='+encodeURIComponent('#'+inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));   })();" ,
+                "Twitter検索（画像）"             : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Twitter%E6%A4%9C%E7%B4%A2%EF%BC%88%E7%94%BB%E5%83%8F%EF%BC%89'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://twitter.com/search?f=images&vertical=default&q='+encodeURIComponent(inputStr);window.open(url); document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));  })();" ,
+                "Twitter検索（動画）"             : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Twitter%E6%A4%9C%E7%B4%A2%EF%BC%88%E5%8B%95%E7%94%BB%EF%BC%89'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://twitter.com/search?f=videos&vertical=default&q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));   })();" ,
+            } ,
+            "EventSearch" : {
+                "イベント検索"   : "javascript:(function(){var title='%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E6%A4%9C%E7%B4%A2\n  \n  %E3%82%BF%E3%83%96%EF%BC%91%EF%BC%9Aconnpass%E3%80%81%E3%82%BF%E3%83%96%EF%BC%92%EF%BC%9ADoorKeeper\n  %E3%82%BF%E3%83%96%EF%BC%93%EF%BC%9AATND%E3%80%81%E3%82%BF%E3%83%96%EF%BC%94%EF%BC%9Adots.' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false; var ConnpassUrl  ='https://connpass.com/search/?q='+encodeURIComponent(inputStr) ,DoorKeeperUrl='https://www.doorkeeper.jp/events?utf8=%E2%9C%93&q='+encodeURIComponent(inputStr) ,AtndUrl ='https://atnd.org/events/search?q%5Battendee_gteq%5D=1&q%5Btitle_or_description_or_place_or_address_cont%5D='+encodeURIComponent(inputStr) ,dotsUrl ='https://eventdots.jp/event/search?keyword='+encodeURIComponent(inputStr); window.open(ConnpassUrl);window.open(DoorKeeperUrl);window.open(AtndUrl);window.open(dotsUrl);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "dots検索"       : "javascript:(function(){var title='dots.%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false; var dotsUrl='https://eventdots.jp/event/search?keyword='+encodeURIComponent(inputStr); window.open(dotsUrl);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "ATND検索"       : "javascript:(function(){var title='ATND%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false; var AtndUrl='https://atnd.org/events/search?q%5Battendee_gteq%5D=1&q%5Btitle_or_description_or_place_or_address_cont%5D='+encodeURIComponent(inputStr);  window.open(AtndUrl);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "conpass検索"    : "javascript:(function(){var title='connpass%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false; var ConnpassUrl='https://connpass.com/search/?q='+encodeURIComponent(inputStr); window.open(ConnpassUrl);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "DoorKeeper検索" : "javascript:(function(){var title='DoorKeeper%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false; var DoorKeeperUrl='https://www.doorkeeper.jp/events?utf8=%E2%9C%93&q='+encodeURIComponent(inputStr); window.open(DoorKeeperUrl);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "BookSearch" : {
+                "ブクログ検索" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('%E3%83%96%E3%82%B0%E3%83%AD%E3%82%B0%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='http://booklog.jp/search?keyword='+encodeURIComponent(inputStr)+'&service_id=1&index=Books';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "カーリル検索" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('%E3%82%AB%E3%83%BC%E3%83%AA%E3%83%AB%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://calil.jp/search?q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "BlogSearch" : {
+                "ブログ検索"           : "javascript:(function() {var title = '%E3%83%96%E3%83%AD%E3%82%B0%E6%A4%9C%E7%B4%A2\n  %E2%80%BB%E4%BB%A5%E4%B8%8B%E3%81%AE%E3%82%B5%E3%82%A4%E3%83%88%E5%86%85%E3%81%8B%E3%82%89%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%BE%E3%81%99\n  %E3%83%BB%E3%82%A2%E3%83%A1%E3%83%BC%E3%83%90%E3%83%96%E3%83%AD%E3%82%B0\n  %E3%83%BBYAHOO%E3%83%96%E3%83%AD%E3%82%B0\n  %E3%83%BBFC2%E3%83%96%E3%83%AD%E3%82%B0\n  %E3%83%BBlivedoor%E3%83%96%E3%83%AD%E3%82%B0\n  %E3%83%BB%E3%83%A4%E3%83%97%E3%83%AD%E3%82%B0%EF%BC%81\n %E3%83%BBgoo%E3%83%96%E3%83%AD%E3%82%B0\n %E3%83%BB%E3%82%B3%E3%82%B3%E3%83%AD%E3%82%B0\n %E3%83%BB%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%80%E3%82%A4%E3%82%A2%E3%83%AA%E3%83%BC\n %E3%83%BBseesaa%E3%83%96%E3%83%AD%E3%82%B0\n %E3%83%BB%E3%82%A6%E3%82%A7%E3%83%96%E3%83%AA%E3%83%96%E3%83%AD%E3%82%B0'       , defaultStr = '%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84'       , inputStr   = window.prompt(decodeURIComponent(title), decodeURIComponent(defaultStr));      if(inputStr == decodeURIComponent(defaultStr) || inputStr == '' || inputStr == null) return false;      var url = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://ameblo.jp/ OR site:http://blogs.yahoo.co.jp/ OR site:fc2.com OR site:http://blog.livedoor.jp/ OR site:http://yaplog.jp/ OR site:http://blog.goo.ne.jp/ OR site:cocolog-nifty.com OR site:http://d.hatena.ne.jp/ OR site:hatenablog.com OR site:seesaa.net OR site:webry.info -site:d.hatena.ne.jp/keyword/';      window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));  }());" ,
+                "FC2ブログ検索"        : "javascript:(function(){var title='FC2%E3%83%96%E3%83%AD%E3%82%B0%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:fc2.com';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "YAHOOブログ検索"      : "javascript:(function(){var title='YAHOO%E3%83%96%E3%83%AD%E3%82%B0%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:http://blogs.yahoo.co.jp/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "アメーバブログ検索"   : "javascript:(function(){var title='%E3%82%A2%E3%83%A1%E3%83%BC%E3%83%90%E3%83%96%E3%83%AD%E3%82%B0%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:http://ameblo.jp/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "はてなダイアリー検索" : "javascript:(function(){var title='%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%80%E3%82%A4%E3%82%A2%E3%83%AA%E3%83%BC%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:http://d.hatena.ne.jp/ OR site:hatenablog.com -site:d.hatena.ne.jp/keyword/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+            } ,
+            "SlideSearch" : {
+                "スライド検索"    : "javascript:(function(){var title='スライド検索\n \n タブ１：SlideShare、タブ２：Speaker Deck',defaultStr='検索したい文字列を入力してください',inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url1='http://www.slideshare.net/search/slideshow?searchfrom=header&q='+encodeURIComponent(inputStr),url2='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:https://speakerdeck.com/';window.open(url1);window.open(url2);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "SlideShare検索"  : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('SlideShare%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='http://www.slideshare.net/search/slideshow?searchfrom=header&q='+encodeURIComponent(inputStr);window.open(url); document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));  })();" ,
+                "SpeakerDeck検索" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Speaker Deck検索'),decodeURIComponent('検索したい文字列を入力して下さい'));if(inputStr==decodeURIComponent('検索したい文字列を入力して下さい')||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:https://speakerdeck.com/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+            } ,
+            "ProgrammingSearch" : {
+                "MDN検索"                : "javascript:(function(){var title='MDN%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false; var url='https://developer.mozilla.org/ja/search?q='+encodeURIComponent(inputStr)+'&topic=html&topic=css&topic=js&topic=api';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "jQueryリファンレス検索" : "javascript:(function(){var title='jQuery%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9%E6%A4%9C%E7%B4%A2\n %E2%80%BB%E4%BB%A5%E4%B8%8B%E3%81%AE%E3%82%B5%E3%82%A4%E3%83%88%E5%86%85%E3%81%8B%E3%82%89%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%BE%E3%81%99\n %E3%83%BBjQuery%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9\n %E3%83%BBjQuery%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?sourceid=chrome&ie=UTF-8&q='+encodeURIComponent(inputStr)+' site:http://semooh.jp/jquery/ OR site:http://api.jquery.com/';window.open(url);  document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu')); })();" ,
+                "StackOverflow検索"      : "javascript:(function(){var title='Stack Overflow%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:stackoverflow.com/questions/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "teratail検索"           : "javascript:(function(){var title='teratail%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:https://teratail.com/questions/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "Qiita検索"              : "javascript:(function(){var title='Qiita%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:http://qiita.com/ -site:http://qiita.com/tags/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+                "@IT検索"                : "javascript:(function(){var title='@IT%E8%A8%98%E4%BA%8B%E6%A4%9C%E7%B4%A2' ,defaultStr='%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84' ,inputStr  =window.prompt(decodeURIComponent(title),decodeURIComponent(defaultStr));if(inputStr==decodeURIComponent(defaultStr)||inputStr==''||inputStr==null)return false;var url='https://www.google.co.jp/search?q='+encodeURIComponent(inputStr)+' site:http://www.atmarkit.co.jp/ -site:http://www.atmarkit.co.jp/bbs/';window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));}());" ,
+            } ,
+            "OtherSearch" : {
+                "Amazon商品検索"                : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Amazon%E5%95%86%E5%93%81%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://www.amazon.co.jp/s/ref=nb_sb_noss_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&url=search-alias%3Daps&field-keywords='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "NAVER検索"                     : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('NAVER%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='http://matome.naver.jp/search?q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "LifeHacker検索"                : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Lifehacker%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url='https://www.lifehacker.jp/search/?q='+encodeURIComponent(inputStr);window.open(url);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Wikipedia検索＆Google画像検索" : "javascript:(function(){var inputStr=window.prompt(decodeURIComponent('Wikipedia%E6%A4%9C%E7%B4%A2&Google%E7%94%BB%E5%83%8F%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(inputStr==decodeURIComponent('%E6%A4%9C%E7%B4%A2%E3%81%97%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||inputStr==''||inputStr==null)return false;var url1   ='https://ja.wikipedia.org/wiki/'+inputStr ,url2   ='http://www.google.co.jp/search?newwindow=1&site=&tbm=isch&source=hp&q='+inputStr ,screenWidth =(window.screen.width-15)/2 ,screenHeight=window.screen.height-95 ,winName='_blank' ,winleft1=0;window.screenX>=window.screen.width ? winleft1=window.screen.width:winleft1=0;var winOption1='left='+winleft1+',width='+screenWidth+',height='+screenHeight+',scrollbars=yes,resizeable=yes,menubar=yes,location=no' ,winOption2='left='+(winleft1+screenWidth+15)+',width='+(screenWidth-15)+',height='+screenHeight+',scrollbars=yes,resizeable=yes,menubar=yes,location=no';window.open(url1,winName,winOption1);window.open(url2,winName,winOption2);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));})();" ,
+                "Yahoo路線情報検索"             : "javascript:(function(){var departure=window.prompt(decodeURIComponent('Yahoo%E8%B7%AF%E7%B7%9A%E6%83%85%E5%A0%B1%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E5%87%BA%E7%99%BA%E5%9C%B0%E7%82%B9%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(departure==decodeURIComponent('%E5%87%BA%E7%99%BA%E5%9C%B0%E7%82%B9%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||departure==''||departure==null)return false;var arrival=window.prompt(decodeURIComponent('Yahoo%E8%B7%AF%E7%B7%9A%E6%83%85%E5%A0%B1%E6%A4%9C%E7%B4%A2'),decodeURIComponent('%E5%88%B0%E7%9D%80%E5%9C%B0%E7%82%B9%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'));if(arrival==decodeURIComponent('%E5%88%B0%E7%9D%80%E5%9C%B0%E7%82%B9%E3%82%92%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84')||arrival==''||arrival==null)return false;var nowTime=getCurrentTime();var rideTime=window.prompt(decodeURIComponent('Yahoo%E8%B7%AF%E7%B7%9A%E6%83%85%E5%A0%B1%E6%A4%9C%E7%B4%A2\n %E3%80%80%E4%B9%97%E8%BB%8A%E6%99%82%E9%96%93%E3%82%92%E3%80%8Cyyyy/mm/dd hh:mm%E3%80%8D%E5%BD%A2%E5%BC%8F%E3%81%A7%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84\n %E3%80%80%E2%80%BB%E6%97%A5%E4%BB%98%E3%83%BB%E6%99%82%E9%96%93%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%81%AF%E3%81%97%E3%81%AA%E3%81%84%E3%81%AE%E3%81%A7%E6%AD%A3%E3%81%97%E3%81%84%E5%BD%A2%E5%BC%8F%E3%81%A7%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E4%B8%8B%E3%81%95%E3%81%84'),nowTime);var year=rideTime.substr(0,4),month=rideTime.substr(5,2),day=rideTime.substr(8,2),hour=rideTime.substr(11,2),time1=rideTime.substr(14,1),time2=rideTime.substr(15,1);var screenWidth=(window.screen.width-15)/2,screenHeight=window.screen.height-95,winName='_blank',winleft1=0;window.screenX>=window.screen.width ? winleft1=window.screen.width:winleft1=0;var winOption1='left='+winleft1+',width='+screenWidth+',height='+screenHeight+',scrollbars=yes,resizeable=yes,menubar=yes,location=no',winOption2='left='+(winleft1+screenWidth+15)+',width='+(screenWidth-15)+',height='+screenHeight+',scrollbars=yes,resizeable=yes,menubar=yes,location=no';window.open('http://transit.yahoo.co.jp/search/result?flatlon=&from='+encodeURIComponent(departure)+'&tlatlon=&to='+encodeURIComponent(arrival)+'&via=&via=&via=&y='+year+'&m='+month+'&d='+day+'&hh='+hour+'&m2='+time2+'&m1='+time1+'&type=1&ticket=ic&shin=1&ex=1&s=0&expkind=1&ws=2',winName,winOption1);window.open('http://transit.yahoo.co.jp/search/result?flatlon=&from='+encodeURIComponent(departure)+'&tlatlon=&to='+encodeURIComponent(arrival)+'&via=&via=&via=&y='+year+'&m='+month+'&d='+day+'&hh='+hour+'&m2='+time2+'&m1='+time1+'&type=2&ticket=ic&shin=1&ex=1&s=0&expkind=1&ws=2',winName,winOption2);document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));function getCurrentTime(){var now=new Date();var res=''+now.getFullYear()+'/'+padZero(now.getMonth()+1)+'/'+padZero(now.getDate())+' '+padZero(now.getHours())+':'+padZero(now.getMinutes());return res;}function padZero(num){var result;if(num<10){result='0'+num;}else{result=''+num;}return result;}})();" ,
+
+            }
+        } ,
+        styles = {
+            "#mySearchMenu"                                     : "#mySearchMenu {\n   overflow: hidden;\n   width: 750px;\n   height: 800px;\n   margin: 0 auto;\n   padding: 0;\n   box-sizing: border-box;\n   display: flex;\n   position: fixed;\n   top: 5px;\n   left: 5px;\n   z-index: 10000;\n}" ,
+            "#mySearchMenu .nav"                                : "#mySearchMenu .nav {\n   width: 200px;\n   margin: 0;\n   padding: 0;\n}" ,
+            "#mySearchMenu .nav li"                             : "#mySearchMenu .nav li {\n   position: relative;\n   width: 200px;\n   height: 40px;\n}" ,
+            "#mySearchMenu .nav > li"                           : "#mySearchMenu .nav > li {\n   border-bottom: none;\n}" ,
+            "#mySearchMenu .nav li:last-child"                  : "#mySearchMenu .nav li:last-child {\n   border-bottom: none;\n}" ,
+            "#mySearchMenu .nav li:hover"                       : "#mySearchMenu .nav li:hover > ul > li {\n   border-bottom: none;\n}" ,
+            "#mySearchMenu .nav li > ul"                        : "#mySearchMenu .nav li > ul > li:last-child {\n   border-bottom: none;\n}" ,
+            "#mySearchMenu .nav li a"                           : "#mySearchMenu .nav li a {\n   display: block;\n   width: 200px;\n   height: 40px;\n   color: #fff;\n   font-size: 14px;\n   line-height: 2.8;\n   padding: 0 5px;\n   background: #9fb7d4;\n   border-bottom: 1px solid #eee;\n   box-sizing: border-box;\n   text-decoration: none;\n   transition: 0.5s;\n}" ,
+            "#mySearchMenu .nav > li:hover"                     : "#mySearchMenu .nav > li:hover > a {\n   color: orange;\n   background: #afc6e2;\n   transition: 0.5s;\n}" ,
+            "#mySearchMenu .nav > li li:hover"                  : "#mySearchMenu .nav > li li:hover > a {\n   color: olive;\n   background: #afc6e2;\n}" ,
+            "#mySearchMenu .nav li:hover"                       : "#mySearchMenu .nav li:hover > ul > li {\n   overflow: visible;\n   top: -40px;\n   left: 200px;\n   height: 40px;\n}" ,
+            "#mySearchMenu .nav li ul li"                       : "#mySearchMenu .nav li ul li {\n   overflow: hidden;\n   height: 0;\n   width: 300px;\n   left: 200px;\n   list-style: none;\n   transition: 0.2s;\n}" ,
+            "#mySearchMenu .nav li ul li a"                     : "#mySearchMenu .nav li ul li a {\n   background: #9fb7d4;\n   transition: 0.5s;\n   width: 300px;\n}" ,
+            "#mySearchMenu .nav li ul:before"                   : "#mySearchMenu .nav li ul:before {\n   position: absolute;\n   content: '';\n   top: 14px;\n   left: 190px;\n   border: 5px solid transparent;\n   border-left: 5px solid #fff;\n}" ,
+            "#mySearchMenu .nav li:hover ul li ul li:hover > a" : "#mySearchMenu .nav li:hover ul li ul li:hover > a {\n   color: pink;\n   background: #afc6e2;\n}" ,
+        };
+
+    createCssToScreen();
+
+    var div = createDIVtag();
+    div.appendChild( createMyMenu() ) ;
+
+    document.body.appendChild( div );
+
+    window.addEventListener("keydown", function(e) {
+        if (e.which != 27) return;
+        document.getElementById('mySearchMenu').parentNode.removeChild(document.getElementById('mySearchMenu'));
+    });
+
+    function createMyMenu() {
+        var myMenuUl = createULtag();
+        for (menuListsKey in menuLists) {
+            var a  = createAtag(decodeURIComponent(menuLists[menuListsKey]), '#') ,
+                li = createLItag();
+            li.appendChild(a);
+            li.appendChild( createMenu(subMenuLists[menuListsKey] ,menuListsKey) );
+            myMenuUl.appendChild(li);
+        };
+        return myMenuUl;
+    }
+    function createMenu(lists, ulId) {
+        var ul = createULtag(ulId);
+        for(listsKey in lists) {
+            var a  = createAtag(decodeURIComponent(listsKey), lists[listsKey]) ,
+                li = createLItag();
+            li.appendChild(a);
+            ul.appendChild(li);
+        }
+        return ul;
+    }
+    function createDIVtag() {
+        var div = document.createElement('div');
+        div.id  = 'mySearchMenu';
+        return div;
+    }
+    function createULtag() {
+        var ul = document.createElement('ul');
+        ul.className = 'nav';
+        return ul;
+    }
+    function createLItag() {
+        var li = document.createElement('li');
+        return li;
+    }
+    function createAtag(content, url) {
+        var a = document.createElement('a');
+        a.innerHTML     = content;
+        a.href          = url;
+        return a;
+    }
+    function createCssToScreen() {
+        var document = window.document;
+        var css      = document.createElement('style');
+        css.media = 'screen';
+        css.type = 'text/css';
+
+        var cssText = '';
+        for (styleKey in styles) {
+            cssText += '\n' + styles[styleKey];
+        };
+
+        var cssRule = document.createTextNode(cssText);
+
+        if (css.styleSheet) {
+            css.styleSheet.cssText = cssRule.nodeValue;
+        } else {
+            css.appendChild(cssRule);
+        };
+        document.getElementsByTagName('head')[0].appendChild(css);
+    }
+})();
