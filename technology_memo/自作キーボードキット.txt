@@ -1,0 +1,54 @@
+
+●練習1
+テンキー型　電卓自作キット　”TENTAKU”（てんたく）
+https://booth.pm/ja/items/1069765
+
+namecard2x4
+
+●本番1
+mint60
+
+https://qiita.com/umechanhika/items/c72ed6f636479353f3be
+
+●本番2
+ErgoDash
+
+●スマホ用
+Blockey
+
+●カスタム
+
+
+遊舎工房
+Lily58 Pro
+ErgoDash
+frogpad
+
+
+
+
+ジョイスティック de Mouse and shortcutKB
+
+
+Arduino ESPLORA
+
+
+
+Magic Trackpad 2 MJ2R2J/A
+LOGICOOL ワイヤレス 充電式 タッチパッド T650
+
+
+●次の行をコピーし、次の画面にペースト(Next)
+下→Home→Shift+End→Ctrl＋C→Alt＋Tab→Ctrl＋V
+
+Shift                  Shift
+Home                   End
+PgUp                   PgDn
+
+
+
+Bluetooth LE 対応の開発ボード比較
+Adafruit Feather nRF52 Bluefruit LE - nRF52832
+
+ESP32-DevKitC (とその他 ESP32 系開発ボード)
+BBC micro:bit
