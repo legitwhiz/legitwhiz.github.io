@@ -78,70 +78,90 @@ Ansibleで公開しているBest Pricticeの構成を前回、記載しました
 
 ```
 Ansible_Dir=/etc/ansible
-mkdir -m 755 $Ansible/inventories
-mkdir -m 755 $Ansible/inventories/production/
-mkdir -m 755 $Ansible/inventories/production/group_vars/
-mkdir -m 755 $Ansible/inventories/production/host_vars/
-mkdir -m 755 $Ansible/inventories/staging/
-mkdir -m 755 $Ansible/inventories/staging/group_vars/
-mkdir -m 755 $Ansible/inventories/staging/host_vars/
-mkdir -m 755 $Ansible/library
-mkdir -m 755 $Ansible/module_utils
-mkdir -m 755 $Ansible/filter_plugins
-mkdir -m 755 $Ansible/roles
-mkdir -m 755 $Ansible/roles/common
-mkdir -m 755 $Ansible/roles/common/tasks
-mkdir -m 755 $Ansible/roles/common/handlers
-mkdir -m 755 $Ansible/roles/common/templates
-mkdir -m 755 $Ansible/roles/common/files
-mkdir -m 755 $Ansible/roles/common/vars
-mkdir -m 755 $Ansible/roles/common/defaults
-mkdir -m 755 $Ansible/roles/common/meta
-mkdir -m 755 $Ansible/roles/common/library
-mkdir -m 755 $Ansible/roles/common/module_utils
-mkdir -m 755 $Ansible/roles/common/lookup_plugins
-mkdir -m 755 $Ansible/roles/common/
-mkdir -m 755 $Ansible/roles/webtier/tasks
-mkdir -m 755 $Ansible/roles/webtier/handlers
-mkdir -m 755 $Ansible/roles/webtier/templates
-mkdir -m 755 $Ansible/roles/webtier/files
-mkdir -m 755 $Ansible/roles/webtier/vars
-mkdir -m 755 $Ansible/roles/webtier/defaults
-mkdir -m 755 $Ansible/roles/webtier/meta
-mkdir -m 755 $Ansible/roles/webtier/library
-mkdir -m 755 $Ansible/roles/webtier/module_utils
-mkdir -m 755 $Ansible/roles/webtier/lookup_plugins
-mkdir -m 755 $Ansible/roles/dbtier/
-mkdir -m 755 $Ansible/roles/dbtier/tasks
-mkdir -m 755 $Ansible/roles/dbtier/handlers
-mkdir -m 755 $Ansible/roles/dbtier/templates
-mkdir -m 755 $Ansible/roles/dbtier/files
-mkdir -m 755 $Ansible/roles/dbtier/vars
-mkdir -m 755 $Ansible/roles/dbtier/defaults
-mkdir -m 755 $Ansible/roles/dbtier/meta
-mkdir -m 755 $Ansible/roles/dbtier/library
-mkdir -m 755 $Ansible/roles/dbtier/module_utils
-mkdir -m 755 $Ansible/roles/dbtier/lookup_plugins
-mkdir -m 755 $Ansible/roles/apwtier/
-mkdir -m 755 $Ansible/roles/aptier/tasks
-mkdir -m 755 $Ansible/roles/aptier/handlers
-mkdir -m 755 $Ansible/roles/aptier/templates
-mkdir -m 755 $Ansible/roles/aptier/files
-mkdir -m 755 $Ansible/roles/aptier/vars
-mkdir -m 755 $Ansible/roles/aptier/defaults
-mkdir -m 755 $Ansible/roles/aptier/meta
-mkdir -m 755 $Ansible/roles/aptier/library
-mkdir -m 755 $Ansible/roles/aptier/module_utils
-mkdir -m 755 $Ansible/roles/aptier/lookup_plugins
+mkdir -m 755 $Ansible_Dir/inventories
+mkdir -m 755 $Ansible_Dir/inventories/production/
+mkdir -m 755 $Ansible_Dir/inventories/production/group_vars/
+mkdir -m 755 $Ansible_Dir/inventories/production/host_vars/
+mkdir -m 755 $Ansible_Dir/inventories/staging/
+mkdir -m 755 $Ansible_Dir/inventories/staging/group_vars/
+mkdir -m 755 $Ansible_Dir/inventories/staging/host_vars/
+mkdir -m 755 $Ansible_Dir/library
+mkdir -m 755 $Ansible_Dir/module_utils
+mkdir -m 755 $Ansible_Dir/filter_plugins
+mkdir -m 755 $Ansible_Dir/roles
+mkdir -m 755 $Ansible_Dir/roles/common
+mkdir -m 755 $Ansible_Dir/roles/common/tasks
+mkdir -m 755 $Ansible_Dir/roles/common/handlers
+mkdir -m 755 $Ansible_Dir/roles/common/templates
+mkdir -m 755 $Ansible_Dir/roles/common/files
+mkdir -m 755 $Ansible_Dir/roles/common/vars
+mkdir -m 755 $Ansible_Dir/roles/common/defaults
+mkdir -m 755 $Ansible_Dir/roles/common/meta
+mkdir -m 755 $Ansible_Dir/roles/common/library
+mkdir -m 755 $Ansible_Dir/roles/common/module_utils
+mkdir -m 755 $Ansible_Dir/roles/common/lookup_plugins
+mkdir -m 755 $Ansible_Dir/roles/webtier
+mkdir -m 755 $Ansible_Dir/roles/webtier/tasks
+mkdir -m 755 $Ansible_Dir/roles/webtier/handlers
+mkdir -m 755 $Ansible_Dir/roles/webtier/templates
+mkdir -m 755 $Ansible_Dir/roles/webtier/files
+mkdir -m 755 $Ansible_Dir/roles/webtier/vars
+mkdir -m 755 $Ansible_Dir/roles/webtier/defaults
+mkdir -m 755 $Ansible_Dir/roles/webtier/meta
+mkdir -m 755 $Ansible_Dir/roles/webtier/library
+mkdir -m 755 $Ansible_Dir/roles/webtier/module_utils
+mkdir -m 755 $Ansible_Dir/roles/webtier/lookup_plugins
+mkdir -m 755 $Ansible_Dir/roles/dbtier/
+mkdir -m 755 $Ansible_Dir/roles/dbtier/tasks
+mkdir -m 755 $Ansible_Dir/roles/dbtier/handlers
+mkdir -m 755 $Ansible_Dir/roles/dbtier/templates
+mkdir -m 755 $Ansible_Dir/roles/dbtier/files
+mkdir -m 755 $Ansible_Dir/roles/dbtier/vars
+mkdir -m 755 $Ansible_Dir/roles/dbtier/defaults
+mkdir -m 755 $Ansible_Dir/roles/dbtier/meta
+mkdir -m 755 $Ansible_Dir/roles/dbtier/library
+mkdir -m 755 $Ansible_Dir/roles/dbtier/module_utils
+mkdir -m 755 $Ansible_Dir/roles/dbtier/lookup_plugins
+mkdir -m 755 $Ansible_Dir/roles/aptier/
+mkdir -m 755 $Ansible_Dir/roles/aptier/tasks
+mkdir -m 755 $Ansible_Dir/roles/aptier/handlers
+mkdir -m 755 $Ansible_Dir/roles/aptier/templates
+mkdir -m 755 $Ansible_Dir/roles/aptier/files
+mkdir -m 755 $Ansible_Dir/roles/aptier/vars
+mkdir -m 755 $Ansible_Dir/roles/aptier/defaults
+mkdir -m 755 $Ansible_Dir/roles/aptier/meta
+mkdir -m 755 $Ansible_Dir/roles/aptier/library
+mkdir -m 755 $Ansible_Dir/roles/aptier/module_utils
+mkdir -m 755 $Ansible_Dir/roles/aptier/lookup_plugins
 ```
 
-## 1.2. 最初にInventoryを設定する。
+
+
+## 1.2. Ansible設定 【/etc/ansible/ansible.cfg】
+
+Ansibleの設定値に関しては、先人がまとめてくれているので以下を参照。
+
+[【ansible.cfgの項目をリスト化してみた】](https://qiita.com/croissant1028/items/33f06298d7d05bf1e295)
+
+[公式マニュアル(ansible.cfg)](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-configuration-settings-locations)
+
+とりあえず、必要最低限として以下の行をコメントを外さないと動作しませんでした。
+
+```yaml
+retry_files_enabled = False
+retry_files_save_path = ~/.ansible-retry
+```
+
+
+
+
+## 1.3. Inventory設定
 
 本番環境用のInventoryとステージング環境とでInventoryを分けて記載するのは、`ansible-playbook`コマンドにて`-i`でInventory file指定して実行するため、playbookを実行する対象を環境毎に分けることが可能です。
 
 また、各Inventoryは、サーバの役割毎にグループを分けて記載することで、各役割毎のplaybookを実行するように構成しています。
 
-【$Ansible/inventories/production/hosts】
+【$Ansible_Dir/inventories/production/hosts】
 
 ```yaml
 [webservers]
@@ -157,7 +177,7 @@ mkdir -m 755 $Ansible/roles/aptier/lookup_plugins
 192.168.102.102
 ```
 
-【$Ansible/inventories/staging/hosts】
+【$Ansible_Dir/inventories/staging/hosts】
 
 ```yaml
 [webservers]
@@ -173,28 +193,28 @@ mkdir -m 755 $Ansible/roles/aptier/lookup_plugins
 192.168.202.102
 ```
 
-## 1.3. マスターplaybook 
+## 1.4. マスターplaybook 
 
 `ansible-playbook`コマンドで実行する時に指定する、playbookとなります。
 
-なるべく、シンプルにするためサーバ役割毎のYAMLファイルをインクルードしているだけとしています。
+なるべく、シンプルにするためサーバ役割毎のYAMLファイルをインクルードのみとしています。
 
-$Ansible/site.yml 
+$Ansible_Dir/site.yml 
 
 ```yaml
 ---
-- include: webservers.yml
-- include: dbservers.yml
-- include: apservers.yml
+- import_playbook: webservers.yml
+- import_playbook: dbservers.yml
+- import_playbook: apservers.yml
 ```
 
-## 1.4. サーバの役割毎のplaybook
+## 1.5. サーバの役割毎のplaybook
 
 サーバ役割毎にplaybookを作成し、このファイルで実行するサーバのグループを指定し実行するroleを指定します。
-rolesで指定しているcommonは、共通の設定であるcommonとwebサーバ固有のwebtierを指定してます。
-Ansibleのroleは、roleディレクトリの指定ディレクトリ配下(commonの場合[$Ansible/roles/common])配下に配置されたmain.ymlをインクルードします)
+rolesで指定しているcommonは、共通の設定である【common】とwebサーバ固有の【webtier】を指定してます。
+Ansibleのroleは、roleディレクトリの指定ディレクトリ配下(commonの場合[$Ansible_Dir/roles/common])配下に配置されたmain.ymlをインクルードします)
 
-$Ansible/webservers.yml 
+$Ansible_Dir/webservers.yml 
 
 ```yaml
 ---
@@ -204,7 +224,7 @@ $Ansible/webservers.yml
     - webtier
 ```
 
-$Ansible/dbservers.yml 
+$Ansible_Dir/dbservers.yml 
 
 ```yaml
 ---
@@ -214,7 +234,7 @@ $Ansible/dbservers.yml
     - dbtier
 ```
 
-$Ansible/apservers.yml
+$Ansible_Dir/apservers.yml
 
 ```yaml
 ---
@@ -224,12 +244,16 @@ $Ansible/apservers.yml
     - aptier
 ```
 
-## 1.5. role配下の各役割
+## 1.6. role配下の各役割
 
 #### tasks
 roleで実行されるtaskを定義する。 roleからmain.ymlが自動で読み込まれますので、他のファイルに分けたい時はmain.ymlからincludeすること。
 
-$Ansible/common/tasks/main.yml
+また、task実行する対象が複数の場合は、変数を使用しループ実行するように定義してます。
+
+変数に関しては、後述の【vars】を参照。
+
+$Ansible_Dir/roles/common/tasks/main.yml
 
 ```yaml
 ---
@@ -240,7 +264,7 @@ $Ansible/common/tasks/main.yml
    - "{{ common_packages }}"
  
  - name: users exist
-   user: name={{item.name}} state=present password={{item.password}} groups={{item.groups}}
+   user: name={{item.name}} state=present password={{item.password}} group={{item.group}} uid={{item.uid}} generate_ssh_key={{item.generate_ssh_key}} home={{item.home}} shell={{item.shell}} create_home={{item.create_home}}
   with_items: 
    - "{{ common_users }}"
 
@@ -265,7 +289,7 @@ $Ansible/common/tasks/main.yml
   notify: restart ntp
 ```
 
-$Ansible/webtier/tasks/main.yml
+$Ansible_Dir/roles/webtier/tasks/main.yml
 
 ```yaml
 ---
@@ -278,7 +302,7 @@ $Ansible/webtier/tasks/main.yml
   copy: src="httpd.conf" dest="/etc/httpd/conf/httpd.conf" owner=root group=root mode=0644
 ```
 
-$Ansible/dbtier/tasks/main.yml
+$Ansible_Dir/roles/dbtier/tasks/main.yml
 
 ```yaml
 ---
@@ -289,7 +313,7 @@ $Ansible/dbtier/tasks/main.yml
  - "{{ dbtier_packages }}"
 ```
 
-$Ansible/aptier/tasks/main.yml
+$Ansible_Dir/roles/aptier/tasks/main.yml
 
 ```yaml
 ---
@@ -310,7 +334,7 @@ varsで、group_varsなどで変数を上書きできます。
 #### vars
 main.ymlにroleで利用される変数を定義します。 基本的に環境毎に変わる固定値などを記述します。group_varsなどで変数を上書きできないので注意が必要です。
 
-$Ansible/roles/common/vars/main.yml
+$Ansible_Dir/roles/common/vars/main.yml
 
 ```yaml
 ---
@@ -319,13 +343,13 @@ common_packages:
   - ntpdate
   - ncompress
 common_users:
-  - { name: opeuser,  password: "*****", groups: "opegroup" }
+  - { name: opeuser,  password: "*****", group: "opegroup", uid: "1001", home: "/home/opeuser", create_home: "yes", shell: "/bin/bash", generate_ssh_key: "yes" }
 ```
 
 ※パスワードは、opensslコマンドでハッシュ化したパスワードを入力して下さい。
 ハッシュ化は、`openssl passwd -l <平文のパスワード>`
 
-$Ansible/roles/webtier/vars/main.yml
+$Ansible_Dir/roles/webtier/vars/main.yml
 
 
 ```yaml
@@ -337,7 +361,7 @@ webtier_packages:
   - apr-util
 ```
 
-$Ansible/roles/dbtier/vars/main.yml
+$Ansible_Dir/roles/dbtier/vars/main.yml
 
 ```yaml
 ---
@@ -346,7 +370,7 @@ dbtier_packages:
   - postgresql-contrib
 ```
 
-$Ansible/roles/aptier/vars/main.yml
+$Ansible_Dir/roles/aptier/vars/main.yml
 
 ```yaml
 ---
@@ -373,7 +397,7 @@ authorized_keys_for_***
 templateモジュールでセットアップされるJinja2形式のテキストファイルを配置する。
  Jinja2形式のテキストファイルは、変数を埋め込むことができる点がfilesの下のファイルとの違いです。変数は、【default】【group_vars】【vars】のどこかに設定する必要があります。
 
-$Ansible/roles/common/templates/ntp.conf.j2
+$Ansible_Dir/roles/common/templates/ntp.conf.j2
 
 ```
 driftfile /var/lib/ntp/drift
@@ -390,29 +414,12 @@ keys /etc/ntp/keys
 
 #### meta
 metaを設定する事でRoleの依存関係を設定出来ます。
-
 複数roleをtaskで実行する際に、依存関係で先に実行すべきroleを記載する。
-
-$Ansible/roles/common/meta/main.yml
-
-```yaml
----
-dependencies:
-  - { role: common }
-```
-
-$Ansible/roles/webtier/meta/main.yml
-
-```yaml
----
-dependencies:
-  - { role: common }
-```
 
 #### handlers
 handlersには、主にサービスの再起動といった特定の条件で発火するイベントtaskを定義します。 別のRoleにて、Apacheの設定ファイルを変更した後、Apacheを再起動したいといったケースで利用します。 この場合、別のRoleからhandlerの「restart apache2 service」をnotifyすれば、期待する挙動となるのです。
 
-$Ansible/roles/common/handlers/main.yml
+$Ansible_Dir/roles/common/handlers/main.yml
 
 ```yaml
 ---
@@ -421,7 +428,7 @@ $Ansible/roles/common/handlers/main.yml
   listen:restart ntp
 ```
 
-$Ansible/roles/webtier/handlers/main.yml
+$Ansible_Dir/roles/webtier/handlers/main.yml
 
 ```yaml
 ---
@@ -430,7 +437,7 @@ $Ansible/roles/webtier/handlers/main.yml
   listen:Start handler webtier
 ```
 
-$Ansible/roles/dbtier/handlers/main.yml
+$Ansible_Dir/roles/dbtier/handlers/main.yml
 
 ```yaml
 ---
@@ -439,7 +446,7 @@ $Ansible/roles/dbtier/handlers/main.yml
   listen:Start handler dbtier
 ```
 
-$Ansible/roles/aptier/handlers/main.yml
+$Ansible_Dir/roles/aptier/handlers/main.yml
 
 ```yaml
 ---
@@ -452,7 +459,14 @@ $Ansible/roles/aptier/handlers/main.yml
 #### group_vars
 
 共通にセットする変数を格納。
-$Ansible/group_vars/all.yml
+$Ansible_Dir/inventories/production/group_vars/all.yml
+
+```yaml
+---
+ntpserver: 192.168.1.2
+```
+
+$Ansible_Dir/inventories/staging/group_vars/all.yml
 
 ```yaml
 ---
@@ -461,9 +475,10 @@ ntpserver: 192.168.1.2
 
 
 
-### 最後に
+## 最後に
 
 理想的にはGitで構築用のリポジトリにpushしたら、jenkinsでAnsibleサーバにビルドして、jenkinsからainsibleのplaybookを実行し、各サーバの設定を実施していくイメージだろう。
 
-ここまで、できれば単体試験まで自動化したいですが、それは後日・・・。
+ここまで、できれば仮想マシン設定、OSインストール、単体試験まで自動化したいですが、それは後日・・・。
+
 
