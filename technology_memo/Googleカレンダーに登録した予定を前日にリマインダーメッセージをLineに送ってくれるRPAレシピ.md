@@ -1,91 +1,91 @@
-# Google�J�����_�[�ɓo�^�����\���O���Ƀ��}�C���_�[���b�Z�[�W��Line�ɑ����Ă����RPA���V�s
+# Googleカレンダーに登録した予定を前日にリマインダーメッセージをLineに送ってくれるRPAレシピ
 
-**�yRPA�z**�Ƃ́A�yRobotics Process Automation�z�̗��̂ŌJ��Ԃ����s�����A�N�V���������{�b�g�������Ŏ��s���邱�Ƃ������B
+**【RPA】**とは、【Robotics Process Automation】の略称で繰り返し実行されるアクションをロボットが自動で実行することを差す。
 
-���Ɋ��p����Ă���̂���ƂŁA���X�J��Ԃ��s����Ɩ������{�b�g���ς��ɍs���Ă����Ƃ������̂ł��B���������v�̈�Ƃ��Ă����ڂ���Ă���Z�p�ł��B
+特に活用されているのが企業で、日々繰り返し行われる業務をロボットが変わりに行ってくれるというものです。働き方改革の一環としても注目されている技術です。
 
-�ł����A�Ɩ������łȂ����퐶���ł����Ă����{�b�g�Ŏ��������邱�Ƃ��\�Ȃ�ł���B
+ですが、業務だけでなく日常生活であってもロボットで自動化することも可能なんですよ。
 
-��Ƃ��g�p���Ă���**�yRPA�z**�c�[���́A���G�Ȃ��Ƃ��ł��܂����c�[���̂��l�i������Ȃ�ɂ��܂��B�ł����A�t���[�̃c�[��������܂����A�X�}�z�A�v���ł������ł��B
+企業が使用している**【RPA】**ツールは、複雑なこともできますがツールのお値段もそれなりにします。ですが、フリーのツールもありますし、スマホアプリでもあるんです。
 
-�܂��A�v���O���~���O��K�v�Ƃ���c�[��������΁AGUI�ŊȒP�ɍ��郂�m������悤�ł��B
+また、プログラミングを必要とするツールもあれば、GUIで簡単に作れるモノもあるようです。
 
-## ���Ⴀ�A�Ȃɂ�������������֗��H
+## じゃあ、なにを自動化したら便利？
 
-Google�J�����_�[�ɗ\���o�^���Ă����Ă��A�߁X�̗\��Ȃ炢����ł����A��̗\�肾�Ɛ܊p�J�����_�[�ɗ\�������Ă����Ă����邱�Ƃ�Y�ꂽ�Ȃ�Čo������܂��񂩁H
+Googleカレンダーに予定を登録しておいても、近々の予定ならいいんですが、先の予定だと折角カレンダーに予定をいれておいても見ることを忘れたなんて経験ありませんか？
 
-�Ȃ̂ŁA�J�����_�[�ɓo�^�����\���O���Ƀ��}�C���_�[�Ƃ���LINE�ʒm����**�yRPA�z**������Ă݂悤�Ǝv���܂��B
+なので、カレンダーに登録した予定を前日にリマインダーとしてLINE通知する**【RPA】**を作ってみようと思います。
 
-### �y�ޗ��z
+### 【材料】
 
-1. Google�J�����_�[��Google Apps Script���g�����߂̃A�J�E���g
+1. GoogleカレンダーとGoogle Apps Scriptを使うためのアカウント
 
-2. �ʒm�����Ƃ���LINE�A�J�E���g
+2. 通知する先としてLINEアカウント
 
-3. LINE ���b�Z�[�W�𔭍s����Line
+3. LINE メッセージを発行するLine
 
-��́A�������΁cw
+後は、愛情があれば…w
 
-### �y�����z
+### 【作り方】
 
-#### �O��
+#### 前菜
 
-�܂��́A�O�؂Ɏ�����Google�A�J�E���g���g���āwGoogle�J�����_�[�x�ɃX�P�W���[��������Ă݂����Ǝv���܂��B
+まずは、前菜に自分のGoogleアカウントを使って『Googleカレンダー』にスケジュールを作ってみたいと思います。
 
-##### 1�D PC�ł��X�}�z�ł��ȒP�ɂł��܂��̂Ŏ菇�͏ȗ����܂��B
+##### 1． PCでもスマホでも簡単にできますので手順は省略します。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/google_calender_TEST_Schedule.png" width="420">
 
 
 
-#### �`��
+#### 汁物
 
-����LINE�Ƀ��b�Z�[�W�𔭍s���邽�߂�LINE Notify�ƌĂ΂��API�g�[�N�������܂��B
-�u���E�U�ňȉ���URL�ɃA�N�Z�X���܂��B���̎菇��PC�����{���邱�ƁB
+次にLINEにメッセージを発行するためのLINE Notifyと呼ばれるAPIトークンを作ります。
+ブラウザで以下のURLにアクセスします。この手順はPCより実施すること。
 
 [LINE Notify](https://notify-bot.line.me/doc/ja/)
 
-##### 1. �E��́u���O�C���v�{�^���������A
+##### 1. 右上の「ログイン」ボタンを押し、
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/line_notify_01.png" width="420">
 
-##### 2. �A�J�E���g�̃��[���A�h���X�ƃp�X���[�h����͂��u���O�C���v�{�^���������܂��B
+##### 2. アカウントのメールアドレスとパスワードを入力し「ログイン」ボタンを押します。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/line_notify_02.png" width="420">
 
-3. �u�o�^�T�[�r�X�Ǘ��v�������B
+3. 「登録サービス管理」を押す。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/line_notify_03.png" width="420">
 
 
-##### 4. �u�T�[�r�X��o�^����v�������B
+##### 4. 「サービスを登録する」を押す。
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/line_notify_04.png" width="420">
 
 
 
-##### 5. �K�v��������͂��u�o�^�v�{�^���������B
+##### 5. 必要事項を入力し「登録」ボタンを押す。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/line_notify_06.png" width="420">
 
-##### 6. LINE Notify�̃g�b�v��ʂɖ߂�u�g�[�N���𔭍s����v�{�^���������B
+##### 6. LINE Notifyのトップ画面に戻り「トークンを発行する」ボタンを押す。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/line_notify_07.png" width="420">
 
 
 
-##### 7. �o�͂��ꂽ��������T�����API�g�[�N���̏o���オ��ł��B
+##### 7. 出力された文字列を控えればAPIトークンの出来上がりです。
 
 
 
-#### ��H
+#### 主食
 
-���C���f�B�b�V���́AGoogle Apps Script(GAS)�Œ���I��Google�J�����_�[�����Ė����̗\�肪����΁ALINE���b�Z�[�W�𑗂�X�N���v�g������Ă݂����Ǝv���܂��B
+メインディッシュは、Google Apps Script(GAS)で定期的にGoogleカレンダーを見て明日の予定があれば、LINEメッセージを送るスクリプトを作ってみたいと思います。
 
 
 
-##### 1. Google�h���C�u�ɃA�N�Z�X���A[MyDrive]���E�N���b�N���āA[More] ��[Connect more apps]���N���b�N
+##### 1. Googleドライブにアクセスし、[MyDrive]を右クリックして、[More] →[Connect more apps]をクリック
 
-������[Google Apps Acript]��o�^�ς݂̏ꍇ�́A�菇5.�ɐi��
+※既に[Google Apps Acript]を登録済みの場合は、手順5.に進む
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_01.png" width="420">
 
@@ -93,33 +93,33 @@ Google�J�����_�[�ɗ\���o�^���Ă����Ă��A�߁X�̗\��Ȃ炢����ł����A��̗\�肾
 
 
 
-##### 2. [Google Apps Acript]���N���b�N
+##### 2. [Google Apps Acript]をクリック
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_02.png" width="420">
 
 
 
-##### 3. [connect]���N���b�N
+##### 3. [connect]をクリック
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_03.png" width="420">
 
-##### 4. �����m�F��ʂ�[OK]���N���b�N
+##### 4. 了承確認画面で[OK]をクリック
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_04.png" width="420">
 
 
 
-##### 5. [My Drive]���E�N���b�N���āA[Google Apps Acript]���N���b�N
+##### 5. [My Drive]を右クリックして、[Google Apps Acript]をクリック
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_05.png" width="420">
 
 
 
-##### 6. �X�N���v�g�����
+##### 6. スクリプトを入力
 
-���X�N���v�g�̓��e�́A[�yLINE Notify + GoogleAppsScript + Google�J�����_�[�Ŗ����̗\����ΖY��Ȃ��z](https://qiita.com/imajoriri/items/e211547438967827661f)���Q�l�ɂ����Ă��������܂����B
+※スクリプトの内容は、[【LINE Notify + GoogleAppsScript + Googleカレンダーで明日の予定を絶対忘れない】](https://qiita.com/imajoriri/items/e211547438967827661f)を参考にさせていただきました。
 
-�������A�\�肪�Ȃ����Ɂu�\�肪����܂���v��LINE���b�Z�[�W������͎̂₵���̂ŉ������b�Z�[�W���o���Ȃ��悤�ɂ��Ă��܂��E�E�Ewww
+ただし、予定がない日に「予定がありません」とLINEメッセージが来るのは寂しいので何もメッセージを出さないようにしています・・・www
 
 
 
@@ -127,40 +127,38 @@ Google�J�����_�[�ɗ\���o�^���Ă����Ă��A�߁X�̗\��Ȃ炢����ł����A��̗\�肾
 
 
 
-##### 7. [File]�� [Save]���N���b�N
+##### 7. [File]→ [Save]をクリック
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_07.png" width="420">
 
 
 
-##### 8. �g���K�[��ʂ�[�g���K�[��ǉ�]���N���b�N
+##### 8. トリガー画面で[トリガーを追加]をクリック
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_08.png" width="420">
 
 
 
-##### 9. �g���K�[�ǉ���ʂ�[���s����֐���I��]�ŁumyFunction��1�v��I���B
+##### 9. トリガー追加画面で[実行する関数を選択]で「myFunction※1」を選択。
 
-������A���͂����X�N���v�g�̃��C���֐����umyFunction�v�ƂȂ��Ă��邽�߁B
+※先程、入力したスクリプトのメイン関数が「myFunction」となっているため。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_09.png" width="420">
 
 
 
-##### 10. [���ԃx�[�X�̃g���K�[�̃^�C�v��I��]�Łu���t�x�[�X�̃^�C�}�[�v��I�����A[������I��]��[�ߑO8���`9��]��I����[�ۑ�]���N���b�N�B���Ԃ͂��D�݂ŁB
+##### 10. [時間ベースのトリガーのタイプを選択]で「日付ベースのタイマー」を選択し、[時刻を選択]で[午前8時～9時]を選択し[保存]をクリック。時間はお好みで。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_10.png" width="420">
 
 
 
-##### 11. �g���K�[���o�^���ꂽ���Ƃ��m�F���A�I���ł��B
+##### 11. トリガーが登録されたことを確認し、終わりです。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/linenotify/GAS_11.png" width="420">
 
 
-#### �Ō��
+#### 最後に
 
-����́AGoogle�J�����_�[�̗\���ʒm������̂����܂������A�F�X��API���g�p����LINE���ɒʒm���邱�Ƃ��ł������Ȃ̂�������܂����B
-���ꂱ���A���܂ň��~�������̂���T�C�g���{�����Ă����Ƃ����{���ɕK�v�ȏ�񂾂����s�b�N�A�b�v���邱�Ƃ��\�ɂȂ肻���ł��̂ŁA�]�v�Ȏ��ԒZ�k��ڕW�ɐF�X�Ǝ����Ă݂����Ǝv���܂��B
-
-
+今回は、Googleカレンダーの予定を通知するものを作りましたが、色々なAPIを使用してLINE等に通知することができそうなのが分かりました。
+それこそ、今まで一つ一つ欲しい情報のあるサイトを閲覧していたところを本当に必要な情報だけをピックアップすることも可能になりそうですので、余計な時間短縮を目標に色々と試してみたいと思います。
