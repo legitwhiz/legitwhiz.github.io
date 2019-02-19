@@ -1,0 +1,178 @@
+tech.html
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>legit whiz (フリーランス)</title>
+<meta name="viewport" content="width=device-width">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.smoothscroll.js"></script>
+<script type="text/javascript" src="js/jquery.smoothscroll.js"></script>
+<script type="text/javascript" src="js/jquery.scrollshow.js"></script>
+<script type="text/javascript" src="js/jquery.slideshow.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script>
+$(function($){
+	$('html').smoothscroll({easing : 'swing', speed : 1000, margintop : 30, headerfix : $('nav')});
+	$('.totop').scrollshow({position : 500});
+	$('.slide').slideshow({
+		touch        : false,
+		bgImage      : true,
+		autoSlide    : true,
+		effect       : 'fade',
+		repeat       : true,
+		easing       : 'swing',
+		interval     : 5000,
+		duration     : 1000,
+		imgHoverStop : false,
+		navHoverStop : false,
+		navImg       : false,
+		navImgCustom : false,
+		navImgSuffix : ''
+	});
+});
+</script>
+<!--[if lt IE 9]>
+	<script src="js/html5shiv.js"></script>
+	<script src="js/css3-mediaqueries.js"></script>
+<![endif]-->
+<link rel="shortcut icon" href="images/fav01.ico" />
+</head>
+<body>
+<header>
+        <div align="center">
+	<h1><img src="images/logo.png" width="420" alt="legit whiz"></h1>
+	</div>
+	<div class="slide">
+		<ul class="slideInner">
+			<li><img src="images/photo01.jpg" alt=""></li>
+			<li><img src="images/photo02.jpg" alt=""></li>
+			<li><img src="images/photo03.jpg" alt=""></li>
+		</ul>
+	</div><!-- /.slide -->
+</header>
+
+<nav>
+	<ul>
+		<li><a href="index.html">HOME</a></li>
+		<li><a href="index.html">PROFILE</a></li>
+		<li><a href="tech.html">技術レポート</a></li>
+	</ul>
+</nav>
+
+<div id="contents">
+	<h2>技術レポート</h2>
+	<div class="imgL">
+		<img src="images/photo04.jpg" alt="">
+		<a href="technology_memo/OSS%20%E3%82%B8%E3%83%A7%E3%83%96%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%A9(Rundeck)%E3%82%92%E8%87%AA%E5%AE%85%E3%82%B5%E3%83%BC%E3%83%90%E3%81%AB%E5%85%A5%E3%82%8C%E3%81%A6%E3%81%BF%E3%81%9F.md">OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた</a>
+	</div><!-- /.imgL -->
+	<div class="imgR">
+		<img src="images/photo05.jpg" alt="">
+		<h3>OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part2</h3>
+		<a href="technology_memo/OSS%20%E3%82%B8%E3%83%A7%E3%83%96%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%A9(Rundeck)%E3%82%92%E8%87%AA%E5%AE%85%E3%82%B5%E3%83%BC%E3%83%90%E3%81%AB%E5%85%A5%E3%82%8C%E3%81%A6%E3%81%BF%E3%81%9F_Part2.md">OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part2</a>
+	</div><!-- /.imgL -->
+	<div class="imgR">
+		<img src="images/photo06.jpg" alt="">
+		<a href="technology_memo/OSS%20%E3%82%B8%E3%83%A7%E3%83%96%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%A9(Rundeck)%E3%82%92%E8%87%AA%E5%AE%85%E3%82%B5%E3%83%BC%E3%83%90%E3%81%AB%E5%85%A5%E3%82%8C%E3%81%A6%E3%81%BF%E3%81%9F_Part3.md">OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part3</a>
+		</div><!-- /.imgL -->
+	<div class="imgR">
+		<img src="images/photo07.jpg" alt="">
+		<a href="technology_memo/Linux_firewall.md">Linux_firewall</a>
+	</div><!-- /.imgL -->
+
+<!--
+	<h3>テーブル</h3>
+	<table>
+		<tbody>
+		<tr><th>見出し1<br>見出し1</th><th>見出し2</th><th>見出し3</th><th>見出し4</th><th>見出し5</th></tr>
+		<tr><td>セル1<br>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		<tr><td>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		<tr><td>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		</tbody>
+	</table>
+	<h2>ボタンデザイン</h2>
+	<p class="btn02"><a href="index.html">リンク先へ &raquo;</a></p>
+	<h2>お知らせ</h2>
+	<dl class="information">
+		<dt><span>20XX-01-01</span></dt>
+		<dd>
+		<div>
+			更新情報などを掲載するのに便利なデザインです。dlタグに『class="information"』を追加してください。
+		</div>
+		</dd>
+		<dt><span>20XX-01-01</span></dt>
+		<dd>
+		<div>
+			更新情報などを掲載するのに便利なデザインです。
+		</div>
+		</dd>
+	</dl>
+	<h2 id="sample">サンプルタグについて</h2>
+	<p>
+	以下、サンプルタグになります。ご利用の際は参考にしてみてください。
+	</p>
+	<h2>h2タグ</h2>
+	<h3>h3タグ</h3>
+	<h4>h4タグ</h4>
+	<h5>h5タグ</h5>
+	<h6>h6タグ</h6>
+	<p>
+	<em>強調（em）</em>
+	<strong>より強い強調（strong）</strong>
+	<ins>追加（ins）</ins>
+	<del>削除（del）</del>
+	<a href="#">テキストアンカー</a>
+	</p>
+	<blockquote>
+	引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。引用部分です。
+	</blockquote>
+	<h3>リスト</h3>
+	<h4>普通のリスト</h4>
+	<ul>
+		<li>普通のリスト1</li>
+		<li>普通のリスト2</li>
+		<li>普通のリスト3</li>
+	</ul>
+	<h4>番号付きリスト</h4>
+	<ol>
+		<li>番号付きリスト1</li>
+		<li>番号付きリスト2</li>
+		<li>番号付きリスト3<br>li要素の中はブロックレベルのタグを使用することが出来ます。例えば、&lt;p&gt;タグも記述することが出来ます。<br></li>
+	</ol>
+	<h4>定義リスト</h4>
+	<dl>
+		<dt>定義リスト1</dt>
+		<dd>定義した用語の説明</dd>
+		<dt>定義リスト2</dt>
+		<dd>定義した用語の説明</dd>
+		<dt>定義リスト3</dt>
+		<dd>定義した用語の説明<br>dd要素の中はブロックレベルのタグを使用することが出来ます。例えば、&lt;p&gt;タグも記述することが出来ます。しかし、dt要素にはインライン要素しか記述することができません。</dd>
+	</dl>
+-->
+
+<!--
+	<table>
+		<tbody>
+		<tr><th>見出し1</th><td>セル1<br>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		<tr><th>見出し2<br>見出し2</th><td>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		<tr><th>見出し3</th><td>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		<tr><th>見出し4</th><td>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		<tr><th>見出し5</th><td>セル1</td><td>セル2</td><td>セル3</td><td>セル4</td><td>セル5</td></tr>
+		</tbody>
+	</table>
+-->
+
+</div><!-- /.contents -->
+
+<footer>
+	<div><small>Copyright &#169; 2017 legit whiz All Rights Reserved.</small></div><!-- /.copyright -->
+</footer>
+
+<div class="totop"><a href="#"><img src="images/totop.png" alt="ページのトップへ戻る"></a></div><!-- /.totop -->
+</body>
+</html>
+
