@@ -1,3 +1,8 @@
+---
+layout: default
+title: cgroupsを利用したリソースコントロール(RHEL7)
+---
+
 # cgroupsを利用したリソースコントロール(RHEL7)
 
 ## cgroupsとは
