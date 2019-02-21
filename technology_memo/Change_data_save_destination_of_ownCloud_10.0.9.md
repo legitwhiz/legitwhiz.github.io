@@ -1,3 +1,8 @@
+---
+layout: default
+title: ownCloud10.0.9のデータ保存先変更
+---
+
 # ownCloud10.0.9のデータ保存先変更
 
 ## 概要
