@@ -1,4 +1,9 @@
 
+---
+layout: default
+title: OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた Part2
+---
+
 # OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた Part2
 
 サーバに『Rundeck』を導入したとこまで、前回(Part1)検証してみましたが、Part2は実際にプロジェクト、ジョブを作成し、実行するまでは検証してみました。
