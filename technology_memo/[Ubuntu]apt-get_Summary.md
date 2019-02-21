@@ -1,3 +1,10 @@
+---
+layout: default
+title: [Ubuntu]apt-getコマンドSummary
+---
+
+# [Ubuntu]apt-getコマンドSummary
+
 ## 古い`apt-get`コマンド
 
 |コマンド|内容|
