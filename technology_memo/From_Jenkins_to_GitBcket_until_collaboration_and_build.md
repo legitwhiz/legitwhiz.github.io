@@ -1,3 +1,8 @@
+---
+layout: default
+title: JenkinsとGitBcketの連携・ビルドまで
+---
+
 # JenkinsとGitBcketの連携・ビルドまで
 
 Jenkinsで作成したジョブを実行すればGitBcketで管理されたソースを各サーバに配布するとこまでを目的とし検証してみました。
