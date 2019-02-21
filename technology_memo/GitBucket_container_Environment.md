@@ -1,3 +1,8 @@
+---
+layout: default
+title: GitBucketをdockerで構築
+---
+
 # GitBucketをdockerで構築
 
 ## 1. GitBucket
