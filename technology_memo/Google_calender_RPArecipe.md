@@ -1,3 +1,8 @@
+---
+layout: default
+title: Googleカレンダーに登録した予定を前日にリマインダーメッセージをLineに送ってくれるRPAレシピ
+---
+
 # Googleカレンダーに登録した予定を前日にリマインダーメッセージをLineに送ってくれるRPAレシピ
 
 **【RPA】**とは、【Robotics Process Automation】の略称で繰り返し実行されるアクションをロボットが自動で実行することを差す。
