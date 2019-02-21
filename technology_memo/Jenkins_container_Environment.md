@@ -1,3 +1,8 @@
+---
+layout: default
+title: Jenkinsをdocker上に構築
+---
+
 # Jenkinsをdocker上に構築
 
 ## 1. Jenkins
