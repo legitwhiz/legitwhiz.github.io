@@ -1,3 +1,8 @@
+---
+layout: default
+title: Dockerでコンテナ環境簡単構築
+---
+
 # Dockerでコンテナ環境簡単構築
 
 ## 1. Dockerとは？
