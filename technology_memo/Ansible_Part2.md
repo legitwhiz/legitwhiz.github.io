@@ -1,3 +1,8 @@
+---
+layout: default
+title: Ansibleで始める構成管理ツール_Part2
+---
+
 # Ansibleで始める構成管理ツール_Part2
 
 
