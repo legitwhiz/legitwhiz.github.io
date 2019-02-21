@@ -1,3 +1,8 @@
+---
+layout: default
+title: Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。
+---
+
 # Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。
 
 ## 環境
