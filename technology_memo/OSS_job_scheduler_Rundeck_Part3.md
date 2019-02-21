@@ -1,3 +1,8 @@
+---
+layout: default
+title: OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた Part3
+---
+
 # OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた Part3
 
 rundeckを運用するための機能に【Rundeck cli】と【Rundeck API】があります。
