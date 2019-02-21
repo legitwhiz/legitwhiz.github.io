@@ -1,3 +1,8 @@
+---
+layout: default
+title: Linux FireWall
+---
+
 # Linux FireWall
 
 LinuxのFireWallには、iptables,SELinux,ipchains,ipfilter,firewalldがありますが
