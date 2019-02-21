@@ -1,8 +1,10 @@
+
+---
+layout: default
+title: Redmineで始めるプロジェクト管理
+---
+
 # Redmineで始めるプロジェクト管理
-
-
-
-
 
 プロジェクト管理ツール
 
