@@ -1,8 +1,7 @@
 ---
+layout: default
 title: lsofコマンドの使い方
 tags: centos7 lsof
-author: hana_shin
-slide: false
 ---
 #1 環境
 VMware Workstation 12 Player上のゲストマシンを使っています。
