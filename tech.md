@@ -3,43 +3,43 @@ layout: default
 title: 技術レポート
 ---
 
-### DevOps
+### ● DevOps
 
-#### ジョブスケジューラー
+#### ■ ジョブスケジューラー
 
 * [OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part1](technology_memo/OSS_job_scheduler_Rundeck_Part1.html)
 * [OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part2](technology_memo/OSS_job_scheduler_Rundeck_Part2.html)
 * [OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part3](technology_memo/OSS_job_scheduler_Rundeck_Part3.html)
 
-#### コンテナ
+#### ■ コンテナ
 
 * [Dockerでコンテナ環境簡単構築](technology_memo/Docker_container_Environment.html)
 
-#### Git
+#### ■ Git
 
-* [Git、GitHubなんて今さら聞けないですよ【名前だけは聞いたことはありますって言う超初心者向けw](technology_memo/Git_GitHub_I_can_not_ask_you_right_now.html)
+* [Git、GitHubなんて今さら聞けないですよ【名前だけは聞いたことはありますって言う超初心者向けw】](technology_memo/Git_GitHub_I_can_not_ask_you_right_now.html)
 
 * [GitBucketをdockerで構築](technology_memo/GitBucket_container_Environment.html)
 
 * [Gitbucketでソース管理](technology_memo/Gitbucket_Resource_management.html)
 
-#### CI
+#### ■ CI
 
 * [Jenkinsをdocker上に構築](technology_memo/Jenkins_container_Environment.html)
 
 * [Jenkins_プロジェクト作成、各連携設定、ビルド実行](technology_memo/From_Jenkins_to_GitBcket_until_collaboration_and_build.html)
 
-#### 構成管理
+#### ■ 構成管理
 
 * [Ansibleで始める構成管理ツール_Part1](technology_memo/Ansible_Part1.html)
 
 * [Ansibleで始める構成管理ツール_Part2](technology_memo/Ansible_Part2.html)
 
-### Ubuntu
+### ● Ubuntu
 
 * [Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。](technology_memo/attached_a_USB_camera_(Logicool_C270)_to_Ubuntu16.04LTS.html)
 
-### Other
+### ● Other
 
 * [Bashメジャーバージョンアップで何が変わった？](technology_memo/Bash_major_versionup.html)
 
