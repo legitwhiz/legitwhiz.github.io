@@ -1,7 +1,6 @@
-
 ---
 layout: default
-title: OSS ジョブスケジューラを自宅サーバに入れてみた Part2
+title: OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた Part2
 ---
 
 # OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた Part2
