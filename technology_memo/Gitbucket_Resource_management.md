@@ -1,3 +1,10 @@
+---
+layout: default
+title: Gitbucketでソース管理
+---
+
+# Gitbucketでソース管理
+
 ## 1. Git運用ルール
 
 サイト管理のためのGit運用フローを作ってみました。
