@@ -1,3 +1,7 @@
+---
+layout: default
+title: Windows Server 2016標準コマンドでできる簡単パケットキャプチャ
+---
 # Windows Server 2016標準コマンドでできる簡単パケットキャプチャ
 
 今までは、WireShark等のパケットキャプチャーソフトウェアを
