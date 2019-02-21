@@ -59,6 +59,6 @@ title: 技術レポート
 
 * [viもしくはvimでファイルを開いたら文字化け・・・。でも、慌てずファイルエンコードを変えれば読めるよ!](technology_memo/vi_vim_garbled_characters.html)
 
-* [会議を有意義にし、しかも時間を短縮し、業務に費やす時間を増やそう。](technology_memo/Let's_make_the_meeting_meaningful__shorten_the_time_and_increase_time_spent_on_work.html)
+* [会議を有意義にし、しかも時間を短縮し、業務に費やす時間を増やそう。](technology_memo/Let's_make_the_meeting_meaningful_shorten_the_time_and_increase_time_spent_on_work.md)
 
 
