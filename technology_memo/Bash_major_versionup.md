@@ -80,6 +80,3 @@ UNIX時間のマイクロ秒数
 ・Readline系も変わったみたい。キーバインドで`next-screen-line`と`previous-screen-line`が追加され、Insertキーで上書き出来るようになった。
 
 
-
-[Bashソース](https://ftp.gnu.org/gnu/bash/)を
-
