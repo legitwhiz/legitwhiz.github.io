@@ -158,7 +158,7 @@ Message Analyzerでどのサーバにどんなプロトコルを投げている�
 以下を参考にしてみるといいでしょう。
 [Message Analyzer の Gantt Viewer](http://troushoo.blog.fc2.com/blog-entry-323.html)
 
-#後述
+# 後述
 
 Windows Serverでも、簡単にパケットキャプチャ出来るようになったのは
 非常にありがたいですね。
