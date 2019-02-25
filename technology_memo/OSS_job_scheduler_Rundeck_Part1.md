@@ -119,6 +119,7 @@ HTTPSの場合は、、https://ドメイン名:4443
 ### 2.2.CentOS7.5にインストール
 
 #### 2.2.1.インストール 
+
 ```
 # yum install java-1.8.0
 # wget https://repo.rundeck.org/latest.rpm
@@ -127,6 +128,7 @@ HTTPSの場合は、、https://ドメイン名:4443
 ```
 
 #### 2.2.2.JAVA_HOME追加
+
 ```console:JAVA_HOME追加
 $ sudo vi ~/.bashrc
 
@@ -155,12 +157,14 @@ framework.server.url = http://IPアドレス:4440 ← ■localhostからIPアド
 ```
 
 #### 2.2.4.『Rundeck』起動
+
 ```
 # systemctl status rundeckd
 # systemctl start rundeckd
 ```
 
 #### 2.2.5. firewalldのポート許可設定
+
 ```
 # firewall-cmd --list-ports --zone=public
 # firewall-cmd --add-port=4440/tcp --zone=public --permanent
