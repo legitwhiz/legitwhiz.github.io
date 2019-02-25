@@ -51,7 +51,7 @@ title: 技術レポート
 
 * [WindowsServer2016標準コマンドでできる簡単パケットキャプチャ](technology_memo/Easy_packet_capture_with_Windows_Server_2016_standard_command.html)
 
-* [cgroupsを利用したリソースコントロール](echnology_memo/Resource_control_using_cgroups(RHEL7).html)
+* [cgroupsを利用したリソースコントロール](technology_memo/Resource_control_using_cgroups(RHEL7).html)
 
 * [findコマンドで-execオプション](technology_memo/find_command-exec_option.html)
 
