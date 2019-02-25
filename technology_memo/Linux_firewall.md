@@ -25,7 +25,7 @@ root（ルート）アカウントの特権を無くしてしまったことで�
 iptablesとは一般的なLinuxに搭載されているパケットフィルタの事だ。  
 パケットとは、スマホのパケット通信費などでよく出てくるように、  
 ネットワーク上を流れるデータの事だ。  
-  
+
 パケットフィルタとは、このパケットを選別して、  
 通すものと通さないものを分けるということを意味している。  
 
@@ -62,24 +62,27 @@ Linuxにおけるパケットフィルタリングは、Linuxカーネル内のN
 Firewalldも、iptablesも、その役割は、  
  - Netfilterを動作させるための設定を行う  
  - Netfilterの設定内容を保持するための、「Netfilterの管理インタフェース」です。 
-ただし、これまでのiptablesは、運用において幾つかの課題を抱えていました。  
-  
+    ただし、これまでのiptablesは、運用において幾つかの課題を抱えていました。  
+
 例えば、本来のiptablesは設定を保持する機能がないこと。  
 システムを再起動すると設定がクリアされてしまうので、/etc/sysconfig/iptables  
 というファイルにルールを書き込むことで、設定を保持できるようにしていました。  
-  
+
 また、コマンドオプションがかなり複雑で、TCP/IPの仕組みを深く理解していないと  
 設定が難しいものでした。  
-  
+
 Firewalldは、そんな課題を解決するために設計されたといえます。  
 Firewalldには、以下の特徴があります。  
 「Firewalld」と「iptables」の簡易特徴比較  
 
-|type|Firewalld|iptables|
-|:-----------------------|:-------------------------------------------------|:-------------------------------------------------|
-|設定変更|通信を停止させることなく、変更した設定を反映できる|設定を反映させるために、サービスの再起動が必要（ネットワークの瞬断が発生する）|
-|設定の難易度|TCP/IPの仕組みを深く理解していなくても比較的簡単に設定できる|TCP/IPの仕組みを深く理解していないと、設定そのものが難しい。コマンドオプションがかなり複雑|
-|運用の柔軟性|一時的なルールと永続的なルールをそれぞれ管理できる。一定時間のみ有効にするといったルールの設定も可能|一時的なルールの設定は困難|
+
+
+| type|Firewalld|iptables|
+| :----------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| 設定変更     | 通信を停止させることなく、変更した設定を反映できる           | 設定を反映させるために、サービスの再起動が必要（ネットワークの瞬断が発生する） |
+| 設定の難易度 | TCP/IPの仕組みを深く理解していなくても比較的簡単に設定できる | TCP/IPの仕組みを深く理解していないと、設定そのものが難しい。コマンドオプションがかなり複雑 |
+| 運用の柔軟性 | 一時的なルールと永続的なルールをそれぞれ管理できる。一定時間のみ有効にするといったルールの設定も可能 | 一時的なルールの設定は困難                       |
+
 
 
 ### Netfilterにおける「チェイン」とは
@@ -108,7 +111,6 @@ Netfilterでは、以下の3種類のパケットの流れに対してパケッ�
     適用して処理します。  
     転送すべきパケットはネットワークデバイスを経由して別のサーバなどに転送され、  
     ルールに合致しないパケットは破棄します。  
-
 
 **このパケット処理の分類を「チェイン」と呼びます。  
 iptablesでは、それぞれのチェインに対して個別のフィルタリングルール  
@@ -149,17 +151,17 @@ iptablesのような、OUTPUT定義も可能な[direct-rule]フィルタ定義
 あらかじめ設定されている「ゾーン」は表1の通りです。  
 #### 表1　ゾーン名  
 
-|ゾーン名|概要|
-|:-------|:------------------------------------------------|
-|public|サーバとして最低限必要な受信許可ルール。全てのインタフェースはデフォルトでpublicゾーンに所属している|
-|work|業務用クライアントPCとしての利用を想定したルール。社内LAN内で使う場合を想定している。クライアントPCに求められる必要最低限のルールが定義されている|
-|home|家庭用クライアントPCとしての利用を想定したルール。家庭内LANに接続して使う場合を想定している|
-|internal|Linuxを用いてファイアウォールを構築するのに使うルール。内部ネットワークのインタフェースに設定する|
-|external|同じく、Linuxを用いてファイアウォールを構築するのに使うルール。こちらは、外部ネットワークのインタフェースに対して設定する|
-|dmz|同じく、Linuxを用いてファイアウォールを構築するのに使うルール。こちらは、DMZのインタフェースに対して設定する|
-|block|受信パケットを全て拒否するルール。送信パケットの戻り通信は許可される|
-|drop|受信パケットを全て破棄するルール。送信パケットの戻り通信は許可される|
-|trusted|全ての通信を許可するルール|
+| ゾーン名 | 概要                                                         |
+| :------- | :----------------------------------------------------------- |
+| public   | サーバとして最低限必要な受信許可ルール。全てのインタフェースはデフォルトでpublicゾーンに所属している |
+| work     | 業務用クライアントPCとしての利用を想定したルール。社内LAN内で使う場合を想定している。クライアントPCに求められる必要最低限のルールが定義されている |
+| home     | 家庭用クライアントPCとしての利用を想定したルール。家庭内LANに接続して使う場合を想定している |
+| internal | Linuxを用いてファイアウォールを構築するのに使うルール。内部ネットワークのインタフェースに設定する |
+| external | 同じく、Linuxを用いてファイアウォールを構築するのに使うルール。こちらは、外部ネットワークのインタフェースに対して設定する |
+| dmz      | 同じく、Linuxを用いてファイアウォールを構築するのに使うルール。こちらは、DMZのインタフェースに対して設定する |
+| block    | 受信パケットを全て拒否するルール。送信パケットの戻り通信は許可される |
+| drop     | 受信パケットを全て破棄するルール。送信パケットの戻り通信は許可される |
+| trusted  | 全ての通信を許可するルール                                   |
 
 ### 動的ファイアウォールと静的ファイアウォール 
 iptablesによるファイアウォール(system-config-firewall/lokkit)は、
@@ -185,16 +187,22 @@ ICMPタイプファイルフォルダ[/etc/firewalld/icmptypes]
 
 ## firewalldサービス設定
 
-```console:自動起動の設定
+自動起動の設定
+
+```
 # systemctl enable firewalld.service
 ```
 
-```console:自動起動設定の状態確認
+自動起動設定の状態確認
+
+```
 # systemctl is-enabled firewalld.service 
 enabled
 ```
 
-```console:自動起動の解除
+自動起動の解除
+
+```
 # systemctl disable firewalld.service
 Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
 Removed symlink /etc/systemd/system/basic.target.wants/firewalld.service.
@@ -332,31 +340,39 @@ timevalは、秒（秒）または数字の後に文字s（秒）、 m （分）
 
 #### 現在割り当てられているアクティブゾーンの確認(--get-active-zones)
 
-```console:【NICに割り当てられているゾーンを調べる】
+NICに割り当てられているゾーンを調べる
+
+```
 # firewall-cmd --get-active-zones
 public
-  interfaces: ens160
+  interfaces: ens160
 ```
 
 #### デフォルトで割り当てられるゾーンの確認(--get-default-zone)
 
 ens160にはpublicというゾーンが割り当たっている状態。
 
-```console:システムのデフォルトゾーンの確認 
+システムのデフォルトゾーンの確認 
+
+```
 # firewall-cmd --get-default-zone
 public
 ```
 
 #### デフォルトで割り当てられるゾーンの設定(--set-default-zone)
 
-```console:システムのデフォルトゾーンの設定
+システムのデフォルトゾーンの設定
+
+```
 # firewall-cmd --set-default-zone=<zone name>
 public
 ```
 
 #### ゾーンの確認(--get-zones)
 
-```console:システムのデフォルトゾーンの設定
+システムのデフォルトゾーンの設定
+
+```
 # firewall-cmd --get-zones
 ```
 
@@ -365,7 +381,9 @@ public
 「--list-all-zones」オプションを指定することで、
 すべてのゾーンの現在のFW設定を確認できます。
 
-```console:すべてのゾーンのFW設定を確認 
+すべてのゾーンのFW設定を確認 
+
+```
 # firewall-cmd --list-all-zones
 ```
 
@@ -426,7 +444,9 @@ public
 ※デフォルトゾーンとアクティブゾーンが異なる場合は、
 アクティブゾーンの設定を見るように促す注意書きが出力されます。
 
-```console:デフォルトゾーンのFW設定確認 
+デフォルトゾーンのFW設定確認 
+
+```
 # firewall-cmd --list-all
 public
   target: default
@@ -443,7 +463,9 @@ public
   rich rules: 
 ```
 
-```console:【(publicゾーン)指定したゾーン設定を確認する】
+(publicゾーン)指定したゾーン設定を確認する
+
+```
 # firewall-cmd --list-all --zone=<zone name>
 <zone name>
   target: default
@@ -468,15 +490,21 @@ public
 「--permanent」オプションを指定することで、恒久的な設定をそれぞれ確認できます。
 ※一時的に追加した設定は表示されません。再起動後も反映される設定となります。
 
-```console:デフォルトゾーンのFW設定確認（恒久的な設定のみ） 
+デフォルトゾーンのFW設定確認（恒久的な設定のみ） 
+
+```
 # firewall-cmd --list-all --permanent
 ```
 
-```console:指定したゾーンのFW設定確認（恒久的な設定のみ） 
+指定したゾーンのFW設定確認（恒久的な設定のみ） 
+
+```
 # firewall-cmd --list-all --zone=home --permanent
 ```
 
-```console:すべてのゾーンのFW設定確認（恒久的な設定のみ） 
+すべてのゾーンのFW設定確認（恒久的な設定のみ） 
+
+```
 # firewall-cmd --list-all-zones --permanent
 ```
 
@@ -491,7 +519,9 @@ public
 
 「--get-servicess」オプションを指定することで登録可能なサービス名一覧を確認できます。
 
-```console:登録可能なサービスの確認
+登録可能なサービスの確認
+
+```
 # firewall-cmd --get-services
 RH-Satellite-6 amanda-client amanda-k5-client bacula bacula-client bitcoin bitcoin-rpc bitcoin-testnet bitcoin-testnet-rpc ceph ceph-mon cfengine condor-collector ctdb dhcp dhcpv6 dhcpv6-client dns docker-registry dropbox-lansync elasticsearch freeipa-ldap freeipa-ldaps freeipa-replication freeipa-trust ftp ganglia-client ganglia-master high-availability http https imap imaps ipp ipp-client ipsec iscsi-target kadmin kerberos kibana klogin kpasswd kshell ldap ldaps libvirt libvirt-tls managesieve mdns mosh mountd ms-wbt mssql mysql nfs nfs3 nrpe ntp openvpn ovirt-imageio ovirt-storageconsole ovirt-vmconsole pmcd pmproxy pmwebapi pmwebapis pop3 pop3s postgresql privoxy proxy-dhcp ptp pulseaudio puppetmaster quassel radius rpc-bind rsh rsyncd samba samba-client sane sip sips smtp smtp-submission smtps snmp snmptrap spideroak-lansync squid ssh synergy syslog syslog-tls telnet tftp tftp-client tinc tor-socks transmission-client vdsm vnc-server wbem-https xmpp-bosh xmpp-client xmpp-local xmpp-server
 ```
@@ -502,12 +532,15 @@ RH-Satellite-6 amanda-client amanda-k5-client bacula bacula-client bitcoin bitco
 ※「--zone」オプションを省略した場合、デフォルトゾーンの設定が表示されます。
 　ただし、アクティブゾーンとデフォルトゾーンが異なる場合は、注意書きが出力されます。
 
-```console:現在追加されているサービスの確認
+現在追加されているサービスの確認
+
+```
 # firewall-cmd --list-services --zone=<zone name>
 dhcpv6-client ssh https
 ```
+現在追加されているサービスの確認（恒久的な設定のみ表示）
 
-```console:現在追加されているサービスの確認（恒久的な設定のみ表示）
+```
 # firewall-cmd --list-services --zone=<zone name> --permanent
 dhcpv6-client ssh
 ```
@@ -516,29 +549,38 @@ dhcpv6-client ssh
 「--add-service」オプションを指定することでサービスを追加できます。
 ※「--zone」オプションを省略した場合、デフォルトゾーンに登録されます。
 
-```console:サービスの追加（publicゾーンに対して、httpsを追加する例）
+サービスの追加（publicゾーンに対して、httpsを追加する例）
+
+```
 # firewall-cmd --add-service=https --zone=<zone name> 
 ```
 
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:サービスの追加
+サービスの追加
+
+```
 # firewall-cmd --add-service=https --zone=<zone name> --permanent
 ```
 
 #### ゾーンのサービスの削除(--remove-service)
+
 「--remove-service」オプションを指定することでサービスを削除できます。
 ※「--zone」オプションを省略した場合、デフォルトゾーンから削除されます。
 
-```console:サービスの削除
+サービスの削除
+
+```
 # firewall-cmd --remove-service=https --zone=<zone name>
 ```
 
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:サービスの削除
+サービスの削除
+
+```
 # firewall-cmd --remove-service=https --zone=<zone name> --permanent
 ```
 
@@ -548,7 +590,9 @@ dhcpv6-client ssh
 詳しくは、firewall-cmdのマニュアル（man firewalld-cmd）をご覧ください。
 「--permanent」オプションは必須です。
 
-```console:hogeサービスの作成
+hogeサービスの作成
+
+```
 # firewall-cmd --permanent --new-service hoge
 
 # cat /etc/firewalld/services/hoge.xml
@@ -561,26 +605,34 @@ dhcpv6-client ssh
 
 #### xmlファイルからサービスの新規作成(--new-service-from-file)
 
-```console:既存のxmlファイルから作成する場合
+既存のxmlファイルから作成する場合
+
+```
 # firewall-cmd --permanent --new-service-from-file=<filename> --name=<別名をつける場合>
 ```
 
 #### サービスの説明文を追加(--set-description)
 
-```console:hogeサービスの説明文追加
+サービスの説明文追加
+
+```
 # firewall-cmd --permanent --service=hoge --set-description=<説明文>
 # firewall-cmd --permanent --service=hoge --set-short=<短い説明文>
 ```
 
 #### サービスの削除(--delete-service)
 
-```console:サービスの削除
+サービスの削除
+
+```
 # firewall-cmd --permanent --delete-service=<service name>
 ```
 
 #### サービスが追加されたか照会(--query-service)
 
-```console:追加サービスの確認
+追加サービスの確認
+
+```
 # firewall-cmd --permanent --zone=<zone name> --query-service=<service name>
 ```
 
@@ -620,11 +672,15 @@ firewall-cmd --service=<service name> --get-modules
 ※「--zone」オプションを省略した場合、デフォルトゾーンの設定が表示されます。
 　ただし、アクティブゾーンとデフォルトゾーンが異なる場合は、注意書きが出力されます。
 
-```console:現在追加されているポート番号の確認
+現在追加されているポート番号の確認
+
+```
 # firewall-cmd --list-ports --zone=<zone name>
 ```
 
-```console:現在追加されているポート番号の確認（恒久的な設定のみ表示）
+現在追加されているポート番号の確認（恒久的な設定のみ表示）
+
+```
 # firewall-cmd --list-ports --zone=<zone name>
 ```
 
@@ -633,7 +689,9 @@ firewall-cmd --service=<service name> --get-modules
 「--add-port」オプションを指定することでサービスを追加できます。
 ※「--zone」オプションを省略した場合、デフォルトゾーンに追加されます。
 
-```console:ポート番号の追加（デフォルトゾーンに対して、TCP8080、UDP60000の例）
+ポート番号の追加（デフォルトゾーンに対して、TCP8080、UDP60000の例）
+
+```
 # firewall-cmd --add-port=8080/tcp --zone=<zone name>
 # firewall-cmd --add-port=60000/udp --zone=<zone name>
 ```
@@ -641,7 +699,9 @@ firewall-cmd --service=<service name> --get-modules
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:ポート番号の追加
+ポート番号の追加
+
+```
 # firewall-cmd --add-port=8080/tcp --zone=<zone name> --permanent
 # firewall-cmd --add-port=60000/udp --zone=<zone name> --permanent
 ```
@@ -651,7 +711,9 @@ firewall-cmd --service=<service name> --get-modules
 「--remove-service」オプションを指定することでサービスを削除できます。
 ※「--zone」オプションを省略した場合、デフォルトゾーンから削除されます。
 
-```console:ポート番号の削除
+ポート番号の削除
+
+```
 # firewall-cmd --remove-port=8080/tcp --zone=<zone name>
 # firewall-cmd --remove-port=60000/udp --zone=<zone name>
 ```
@@ -659,14 +721,18 @@ firewall-cmd --service=<service name> --get-modules
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:ポート番号の削除
+ポート番号の削除
+
+```
 # firewall-cmd --remove-port=8080/tcp --zone=<zone name> --permanent
 # firewall-cmd --remove-port=60000/udp --zone=<zone name> --permanent
 ```
 
 #### 追加ポートの照会(--query-port)
 
-```console:ポート番号の削除（恒久的な設定とする場合）
+ポート番号の削除（恒久的な設定とする場合）
+
+```
 # firewall-cmd --query-port=8080/tcp --zone=<zone name>
 ```
 
@@ -680,11 +746,15 @@ firewall-cmd --service=<service name> --get-modules
 「--list-sources」オプションを指定することで現在追加されているIPアドレスを確認できます。
 ※「--zone」オプションを省略した場合、デフォルトゾーンに追加されます。
 
-```console:現在追加されているIPアドレスの確認
+現在追加されているIPアドレスの確認
+
+```
 # firewall-cmd --list-sources --zone=<zone name>
 ```
 
-```console:現在追加されているIPアドレスの確認
+現在追加されているIPアドレスの確認
+
+```
 # firewall-cmd --list-sources --zone=<zone name> --permanent
 ```
 
@@ -695,28 +765,36 @@ firewall-cmd --service=<service name> --get-modules
 
 ##### アクセス許可
 
-```console:許可アドレスの追加
+許可アドレスの追加
+
+```
 # firewall-cmd --add-source=192.168.0.0/24 --zone=<zone name>
 ```
 
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:ポート番号の追加（恒久的な設定とする場合）
+ポート番号の追加（恒久的な設定とする場合）
+
+```
 # firewall-cmd --add-source=192.168.0.0/24 --zone=<zone name> --permanent
 ```
 
 ##### アクセス拒否
 「drop」ゾーンに対してIPアドレスを登録することで拒否IPアドレスとなります。
 
-```console:拒否アドレスの追加
+拒否アドレスの追加
+
+```
 # firewall-cmd --add-source=192.168.11.0/24 --zone=drop 
 ```
 
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:ポート番号の追加（恒久的な設定とする場合）
+ポート番号の追加（恒久的な設定とする場合）
+
+```
 # firewall-cmd --add-source=192.168.11.0/24 --zone=drop --permanent
 ```
 
@@ -724,11 +802,15 @@ firewall-cmd --service=<service name> --get-modules
 
 すでに登録済みのIPアドレスは、「--change-source」オプションを指定することで、ゾーンの変更が行えます。
 
-```console:アクセス元IPアドレスに割り当てられているゾーンの変更（dropに変更の例）
+アクセス元IPアドレスに割り当てられているゾーンの変更（dropに変更の例）
+
+```
 # firewall-cmd --change-source=192.168.11.0/24 --zone=drop
 ```
 
-```console:アクセス元IPアドレスに割り当てられているゾーンの確認
+アクセス元IPアドレスに割り当てられているゾーンの確認
+
+```
 # firewall-cmd --get-zone-of-source=192.168.11.0/24
 drop
 ```
@@ -736,7 +818,9 @@ drop
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:ゾーンの変更
+ゾーンの変更
+
+```
 # firewall-cmd --change-source=192.168.11.0/24 --zone=drop --permanent
 ```
 
@@ -744,20 +828,26 @@ drop
 「--remove-source」オプションを指定することでサービスを削除できます。
 ※「--zone」オプションを省略した場合、デフォルトゾーンに追加されます。
 
-```console:IPアドレスの削除
+IPアドレスの削除
+
+```
 # firewall-cmd --remove-source=192.168.11.0/24 --zone=drop
 ```
 
 恒久的な設定とする場合は、「--permanent」オプションを指定します。
 ただし、設定を反映したい場合は設定の再読み込みが必要です。
 
-```console:IPアドレスの削除
+IPアドレスの削除
+
+```
 # firewall-cmd --remove-source=192.168.11.0/24 --zone=drop --permanent
 ```
 
 #### IPアドレスの照会(--query-source)
 
-```console:IPアドレスの確認
+IPアドレスの確認
+
+```
 # firewall-cmd --query-source=192.168.11.0/24 --zone=drop --permanent
 ```
 
@@ -770,9 +860,12 @@ drop
     DROP ⇒ 拒否ルールに引っ掛かった通信はルール通り拒否し、何も返さない。
     REJECT ⇒ 拒否ルールに引っ掛かった通信はルール通り拒否し、ICMP の Type 3(Destination Unreachable) の Code 10 ( Host administratively prohibited) を返す。
     DROPとREJECTの違いは、上記のようにICMPのエラーコードを返すか返さないかです。
+
 #### ターゲットの追加(--set-target)
 
-```console:ゾーン:sshを許可し、ゾーン:telnetを拒否するゾーン設定
+sshを許可し、ゾーン:telnetを拒否するゾーン設定
+
+```
 # firewall-cmd --permanent --zone=ssh --set-target=ACCEPT
 # firewall-cmd --permanent --zone=telnet --set-target=DROP
 ```
@@ -787,6 +880,7 @@ drop
 ```
 
 ### icmp-block-inversion
+
     icmp-block-inversion: { yes , no }
     yes ⇒ icmp-blocks に記載されたICMP Typeを受け入れ、記載されていないICMP Type を拒否するようになる。つまり、逆の動作になる。
     no ⇒ icmp-blocks に記載された ICMP Type を拒否する。通常の動作。
@@ -814,6 +908,7 @@ drop
 <!--=================================================================-->
 
 ### interfaces
+
 interfaces: { 該当インタフェース }
 
 #### 対象nicにゾーンを適用(--add-interface)
@@ -832,7 +927,9 @@ success
 
 #### ゾーンが適用されるNICポートを表示(--list-interfaces)
 
-```console:eth0がpublicゾーン、eth1がhomeゾーンに所属することがわかる。
+eth0がpublicゾーン、eth1がhomeゾーンに所属することがわかる。
+
+```
 # firewall-cmd --list-interfaces --zone=<zone name>
 ```
 
@@ -851,6 +948,7 @@ success
 <!--=================================================================-->
 
 ### sources
+
     通信元のIPサブネットによる通信制限する。
     sources: { IP or NW address }
     送信元IPもしくはNWアドレス単位で全てを許可したい場合はここで指定します。
@@ -895,6 +993,7 @@ success
 <!--=================================================================-->
 
 ### protocols
+
 protocols: { プロトコル }
 プロトコル単位で（送信元IP等に依らず）許可したい場合はここで指定します。TCPやUDP, ICMP, OSPF等が入れられます。
 protocols: tcp udp icmp ospf 等と記載されます。
@@ -902,6 +1001,7 @@ protocols: tcp udp icmp ospf 等と記載されます。
 protocol value=protocol_name_or_ID
 
 #### zone用に追加されたプロトコルを表示(--list-protocols)
+
 zone用に追加されたプロトコルをスペース区切りリストとして表示。
 zoneを省略すると、デフォルトのゾーンが使用されます。
 
@@ -937,6 +1037,7 @@ zoneを省略すると、デフォルトのゾーンが使用されます。
 <!--=================================================================-->
 
 ### masquerade
+
 masquerade: { yes , no }
 NAPTを掛けるかどうかを決めます。カーネルでルーティングを有効にした場合や、firewalld のポートフォワードの機能を使う際に使うことができます。
 
@@ -976,18 +1077,23 @@ forward-ports: port=8080:proto=tcp:toport=80:toaddr=192.168.1.1 等と記載さ�
 #### ポートフォワードする設定を追加(--add-forward-port)
 
 TCP:99 宛のパケットを TCP:8888 宛にポートフォワードする設定を追加
+
 ```
 # firewall-cmd --zone=<zone name> --add-forward-port=port=22:proto=tcp:toport=8888
 ```
 
 #### ポートフォワードする設定が適用されているかを照会(--query-forward-port)
+
 TCP:99 宛のパケットを TCP:8888 宛にポートフォワードする設定を確認
+
 ```
 # firewall-cmd --zone=<zone name> --query-forward-port=port=22:proto=tcp:toport=8888
 ```
 
 #### ポートフォワードする設定を削除(--remove-forward-port)
+
 TCP:99 宛のパケットを TCP:8888 宛にポートフォワードする設定を削除
+
 ```
 # firewall-cmd --zone=<zone name> --remove-forward-port=port=22:proto=tcp:toport=8888
 ```
@@ -1001,7 +1107,9 @@ icmp-blocks: { ICMP Type }
 送られてきたときに拒否するICMPのタイプを指定します。ICMPタイプは firewall-cmd --get-icmptypes で確認できますが定義情報を見たいときは /usr/lib/firewalld/icmptypes の .xml ファイルを確認します。以下は redirect の例です。
 
 
-```console:ICMPタイプ定義ファイル
+ICMPタイプ定義ファイル
+
+```
 # pwd
 /usr/lib/firewalld/icmptypes
 # cat redirect.xml
@@ -1106,32 +1214,42 @@ firewall-cmd --query-rich-rule='rule family="ipv4" source address="192.168.200.0
 
 ##### ユーザ定義チェインの追加(--direct --add-chain)
 
-```console:ユーザ定義チェインを追加する。
+ユーザ定義チェインを追加する。
+
+```
 # firewall-cmd --direct --add-chain ipv4 filter OUTPUT_direct_xxxxx
 success
 ```
 
 ##### ユーザ定義チェインの表示(--direct --get-all-chains)
 
-```console:全てのユーザ定義チェインを確認する。
+全てのユーザ定義チェインを確認する。
+
+```
 # firewall-cmd --direct --get-all-chains
 ipv4 filter OUTPUT_direct_xxxxx
 ```
 
-```console:別の確認方法として、特定のテーブル(filer)のユーザ定義チェインを確認する。
+別の確認方法として、特定のテーブル(filer)のユーザ定義チェインを確認する。
+
+```
 # firewall-cmd --direct --get-chains ipv4 filter
 ```
 
 ##### ユーザ定義チェインの削除(--direct --remove-chain)
 
-```console:ユーザ定義チェインを削除する。
+ユーザ定義チェインを削除する。
+
+```
 # firewall-cmd --direct --remove-chain ipv4 filter OUTPUT_direct_xxxxx
 success
 # firewall-cmd --direct --remove-chain ipv4 filter OUTPUT_direct_yyyyy
 success
 ```
 
-```console:ユーザ定義チェインを確認する。2つとも削除できたことがわかる。
+ユーザ定義チェインを確認する。2つとも削除できたことがわかる。
+
+```
 # firewall-cmd --direct --get-all-chains
 ```
 
@@ -1139,30 +1257,41 @@ success
 
 ##### ダイレクトルールの追加(--add-rule)
 
-```console:ダイレクトルールを設定する。設定内容は、宛先ポート番号11111は廃棄する。
+ダイレクトルールを設定する。設定内容は、宛先ポート番号11111は廃棄する。
+
+```
 # firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp --dport 11111 -j DROP
 success
 ```
 
 ##### ダイレクトルールの表示(--get-all-rules, --get-rules)
 
-```console:定義されている全てのダイレクトルールを表示する。
+定義されている全てのダイレクトルールを表示する。
+
+```
 # firewall-cmd --direct --get-all-rules
 ipv4 filter OUTPUT 1 -o eth0 -d 224.0.0.18 -p vrrp -j ACCEPT
 ipv4 filter INPUT 1 -i eth0 -d 224.0.0.18 -p vrrp -j ACCEPT
 ```
 
-```console:INPUTチェインのダイレクトルールだけを表示する。
+INPUTチェインのダイレクトルールだけを表示する。
+
+```
 # firewall-cmd --direct --get-rules ipv4 filter INPUT
 ```
 
 #### ダイレクトルールの削除(--remove-rule)
-```console:ダイレクトルールを削除する。
+
+ダイレクトルールを削除する。
+
+```
 # firewall-cmd --direct --remove-rule ipv4 filter OUTPUT 1 -p tcp --dport 11111 -j DROP
 success
 ```
 
-```console:ダイレクトルールを表示する。
+ダイレクトルールを表示する。
+
+```
 # firewall-cmd --direct --get-all-rules
 ```
 
@@ -1187,38 +1316,55 @@ success
 ```
 
 #### パススルー
-パススルーオプションの引数<args>は、対応するiptablesやip6tables、ebtablesの引数と同様です。
 
-```console:パススルーをIPレベルを定義
+パススルーオプションの引数`<args>`は、対応するiptablesやip6tables、ebtablesの引数と同様です。
+
+パススルーをIPレベルを定義
+
+```
 # firewall-cmd --direct --passthrough {ipv4|ipv6|eb} <arg>...
 ```
 
-```console:既存のパススルーを出力
+既存のパススルーを出力
+
+```
 # firewall-cmd --direct --get-all-passthroughs
 ```
 
-```console:パススルーのIPレベルを出力
+パススルーのIPレベルを出力
+
+```
 # firewall-cmd --direct --get-passthroughs {ipv4|ipv6|eb} <arg>...
 ```
 
-```console:パススルーを追加設定
+パススルーを追加設定
+
+```
 # firewall-cmd --direct --add-passthrough {ipv4|ipv6|eb} <arg>...
 ```
 
-```console:パススルーを削除
+パススルーを削除
+
+```
 # firewall-cmd --direct --remove-passthrough {ipv4|ipv6|eb} <arg>...
 ```
 
-```console:既存のパススルーを照会
+既存のパススルーを照会
+
+```
 # firewall-cmd --direct --query-passthrough {ipv4|ipv6|eb} <arg>...
 ```
 
-```console:パススルーの設定例
+パススルーの設定例
+
+```
 # firewall-cmd --permanent --direct --passthrough ipv4 -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
 # firewall-cmd --direct --passthrough ipv4 -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
 ```
 
-```console:パススルーの削除例
+パススルーの削除例
+
+```
 # firewall-cmd --permanent --direct --remove-passthrough ipv4 -m physdev --physdev-is-bridged -j ACCEPT
 # firewall-cmd --direct --remove-passthrough ipv4 -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
 ```
@@ -1226,6 +1372,7 @@ success
 <!--=================================================================-->
 
 ### ipset
+
 ipsetユーティリティは、LinuxカーネルでIPセットを管理するために使用します。IPセットはIPアドレス、ポート番号、IPとMACアドレスのペア、またはIPアドレスとポート番号のペアを格納するために行われるフレームワークです。
 
 オプションでtimeout、hashsize、maxelemようなファミリとオプションを追加する。
@@ -1289,7 +1436,9 @@ ipsetユーティリティは、LinuxカーネルでIPセットを管理する�
 # firewall-cmd --info-helper=<helper name>
 ```
 
-```console:新しいヘルパーにモジュールを追加
+新しいヘルパーにモジュールを追加
+
+```
 # firewall-cmd --new-helper=<helper name> --module=nf_conntrack_module [ --family=ipv4 | ipv6 ]
 ```
 
@@ -1326,51 +1475,75 @@ ipsetユーティリティは、LinuxカーネルでIPセットを管理する�
 
 #### ヘルパーの詳細設定(--helper)
 
-```console:新しい説明をヘルパーに設定
+新しい説明をヘルパーに設定
+
+```
 # firewall-cmd --helper=<helper name> --set-description=<description>
 ```
 
-```console:ヘルパーの説明の出力
+ヘルパーの説明の出力
+
+```
 # firewall-cmd --helper=<helper name> --get-description
 ```
 
-```console:短い説明をヘルパーに設定
+短い説明をヘルパーに設定
+
+```
 # firewall-cmd --helper=<helper name> --set-short=<description>
 ```
 
-```console:ヘルパーの簡単な説明を出力
+ヘルパーの簡単な説明を出力
+
+```
 # firewall-cmd --helper=<helper name> --get-short
 ```
 
-```console:既存ヘルパーに新しいポートを追加
+既存ヘルパーに新しいポートを追加
+
+```
 # firewall-cmd --helper=<helper name> --add-port=portid [ - portid ] / protocol 
 ```
 
-```console:既存ヘルパーからポートを削除
+既存ヘルパーからポートを削除
+
+```
 # firewall-cmd --helper=<helper name> --remove-port=portid [ - portid ] / protocol 
 ```
 
-```console:既存ヘルパーからポートを照会
+既存ヘルパーからポートを照会
+
+```
 # firewall-cmd --helper=<helper name> --query-port=portid [ - portid ] / protocol 
 ```
 
-```console:ヘルパーからポートの確認
+ヘルパーからポートの確認
+
+```
 # firewall-cmd --helper=<helper name> --get-ports 
 ```
 
-```console:ヘルパーにモジュールを設定
+ヘルパーにモジュールを設定
+
+```
 # firewall-cmd --helper=<helper name> --set-moduledescription 
 ```
 
-```console:ヘルパーのモジュールを出力
+ヘルパーのモジュールを出力
+
+```
 # firewall-cmd --helper=<helper name> --get-module
 ```
 
-```console:ヘルパーにfamilyを設定
+ヘルパーにfamilyを設定
+
+```
 # firewall-cmd --helper==helper --set-familydescription
 ```
 
-```console:ヘルパーのfamilyを出力
+ヘルパーのfamilyを出力
+
+```
 # firewall-cmd --helper=helper --get-family 
 ```
 
@@ -1416,35 +1589,51 @@ ipsetユーティリティは、LinuxカーネルでIPセットを管理する�
 
 #### icmptype詳細設定(--icmptype)
 
-```console:icmptypeの説明を設定
+icmptypeの説明を設定
+
+```
 # firewall-cmd --icmptype=<icmptype> --set-description=<description>
 ```
 
-```console:icmptypeの説明を出力
+icmptypeの説明を出力
+
+```
 # firewall-cmd --icmptype=<icmptype> --get-description
 ```
 
-```console:icmptypeの短い説明を追加
+icmptypeの短い説明を追加
+
+```
 # firewall-cmd --icmptype=<icmptype> --set-short=<description>
 ```
 
-```console:icmptypeの短い説明を出力
+icmptypeの短い説明を出力
+
+```
 # firewall-cmd --icmptype=<icmptype> --get-short
 ```
 
-```console:icmptypeの説明を追記
+icmptypeの説明を追記
+
+```
 # firewall-cmd --icmptype=<icmptype> --add-destination=<ipv>
 ```
 
-```console:icmptypeの説明を削除
+icmptypeの説明を削除
+
+```
 # firewall-cmd --icmptype=<icmptype> --remove-destination=<ipv>
 ```
 
-```console:icmptypeの説明を照会
+icmptypeの説明を照会
+
+```
 # firewall-cmd --icmptype=<icmptype> --query-destination=<ipv>
 ```
 
-```console:icmptypeの説明をリスト出力
+icmptypeの説明をリスト出力
+
+```
 # firewall-cmd --icmptype=<icmptype> --get-destinations
 ```
 
@@ -1487,79 +1676,116 @@ Error: ACCESS_DENIED: lockdown is enabled
 3. user 
 4. command
 
-```console:ホワイトリストにあるすべてのコマンドラインを一覧表示
+ホワイトリストにあるすべてのコマンドラインを一覧表示
+
+```
 # firewall-cmd --list-lockdown-whitelist-commands
 ```
 
-```console:commandホワイトリストに追加
+commandホワイトリストに追加
+
+```
 # firewall-cmd --add-lockdown-whitelist-command=<command>
 ```
 
-```console:commandホワイトリストに追加例
+commandホワイトリストに追加例
+
+```
 # firewall-cmd --add-lockdown-whitelist-command='/usr/bin/python -Es /usr/bin/command'
 ```
 
-```console:commandホワイトリストから削除
+commandホワイトリストから削除
+
+```
 # firewall-cmd --remove-lockdown-whitelist-command=<command>
 ```
 
-```console:commandホワイトリストから削除例
+commandホワイトリストから削除例
+
+```
 # firewall-cmd --remove-lockdown-whitelist-command='/usr/bin/python -Es /usr/bin/command'
 ```
 
-```console:commandがホワイトリストにあるかどうかを照会
+commandがホワイトリストにあるかどうかを照会
+
+```
 # firewall-cmd --query-lockdown-whitelist-command=<command>
 ```
 
-```console:commandがホワイトリストにあるかどうかを照会例
+commandがホワイトリストにあるかどうかを照会例
+
+```
 # firewall-cmd --query-lockdown-whitelist-command='/usr/bin/python -Es /usr/bin/command'
 ```
 
-```console:ホワイトリストにあるすべてのコンテキストを一覧表示
+ホワイトリストにあるすべてのコンテキストを一覧表示
+
+```
 # firewall-cmd --list-lockdown-whitelist-contexts
 ```
 
-```console:コンテキストをホワイトリストに追加
+コンテキストをホワイトリストに追加
+
+```
 # firewall-cmd --add-lockdown-whitelist-context=<context>
 ```
 
-```console:コンテキストをホワイトリストから削除
+コンテキストをホワイトリストから削除
+
+```
 # firewall-cmd --remove-lockdown-whitelist-context=<context>
 ```
 
-```console:コンテキストがホワイトリストにあるかどうかを照会
+コンテキストがホワイトリストにあるかどうかを照会
+
+```
 # firewall-cmd --query-lockdown-whitelist-context=<context>
 ```
 
-```console:ホワイトリストにあるすべてのユーザーIDを一覧表示
+ホワイトリストにあるすべてのユーザーIDを一覧表示
+
+```
 # firewall-cmd --list-lockdown-whitelist-uids
 ```
 
-```console:uidホワイトリストにユーザーID を追加
+uidホワイトリストにユーザーID を追加
+```
 # firewall-cmd --add-lockdown-whitelist-uid=<uid>
 ```
 
-```console:idホワイトリストからユーザーID を削除
+idホワイトリストからユーザーID を削除
+
+```
 # firewall-cmd --remove-lockdown-whitelist-uid=<uid>
 ```
 
-```console:ユーザーID uidがホワイトリストにあるかどうかを照会
+ユーザーID uidがホワイトリストにあるかどうかを照会
+
+```
 # firewall-cmd --query-lockdown-whitelist-uid=<uid>
 ```
 
-```console:ホワイトリストにあるすべてのユーザー名を一覧表示
+ホワイトリストにあるすべてのユーザー名を一覧表示
+
+```
 # firewall-cmd --list-lockdown-whitelist-users
 ```
 
-```console:userホワイトリストにユーザー名を追加
+userホワイトリストにユーザー名を追加
+
+```
 # firewall-cmd --add-lockdown-whitelist-user=<user>
 ```
 
-```console:userホワイトリストからユーザー名を削除
+userホワイトリストからユーザー名を削除
+
+```
 # firewall-cmd --remove-lockdown-whitelist-user=<user>
 ```
 
-```console:ユーザー名userがホワイトリストにあるかどうかを照会
+ユーザー名userがホワイトリストにあるかどうかを照会
+
+```
 # firewall-cmd --query-lockdown-whitelist-user=<user>
 ```
 
@@ -1669,5 +1895,3 @@ https://fedoraproject.org/wiki/FirewallD/jp
 https://firewalld.org/documentation/man-pages/firewall-cmd.html
 https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/7/html/security_guide/sec-Using_Firewalls
 https://www.nedia.ne.jp/blog/tech/2015/10/13/6031
-
-
