@@ -52,7 +52,3 @@ sudo -u <apache user> php /var/www/owncloud/occ files:scan <owncloud user>
 
 ちなみにUSBカメラで静止画を撮るのは特に目的はありません。(ただ単にやってみたかっただけですwww。)
 
-
-
-
-```
