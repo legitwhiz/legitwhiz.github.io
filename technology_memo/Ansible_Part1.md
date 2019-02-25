@@ -583,6 +583,7 @@ Ansibleで何か一時的な処理をおこなう時のコマンド。
 ### 3.3.ansible-docコマンド
 
 - モジュール確認
+
   `ansible-doc -l`
 
 
