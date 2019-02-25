@@ -465,57 +465,57 @@ yum: name=httpd state=latest
 Ansible公式サイトで更改しているベストプラクティスは、以下の構成としている。
 この辺は、実際の現場の環境や運用ルールに合わせて、作っていくしかないだろう。
 
-/etc/ansible/
-  ├inventories/
-  │  ├production/
-  │  │  ├hosts                             # 本番環境サーバ用のインベントリファイル
+/etc/ansible/  
+  ├inventories/  
+  │  ├production/  
+  │  │  ├hosts                             # 本番環境サーバ用のインベントリファイル  
   │  │  ├group_vars/
-  │  │  │  ├group1.yml              # 特定のグループに変数を割り当て
-  │  │  │  └group2.yml
-  │  │  └host_vars/
-  │  │      ├hostname1.yml       # 特定のシステムに変数を割り当てます
-  │  │      └hostname2.yml
-  │  │
-  │  └staging/
-  │      ├hosts                            # 開発環境サーバ用のインベントリファイル
-  │      ├group_vars/
-  │      │  ├group1.yml             # 特定のグループに変数を割り当て
-  │      │  └group2.yml
-  │      └host_vars/
-  │          ├stagehost1.yml       # 特定のシステムに変数を割り当てます
-  │          └stagehost2.yml
-  │ 
-  ├library/                                  # カスタムモジュールを置きます（オプション）。
-  ├module_utils/                      # module_utilsを置きます（オプション）。
-  ├filter_plugins/                      # カスタムフィルタプラグインを配置します（オプション）。
-  │
-  ├site.yml                                # master playbook
-  ├webservers.yml                  # playbook for webserver tier
-  ├dbservers.yml                     # playbook for dbserver tier
-  │
-  └roles/
-      ├common/                 # この階層は「役割」を表します
-      │  ├tasks/
-      │  │  └main.yml
-      │  ├handlers/
-      │  │  └main.yml
-      │  ├templates/
-      │  │  └ntp.conf.j2
-      │  ├files/
-      │  │  └source files       # コピーリソースで使用するファイル
-      │  │  └script files         # スクリプトリソースで使用するスクリプトファイル
-      │  ├vars/
-      │  │  └main.yml           # このロールに関連する変数
-      │  ├defaults/
-      │  │  └main.yml           # このロールのデフォルトの優先順位の低い変数
-      │  ├meta/
-      │  │  └main.yml           # ロール依存関係
-      │  ├library/                   # カスタムモジュールも含めることができます
-      │  ├module_utils/       # カスタムmodule_utilsも含めることができます
-      │  └lookup_plugins/   # 検索のように、または他の種類のプラグイン
-      ├webtier/                     # 「common」と同じ構造
-      ├monitoring/
-      └fooapp/
+  │  │  │  ├group1.yml              # 特定のグループに変数を割り当て  
+  │  │  │  └group2.yml  
+  │  │  └host_vars/  
+  │  │      ├hostname1.yml       # 特定のシステムに変数を割り当てます  
+  │  │      └hostname2.yml  
+  │  │  
+  │  └staging/  
+  │      ├hosts                            # 開発環境サーバ用のインベントリファイル  
+  │      ├group_vars/  
+  │      │  ├group1.yml             # 特定のグループに変数を割り当て  
+  │      │  └group2.yml  
+  │      └host_vars/  
+  │          ├stagehost1.yml       # 特定のシステムに変数を割り当てます  
+  │          └stagehost2.yml  
+  │   
+  ├library/                                  # カスタムモジュールを置きます（オプション）。  
+  ├module_utils/                      # module_utilsを置きます（オプション）。  
+  ├filter_plugins/                      # カスタムフィルタプラグインを配置します（オプション）。  
+  │  
+  ├site.yml                                # master playbook  
+  ├webservers.yml                  # playbook for webserver tier  
+  ├dbservers.yml                     # playbook for dbserver tier  
+  │  
+  └roles/  
+      ├common/                 # この階層は「役割」を表します  
+      │  ├tasks/  
+      │  │  └main.yml  
+      │  ├handlers/  
+      │  │  └main.yml  
+      │  ├templates/  
+      │  │  └ntp.conf.j2  
+      │  ├files/  
+      │  │  └source files       # コピーリソースで使用するファイル  
+      │  │  └script files         # スクリプトリソースで使用するスクリプトファイル  
+      │  ├vars/  
+      │  │  └main.yml           # このロールに関連する変数  
+      │  ├defaults/  
+      │  │  └main.yml           # このロールのデフォルトの優先順位の低い変数  
+      │  ├meta/  
+      │  │  └main.yml           # ロール依存関係  
+      │  ├library/                   # カスタムモジュールも含めることができます  
+      │  ├module_utils/       # カスタムmodule_utilsも含めることができます  
+      │  └lookup_plugins/   # 検索のように、または他の種類のプラグイン  
+      ├webtier/                     # 「common」と同じ構造  
+      ├monitoring/  
+      └fooapp/  
 
 
 
@@ -556,15 +556,18 @@ Ansibleで何か一時的な処理をおこなう時のコマンド。
 一連の処理の流れを YAML で記述しておいて、それを実行するコマンド。
 
 - 通常実行
+
   `ansible-playbook -i inventory_file playbook.yml`
 
 - 構文チェック
+
   `ansible-playbook -i inventory_file playbook.yml --syntax-check`
 
 - 実行されるタスクの一覧を表示
   `ansible-playbook -i inventory_file playbook.yml --list-tasks`
 
 - verboseオプション（-vvv）で詳細情報の表示する。
+
   `ansible-playbook -i inventory_file -u root -k playbook.yml -vvv`
 
 - 実行時にパラメータを付与する。
@@ -574,6 +577,7 @@ Ansibleで何か一時的な処理をおこなう時のコマンド。
   `ansible-playbook -e "xxx=yes" -i inventory_file playbook.yml`
 
 - 実行するときのユーザの秘密鍵を指定して実行する
+
   `ansible-playbook -i inventory_file playbook.yml --private-key=/path/key.pem`
 
 ### 3.3.ansible-docコマンド
@@ -583,6 +587,7 @@ Ansibleで何か一時的な処理をおこなう時のコマンド。
 
 
 ## 最後に
+
 Ansibleの特性上、インフラの各設定を実施することからOSの設定及びMWのインストールまでは、【root】ユーザで実施し、MWの設定はMW用のユーザで実施すべきだろう。
 
 そのため、SSH鍵認証ではplaybookを実行するユーザに秘密鍵認証を配置し、実行されるクライアント側に公開鍵を配置することを忘れないようにすること。
