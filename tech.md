@@ -39,6 +39,10 @@ title: 技術レポート
 
 * [Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。](technology_memo/attached_a_USB_camera_(Logicool_C270)_to_Ubuntu16.04LTS.html)
 
+### ● RHEL
+
+* [Red Hat Enterprize Linux 8.0 Betaをとりあえずインストールしてみました。](technology_memo/RHEL8.0Beta_install.html)
+
 ### ● Other
 
 * [Bashメジャーバージョンアップで何が変わった？](technology_memo/Bash_major_versionup.html)
