@@ -1,3 +1,7 @@
+layout: default
+title: Red Hat Enterprize Linux 8.0 Betaをとりあえずインストールしてみました。
+---
+
 # Red Hat Enterprize Linux 8.0 Betaをとりあえずインストールしてみました。
 
 ## Red Hat Enterprize Linux 8.0 Betaをとりあえずインストール
