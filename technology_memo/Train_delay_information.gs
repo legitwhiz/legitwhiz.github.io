@@ -1,11 +1,12 @@
 //Train_delay_information.gs
+
 function getDelayInfo() {
   //電車遅延情報をJSON形式で取得
   var json = JSON.parse(UrlFetchApp.fetch("https://rti-giken.jp/fhc/api/train_tetsudo/delay.json").getContentText());
   //路線名を指定
-  var name="湘南新宿ライン";
+  var name="JR東日本";
   //運営会社名を指定
-  var company="JR東日本";
+  var company="湘南新宿ライン";
   var message="";
  
   for each(var obj in json){
@@ -27,7 +28,7 @@ function getDelayInfo() {
 
 function sendHttpPost(message){
   //アクセストークンを設定
-  var token = ["fkRf9pBD9UOvmuBloFxwuWeCrGROMbqV094RI8Blyiu"];
+  var token = ["njpAr6GUb4b0jYjuKh5PYGOu90uQIV5QQ0IOzDtWHGu"];
   //LINE Notifyに送るリクエストを設定
   var options =
    {
@@ -40,3 +41,4 @@ function sendHttpPost(message){
    //リクエスト送信
    UrlFetchApp.fetch("https://notify-api.line.me/api/notify",options);
 }
+
