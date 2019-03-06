@@ -35,6 +35,10 @@ title: 技術レポート
 
 * [Ansibleで始める構成管理ツール_Part2](technology_memo/Ansible_Part2.html)
 
+#### ■ プロジェクト管理
+
+* [OpenProjectで始めるプロジェクト管理](technology_memo/Project_management_starting_with_OpenProject.html)
+
 ### ● Ubuntu
 
 * [Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。](technology_memo/attached_a_USB_camera_(Logicool_C270)_to_Ubuntu16.04LTS.html)
