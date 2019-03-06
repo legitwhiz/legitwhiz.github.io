@@ -5,7 +5,13 @@ title: OpenProjectで始めるプロジェクト管理
 
 # OpenProjectで始めるプロジェクト管理
 
-## 1. プロジェクト管理ツール選定
+## 0. 目的
+
+【プロジェクト管理ツール】を導入する目的は、DevOpsの一環として、管理ツールを導入し運用の効率化を図る目的と考え、私個人の見解と選定・調査・検証した結果を以下の記事に掲載します。
+
+
+
+## 1. プロジェクト管理ツールとは？
 
 ### 1.1. Excelでプロジェクト管理は、NGなの？
 
@@ -145,6 +151,18 @@ OpenProjectインストールは、公式のマニュアルをもとに実施で
 ですが、今回は簡単に構築できるようにDockerで構築してみたいと思います。
 
 [OpenProject公式HP Install OpenProject with Docker](https://www.openproject.org/docker/)
+
+
+
+### 2.0. 環境
+
+CentOS : 7.5.1804
+Docker : 18.09.0, build 4d60db4
+Docker-compose : 1.23.2, build 1110ad01
+※Dockerには、[Docker CE]とエンタープライズ版の[Docker EE]がありますが、今回は無償の[Docer CE]を使用します。
+OpenProject 8.2.1 (PostgreSQL 9.6、memcached 1.5.7)
+
+
 
 ### 2.1. docker-compose用YAML作成
 
