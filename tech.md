@@ -23,6 +23,8 @@ title: 技術レポート
 
 * [Gitbucketでソース管理](technology_memo/Gitbucket_Resource_management.html)
 
+* [GitHubで公開したソースにオープンソースライセンスを適用](technology_memo/license_to_source_published_on_GitHub.html)
+
 #### ■ CI
 
 * [Jenkinsをdocker上に構築](technology_memo/Jenkins_container_Environment.html)
