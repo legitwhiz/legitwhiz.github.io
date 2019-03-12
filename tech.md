@@ -51,6 +51,8 @@ title: 技術レポート
 
 ### ● Other
 
+* [NTPに変わるchronyって何が変わったの？](technology_memo/What_changed_to_chrony_instead_of_NTP.html)
+
 * [Bashメジャーバージョンアップで何が変わった？](technology_memo/Bash_major_versionup.html)
 
 * [Chrome拡張「vimium」](technology_memo/Chrome_Expansion_vimium.html)
