@@ -287,6 +287,102 @@ http://<IP Address>:8890
 
 ![project_useradd002](https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/project_useradd002.png)
 
+
+
+## 4.OpenProjectを使ってみる
+
+
+
+### 4.1 ガントチャート
+
+プロジェクト画面で作業項目を選択
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/Gantt_chart001.png" width="640">
+
+［+作成］ボタンをクリックし作業種別[Task、Milestone、Phase、Feature、Epic、User story、Bug]を選択する。
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/Gantt_chart002.png" width="640">
+
+[New Task]に"作業名"を入力し[説明]に"作業内容の詳細"を入力し、[担当者]に作業を実行するメンバーを選択、[責任がある]に"作業責任者"を選択、[予定工数]に"想定される工数(日)"を入力、[日付]に"開始日"と"終了日"を選択し、[保存]ボタンをクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/Gantt_chart003.png" width="640">
+
+左ペインの[ガントチャート]を選択し、保存したスケジュールが登録されていることを確認
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/Gantt_chart004.png" width="640">
+
+
+
+
+
+### 4.2 インシデント管理
+
+インシデント管理は、バックログで管理します。
+
+バックログのバージョンにて【障害の種別】(IceWall関連など)を登録し
+
+ストーリーでインシデントを登録し、インシデントの各タスクをかんばんで管理します。
+
+
+
+プロジェクト画面でバックログを選択し、[＋バージョン]ボタンをクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog001.png" width="640">
+
+[名称]に【障害の種別】を入力し[説明]を入力し[作成]ボタンをクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog002.png" width="640">
+
+作成された[バージョン]の［▲］ボタンをクリックし[新しいストーリー]をクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog003.png" width="640">
+
+追加されたストーリーでインシデントの内容を記載する。
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog004.png" width="640">
+
+
+
+インシデントの詳細を記入したい場合は、作成された[バージョン]の［▲］ボタンをクリックし[ストーリー/タスク]をクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog010.png" width="640">
+
+
+
+対象の作業項目の右端の[:]をクリックし[詳細表示を開く]をクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog011.png" width="640">
+
+[説明]に"インシデントの詳細情報"を記入し[レ]ボタンをクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog012.png" width="640">
+
+
+
+バックログ画面に戻り、作成された[バージョン]の［▲］ボタンをクリックし[かんばん]をクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog005.png" width="640">
+
+対象インシデントの右側の[＋]ボタンをクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog006.png" width="640">
+
+NewTask画面の[Subject]にインシデントで実施すべきタスクを入力し[Assigned To]に"タスクの実行者"を選択し[Remaining Hour]に予測される"工数(時間)"を入力し[OK]ボタンをクリック
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog007.png" width="640">
+
+かんばんにインシデントのタスクが登録されたことを確認
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog008.png" width="640">
+
+[Assigned To]に登録された"タスクの実行者"は、タスクを着手したらタスクをドラッグし[In progress]写し、終了したら[Closed]にドラッグする。優先度の低いタスクであれば[On hold]にドラッグし、実施しなくても大丈夫だと判断したら[Rejected]にドラッグしタスクを移動する。 
+
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog009.png" width="640">
+
+
+
+
+
 ### 最後に
 
 とりあえず初期構築までやってみましたが【docker】を使用していることもあり簡単に構築できます。
