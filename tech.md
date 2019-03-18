@@ -41,6 +41,10 @@ title: 技術レポート
 
 * [OpenProjectで始めるプロジェクト管理](technology_memo/Project_management_starting_with_OpenProject.html)
 
+#### ■ テスト自動化
+
+* [インフラのテスト自動化を実現するツール「Serverspec」](technology_memo/Tool_Serverspec_to_realize_infrastructure_test_automation.html)
+
 ### ● Ubuntu
 
 * [Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。](technology_memo/attached_a_USB_camera_(Logicool_C270)_to_Ubuntu16.04LTS.html)
