@@ -338,7 +338,7 @@ http://<IP Address>:8890
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog003.png" width="640">
 
 追加されたストーリーでインシデントの内容を記載する。
-
+Feature(機能改善)、Bug(不具合)、Epic(正式版リリース)、UserStory(要求された一連の作業)を選択する。※UserStoryは、ユーザから要求されたログ採取、分析など定例作業外の一覧の作業を指す。
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/openproject/backlog004.png" width="640">
 
 
@@ -391,30 +391,3 @@ GUIについてもスケジュールを【マウス操作】で移動や期間�
 とは言え、まずは【運用ルール】の確立させないと、このツールがあったとしても【プロジェクト推進】が上手くいくわけがありません。
 
 ツールに慣れ、きちんとした【運用ルール】を策定することが肝心だと感じました。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
