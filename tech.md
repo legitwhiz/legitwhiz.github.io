@@ -45,6 +45,10 @@ title: 技術レポート
 
 * [インフラのテスト自動化を実現するツール「Serverspec」](technology_memo/Tool_Serverspec_to_realize_infrastructure_test_automation.html)
 
+#### ■ プロジェクトコミュニケーションツール
+
+* [プロジェクトコミュニケーションツール『Rocket.chat』＆bot](technology_memo/Project_communication_tool_Rocket.chat_and_bot.html)
+
 ### ● Ubuntu
 
 * [Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみた。](technology_memo/attached_a_USB_camera_(Logicool_C270)_to_Ubuntu16.04LTS.html)
