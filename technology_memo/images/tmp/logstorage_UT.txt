@@ -1,0 +1,108 @@
+Logstorage_IT
+
+
+cd /opt/sftp_log/
+vi sso_config.pl
+vi reminder_config.pl
+vi ssodgo_config.pl
+vi sso_config_ldif.pl
+
+cp -p ./sso_sftp_log.pl ./sso_sftp_log.pl.org
+cp -p ./reminder_sftp_log.pl ./reminder_sftp_log.pl.org
+cp -p ./ssodgo_sftp_log.pl ./ssodgo_sftp_log.pl.org
+cp -p ./sso_sftp_ldif.pl ./sso_sftp_ldif.pl.org
+
+vi ./sso_sftp_log.pl
+vi ./reminder_sftp_log.pl
+vi ./ssodgo_sftp_log.pl
+vi ./sso_sftp_ldif.pl
+
+diff ./sso_sftp_log.pl ./sso_sftp_log.pl.org
+diff ./reminder_sftp_log.pl ./reminder_sftp_log.pl.org
+diff ./ssodgo_sftp_log.pl ./ssodgo_sftp_log.pl.org
+diff ./sso_sftp_ldif.pl ./sso_sftp_ldif.pl.org
+
+ls -l /home/radmin/backup
+
+cd /log/arclog/02
+ls -l ./17/icewall-sso/
+ls -l ./17/slapd/
+
+find ./ -name "*dgo*.Z"
+find ./ -name "*rem*.Z"
+find ./ -name "dfw.log*.Z"
+ls -l ./30/icewall-sso/
+
+cp -p ./15/icewall-sso/cert_dgo.log0115.Z ./22/icewall-sso/cert_dgo.log0122.Z
+cp -p ../09/17/icewall-sso/cert_dgo.log0917.Z ./22/icewall-sso/cert_dgo.log0122.Z
+find ./ -name "*cert*.Z"
+cp -p ./09/icewall-sso/cert.log0109.Z ./22/icewall-sso/cert.log0122.Z
+ls -l ./22/icewall-sso/
+ls -l /home/radmin/backup/
+
+#IceWall
+/usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/ssodgo_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/reminder_sftp_log.pl
+#Cert
+/usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/ssodgo_sftp_log.pl
+#LDAP
+/usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/sso_sftp_ldif.pl
+#LDAP REP
+/usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+
+
+
+UT-2
+cp -p /opt/sftp_log/sso_config.pl /opt/sftp_log/sso_config.pl.org
+cp -p /opt/sftp_log/ssodgo_config.pl /opt/sftp_log/ssodgo_config.pl.org
+cp -p /opt/sftp_log/reminder_config.pl /opt/sftp_log/reminder_config.pl.org
+cp -p /opt/sftp_log/sso_config_ldif.pl /opt/sftp_log/sso_config_ldif.pl.org
+
+vi /opt/sftp_log/sso_config.pl
+vi /opt/sftp_log/ssodgo_config.pl
+vi /opt/sftp_log/reminder_config.pl
+vi /opt/sftp_log/sso_config_ldif.pl
+
+ls -l ./22/icewall-sso/
+/usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/ssodgo_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/reminder_sftp_log.pl
+/usr/bin/perl /opt/sftp_log/sso_sftp_ldif.pl
+
+
+mv /opt/sftp_log/sso_config.pl.org /opt/sftp_log/sso_config.pl
+mv /opt/sftp_log/ssodgo_config.pl.org /opt/sftp_log/ssodgo_config.pl
+mv /opt/sftp_log/reminder_config.pl.org /opt/sftp_log/reminder_config.pl
+
+
+
+
+
+
+
+
+
+#######################
+cd /opt/sftp_log/
+cp -p ./sso_sftp_log.pl.org ./sso_sftp_log.pl
+cp -p ./reminder_sftp_log.pl.org ./reminder_sftp_log.pl
+cp -p ./ssodgo_sftp_log.pl.org ./ssodgo_sftp_log.pl
+cp -p ./sso_sftp_ldif.pl.org ./sso_sftp_ldif.pl
+
+diff ./sso_sftp_log.pl ./sso_sftp_log.pl.org
+diff ./reminder_sftp_log.pl ./reminder_sftp_log.pl.org
+diff ./ssodgo_sftp_log.pl ./ssodgo_sftp_log.pl.org
+diff ./sso_sftp_ldif.pl.org ./sso_sftp_ldif.pl
+
+rm ./sso_sftp_log.pl.org
+rm ./reminder_sftp_log.pl.org
+rm ./ssodgo_sftp_log.pl.org
+rm ./sso_sftp_ldif.pl.org
+
+
+
+
+

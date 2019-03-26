@@ -1,0 +1,264 @@
+Chormeアドレスバーをカスタマイズする
+設定することで素早く検索エンジンを切り替えて検索することが出来るようになります。
+
+アドレスバーにフォーカスをセット(Ctrl+I)
+「q」を入力(以下のQiitaの場合)
+スペースまたはTabキーを押下
+入力したい文字を入力してEnter
+
+【設定方法】
+アドレスバーを右クリックし、[検索エンジンの編集]をクリックし設定画面で[追加]ボタンをクリック。
+[検索エンジン][キーワード][URL]を入力し[追加]ボタンをクリック。
+
+
+検索エンジン:Qiita検索
+キーワード:q
+URL:https://qiita.com/search?q=%s
+
+
+
+
+
+
+
+
+
+
+
+○：ブログ検索
+b.
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://ameblo.jp/ OR site:http://blogs.yahoo.co.jp/ OR site:fc2.com OR site:http://blog.livedoor.jp/ OR site:http://yaplog.jp/ OR site:http://blog.goo.ne.jp/ OR site:cocolog-nifty.com OR site:http://d.hatena.ne.jp/ OR site:hatenablog.com OR site:seesaa.net OR site:webry.info -site:d.hatena.ne.jp/keyword/';     window.open(url); }())
+○：FC2ブログ検索
+bf
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:fc2.com';     window.open(url); }())
+○：YAHOOブログ検索
+by
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://blogs.yahoo.co.jp/';     window.open(url); }())
+○：アメーバブログ検索
+ba
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://ameblo.jp/';     window.open(url); }())
+○：はてなダイアリー検索
+bh
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://d.hatena.ne.jp/ OR site:hatenablog.com -site:d.hatena.ne.jp/keyword/';     window.open(url); }())
+
+●：SampleCode検索
+c.
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://code.msdn.microsoft.com/ OR site:http://dobon.net OR site:http://rucio.a.la9.jp/main/ OR site:http://smdn.jp/ -site:http://dobon.net/cgi-bin/vbbbs -site:http://dobon.net/vb/bbs/';     window.open(url); }())
+●：DOBON.NET Code検索
+cd
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://dobon.net -site:http://dobon.net/cgi-bin/vbbbs -site:http://dobon.net/vb/bbs/';     window.open(url); }())
+●：MSDN Code検索
+cm
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://code.msdn.microsoft.com/';     window.open(url); }())
+●：smdn Code検索
+cs
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://smdn.jp/';     window.open(url); }())
+●：VB中学校 Code検索
+cv
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://rucio.a.la9.jp/main/';     window.open(url); }())
+
+□：IT用語辞典検索
+ i
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://e-words.jp/?cx=partner-pub-1175263777233757%3Axelkt7-c6j8&cof=FORID%3A10&ie=Shift_JIS&q=' + encodeURIComponent(inputStr) + '&r=opensearch';     window.open(url); }())
+□：Weblio辞書検索
+wb
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://e-words.jp/?cx=partner-pub-1175263777233757%3Axelkt7-c6j8&cof=FORID%3A10&ie=Shift_JIS&q=' + encodeURIComponent(inputStr) + '&r=opensearch';     window.open(url); }())
+□：Wikitionary検索
+wk
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://ja.wiktionary.org/wiki/' + encodeURIComponent(inputStr);     window.open(url); }())
+□：Wikipedia検索
+ w
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://ja.wikipedia.org/wiki/' + encodeURIComponent(inputStr);     window.open(url); }())
+
+■：画像検索
+i.
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , FlickrCommURL = 'http://flickr.com/search/?l=comm&q='                                     + encodeURIComponent(inputStr)       , FlickrURL     = 'http://flickr.com/search/?q='                                            + encodeURIComponent(inputStr)       , BingURL       = 'https://www.bing.com/images/search?&q='                                  + encodeURIComponent(inputStr)       , GoogleURL     = 'https://www.google.co.jp/search?newwindow=1&site=&tbm=isch&source=hp&q=' + encodeURIComponent(inputStr);      window.open(FlickrCommURL);     window.open(FlickrURL);     window.open(BingURL);     window.open(GoogleURL);  }())
+■：Bing画像検索
+ib
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.bing.com/images/search?&q=' + encodeURIComponent(inputStr);      window.open(url);      } )();
+■：Google画像検索
+ig
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?newwindow=1&site=&tbm=isch&source=hp&q=' + encodeURIComponent(inputStr);      window.open(url);      } )();
+
+◇：記事検索
+a.
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://qiita.com/ OR site:http://www.atmarkit.co.jp/ OR site:https://codezine.jp/article/ OR site:http://itpro.nikkeibp.co.jp/article/ -site:http://www.atmarkit.co.jp/bbs/ -site:http://qiita.com/tags/';     window.open(url); }())
+◇：CodeZine記事検索
+ac
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://codezine.jp/article/';     window.open(url); }())
+◇：ITpro記事検索
+ai
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://itpro.nikkeibp.co.jp/article/';     window.open(url); }())
+◇：Qiita検索
+aq
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://qiita.com/ -site:http://qiita.com/tags/';     window.open(url); }())
+◇：@IT記事検索
+aa
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://www.atmarkit.co.jp/ -site:http://www.atmarkit.co.jp/bbs/';     window.open(url); }())
+
+◆：DevDocs検索
+rd
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://devdocs.io/#q=' + encodeURIComponent(inputStr);          window.open(url);      }())
+◆：HTMLクイックリファレンス検索
+rh
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?sourceid=chrome&ie=UTF-8&q=' + encodeURIComponent(inputStr) + ' site:http://www.htmq.com/';     window.open(url); }())
+◆：jQueryリファレンス検索
+rq
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?sourceid=chrome&ie=UTF-8&q=' + encodeURIComponent(inputStr) + ' site:http://semooh.jp/jquery/ OR site:http://api.jquery.com/';     window.open(url); }())
+◆：ORACLEリファレンス検索
+ro
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?sourceid=chrome&ie=UTF-8&q=' + encodeURIComponent(inputStr) + ' site:http://oracle.se-free.com/ OR site:www.shift-the-oracle.com';     window.open(url); }())
+◆：MDN検索
+rm
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://developer.mozilla.org/ja/search?q=' + encodeURIComponent(inputStr) + '&topic=html&topic=css&topic=js&topic=api';     window.open(url); }())
+◆：Laravel API 公式ドキュメント検索
+rla
+javascript: (function() {var inputStr = decodeURIComponent('%s')       , url      = 'https://laravel.com/api/5.5/search.html?search=' + encodeURIComponent(inputStr);      window.open(url);  })();
+◆：Laravel公式ドキュメント検索
+rl
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://readouble.com/laravel/5.5/ja/';         window.open(url);          })();
+
+△：掲示板検索
+f.
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://teratail.com/questions/ OR site:https://social.msdn.microsoft.com/Forums/ja-JP/ OR site:stackoverflow.com/questions/ OR site:http://search.hatena.ne.jp/quest/ OR site:http://qa.atmarkit.co.jp/q/ OR site:http://okwave.jp/qa/ OR site:http://hanatyan.sakura.ne.jp/vbnetbbs/ OR site:http://hanatyan.sakura.ne.jp/vb60bbs/ OR site:http://chiebukuro.yahoo.co.jp/ OR site:http://bbs.wankuma.com/index.cgi?mode=al2/ OR site:http://www.atmarkit.co.jp/bbs/phpBB/ OR site:http://dobon.net/cgi-bin/vbbbs/ OR site:http://dobon.net/vb/bbs/ OR site:http://www.logsoku.com/ OR site:http://qa.itmedia.co.jp/ OR site:http://otn.oracle.co.jp/forum/';      window.open(url);  }())
+△：MSDN掲示板検索
+fm
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://social.msdn.microsoft.com/Forums/ja-JP/';      window.open(url);  }())
+△：OTN(Oracle)掲示板検索
+fo
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://otn.oracle.co.jp/forum/';      window.open(url);  }())
+△：Stack Overflow検索
+fs
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:stackoverflow.com/questions/';      window.open(url);  }())
+△：teratail検索
+ft
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:https://teratail.com/questions/';      window.open(url);  }())
+△：Yahoo!知恵袋検索
+fc
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://chiebukuro.yahoo.co.jp/';      window.open(url);  }())
+△：２ちゃんログ速検索
+fn
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://www.logsoku.com/';     window.open(url); }())
+△：@IT掲示板検索
+fi
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr) + ' site:http://qa.atmarkit.co.jp/q/ OR site:http://www.atmarkit.co.jp/bbs/phpBB/';      window.open(url);  }())
+
+◎：NAVER検索
+ n
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://matome.naver.jp/search?q=' + encodeURIComponent(inputStr);     window.open(url); }())
+◎：Lifehacker検索
+ l
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://www.lifehacker.jp/search.html?q=' + encodeURIComponent(inputStr) + '&submit=Search';     window.open(url); }())
+◎：スライド検索
+s.
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url1     = 'http://www.slideshare.net/search/slideshow?searchfrom=header&q=' + encodeURIComponent(inputStr)       , url2     = 'https://www.google.co.jp/search?q=site:https://speakerdeck.com/ ' + encodeURIComponent(inputStr);     window.open(url1);     window.open(url2); }())
+◎：Wikipedia&GoogleImage検索
+wg
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url1     = 'https://ja.wikipedia.org/wiki/' + inputStr        	  , url2         = 'http://www.google.co.jp/search?newwindow=1&site=&tbm=isch&source=hp&q=' + inputStr    	  , screenWidth  = (window.screen.width - 15) / 2    	  , screenHeight = window.screen.height - 95     	  , winName      = '_blank'    	  , winleft1     = 0;    	 	window.screenX >= window.screen.width ? winleft1 = window.screen.width : winleft1 = 0;       	 	var winOption1 = 'left=' + winleft1 + ',width=' + screenWidth + ',height=' + screenHeight + ',scrollbars=yes,resizeable=yes,menubar=yes,location=no'             	  , winOption2 = 'left=' + (winleft1 + screenWidth + 15) + ',width=' + (screenWidth - 15) + ',height=' + screenHeight + ',scrollbars=yes,resizeable=yes,menubar=yes,location=no';                 	 	window.open(url1, winName, winOption1);   	window.open(url2, winName, winOption2);   }())
+◎：天気調べ
+ ,
+javascript:(function() { var inputStr = decodeURIComponent('%s' + ' 天気') , url  = 'https://www.google.co.jp/search?q=' + encodeURIComponent(inputStr);;     window.open(url); }())
+◎：イベント検索
+e.
+javascript:(function() { var inputStr = decodeURIComponent('%s') , ConnpassUrl    = 'https://connpass.com/search/?q=' + encodeURIComponent(inputStr) 	  , DoorKeeperUrl = 'https://www.doorkeeper.jp/events?utf8=%E2%9C%93&q=' + encodeURIComponent(inputStr) 	  , AtndUrl       = 'https://atnd.org/events/search?q%5Battendee_gteq%5D=1&q%5Btitle_or_description_or_place_or_address_cont%5D=' + encodeURIComponent(inputStr) 	  , TechPlayUrl   = 'https://techplay.jp/event/search?keyword=' + encodeURIComponent(inputStr);  	window.open(ConnpassUrl); 	window.open(DoorKeeperUrl); 	window.open(AtndUrl); 	window.open(TechPlayUrl);  }())
+
+Ｇ：Google翻訳（日本語→英語）
+gn
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://translate.google.co.jp/?hl=ja#ja/en/' + encodeURIComponent(inputStr);     window.open(url); }())
+Ｇ：Google翻訳（英語→日本語）
+ge
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://translate.google.co.jp/?hl=ja#en/ja/' + encodeURIComponent(inputStr);     window.open(url); }())
+Ｇ：GoogleMap検索
+gm
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/maps/place/' + encodeURIComponent(inputStr);     window.open(url); }())
+Ｇ：I'm feeling lucky検索
+ .
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?btnI&q=' + encodeURIComponent(inputStr);;     window.open(url); }())
+Ｇ：サイト内検索
+gs
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.google.co.jp/search?q=site:' + location.href + ' '  + encodeURIComponent(inputStr) + '&lr=-lang_ja';     window.open(url);       } )();
+
+Ｔ：Twitter検索（ツイート）
+tt
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://twitter.com/search?q=' + encodeURIComponent(inputStr);     window.open(url); }())
+Ｔ：Twitter検索（ハッシュタグ）
+th
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://twitter.com/search?q=' + encodeURIComponent('#' + inputStr);     window.open(url); }())
+Ｔ：Twitter検索（画像）
+ti
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://twitter.com/search?f=images&vertical=default&q=' + encodeURIComponent(inputStr);     window.open(url); }())
+Ｔ：Twitter検索（動画）
+tm
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://twitter.com/search?f=videos&vertical=default&q=' + encodeURIComponent(inputStr);     window.open(url); }())
+
+▽：ブクログ検索
+br
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://booklog.jp/search?keyword=' + encodeURIComponent(inputStr) + '&service_id=1&index=Books';     window.open(url); }())
+▽：カーリル検索
+bc
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://calil.jp/search?q=' + encodeURIComponent(inputStr);     window.open(url); }())
+
+▼：Gmail送信
+mg
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , subject  = decodeURIComponent('【俺からのメッセージ】')       , body         = decodeURIComponent('俺からのメッセージだ受け取れ\n\n')       , screenWidth  = window.parent.screen.width / 2       , screenHeight = window.parent.screen.height / 2       , winName      = '_blank'       , option       = 'width=' + screenWidth + ',height=' + screenHeight + ',scrollbars=yes,resizeable=yes,menubar=no,location=no';      var url = 'https://mail.google.com/mail/?view=cm&to=make.an.effort.wish.come.true@gmail.com&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body) + encodeURIComponent(inputStr);      window.open(url, winName, option);  }());
+▼：YAHOOメール送信
+my
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , subject  = decodeURIComponent('【俺からのメッセージ】')       , body         = decodeURIComponent('俺からのメッセージだ受け取れ\n\n')       , screenWidth  = window.parent.screen.width / 2       , screenHeight = window.parent.screen.height / 2       , winName      = '_blank'       , option       = 'width=' + screenWidth + ',height=' + screenHeight + ',scrollbars=yes,resizeable=yes,menubar=no,location=no';      var url = 'https://mail.google.com/mail/?view=cm&to=make_an_effort_wish_come_true@yahoo.co.jp&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body) + encodeURIComponent(inputStr);          window.open(url, winName, option);  }());
+
+☆：Amazon商品検索
+sa
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.amazon.co.jp/s/ref=nb_sb_noss_1?__mk_ja_JP=カタカナ&url=search-alias%3Daps&field-keywords=' + encodeURIComponent(inputStr);     window.open(url); }())
+☆：GearBest商品検索
+sb
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://www.gearbest.com/' + encodeURIComponent(inputStr) + '-_gear/';     window.open(url); }())
+☆：駿河屋検索
+ss
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://www.suruga-ya.jp/search?category=&search_word=' + encodeURIComponent(inputStr) + '&cookie=true';     window.open(url); }())
+☆：ヤフオク検索
+sy
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://auctions.search.yahoo.co.jp/search?auccat=&tab_ex=commerce&ei=utf-8&aq=-1&oq=&sc_i=&fr=auc_top&p=' + encodeURIComponent(inputStr) + '&x=0&y=0';     window.open(url); }())
+☆：Shufoo!検索
+st
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://www.shufoo.net/pntweb/shopNameSearchList.php?dummy=dummy&keyword=' + encodeURIComponent(inputStr);     window.open(url); }())
+
+☆：価格.com検索
+sk
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://search.kakaku.com/ksearch/search.aspx?search.x=0&search.y=0=&query=' + encodeURIComponent(inputStr);     window.open(url); }())
+
+
+★：YouTube検索
+dy
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://www.youtube.com/results?search_query=' + encodeURIComponent(inputStr);     window.open(url); }())
+★：nicozon検索
+dn
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://www.nicozon.net/search/' + encodeURIComponent(inputStr);     window.open(url); }())
+★：学習動画検索
+dl
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , schooURL      = 'https://schoo.jp/search?q=' + encodeURIComponent(inputStr)       , mvaURL        = 'https://mva.microsoft.com/search/SearchResults.aspx#!q=' + encodeURIComponent(inputStr) + '&index=2&lang=1033'       , dotInstallURL = 'http://dotinstall.com/search?q=' + encodeURIComponent(inputStr);      window.open(schooURL);     window.open(mvaURL);     window.open(dotInstallURL); }())
+★：ドットインストール検索
+dd
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://dotinstall.com/search?q=' + encodeURIComponent(inputStr);     window.open(url); }())
+★：schoo検索
+ds
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://schoo.jp/search?q=' + encodeURIComponent(inputStr);     window.open(url); }())
+★：MicrosoftVirtualAcademy検索
+dm
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'https://mva.microsoft.com/search/SearchResults.aspx#!q=' + encodeURIComponent(inputStr) + '&index=2&lang=1033';     window.open(url); }())
+
+
+▲：類語辞典（weblio.jp）検索
+lr
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://thesaurus.weblio.jp/content/' + encodeURIComponent(inputStr);     window.open(url); }())
+
+▲：英和和英辞典（weblio.jp）
+le
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://ejje.weblio.jp/content/' + encodeURIComponent(inputStr);     window.open(url); }())
+
+▲：類義語辞典検索
+ll
+javascript:(function() { var inputStr = decodeURIComponent('%s')       , url      = 'http://thesaurus.weblio.jp/content/' + encodeURIComponent(inputStr);     window.open(url); }())
+
+Ω：Facebook検索
+fb
+https://www.facebook.com/search/top/?q=%s
+

@@ -1,0 +1,126 @@
+
+
+===== Default =====
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  [0] = LAYOUT( \
+    KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,    KC_BSPC,  \
+    KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,  \
+    KC_CAPS,     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,        KC_ENT,   \
+    KC_LSFT,       KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,      KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,   KC_UP,  MO(1),   \
+    KC_ESC,    KC_LCTL,    KC_LGUI,    KC_LALT,    KC_SPC,        KC_BSPC, KC_ENT,  LALT(KC_GRV),               KC_LEFT,KC_DOWN,KC_RGHT \
+  ),
+  [1] = LAYOUT( \
+    KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,     KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,    KC_DEL, \
+    RGB_TOG,   RGBRST,  RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+    XXXXXXX,     RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,        XXXXXXX, \
+    _______,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, KC_PGUP, _______, \
+    XXXXXXX,   _______,    _______,    _______,    XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX,                   KC_HOME, KC_PGDN, KC_END \
+  )
+};
+
+
+
+===== Custom ( Near HHKB Ver1.00 & LAYOUT(1) Mouse Key )
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  [0] = LAYOUT( \
+    KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,    JP_CIRC,    KC_BSPC,\
+    KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    JP_AT,      JP_LBRC,  KC_JYEN,\
+    KC_LCTL,     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,      KC_H,    KC_J,    KC_K,    KC_L,   KC_SCLN,  JP_COLN,    KC_ENT,         \
+    KC_LSFT,       KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,      KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, JP_BSLS,    KC_UP,KC_RSFT,\
+    MO(1),           JP_ZHTG, KC_LGUI, KC_LALT, KC_ENT,             KC_SPC,  KC_RALT, TG(1),                     KC_LEFT,KC_DOWN,KC_RGHT \
+  ),
+  [1] = LAYOUT( \
+ KC_PWR,     KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_DEL,\
+    KC_CAPS,   RGBRST,  RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX,    KC_WH_L, KC_MS_U, KC_MS_R, KC_ACL2, KC_PSCR, KC_INS,  XXXXXXX, JP_RBRC,\
+    XXXXXXX,     RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX,   KC_MS_L,  XXXXXXX, KC_MS_R, KC_ACL1, XXXXXXX, XXXXXXX,        XXXXXXX,\
+    _______,       XXXXXXX, KC_WH_D, KC_WH_U,  KC_BTN2,KC_BTN1,   XXXXXXX,  KC_MS_D, XXXXXXX, KC_ACL0, XXXXXXX, _______, KC_PGUP, _______, \
+    XXXXXXX,   RGB_TOG,    _______,    _______,    XXXXXXX,         XXXXXXX,  XXXXXXX, KC_TRNS,                 KC_HOME, KC_PGDN, KC_END \
+  )
+};
+KC_LBRC
+/* LAYOUT[0] Qwerty JIS Normal
+ * ,----------------------------------------------------------------------------------------------------.
+ * | Esc  |  1!  |  2"  |  3#  |  4$  |  5%  ||  6&  |  7'  |  8(  |  9)  |   0  |  -=  |  ^~   |  Bksp |
+ * |------+------+------+------+------+------++------+------+------+------+------+------+-------+-------|
+ * | Tab  |   Q  |   W  |   E  |   R  |   T  ||   Y  |   U  |   I  |   O  |   P  |  @`  |  [{   |  \|   |
+ * |------+------+------+------+------+------++------+------+------+------+------+------+-------+-------|
+ * | Ctrl |   A  |   S  |   D  |   F  |   G  ||   H  |   J  |   K  |   L  |  ;+  | :*   |   Enter       |
+ * |------+------+------+------+------+------++------+------+------+------+------+------+-------+-------|
+ * | Shift|   Z  |   X  |   C  |   V  |   B  ||   N  |   M  |  ,<  |  .>  |  /?  |  \_  |  ↑   | Shift |
+ * |------+------+------+------+------+------++------+------+------+------+------+------+-------+-------|
+ * | Fn   | 半英 | GUI  |  ALT | Enter       ||Space |  Alt |  Fn                | ←   |  ↓   |  →   |
+ * `----------------------------------------------------------------------------------------------------'
+ */
+
+/* LAYOUT[0]
+ * ,-----------------------------------------------------------------------------------------------------------.
+ * |KC_ESC |KC_1  |KC_2   |KC_3   |KC_4  |KC_5  ||KC_6  |KC_7   |KC_8   |KC_9  |KC_0   |KC_MINS|JP_CIRC|KC_BSPC|
+ * |-------+------+-------+-------+------+------++------+-------+-------+------+-------+-------+-------+-------|
+ * |KC_TAB |KC_Q  |KC_W   |KC_E   |KC_R  |KC_T  ||KC_Y  |KC_U   |KC_I   |KC_O  |KC_P   |JP_AT  |JP_LBRC|KC_JYEN|
+ * |-------+------+-------+-------+------+------++------+-------+-------+------+-------+-------+-------+-------|
+ * |KC_LCTL|KC_A  |KC_S   |KC_D   |KC_F  |KC_G  ||KC_H  |KC_J   |KC_K   |KC_L  |KC_SCLN|JP_COLN|   KC_ENT      |
+ * |-------+------+-------+-------+------+------++------+-------+-------+------+-------+-------+-------+-------|
+ * |KC_LSFT|KC_Z  |KC_X   |KC_C   |KC_V  |KC_B  ||KC_N  |KC_M   |KC_COMM|KC_DOT|KC_SLSH|JP_BSLS| KC_UP |KC_RSFT|
+ * |-------+------+-------+-------+------+------++------+-------+-------+------+-------+-------+-------+-------|
+ * | MO(1) |JP_ZHTG|KC_LGUI|KC_LALT| KC_ENT      ||KC_SPC|KC_RALT|  TG(1)              |KC_LEFT|KC_DOWN|KC_RGHT|
+ * `----------------------------------------------------------------------------------------------------------'
+ */
+/* LAYOUT[1]
+ * ,----------------------------------------------------------------------------------------------------------------.
+ * |KC_PWR |KC_F1  |KC_F2  |KC_F3  |KC_F4  |KC_F5  ||KC_F6  |KC_F7  |KC_F8  |KC_F9  |KC_F10 |KC_F11 |KC_F12 |KC_DEL |
+ * |-------+-------+-------+-------+-------+-------++-------+-------+-------+-------+-------+-------+-------+-------|
+ * |KC_CAPS|RGBRST |RGB_HUI|RGB_SAI|RGB_VAI|XXXXXXX||KC_WH_L|KC_MS_U|KC_MS_R|KC_ACL2|KC_PSCR|KC_INS |XXXXXXX|JP_RBRC|
+ * |-------+-------+-------+-------+-------+-------++-------+-------+-------+-------+-------+-------+-------+-------|
+ * |XXXXXXX|RGB_MOD|RGB_HUD|RGB_SAD|RGB_VAD|XXXXXXX||KC_MS_L|XXXXXXX|KC_MS_R|KC_ACL1|XXXXXXX|XXXXXXX|XXXXXXX XXXXXXX|
+ * |-------+-------+-------+-------+-------+-------++-------+-------+-------+-------+-------+-------+-------+-------|
+ * |XXXXXXX|XXXXXXX|KC_WH_D|KC_WH_U|KC_BTN2|KC_BTN1||XXXXXXX|KC_MS_D|XXXXXXX|KC_ACL0|XXXXXXX|XXXXXXX|KC_PGUP|XXXXXXX|
+ * |-------+-------+-------+-------+-------+-------++-------+-------+-------+-------+-------+-------+-------+-------|
+ * |XXXXXXX|RGB_TOG|XXXXXXX|XXXXXXX|XXXXXXX XXXXXXX||XXXXXXX|XXXXXXX|KC_TRNS XXXXXXX XXXXXXX|KC_HOME|KC_PGDN|KC_END |
+ * `----------------------------------------------------------------------------------------------------------------'
+ */
+/* LAYOUT[Shift]
+ * ,----------------------------------------------------------------------------------------------------------------------------------------------------.
+ * |XXXXXXX|S(KC_EXLM)|S(KC_DQUO)|S(KC_HASH)|S(KC_DLR) |S(KC_PERC)||S(KC_AMPR)|S(KC_QUOT)|S(KC_LPRN)|S(KC_RPRN)|XXXXXXXXXX|S(KC_EQL) |S(KC_TILD)|XXXXXXX|
+ * |-------+----------+----------+----------+----------+----------++----------+----------+----------+----------+----------+----------+----------+-------|
+ * |XXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX||XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|S(KC_GRV) |S(KC_LCBR)|XXXXXXX|
+ * |-------+----------+----------+----------+----------+----------++----------+----------+----------+----------+----------+----------+----------+-------|
+ * |XXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX||XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|S(KC_PLUS)|S(KC_ASTR)|XXXXXXXXXXXXXXXXXX|
+ * |-------+----------+----------+----------+----------+----------++----------+----------+----------+----------+----------+----------+----------+-------|
+ * |XXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX||XXXXXXXXXX|XXXXXXXXXX|S(KC_LABK)|S(KC_RABK)|S(KC_QUES)|S(KC_UNDS)|XXXXXXXXXX|XXXXXXX|
+ * |-------+----------+----------+----------+----------+----------++----------+----------+----------+----------+----------+----------+----------+-------|
+ * |XXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXXXXXXXXXXXXX||XXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXX|XXXXXXX|
+ * `----------------------------------------------------------------------------------------------------------------------------------------------------'
+ */
+
+
+KC_EQL?→
+
+###############################
+keymap.cに以下を追加
+
+#include "keymap_jp.h"
+
+#define S(KC_EXLM) LSFT(KC_EXLM)
+#define S(KC_DQUO) LSFT(KC_DQUO)
+#define S(KC_HASH) LSFT(KC_HASH)
+#define S(KC_DLR) LSFT(KC_DLR)
+#define S(KC_PERC) LSFT(KC_PERC)
+#define S(KC_AMPR) LSFT(KC_AMPR)
+#define S(KC_QUOT) LSFT(KC_QUOT)
+#define S(KC_LPRN) LSFT(KC_LPRN)
+#define S(KC_RPRN) LSFT(KC_RPRN)
+#define S(KC_EQL) LSFT(KC_EQL)
+#define S(KC_TILD) LSFT(KC_TILD)
+#define S(KC_GRV) LSFT(KC_GRV)
+#define S(KC_LCBR) LSFT(KC_LCBR)
+#define S(KC_PLUS) LSFT(KC_PLUS)
+#define S(KC_ASTR) LSFT(KC_ASTR)
+#define S(KC_LABK) LSFT(KC_LABK)
+#define S(KC_RABK) LSFT(KC_RABK)
+#define S(KC_QUES) LSFT(KC_QUES)
+#define S(KC_UNDS) LSFT(KC_UNDS)
+
+rules.mkのMOUSEKEY_ENABLEをyesにした場合マウスキーを利用できます。
+
+

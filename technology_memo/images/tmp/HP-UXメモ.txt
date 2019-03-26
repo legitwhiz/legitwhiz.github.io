@@ -1,0 +1,460 @@
+-----------
+HP-UX メモ
+-----------
+
+■ tar.gz 圧縮
+tar cvf hoge.tar hoge ; gzip hoge.tar
+
+■ tar.gz 展開
+gzip -dc hoge.tar.gz | tar xvf -
+
+■ CD-ROM/DVD-ROMからのコピー
+find . | cpio -pdumv <DIR>
+
+■ CD-ROM/DVD-ROMマウント
+mount -F cdfs /dev/dsk/c0t0d0 /SD_CDROM
+
+■ IPアドレス振り直し
+ifconfig lanX 0.0.0.0
+ifconfig lanX unplumb
+/sbin/init.d/net stop;/sbin/init.d/net start
+
+■ コメントと空白以外を表示
+grep ^[^#] <FILE>
+
+-----------
+サーバ設定
+-----------
+■ ファームウェア設定
+MP:CM> SYSREV
+MP:CM> ID
+■iLO2
+http://<MPのアドレス>/
+
+■ MP/iLO2設定
+MP:CM> LS
+MP:CM> SA
+■ ハードウェア構成
+model
+machinfo
+vparstatus -v <vpar名>
+ioscan -fnC disk
+ioscan -fnC tape
+ioscan -fnC lan
+■ 内蔵ディスク 物理ボリューム設定
+pvdisplay /dev/dsk/<PV名>
+vgdisplay -v vg00
+sasmgr get_info -D /dev/sasd0 -q raid
+sasmgr get_info -D /dev/sasd0 -q phy=all
+efi_cp -d /dev/dsk/<PV名>s1 -u /EFI/HPUX/AUTO /tmp/autofile ; cat /tmp/autofile ; rm /tmp/autofile
+lvlnboot -v vg00
+
+■ 内蔵ディスク LVMボリューム設定
+fstyp /dev/vg00/<LV名>
+fsadm -F vxfs /dev/vg00/r<LV名>
+swapinfo -m
+lvdisplay -v /dev/vg00/<LV名>
+
+■ 外部ディスク 物理ボリューム設定
+pvdisplay /dev/dsk/<PV名>
+vgdisplay -v <VG名>
+■ 外部ディスク LVMボリューム設定
+fstyp /dev/<VG名>/<LV名>
+fsadm -F vxfs /dev/<VG名>/r<LV名>
+lvdisplay -v /dev/<VG名>/<LV名>
+-----------
+OS設定
+-----------
+■ パッチバンドル・個別パッチ設定
+swlist | grep -ie BUNDLE11i -ie FEATURE11i -ie HWEnable11i -ie QPKAPPS -ie QPKBASE -ie HP_LTT -ie Ignite-UX -ie T1907BA
+swlist | grep -ie FibrChanl -ie IEther -ie RAID-01 -ie USB-00 -ie OpenSSL -ie WBEMSvcs
+swlist | grep -ie CDE-English
+■ ブートパス設定
+setboot
+■ fstab設定
+grep ^[^#] /etc/fstab
+bdf
+■ システム起動時VG設定
+grep ^[^#] /etc/lvmrc
+■ クラッシュダンプ設定
+grep ^[^#] /etc/rc.config.d/crashconf
+grep ^[^#] /etc/rc.config.d/savecrash
+■ ログ出力設定
+grep ^[^#] /etc/rc.config.d/netdaemons
+grep ^[^#] /etc/syslog.conf
+■ システム言語設定
+cat /etc/rc.config.d/LANG
+■ タイムゾーン設定
+cat /etc/TIMEZONE
+■ カーネルパラメータ設定
+kctune -S
+■ ホスト名・ネットワーク構成
+cat /etc/rc.config.d/netconf
+lanscan
+for i in 0 1 2 3 4 5 6 7;do
+echo "\\n\\n# ifconfig lan${i}";/usr/sbin/ifconfig \lan${i}|grep "";done
+uname -n
+netstat -in
+netstat -rn
+■ 名前解決設定
+grep ^[^#] /etc/hosts
+■ ネットワークインタフェイスアダプタ設定
+cat /etc/rc.config.d/hpietherconf
+for i in 0 1 2 3 4 5 6 7;do
+echo "\\n\\n# lanadmin lan${i}";/usr/sbin/lanadmin -x ${i}|grep "";done
+■ ネームスイッチサービス設定
+ll /etc/nsswitch.conf
+■ ネットワーク調整パラメータ (nddconf)設定
+grep ^[^#] /etc/rc.config.d/nddconf
+ndd -get /dev/tcp tcp_keepalive_interval
+ndd -get /dev/tcp tcp_time_wait_interval
+ndd -get /dev/tcp tcp_conn_request_max
+ndd -get /dev/tcp tcp_smallest_anon_port
+ndd -get /dev/tcp tcp_largest_anon_port
+■ services設定
+grep ^[^#] /etc/services
+■ ファイル共有設定
+grep ^[^#] /etc/fstab
+bdf
+■ 時刻同期設定
+grep ^[^#] /etc/ntp.conf
+grep ^[^#] /etc/rc.config.d/netdaemons
+■ グループ設定
+grep ^[^#] /etc/group
+■ ユーザ設定
+grep ^[^#] /etc/passwd
+■ ユーザ環境設定
+grep ^[^#] /etc/skel/.login
+grep ^[^#] /etc/csh.login
+grep ^[^#] /.profile
+for i in `ls /home/usr`
+do
+echo "###### ${i}"
+cat /home/usr/${i}/.cshrc
+done
+for i in `ls /home/usr/common`
+do
+echo "###### ${i}"
+cat /home/usr/common/${i}
+done
+■ コンソール設定
+grep ^[^#] /etc/securetty
+ll /etc/securetty # 444 root:sys
+■ su可能なユーザ設定、パスワードポリシー設定
+grep ^[^#] /etc/default/security
+■ sshd設定
+grep ^[^#] /etc/rc.config.d/sshd
+■ TrustedMode設定
+grep ^[^#] /tcb
+■ インターネットデーモンセキュリティ設定
+grep ^[^#] /var/adm/inetd.sec
+■ システム起動時自動起動サービス設定
+for i in `ls /etc/rc.config.d`
+do
+echo "###### ${i}"
+cat /etc/rc.config.d/${i}
+done
+ll /sbin/rc?.d/S*
+■ inetd起動サービス設定
+grep ^[^#] /etc/inetd.conf
+grep ^[^#] /etc/inetd.conf.recovery
+■ 監査ポリシー設定
+last
+lastb
+■ システムジョブ設定
+grep ^[^#] /var/adm/cron/cron.allow
+grep ^[^#] /var/adm/cron/at.allow
+■ SNMP設定
+grep ^[^#] /etc/snmpd.conf
+■ ログローテーション設定
+grep ^[^#] /sbin/init.d/syslogd
+■ 性能情報設定
+grep ^[^#] /var/opt/perf/parm
+■ ハードウェア監視設定
+/etc/opt/resmon/lbin/monconfig
+■ System Management Homepage (SMH)設定
+grep ^[^#] /etc/rc.config.d/hpsmh
+
+-----------
+OS機能
+-----------
+■システム起動 (電源ON)
+MP:CM>PC
+→ [on]→[Y]
+mon> vparload -p vpaename
+■システム停止 (電源OFF)
+cd /
+shutdown -h -y 0
+■時刻同期
+ntpq -p
+------------
+ServiceGuard
+------------
+■ OSブート時自動クラスタ起動設定
+grep ^[^#] /etc/rc.config.d/cmcluster
+■ パッケージ制御ファイル
+customer_defined_run_cmds
+{
+CRS_FLG=/BW_un/infra/onfile/crs01
+if [ -f "${CRS_FLG}" ] ; then
+CRS_BIN="/ora_crs/product/crs/bin"
+print "$(date '+%b %e %X') - Node \"$(hostname)\": Starting Oracle Clusterware."
+${CRS_BIN}/crsctl start crs
+print "$(date '+%b %e %X') - Node \"$(hostname)\": Wait for Oracle Clusterware to start."
+while (( `${CRS_BIN}/crsctl check crs | grep healthy | wc -l` != 3 )); do sleep 5; done
+sleep 30
+print "$(date '+%b %e %X') - Node \"$(hostname)\": Oracle Clusterware is started."
+fi
+}
+customer_defined_halt_cmds
+{
+CRS_FLG=/BW_un/infra/onfile/crs01
+if [ -f "${CRS_FLG}" ] ; then
+CRS_BIN="/ora_crs/product/crs/bin "
+print "$(date '+%b %e %X') - Node \"$(hostname)\": Halting nodeapps and Oracle Clusterware."
+ORACLE_SID=BA0`${CRS_BIN}/olsnodes -n | grep \`hostname\` | awk '{print $2}'`
+${CRS_BIN}/srvctl stop instance -i $ORACLE_SID -d BA0
+${CRS_BIN}/srvctl stop nodeapps -n `hostname`
+${CRS_BIN}/crsctl stop crs
+print "$(date '+%b %e %X') - Node \"$(hostname)\": Wait for Oracle Clusterware to halt."
+while (( `UNIX95=YES ps -eo args | grep "^${CRS_BIN}/ocssd.bin" | wc -l` != 0 )); do sleep 5; done
+print "$(date '+%b %e %X') - Node \"$(hostname)\": Oracle Clusterware is halted."
+fi
+}
+
+HP-UX 適用済みのパッチ情報の確認
+/usr/sbin/swlist -l patch \*.\*,c=patch
+
+
+
+ディスク容量の確認
+
+bdf
+リソース使用状況
+
+# 対話式（topより詳細）
+glance
+システムログ(syslog)の場所
+
+/var/adm/syslog
+カーネルパラメータの確認
+
+kctune
+カーネルパラメータの使用率確認
+
+kcusage [カーネルパラメータ名(kctune等で確認)]
+物理メモリのサイズ
+
+# Itanium
+/usr/contrib/bin/machinfo | grep -i Memory
+# PA-RISC
+grep "Physical:" /var/adm/syslog/syslog.log
+スワップ領域のサイズ
+
+/usr/sbin/swapinfo -a
+CPUのアーキテクチャ
+
+/bin/getconf KERNEL_BITS
+ディレクトリ以下を再帰的に検索する ( grep )
+
+# 全ファイルを対象とする場合
+find ./ -name '*' | xargs grep [検索文字列]
+ 
+# logファイルを対象とする場合
+find ./ -name '*.log' | xargs grep [検索文字列]
+ファイルをまとめて圧縮/解凍する
+
+# tarまとめる（拡張子を付けておくと分かりやすい）
+tar -cvf backup.tar [まとめるファイル名]
+# gzip圧縮（拡張子.gzのものが作られる）
+gzip backup.tar
+ 
+# gzip解凍
+gzip -d backup.tar.gz
+# tar展開
+tar -xvf backup.tar
+n日前に更新されたファイルを固める
+コマンド例：findコマンドで5日前(-4)に更新されたファイルを固める
+
+
+find . -type f -mtime -4 -print | xargs tar cvf `date '+%Y%m%d'`_`hostname`_log.tar
+gzip `date '+%Y%m%d'`_`hostname`_log.tar
+Javaの性能調査
+HP-UXの場合は、「eprof」を使用することで、JVMにシグナルを送ってプロファイルを作成することができる。 参考：HPJmeter
+
+# 以下Java実行時にeprof引数を渡してプロファイラ作成する
+# 作成したプロファイラをHPjmeterで見る
+/opt/java1.5/bin/java -Xeprof:file=myfile.eprof TestGetClass
+ 
+# シグナルでプロファイルを作成する場合は以下を引数とする
+# （比較的、負荷が少ない）
+-Xeprof:inlining=disable,time_on=sigusr1,time_slice=sigusr2
+ 
+# プロファイルの開始
+kill -SIGUSR1 [プロセスID]
+# プロファイルの停止
+kill -SIGUSR2 [プロセスID]
+TCPダンプの取得方法
+
+
+# 1.トレース開始（作成されたデータはWireshark等で解析する）
+nettl -tn pduin pduout -e all -f /tmp/trace
+nettl -tn all -e all -f /tmp/trace
+ 
+# 2.トレース終了
+nettl -tf -e all
+ 
+# 3.トレースファイルのデコード（テキストにする場合）
+netfmt -NnlTf /tmp/trace.TRCxxx
+# または
+# netfmt -1Tf /tmp/trace.TRCxxx
+ 
+# -tn pduin pduout：LANインタフェース経由で送受信したパケットの内容を記録 します。
+# -e ns_ls_ip：IPパケットの通信を記録する。
+# -s 1024：トレースを記録する際のメッセージバッファサイズ（単位：KB）
+# -tm 1000：トレース記録用のファイルサイズ指定（単位：KB）
+# -f /tmp/trace1：トレース記録用のファイル名
+ 
+ 
+# フィルタ方法
+# 「vi TXT」で以下内容のファイルを作成する
+filter ip_saddr [IPアドレス]
+filter ip_daddr [IPアドレス]
+ 
+# 作成したファイルでフィルタする
+netfmt -1T -c TXT -f nettl.log.TRC0
+netfmt -lN -c TXT -f nettl.log.TRC0
+teraterm等で日本語入力する
+
+
+# 確認コマンド
+stty -a
+# 設定コマンド（パリティなし、文字サイズ8ビット、8ビット目をクリアしない）
+stty -parenb cs8 -istrip
+
+
+（１）Tape OS Backup
+シングルユーザモードへの移行
+
+# shutdown now
+# mount -a
+# make_tape_recovery -v -A
+
+デバイス名を指定しない場合は/dev/rmt/0mが使われる。
+mount -aで外部ストレージのファイルシステムがマウントされてしまっても
+/dev/vg00内のファイルシステムのデータがバックアップされるようになっている模様
+
+（２）make_tape_recoveryで取得したテープの中身を確認する
+①テープを装填する
+# mt -f /dev/rmt/0mn rew
+
+②テープの一番目の領域にはパーティションやブート情報などが入っている。
+　その領域を飛ばした次の領域にtarでとってあるので、次の位置へテープを進める
+
+# mt -f /dev/rmt/0mn fsf 1
+
+③中身をみる
+
+# tar vt /dev/rmt/0mn
+　途中でキャンセルする場合は、ctl + c 
+　ただし、キャンセルした場合はテープ巻き戻さないともう一度中身は見れないよ
+
+（３）マルチパス
+HP-UX11iV3からマルチパスストレージ用のバンドルプロダクトがデフォルトで入る？っぽい。
+/dev/dsk/cXtYdZ等で表記されていたデバイスが、自動的に集約されて
+/dev/disk/diskXという名前のデバイス名で扱うことができるようになった。
+これによりマルチパス設定で苦戦する必要が無くなった。
+
+LUN番号0に接続されているディスクパスが以下の二つだった場合、
+このようになる
+
+/dev/dsk/c1t0d0
+/dev/dsk/c2t0d0
+↓
+/dev/disk/disk1
+
+pvcreate/vgcreateを実行するときは、pvcreate /dev/disk/disk1でよい。
+
+やったぜHP！おせーよ('A`)
+
+（４）FCストレージのLUN確認方法
+ioscan -fnkC disk
+
+H/Wパスとブロック/キャラクタデバイスで構成されているか表示する
+ioscan -m dsf
+
+/dev/disk/diskXXがどのブロック/キャラクタデバイスで構成されているか表示する
+ioscan -m lun
+
+LUNと/dev/disk/diskXXが関連付けられて表示される。LUNは16進数表記
+（５）VGを別ノードに切り替える方法
+
+切り替え元で実施
+# vgchange -a n /dev/vgXX
+切り替え先で実施
+
+切り替え先に存在しない場合importする
+既に/etc/lvmtabにVGが定義されている場合は不要
+# vgimport /dev/vgXX /dev/disk/diskXX
+# vgchange -a y /dev/vgXX
+
+（６）スワップ領域の作成
+ブート時に必ずActivateされなければならない
+一次スワップ領域はブートボリュームグループに定義しなければならないが、
+外部ストレージに定義する場合はSANブートで無い限り、
+ブートボリュームグループにする必要は無い。
+
+①一次スワップ領域の作成
+
+ブート可能なディスクとしてPVを作成
+pvcreate -B /dev/disk/diskX
+
+VGを作成
+vgcreate -n /dev/ /dev/disk/diskX
+
+LVを作成
+lvcreate -L -n /dev/vgX
+
+一次スワップ領域を作成
+lvlnboot -s /dev/vgX/
+
+一次スワップ領域のActivate
+swapon -a
+
+確認
+swapinfo
+
+②通常のスワップ領域を作成する場合
+
+[-B]オプションが不要。つーかつけるな
+pvcreate /dev/disk/diskX
+
+VGを作成
+vgcreate -n /dev/ /dev/diskX
+
+LVを作成
+lvcreate -L -n /dev/vgX
+
+作成したLVをスワップ領域としてActivate
+swapon /dev/vgX/
+
+確認
+swapinfo
+
+起動時にActivateする場合は/etc/fstabに定義
+/dev/vgX/ / swap default 0 1 #
+
+リブート
+shutdown -r -y now
+
+自動Activateの確認
+swapinfo
+
+③スワップ領域の優先度を変更する
+swapon -p <0-10までの値> 
+0が一番優先度が高い。
+自動Activateさせるスワップ領域はfstabに優先順位を記述できるはず。。
+これはまだ試してない。
+
+またlvlnbootで作ったスワップの優先順位を変えるにはどうしたらよいものか
+man読まないと。

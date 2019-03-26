@@ -1,0 +1,4 @@
+dism /online /Enable-Feature /FeatureName:SMB1Protocol /NoRestart
+
+echo SMB1.0を有効化します。パソコンを再起動してください。
+pause
