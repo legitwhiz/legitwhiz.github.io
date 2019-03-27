@@ -32,11 +32,11 @@ title: プロジェクトコミュニケーションツール『Rocket.chat』�
 
 
 
-### 1.4. OSSプロジェクトコミュニケーションツール
+### 1.1. OSSプロジェクトコミュニケーションツール
 
 
 
-#### 1.4.1. オンプレ型プロジェクトコミュニケーションツール
+#### 1.1.1. オンプレ型プロジェクトコミュニケーションツール
 
 [Rocket.chat公式HP](https://rocket.chat/)
 
@@ -44,7 +44,7 @@ Rocket.Chatはオープンソースのウェブチャットプラットフォー
 
 
 
-#### 1.4.2. クラウド型プロジェクトコミュニケーションツール(無料のみを記載※)
+#### 1.1.2. クラウド型プロジェクトコミュニケーションツール(無料のみを記載※)
 
 [Slack公式HP](https://slack.com/)
 
@@ -62,7 +62,7 @@ Slackとよく比較されるのがHipChatです。チャットとしての基�
 
 
 
-#### 1.4.3. オンプレ型botツール
+#### 1.1.3. オンプレ型botツール
 
 [HUBOT公式サイト](https://hubot.github.com/)
 
@@ -80,13 +80,13 @@ RubotyはRuby製のbotツールです。Herokuの無料プランで動作させ�
 
 
 
-### 1.5. プロジェクトコミュニケーションツール選定
+### 1.2. プロジェクトコミュニケーションツール選定
 
 チャットツールは、自社内にオンプレミスで構築でき、利用料金が発生しない**【Rocket.chat】**を選定し、botには、チャットツールとのアダプターが存在する**【HUBOT】**を選定することにします。
 
 
 
-### 1.6. Rocket.chatとは？
+### 1.3. Rocket.chatとは？
 
 Rocket.Chatとは、[OSS](https://www.designet.co.jp/faq/term/index.php?id=44Kq44O844OX44Oz44K944O844K544K944OV44OI44Km44Kn44Ki)のウェブチャットソフトウェアです。昨今では、本社と支社間、在宅勤務者、顧客先や移動中の社員等、遠隔地にいる人とコミュニケーションを取る機会が増えています。会議室やプロジェクトルーム内で気軽に話をするように遠隔地とも話ができれば、作業効率の向上を期待できます。Rocket.Chatは、オンプレミス環境にシンプルなチャットシステムを構築できるソフトウェアです。
 
@@ -175,165 +175,6 @@ HUBOT ：2.17.2
 ### 3.1. Rocket.chat初期設定
 
 ブラウザで[http://IPアドレス:3000/] にアクセスし、[名前]に"root"、[ユーザ名]に"root"、[組織の電子メール]に"適当なメールアドレス"、[パスワード]に"管理者のパスワード"を入力し[次へ]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat001.png" width="640">
-
-[組織の種類]に"適当な種類"、[組織名]に"適当な組織名"、[産業]に"適当な産業"、[規模]に"適当なメンバー数"、[国・地域]に"日本"、[ウェブサイト]に"適当なURL"を入力し、[次へ]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat002.png" width="640">
-
-[サイト名]に"適当なサイト名"、[言語]に"日本語"、[サーバの種類]に"プライベートチーム"を選択し、[次へ]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat003.png" width="640">
-
-[次を自分で実施し、スタンドアローン利用する]を選択し、[次へ]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat004.png" width="640">
-
-[ワークスペースを開く]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat005.png" width="420">
-
-ワークスペース画面で[:]ボタンをクリックし[管理]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat006.png" width="640">
-
-管理画面の左側で[ユーザー]を選択し、右側の[+]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat007.png" width="640">
-
-[名前]に"bot"、[ユーザ名]に[docker-compose.yml]に設定した[ROCKETCHAT_USER]のパラメータ、[メール]に"適当なメールアドレス"、[パスワード]に[docker-compose.yml]に設定した[ROCKETCHAT_PASSWORD]のパラメータ、[ロールを選択]で[BOT_NAME]のパラメータを選択し[ロールを追加する]ボタンをクリックし、[ようこそメールを送信]のチェックを外し、[保存]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat008.png" width="320">
-
-botユーザが追加されたことを確認。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat009.png" width="640">
-
-botユーザ追加後、hubotを起動しRocket.chatのユーザ画面でbotユーザの左側のマークが緑色に変わったらbotの認識はOKとなります。
-
-
-
-### 3.4. ユーザ作成
-
-ユーザ作成は、botユーザ作成と同様に作成すること。
-
-### 3.5 Jenkins連携用スクリプトの配置
-
-
-
-docker-compose.ymlの記載したhubotのscript格納ディレクトリ(以下の場合は[./scripts])に
-
-```yaml
-volumes:
-  - ./scripts:/home/hubot/scripts
-```
-
-
-以下のファイルをダウンロードし、
-
-https://github.com/github/hubot-scripts/blob/master/src/scripts/jenkins.coffee
-
-script格納ディレクトリにファイル[hubot-scripts.json]に以下を設定する。
-
-```json
-[
-    "jenkins.coffee"
-]
-```
-
-
-
-3.6. Jenkins側にリモートジョブ実行許可設定
-
-Jenkins側でもユーザ・パスワードだけでなくリモートジョブを実行許可する設定が必要となります。
-
-Jenkinsにログインし[Jenkinsの管理]をクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/hubot_jenkins_config001.png" width="240">
-
-[グローバルセキュリティの設定]をクリック
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/hubot_jenkins_config002.png" width="480">
-
-[CSRF対策]のチェックを外し、[保存]ボタンをクリック。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/hubot_jenkins_config003.png" width="240">
-
-
-
-### 3.6. Jenkinsジョブを実行
-
-まずは、Rocket.chatにメッセージでbotが応答してくれるか動作確認を実施してみたいと思います。Rocket.chatからbotに対して、呼びかける時は`@bot`と入力すればチャットでの発言がbotに対してのメッセージとなります。
-
-また、単純にbotの応答確認したい時は、`ping`を投げると設定が間違っていなければ`PONG`と応答してくれます。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/hubot_ping001.png" width="320">
-
-Rocket.chatにメッセージを載せ、Hubot経由でJenkinsジョブを実行してみます。
-botにjenkinsのビルドを実行させるには`@bot jenkins build <ジョブ名>`となります。
-なお、jenkinsのジョブリストを出力させたい場合は、`@bot jenkins list`でジョブリストを応答してくれます。
-
-<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/hubot_jenkins_jobstart001.png" width="480">
-
-
-
-### 3.7. その他連携スクリプトの設定
-
-[hubot-scripts.json]に使用するscriptをカンマ(,)区切りで設定し、scriptフォルダに`*.coffee`を設定し、docker-compose.ymlに連携するためのURLや認証情報を環境変数に設定する。
-
-```hubot-scripts.json
-[
-    "jenkins.coffee","gitbucket-notification.coffee"
-]
-```
-
-
-
-## 最後に
-
-最初は、チャットツールの必要性を疑問視していたが、jenkinsのジョブ実行も含め、チーム内で作業も連携することができるのは、連携ミスも避けることも可能だと感じました。
-
-
-    links:
-      - rocketchat:rocketchat
-    labels:
-      - "traefik.enable=false"
-    volumes:
-      - ./scripts:/home/hubot/scripts
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "3001:8080"
-```
-
-### 2.2. Rocket.chat起動
-
-```
-# docker-compose up -d
-```
-
-注意事項：Hubotは、初回起動時のみRocket.chatにbotユーザを作成していないため、docker コンテナが異常終了(Exit 1)します。
-
-
-
-### 
-
-```
-# sudo yum install nodejs npm
-# docker exec <container-name> 
-```
-
-
-
-
-
-## 3.Rocket.chat初期設定
-
-
-
-### 3.1. Rocket.chat初期設定
-
-ブラウザで[http://IPアドレス:3000/]にアクセスし、[名前]に"root"、[ユーザ名]に"root"、[組織の電子メール]に"適当なメールアドレス"、[パスワード]に"管理者のパスワード"を入力し[次へ]ボタンをクリック。
 
 <img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/Rocketchat/Rocket.chat001.png" width="640">
 
