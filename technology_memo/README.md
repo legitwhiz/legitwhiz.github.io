@@ -16,6 +16,14 @@ https://qiita.com/tarobei/items/25f91dc287740fd190fd
 TECH PLAY Magazine
 https://techplay.jp/column
 
+Terraformに入門してサーバを構築してみるまで
+https://kiririmode.hatenablog.jp/entry/20180418/1524006000
+
+LambdaをTerraformで管理してた辛みをApexに乗り換えて解決した〜Datadog Logsの例を添えて〜
+https://tech.recruit-mp.co.jp/infrastructure/post-16931/
+
+AWS アカウントと IAM 認証情報
+
 PC見積もり
 CPU	72980	1	45,939	Core i7-8700K 6コア/12スレッド LGA1151 
 Mem	25401	1		DDR4 2666MHz 8G x 4 の 32G キット！！ 
