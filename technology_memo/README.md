@@ -39,3 +39,9 @@ video	4,259	1	玄人志向 ビデオカードGEFORCE GT 710搭載 ロープロ�
 
 201695			161,950	
 
+Amazone Redshift
+https://www.slideshare.net/AmazonWebServicesJapan/aws-black-belt-tech-2015-amazon-redshift?next_slideshow=1
+
+GCPで永久無料枠を利用してサービスを立ち上げたときにしたことの備忘録
+https://qiita.com/riku-shiru/items/a870edd9dc0b132e092c
+
