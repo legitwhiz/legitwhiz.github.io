@@ -24,17 +24,21 @@ https://tech.recruit-mp.co.jp/infrastructure/post-16931/
 
 AWS アカウントと IAM 認証情報
 
-PC見積もり
-CPU	72980	1	45,939	Core i7-8700K 6コア/12スレッド LGA1151 
-Mem	25401	1		DDR4 2666MHz 8G x 4 の 32G キット！！ 
-SSD	8957	1		Crucial SSD 500GB！！！
-HDD	12569	3		Seagate製 SATA 6Gbps 6.0TB！！
-MB	22557	1		安心品質の ASUS Intel Z390 チップセット搭載マザー！！！
-cooler	6122	1		水冷 CPU クーラー！
-PS	18827	1	11,999	Thermaltake TOUGHPOWER GRAND RGB -850W
-DVD	17121	1		I-O DATA の外付け ブルーレイドライブ USB 3.0 対応！！
-case	17161	1	7,026	Cooler Master MasterBox MB600L Red ミドルタワー型PCケース CS7067 MCB-B600L-KA5N-S00
-video	4,259	1	玄人志向 ビデオカードGEFORCE GT 710搭載 ロープロファイル 空冷FAN GF-GT710-E1GB/LP
+CPU	65,858 	1	65,858 	INTEL インテル CPU Corei9-9900K INTEL300シリーズChipsetマザーボード対応 BX80684I99900K【BOX】	https://www.amazon.co.jp/INTEL-%E3%82%A4%E3%83%B3%E3%83%86%E3%83%AB-Corei9-9900K-INTEL300%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BAChipset%E3%83%9E%E3%82%B6%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E5%AF%BE%E5%BF%9C-BX80684I99900K%E3%80%90BOX%E3%80%91/dp/B005404P9I/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=0010cbab634dac6c6a6625a5c1da2102&creativeASIN=B005404P9I
+Mem	24,343 	1	24,343 	CORSAIR DDR4 デスクトップPC用 メモリモジュール VENGEANCE LPX Series 8GB×4枚キット CMK32GX4M4A2666C16	https://www.amazon.co.jp/CORSAIR-%E3%83%87%E3%82%B9%E3%82%AF%E3%83%88%E3%83%83%E3%83%97PC%E7%94%A8-VENGEANCE-8GB%C3%974%E6%9E%9A%E3%82%AD%E3%83%83%E3%83%88-CMK32GX4M4A2666C16/dp/B00OTJZTZE/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=99a34a42405620e2af397307044a6ab2&creativeASIN=B00OTJZTZE
+SSD	14,980 	2	29,960 	Samsung SSD 500GB 970 EVO Plus M.2 Type2280 PCIe3.0×4 NVMe1.3 5年保証 正規代理店保証品 MZ-V7S500B/EC	https://www.amazon.co.jp/exec/obidos/ASIN/B07MZ4R9FR/ref=nosim?tag=maftracking130538-22&linkCode=ure&creative=6339&th=1
+HDD	11,640 	3	34,920 	Seagate BarraCuda 3.5" 6TB 内蔵ハードディスク HDD 2年保証 6Gb/s 256MB 5400rpm 正規代理店品 ST6000DM003	https://www.amazon.co.jp/Seagate-BarraCuda-%E5%86%85%E8%94%B5%E3%83%8F%E3%83%BC%E3%83%89%E3%83%87%E3%82%A3%E3%82%B9%E3%82%AF-5400rpm-ST4000DM004/dp/B07911QK3W/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=d9bf7d44bf4032b1f27606c472dc05c1&creativeASIN=B073ZGQZM1&th=1
+MB	22,557 	1	22,557 	ASUS Intel® Z390搭載 LGA1151対応マザーボード ROG STRIX Z390-F GAMING【ATX】	https://www.amazon.co.jp/Intel%C2%AE-LGA1151%E5%AF%BE%E5%BF%9C%E3%83%9E%E3%82%B6%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89-ROG-Z390-F-GAMING%E3%80%90ATX%E3%80%91/dp/B07J53J483/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=9c99deba3817a16e921d01c7bbbe8ac2&creativeASIN=B07J53J483
+cooler	6,122 	1	6,122 	Cooler Master MasterLiquid Lite 120 一体型水冷CPUクーラー [デュアルチャンバーヘッド 搭載] FN1092 MLW-D12M-A20PW-R1	https://www.amazon.co.jp/Cooler-MasterLiquid-%E4%B8%80%E4%BD%93%E5%9E%8B%E6%B0%B4%E5%86%B7CPU%E3%82%AF%E3%83%BC%E3%83%A9%E3%83%BC-%E3%83%87%E3%83%A5%E3%82%A2%E3%83%AB%E3%83%81%E3%83%A3%E3%83%B3%E3%83%90%E3%83%BC%E3%83%98%E3%83%83%E3%83%89-MLW-D12M-A20PW-R1/dp/B06WRRDS73/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=c89a99bbdaa8728472e61d4023eaf50b&creativeASIN=B06WRRDS73
+PS	13,190 	1	13,190 	Corsair RM850x -2018-850W PC電源ユニット [80PLUS GOLD] PS795 CP-9020180-JP	https://www.amazon.co.jp/Corsair-RM1000x-GOLD%E8%AA%8D%E8%A8%BC%E5%8F%96%E5%BE%97-1000W%E9%9D%99%E9%9F%B3%E9%9B%BB%E6%BA%90%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88-CP-9020094-JP/dp/B07D2KNCXD/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=5c9751a36d60741b86cd31b5259dfb44&creativeASIN=B0190M0DS2&th=1
+DVD	15,121 	1	15,121 	I-O DATA ブルーレイドライブ 外付型/USB 3.0/BDXL/M-DISC/16倍速高速書き込み BRD-UT16WX	https://www.amazon.co.jp/DATA-%E3%83%96%E3%83%AB%E3%83%BC%E3%83%AC%E3%82%A4%E3%83%89%E3%83%A9%E3%82%A4%E3%83%96-M-DISC-16%E5%80%8D%E9%80%9F%E9%AB%98%E9%80%9F%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%81%BF-BRD-UT16WX/dp/B017V4WN0C/ref=as_sl_pc_tf_til?tag=serverworld-22&linkCode=w00&linkId=7516c267c2f703db436977a6d603e8ae&creativeASIN=B017V4WN0C
+case	5,546 	1	5,546 	Corsair Carbite 100R Silent ATX対応ミドルタワーPCケース CS5332 CC-9011077-WW	https://www.amazon.co.jp/Corsair-Carbite-Silent-ATX%E5%AF%BE%E5%BF%9C%E3%83%9F%E3%83%89%E3%83%AB%E3%82%BF%E3%83%AF%E3%83%BCPC%E3%82%B1%E3%83%BC%E3%82%B9-CC-9011077-WW/dp/B00RORBQSW/ref=sr_1_7?fst=as%3Aoff&qid=1554181002&refinements=p_n_feature_six_browse-bin%3A2189031051&rnid=2189016051&s=computers&sr=1-7
+USB HDD	16,980 	1	16,980 	WD HDD 外付けハードディスク 6TB Elements Desktop USB3.0 WDBBKG0060HBK-JESN / 2年保証	https://www.amazon.co.jp/%E5%A4%96%E4%BB%98%E3%81%91%E3%83%8F%E3%83%BC%E3%83%89%E3%83%87%E3%82%A3%E3%82%B9%E3%82%AF-Elements-Desktop-USB3-0-WDBBKG0060HBK-JESN/dp/B07CY469C5/ref=sr_1_12?fst=as%3Aoff&qid=1554182042&refinements=p_n_feature_browse-bin%3A3292104051&rnid=2180328051&s=computers&sr=1-12
+NW　I/F	9,800 	1	9,800 	Gigabit LAN カード, インテル82580純正ボード(チップ）実装, Quad RJ45 ポート, PCI-E 2.0 X4,I340-T4/ E1G44HT,PCサーバ用	https://www.amazon.co.jp/Gigabit-%E3%82%A4%E3%83%B3%E3%83%86%E3%83%AB82580%E7%B4%94%E6%AD%A3%E3%83%9C%E3%83%BC%E3%83%89-%E3%83%81%E3%83%83%E3%83%97%EF%BC%89%E5%AE%9F%E8%A3%85-I340-T4-E1G44HT/dp/B01LWIJ2UZ/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&keywords=82580&qid=1554183165&s=computers&sr=1-1-catcorr
+SSD ヒートシンク	1,596 	2	3,192 	volflashy M.2 SSD ヒートシンク クーラー M.2 2280 ソリッド ステート ハード ディスク ドライブ ラジエーター オール アルミ ヒートシンク	https://www.amazon.co.jp/volflashy-%E3%83%92%E3%83%BC%E3%83%88%E3%82%B7%E3%83%B3%E3%82%AF-%E3%82%AF%E3%83%BC%E3%83%A9%E3%83%BC-2280-%E3%83%A9%E3%82%B8%E3%82%A8%E3%83%BC%E3%82%BF%E3%83%BC/dp/B07MXCVXCJ/ref=sr_1_24?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=2GHIX8ZXYFLYN&keywords=m.2+%E3%83%92%E3%83%BC%E3%83%88%E3%82%B7%E3%83%B3%E3%82%AF&qid=1554186498&s=computers&sprefix=M.2+%2Ccomputers%2C314&sr=1-24
+
+247,589 
+
 
 
 201695			161,950	
