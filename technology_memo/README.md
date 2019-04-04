@@ -63,3 +63,4 @@ https://www.slideshare.net/AmazonWebServicesJapan/aws-black-belt-tech-2015-amazo
 GCPで永久無料枠を利用してサービスを立ち上げたときにしたことの備忘録
 https://qiita.com/riku-shiru/items/a870edd9dc0b132e092c
 
+NJ2A6-DUH52-78R81-023RM-2TY06
