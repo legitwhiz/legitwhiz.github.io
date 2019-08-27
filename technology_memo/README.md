@@ -69,3 +69,8 @@ NJ2A6-DUH52-78R81-023RM-2TY06
 Confluence（コンフルエンス）を使用するなら最低限覚えておきたいWiki記法
 https://iwb.jp/confluence-wiki/
 
+うなぎ
+https://tabelog.com/tokyo/A1309/A130905/13018616/
+http://www.houraiken.com/access.html
+https://tabelog.com/shizuoka/A2202/A220201/22000097/
+https://tabelog.com/aichi/A2302/A230201/23031912/
