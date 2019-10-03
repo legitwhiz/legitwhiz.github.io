@@ -5,6 +5,8 @@ title: 技術レポート
 
 ### ● DevOps
 
+* [バージョン管理から始めるDevOps(今までの総まとめ)](technology_memo/DevOps_starting_with_version_control.html)
+
 #### ■ ジョブスケジューラー
 
 * [OSS ジョブスケジューラ(Rundeck)を自宅サーバに入れてみた_Part1](technology_memo/OSS_job_scheduler_Rundeck_Part1.html)
@@ -24,6 +26,8 @@ title: 技術レポート
 * [Gitbucketでソース管理](technology_memo/Gitbucket_Resource_management.html)
 
 * [GitHubで公開したソースにオープンソースライセンスを適用](technology_memo/license_to_source_published_on_GitHub.html)
+
+* [サイト管理のためのGit運用フローを作ってみました。](technology_memo/Gitbucket_Resource_management.html)
 
 #### ■ CI
 
