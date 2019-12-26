@@ -1,0 +1,29 @@
+
+cd /log/arclog/02/17/icewall-sso
+cp -p dfw.log0217.Z iw01M_sso_dfwN2019ERS_20190218145600.log.Z
+touch iw01M_sso_dfwN2019ERS_20190218145600.check
+cp -p dfw_dgo.log0217.Z iw01M_sso_dgoN2019ERS_20190218145600.log.Z
+touch iw01M_sso_dgoN2019ERS_20190218145600.check
+cp -p remindermail_log.txt0217.Z iw01M_sso_reminderN2019ERS_20190218145600.log.Z
+touch iw01M_sso_reminderN2019ERS_20190218145600.check
+
+sftp -i /opt/sftp_log/sso_id_rsa sso_sftpuser@192.168.1.16
+
+
+lcd /log/arclog/02/17/icewall-sso
+
+cd /logst/filercv/incomming/manu_load/sso
+put iw01M_sso_dfwN2019ERS_20190218145600.log
+put iw01M_sso_dgoN2019ERS_20190218145600.log
+put iw01M_sso_reminderN2019ERS_20190218145600.log
+
+iw01M_sso_dfwN2019ERS_20190218145600.log
+iw01M_sso_dgoN2019ERS_20190218145600.log
+iw01M_sso_reminderN2019ERS_20190218145600.log
+
+cd /log/arclog/02/17/icewall-sso
+cp -p 
+put cert01M_sso_certdfwN2019ERS_20190218145600.log
+put cert01M_sso_certdfwN2019ERS_20190218145600.check
+put cert01M_sso_certdgoN2019ERS_20190218145600.log
+put cert01M_sso_certdgoN2019ERS_20190218145600.check

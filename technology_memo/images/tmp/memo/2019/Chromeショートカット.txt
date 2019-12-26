@@ -1,0 +1,167 @@
+
+
+○：ブログ検索
+b.
+○：FC2ブログ検索
+bf
+○：YAHOOブログ検索
+by
+○：アメーバブログ検索
+ba
+○：はてなダイアリー検索
+bh
+●：SampleCode検索
+c.
+●：DOBON.NET Code検索
+cd
+●：MSDN Code検索
+cm
+●：smdn Code検索
+cs
+●：VB中学校 Code検索
+cv
+□：IT用語辞典検索
+ i
+□：Weblio辞書検索
+wb
+□：Wikitionary検索
+wk
+□：Wikipedia検索
+ w
+■：画像検索
+i.
+■：Bing画像検索
+ib
+■：Google画像検索
+ig
+◇：記事検索
+a.
+◇：CodeZine記事検索
+ac
+◇：ITpro記事検索
+ai
+◇：Qiita検索
+aq
+◇：@IT記事検索
+aa
+◆：DevDocs検索
+rd
+◆：HTMLクイックリファレンス検索
+rh
+◆：jQueryリファレンス検索
+rq
+◆：ORACLEリファレンス検索
+ro
+◆：MDN検索
+rm
+◆：Laravel API 公式ドキュメント検索
+rla
+◆：Laravel公式ドキュメント検索
+rl
+△：掲示板検索
+f.
+△：MSDN掲示板検索
+fm
+△：OTN(Oracle)掲示板検索
+fo
+△：Stack Overflow検索
+fs
+△：teratail検索
+ft
+△：Yahoo!知恵袋検索
+fc
+△：２ちゃんログ速検索
+fn
+△：@IT掲示板検索
+fi
+◎：NAVER検索
+ n
+◎：Lifehacker検索
+ l
+◎：スライド検索
+s.
+◎：Wikipedia&GoogleImage検索
+wg
+◎：天気調べ
+ ,
+◎：イベント検索
+e.
+Ｇ：Google翻訳（日本語→英語）
+gn
+Ｇ：Google翻訳（英語→日本語）
+ge
+Ｇ：GoogleMap検索
+gm
+Ｇ：I'm feeling lucky検索
+ .
+Ｇ：サイト内検索
+gs
+Ｔ：Twitter検索（ツイート）
+tt
+Ｔ：Twitter検索（ハッシュタグ）
+th
+Ｔ：Twitter検索（画像）
+ti
+Ｔ：Twitter検索（動画）
+tm
+▽：ブクログ検索
+br
+▽：カーリル検索
+bc
+▼：Gmail送信
+mg
+▼：YAHOOメール送信
+my
+☆：Amazon商品検索
+sa
+☆：GearBest商品検索
+sb
+☆：駿河屋検索
+ss
+☆：ヤフオク検索
+sy
+☆：Shufoo!検索
+st
+☆：価格.com検索
+sk
+★：YouTube検索
+dy
+★：nicozon検索
+dn
+★：学習動画検索
+dl
+★：ドットインストール検索
+dd
+★：schoo検索
+ds
+★：MicrosoftVirtualAcademy検索
+dm
+▲：類語辞典（weblio.jp）検索
+lr
+▲：英和和英辞典（weblio.jp）
+le
+▲：類義語辞典検索
+ll
+Ω：Facebook検索
+fb
+
+新規ウィンドウを開く	Ctrl + N
+新規タブを開く	Ctrl ＋ T
+閉じたタブを再度開く	Ctrl＋Shift＋T
+タブを閉じる	Ctrl + W
+現在のタブから右に移動	Ctrl + Tab
+現在のタブから左に移動	Ctrl + Shift + Tab
+指定したタブへ移動	Ctrl+ 数字(0~9)
+テキストの情報のみをペースト	Ctrl + Shift + V
+アドレスバーにカーソルを移動	Ctrl + L
+ブックマークに追加	Ctrl + D
+テキストサイズを大きく	Ctrl + +キー
+テキストサイズを小さく	Ctrl + -キー
+テキストサイズをデフォに	Ctrl + 0
+ページ内キーワード検索	Ctrl + F
+ダウンロードページの表示	Ctrl＋J
+HTMLソースの表示	Ctrl＋U
+履歴の表示	Ctrl＋H
+履歴を削除	Ctrl＋Shift+Delete
+ユーザーを切り替え	Ctrl ＋Shift ＋M
+

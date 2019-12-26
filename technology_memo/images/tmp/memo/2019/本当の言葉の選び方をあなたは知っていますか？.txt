@@ -1,0 +1,75 @@
+■本当の言葉の選び方をあなたは知っていますか？
+文章を書くうえで、適切な言葉を選ばないと伝わるものも100%相手には伝わりません。
+最近、【語彙力】という言葉をよく見かけるようになりましたが、表現するチカラが乏しいと読み手も伝わらないし、とりとめのない文章では飽きてしまいます。
+文章を印象深く鮮やかにするため、私は以下のリンク先を利用しています。
+
+
+■各種辞書
+
+連想類語辞典
+https://renso-ruigo.com/
+日本語表現インフォ
+https://hyogen.info/
+対義語・反対語辞典
+http://hanntaigo.main.jp/
+反対語大辞典
+https://hantaigo.com/
+オノマトペ辞典
+http://sura-sura.com/
+英語の擬音語・擬態語
+https://www.rondely.com/zakkaya/dic5/index.htm
+
+
+■Chrome拡張機能「Context Menu Search」
+更に操作性を高めるため、Chrome拡張機能である「Context Menu Search」を使うことで、簡単に言葉を検索することができるようにしています。
+
+登録方法は、「Context Menu Search 使い方」でググれば先人達が使い方を披露していますので参考にするとよいでしょう。
+
+私の「Context Menu Search」の登録内容は以下のようにしています。
+
+Weblio類語辞典
+http://thesaurus.weblio.jp/content/TESTSEARCH
+連想類語辞典
+http://renso-ruigo.com/word/TESTSEARCH
+weblio辞書
+http://www.weblio.jp/content/%s
+weblio英和・和英辞典
+http://ejje.weblio.jp/content/%s
+Wikipedia
+http://ja.wikipedia.org/wiki/%s
+IT用語辞典
+http://e-words.jp/w/%s.html
+対義語・反対語辞典
+https://hantaigo.com/word/TESTSEARCH
+
+■Bookmarklet
+「Context Menu Search」で操作性を高めるのもいいですが、Javascriptが書けるなら自分の使いやすいようにBookmarkletを作ることも可能です。
+
+サンプルは、以下を参考にするとよいだろう。
+https://qiita.com/shotets/items/817e2c525615334a38fb
+
+特に素晴らしいのが、以下のBookmarklet!!!
+単機能ではなく、メニュー形式で色々選択できるようになっているため大変便利。
+
+俺の最強検索ツール
+https://github.com/dodonki1223/Bookmarklets/tree/master/MyStrongestSearchTool
+
+■キャッチコピー自動作成
+文章を書く上で題目を考えるのに意外と時間と労力を必要とします。
+(まあ、私の発想力がないだけですが・・・w)
+そのため、以下のようにキャッチコピーを単語をいくつか設定するだけで簡単にキャッチコピーを作成してくれるWebサービスを利用しています。
+
+コピーメカ/キャッチコピー自動作成サイト
+http://www.copymecha.com/index.php
+自分で作るキャッチコピー - キャッチコピー制作装置
+https://imu-net.jp/word/copywriting.php
+バカ売れキャッチコピーを作成！プロ直伝のタイトルメーカー「メガトリ」
+https://rakuzanet.jp/megatori/
+キャッチコピー自動生成サービス「Copita AI」
+http://copita.jpn.org/ai/
+
+
+
+
+
+

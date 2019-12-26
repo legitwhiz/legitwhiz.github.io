@@ -1,0 +1,38 @@
+logstorage_cron_config
+
+crontab -l
+crontab -e
+
+### IceWall
+#sftp_log 20190225 UP
+#50 0 * * * /usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+#50 0 * * * /usr/bin/perl /opt/sftp_log/ssodgo_sftp_log.pl
+#55 0 * * * /usr/bin/perl /opt/sftp_log/reminder_sftp_log.pl
+crontab -l
+
+cd /opt/sftp_log/
+ls -l
+chmod 755 ./*.pl
+chown root:root ./*.pl
+chmod 755 ./*.sh
+chown root:root ./*.sh
+ls -l
+
+
+### Cert
+#sftp_log 20190225 UP
+#50 0 * * * /usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+#50 0 * * * /usr/bin/perl /opt/sftp_log/ssodgo_sftp_log.pl
+
+### LDAP
+#sftp_log 20190225 UP
+#10 0 * * * /usr/bin/perl /opt/sftp_log/sso_sftp_log_ldap.pl
+#20 18 * * * /usr/bin/perl /opt/sftp_log/sso_sftp_ldif.pl
+
+### LDAP REP
+#sftp_log 20190225 UP
+#50 0 * * * /usr/bin/perl /opt/sftp_log/sso_sftp_log.pl
+
+
+crontab -l
+

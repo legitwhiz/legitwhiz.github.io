@@ -1,0 +1,21 @@
+
+Get-ExecutionPolicy
+
+powershell -NoProfile -ExecutionPolicy unrestricted -Command "Start-Process powershell.exe -Verb runas"
+
+Set-ExecutionPolicy RemoteSigned
+
+Get-ExecutionPolicy
+
+
+
+
+powershell -NoProfile -ExecutionPolicy unrestricted -Command "Start-Process notepad -Verb runas C:\Windows\System32\drivers\etc\hosts"
+
+
+powershell -NoProfile -ExecutionPolicy unrestricted -Command "Start-Process cmd -Verb runas"
+
+powershell -ExecutionPolicy RemoteSigned 
+
+
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned C:\Users\09013999\Documents\script\eventlog_attendance_management.ps1

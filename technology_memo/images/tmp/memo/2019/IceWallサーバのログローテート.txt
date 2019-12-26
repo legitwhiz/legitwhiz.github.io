@@ -1,0 +1,19 @@
+IceWallサーバのログローテート設定変更実施しました。
+/etc/logrotate.d/icewall_remindermail_log
+
+内容確認いただいて、問題なければ動作確認、実行結果確認を実施したいと思います。
+
+動作確認
+ls -l /log/icewall-sso/dfw/*log.txt
+logrotate -dv /etc/logrotate.d/icewall_remindermail_log
+ls -l /log/icewall-sso/dfw/*log.txt
+
+実行結果確認
+cat /var/lib/logrotate.status
+
+設定反映については、コマンドを実行すると記載されているところとcron実行時にファイルを勝手に読み込むと記載されているところがあるので
+様子見とさせていただきます。
+/usr/sbin/logrotate /etc/logrotate.conf
+
+
+logrotate -fv /etc/logrotate.d/icewall_remindermail_log

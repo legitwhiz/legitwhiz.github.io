@@ -1,0 +1,6 @@
+function cleanup() {
+    rm -f /cleanup-target
+    echo "cleaned up!"
+}
+
+trap cleanup 1 2 3 15

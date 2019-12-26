@@ -1,0 +1,7 @@
+#!/bin/bash
+
+LINE_API_Token="<my token>"
+
+curl -X POST -H 'Authorization: Bearer ${LINE_API_Token}' -F 'message=bashからLINENotifyに送信テスト' https://notify-api.line.me/api/notify
+
+echo "\n\nLINEへの通知に成功しました\n"
