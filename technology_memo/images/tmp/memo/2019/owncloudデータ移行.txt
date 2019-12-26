@@ -1,0 +1,47 @@
+owncloudデータ移行
+
+ocpath='/share/owncloud'
+htuser='www-data'
+
+sudo find ${ocpath}/ -type f -print0 | xargs -0 sudo chmod 0640 {}
+sudo find ${ocpath}/ -type d -print0 | xargs -0 chmod 0750 {}
+
+sudo chown -R root:${htuser} ${ocpath}/
+sudo chown -R ${htuser}:${htuser} ${ocpath}/apps/
+sudo chown -R ${htuser}:${htuser} ${ocpath}/config/
+sudo chown -R ${htuser}:${htuser} ${ocpath}/data/
+
+sudo chown root:${htuser} ${ocpath}/.htaccess
+sudo chown root:${htuser} ${ocpath}/data/.htaccess
+
+sudo chmod 0644 ${ocpath}/.htaccess
+sudo chmod 0644 ${ocpath}/data/.htaccess
+
+
+ocpath='/share/owncloud'
+htuser='www-data'
+htgroup='www-data'
+rootuser='root'
+
+sudo find ${ocpath}/ -type f -print0 | xargs -0 chmod 0640
+find ${ocpath}/ -type d -print0 | xargs -0 chmod 0750
+
+chown -R ${rootuser}:${htgroup} ${ocpath}/
+chown -R ${htuser}:${htgroup} ${ocpath}/apps/
+chown -R ${htuser}:${htgroup} ${ocpath}/assets/
+chown -R ${htuser}:${htgroup} ${ocpath}/config/
+chown -R ${htuser}:${htgroup} ${ocpath}/data/
+chown -R ${htuser}:${htgroup} ${ocpath}/themes/
+chown -R ${htuser}:${htgroup} ${ocpath}/updater/
+
+chmod +x ${ocpath}/occ
+chmod 0644 ${ocpath}/.htaccess
+chown ${rootuser}:${htgroup} ${ocpath}/.htaccess
+chmod 0644 ${ocpath}/data/.htaccess
+chown ${rootuser}:${htgroup} ${ocpath}/data/.htaccess
+
+chown 666 /var/www/html/owncloud/config/config.php
+
+
+config.phpのパーミッションを666
+

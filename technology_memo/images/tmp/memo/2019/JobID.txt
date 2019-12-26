@@ -1,0 +1,11 @@
+JobID
+
+1 System id
+2 ap group id(業務グループid)
+3 ap object id(機能id)
+4 Execution cycle(実行周期)
+5 job object id(job種別)
+6～9 4桁連番(0000-9999)
+
+
+

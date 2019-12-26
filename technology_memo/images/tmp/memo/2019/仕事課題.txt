@@ -1,0 +1,12 @@
+仕事課題
+
+ジョブ実行環境の把握
+JP1/AJS Managerからjobkicker、jobkickerからEC2へ
+
+監視単体テスト
+
+監査ログ取得シェル作成
+
+BLUE会議agenda
+
+

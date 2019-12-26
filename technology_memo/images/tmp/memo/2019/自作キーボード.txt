@@ -1,0 +1,60 @@
+ErgoDash 14,040
+Kailh BOX スイッチ 赤軸  45 *75
+MDA Big Bang 2.0     7938
+TRRSケーブル  324
+USBケーブル    1,296
+26,973
+
+白光 ダイヤル式温度制御はんだこて FX600 5800
+goot こて先クリーナー ST-70                710
+goot 高密度集積基板用はんだ SD-60    280*2
+goot はんだ吸取り線 CP-20Y                 470
+
+7,540
+
+計 34,513
+
+
+精密ピンセット
+プラスドライバー
+ラジオペンチ
+ニッパー
+テスター
+作業マット
+
+マスキングテープ
+
+
+
+Elite-C
+https://keeb.io/collections/frontpage/products/elite-c-usb-c-pro-micro-replacement-arduino-compatible-atmega32u4
+
+左手側(Master)にElite-C、右手にPro-Micro(Slave)で使えます。
+
+Mill-Max ソケット
+
+
+白光 こて先 2C型 T18-C1
+
+TRRS jack … 2個
+・M2ねじ (短) … 4本
+・M2スペーサー … 2本
+
+LED WS2812B × 24
+
+
+2012でもいいような気もしますが、小さいほうがいいだろうと思い1608にしました。
+めっちゃ小さいので素人にはお勧めしま
+白
+http://akizukidenshi.com/catalog/g/gI-03986/
+
+緑
+http://akizukidenshi.com/catalog/g/gI-11878/
+
+黄緑色チップＬＥＤ　［１６０８］　ＯＳＹＧ１６０８　（２０個入）
+http://akizukidenshi.com/catalog/g/gI-03980/
+
+make ergodash:default:avrdude 
+
+1N4148 ダイオード
+

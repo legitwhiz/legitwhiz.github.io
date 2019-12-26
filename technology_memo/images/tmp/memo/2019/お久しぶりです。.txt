@@ -1,0 +1,52 @@
+お久しぶりです。
+
+突然ですが、自宅サーバをリプレースするのにAmazonでパーツを見繕ったのですが、価格は妥当な値段ですかね？
+
+CPU	 単価¥65,858  1個	小計¥65,858 
+INTEL インテル CPU Corei9-9900K INTEL300シリーズChipsetマザーボード対応 BX80684I99900K【BOX】 
+
+
+Mem	単価¥48,358  1個	 小計¥48,358 
+CORSAIR DDR4 デスクトップPC用 メモリモジュール VENGEANCE LPX Series 16GB×4枚キット CMK64GX4M4A2666C16 
+
+
+SSD	単価¥14,980  2個  小計¥29,960 
+Samsung SSD 500GB 970 EVO Plus M.2 Type2280 PCIe3.0×4 NVMe1.3 5年保証 正規代理店保証品 MZ-V7S500B/EC 
+
+
+HDD 単価¥11,640  3個 	小計¥34,920 
+Seagate BarraCuda 3.5" 6TB 内蔵ハードディスク HDD 2年保証 6Gb/s 256MB 5400rpm 正規代理店品 ST6000DM003 
+
+
+MB	単価¥22,557  1個 	小計¥22,557 
+ASUS Intel® Z390搭載 LGA1151対応マザーボード ROG STRIX Z390-F GAMING【ATX】 
+
+
+cooler 単価¥6,122 1個¥	6,122 
+Cooler Master MasterLiquid Lite 120 一体型水冷CPUクーラー [デュアルチャンバーヘッド 搭載] FN1092 MLW-D12M-A20PW-R1 
+
+
+PS	単価¥13,190 1個	小計¥13,190 
+Corsair RM850x -2018-850W PC電源ユニット [80PLUS GOLD] PS795 CP-9020180-JP 
+
+
+DVD	単価¥15,121 1個	小計¥15,121 
+I-O DATA ブルーレイドライブ 外付型/USB 3.0/BDXL/M-DISC/16倍速高速書き込み BRD-UT16WX 
+
+case	 単価¥5,546 1個 小計¥5,546 
+Corsair Carbite 100R Silent ATX対応ミドルタワーPCケース CS5332 CC-9011077-WW 
+
+
+USB HDD	単価¥16,980 1個	小計¥16,980 
+WD HDD 外付けハードディスク 6TB Elements Desktop USB3.0 WDBBKG0060HBK-JESN / 2年保証 
+
+
+NW　I/F	単価¥9,800 1個	小計¥9,800 
+Gigabit LAN カード, インテル82580純正ボード(チップ）実装, Quad RJ45 ポート, PCI-E 2.0 X4,I340-T4/ E1G44HT,PCサーバ用 
+
+SSD ヒートシンク 単価¥1,596 2個	小計¥3,192 
+volflashy M.2 SSD ヒートシンク クーラー M.2 2280 ソリッド ステート ハード ディスク ドライブ ラジエーター オール アルミ ヒートシンク 
+
+
+OS	 単価¥22,888 1個 	小計¥22,888 
+Microsoft Windows 10 Pro April 2018 Update適用(最新) 32bit/64bit 日本語版|パッケージ版
