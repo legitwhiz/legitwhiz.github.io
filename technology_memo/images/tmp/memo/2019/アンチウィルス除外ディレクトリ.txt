@@ -1,0 +1,66 @@
+
+・基本方針として、各サーバでリソースに不要な負荷を与えないため、推奨されているディレクトリ、ファイル種別をスキャン対象外とする。
+・McAfeeで推奨されているスキャン除外対象としている、システム領域(/proc,/sys)、デバイス(/dev)、DUMP(/dump)領域はスキャン対象外とする。
+・圧縮ファイルは検査に負荷がかかるため対象外とする。McAfeeでもJarなどの圧縮ファイルは、スキャン対象外が推奨(圧縮されたアーカイブファイルを[無効]とする)
+・NASサーバにマウントしているディレクトリはバックアップの転送時間やリソースに影響もあるためスキャン対象外とする。(/backup,/backup02, /ocrdata, /ocrdata02)
+・McAfeeで推奨されているDB領域はスキャン対象外とする。(/data, /data01, /data02)
+・各ミドルウェアで使用するインストール領域はスキャン対象外とする。(/opt)
+・MSにて推奨されているディレクトリをスキャン対象外とする。
+　Windows Update または自動更新の関連のファイル(%windir%\SoftwareDistribution\Datastore)
+　Windows セキュリティ ファイル(%windir%\Security\Database)
+　グループ ポリシー関連のファイル(%allusersprofile%\、%SystemRoot%\System32\GroupPolicy\Machine\、%SystemRoot%\System32\GroupPolicy\User\)
+Active Directory および Active Directory 関連のファイル(%windir%\Ntds)
+
+
+
+●Linux
+https://support.symantec.com/jp/ja/article.tech233522.html
+
+/sys/
+/proc/
+/dev/
+/dump
+
+/backup
+/backup2
+
+
+
+
+●IM 業務データ領域
+/opt/tmp/storage/public
+/opt/tmp/storage/system
+/opt/tmp/storage/temp
+
+Intra-Mart
+ウイルスソフトによっては、ウイルスチェック時にファイルを掴むものがあります。PDF処理に影響がでる場合は、作業フォルダをウイルスチェックの対象から外す必要があります。
+https://www.intra-mart.jp/document/library/iad/public/iad_securedownload/imadsec_release_note/texts/limitations/index.html
+
+
+●PostgresSQL
+・アウトテレマDB用
+/data/pgdata/data
+・おまとめ請求用
+/data01/pgdata/data
+・スキルズインベントリ用
+/data02/pgdata/data
+・営業支援用
+/data/pgdata/data
+・
+・
+・
+・
+
+
+●MySQL
+/data/mysql/
+
+●tomcat
+JARファイル
+https://kc.mcafee.com/corporate/index?page=content&id=KB80645&locale=ja_JP&viewlocale=ja_JP
+
+●MS
+
+https://support.microsoft.com/ja-jp/help/822158/virus-scanning-recommendations-for-enterprise-computers-that-are-runni
+
+
