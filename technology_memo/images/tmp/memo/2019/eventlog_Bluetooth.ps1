@@ -1,48 +1,48 @@
 #-----------------------------------------------------
-# ‘O“ú‚ÌƒCƒxƒ“ƒgƒƒO(event-id:2)‚ğƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Éo—Í‚·‚é
-# o—Íƒtƒ@ƒCƒ‹:"D:\SakaTmp\document\_091128.txt"
+# å‰æ—¥ã®ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°(event-id:2)ã‚’ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›ã™ã‚‹
+# å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«:"D:\SakaTmp\document\_091128.txt"
 #-----------------------------------------------------
 
 set-PSDebug -strict
 
-# o—ÍæƒtƒHƒ‹ƒ_‚ğİ’è‚·‚é
+# å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨­å®šã™ã‚‹
 $dir = [string]
 $dir = "D:\SakaTmp\logs\"
 $hostname = "localhost"
 
 ##################
-# ‘O‰ñ‰c‹Æ“ú”»’è #
+# å‰å›å–¶æ¥­æ—¥åˆ¤å®š #
 ##################
 
-# ƒCƒxƒ“ƒgƒƒOæ“¾ŠJn‚Ìİ’è
+# ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°å–å¾—é–‹å§‹æ™‚åˆ»ã®è¨­å®š
 $start_time_today = get-date -hour "0" -minute "0" -second "0"
 $end_time_today = get-date -hour "23" -minute "59" -second "59"
-$start_time_yesterday = $start_time_today.AddDays(-1) #-1‚Ì“ú•t‚ğ“ü‚ê‚é
-$end_time_yesterday  = $end_time_today.AddDays(-1) #-1‚Ì“ú•t‚ğ“ü‚ê‚é
+$start_time_yesterday = $start_time_today.AddDays(-1) #-1ã®æ—¥ä»˜ã‚’å…¥ã‚Œã‚‹
+$end_time_yesterday  = $end_time_today.AddDays(-1) #-1ã®æ—¥ä»˜ã‚’å…¥ã‚Œã‚‹
 
-$HOLIDAYFILE = Get-Content ${dir}holidaylist.txt #j“ú(Œµ–§‚É‚Í‰ïĞ‚Ì“y“úˆÈŠO‚Ì’è‹x“ú)‚ğƒŠƒXƒg‰»‚µ‚½ƒtƒ@ƒCƒ‹
+$HOLIDAYFILE = Get-Content ${dir}holidaylist.txt #ç¥æ—¥(å³å¯†ã«ã¯ä¼šç¤¾ã®åœŸæ—¥ä»¥å¤–ã®å®šä¼‘æ—¥)ã‚’ãƒªã‚¹ãƒˆåŒ–ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«
 $HOLIDATE_S = ($start_time_yesterday).ToString("yyyyMMdd")
 $HOLIDATE_E = ($end_time_yesterday).ToString("yyyyMMdd")
 $WEEKDATE_S = ($start_time_yesterday).DayOfWeek
 $WEEKDATE_E = ($end_time_yesterday).DayOfWeek
 
-###Ÿ‰ñ‰c‹Æ“ú‚É‚È‚é‚Ü‚Å‰i‹vƒ‹[ƒv
+###æ¬¡å›å–¶æ¥­æ—¥ã«ãªã‚‹ã¾ã§æ°¸ä¹…ãƒ«ãƒ¼ãƒ—
 
-#j“ú”»’è
+#ç¥æ—¥åˆ¤å®š
 
 do {
     do {
-        #“y“ú”»’è
+        #åœŸæ—¥åˆ¤å®š
         if ( $WEEKDATE_S -eq "Saturday" ) {
-            $start_time_yesterday = $start_time_yesterday.AddDays(-1) #“y—j“ú‚É-1“ú‚µ‚Ä‹à—j“ú‚É‡‚í‚¹‚é
-            $end_time_yesterday = $end_time_yesterday.AddDays(-1) #“y—j“ú‚É-1“ú‚µ‚Ä‹à—j“ú‚É‡‚í‚¹‚é
+            $start_time_yesterday = $start_time_yesterday.AddDays(-1) #åœŸæ›œæ—¥ã«-1æ—¥ã—ã¦é‡‘æ›œæ—¥ã«åˆã‚ã›ã‚‹
+            $end_time_yesterday = $end_time_yesterday.AddDays(-1) #åœŸæ›œæ—¥ã«-1æ—¥ã—ã¦é‡‘æ›œæ—¥ã«åˆã‚ã›ã‚‹
             $HOLIDATE_S = ($start_time_yesterday).ToString("yyyyMMdd")
             $HOLIDATE_E = ($end_time_yesterday).ToString("yyyyMMdd")
             $WEEKDATE_S = ($start_time_yesterday).DayOfWeek
             $WEEKDATE_E = ($end_time_yesterday).DayOfWeek
      } elseif ( $WEEKDATE_S -eq "Sunday" ) {
-            $start_time_yesterday = $start_time_yesterday.AddDays(-1) #“ú—j“ú‚É-2“ú‚µ‚Ä‹à—j“ú‚É‡‚í‚¹‚é
-            $end_time_yesterday = $end_time_yesterday.AddDays(-1) #“ú—j“ú‚É-2“ú‚µ‚Ä‹à—j“ú‚É‡‚í‚¹‚é
+            $start_time_yesterday = $start_time_yesterday.AddDays(-1) #æ—¥æ›œæ—¥ã«-2æ—¥ã—ã¦é‡‘æ›œæ—¥ã«åˆã‚ã›ã‚‹
+            $end_time_yesterday = $end_time_yesterday.AddDays(-1) #æ—¥æ›œæ—¥ã«-2æ—¥ã—ã¦é‡‘æ›œæ—¥ã«åˆã‚ã›ã‚‹
             $HOLIDATE_S = ($start_time_yesterday).ToString("yyyyMMdd")
             $HOLIDATE_E = ($end_time_yesterday).ToString("yyyyMMdd")
             $WEEKDATE_S = ($start_time_yesterday).DayOfWeek
@@ -50,8 +50,8 @@ do {
      }
     $HOLIDAYFILE | 
         foreach -Process { if ( $HOLIDATE_S -eq ( $_ )) {
-        $start_time_yesterday = $start_time_yesterday.AddDays(-1) #j“ú‚É-1“ú‚µ‚Ä—‚“ú‚ÅÄ“xƒ‹[ƒv”»’è
-        $end_time_yesterday = $end_time_yesterday.AddDays(-1) #j“ú‚É-1“ú‚µ‚Ä—‚“ú‚ÅÄ“xƒ‹[ƒv”»’è
+        $start_time_yesterday = $start_time_yesterday.AddDays(-1) #ç¥æ—¥ã«-1æ—¥ã—ã¦ç¿Œæ—¥ã§å†åº¦ãƒ«ãƒ¼ãƒ—åˆ¤å®š
+        $end_time_yesterday = $end_time_yesterday.AddDays(-1) #ç¥æ—¥ã«-1æ—¥ã—ã¦ç¿Œæ—¥ã§å†åº¦ãƒ«ãƒ¼ãƒ—åˆ¤å®š
         $HOLIDATE_S = ($start_time_yesterday).ToString("yyyyMMdd")
         $HOLIDATE_E = ($end_time_yesterday).ToString("yyyyMMdd")
         $WEEKDATE_S = ($start_time_yesterday).DayOfWeek
@@ -70,32 +70,32 @@ $filter = @{}
 $filter.Add("LogName", "SYSTEM")
 $filter.Add("ID", 2)                             # EventID
 $filter.Add("Level", 3)                          #level Warning
-$filter.Add("StartTime", $start_time_yesterday)  # ‘O“ú‚Ì00•ª0•b
-$filter.Add("EndTime", $end_time_yesterday)      # ‘O“ú‚Ì2459•ª59•b
+$filter.Add("StartTime", $start_time_yesterday)  # å‰æ—¥ã®0æ™‚0åˆ†0ç§’
+$filter.Add("EndTime", $end_time_yesterday)      # å‰æ—¥ã®24æ™‚59åˆ†59ç§’
 
-# system‚ÌƒƒO‚ğo—Í‚·‚é
+# systemã®ãƒ­ã‚°ã‚’å‡ºåŠ›ã™ã‚‹
 $type = [string]
 $name = [string]
 $fPath = [string]
 $event = [system.diagnostics.eventLogEntry]
 
 foreach ($type in "system"){
-    # o—ÍæƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ÌƒpƒX‚ğİ’è
-    $name = "eventlog_bluetooth" + ".txt" # o—Íƒtƒ@ƒCƒ‹–¼
+    # å‡ºåŠ›å…ˆãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‚’è¨­å®š
+    $name = "eventlog_bluetooth" + ".txt" # å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«å
     $fPath = $dir + "\" + $name
     $start_day = $start_time_yesterday.tostring("yyyyMMdd")
     
-    # ƒƒOæ“¾
+    # ãƒ­ã‚°å–å¾—
    #$event = get-EventLog -logname $type -after $start_time_yesterday -before $end_time_yesterday -FilterXPath "*[System[Provider[@Name='EventLog'] and (EventID='2'')]]"
    #$event = Get-WinEvent -logname $type -FilterXPath "*[System[Provider[@Name='EventLog'] and (EventID='2')]]" -after $start_time_yesterday -before $end_time_yesterday
     $event_Count = (Get-WinEvent -ComputerName $hostname -ErrorAction SilentlyContinue -FilterHashtable $filter | Measure-Object).Count
-    # ƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Éo—Í
+    # ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›
     $start_day + "," + $event_Count >> $fPath
 }
 
-Write-host "Š®—¹‚µ‚Ü‚µ‚½"
+Write-host "å®Œäº†ã—ã¾ã—ãŸ"
 
 trap{
-    Write-host "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½"
+    Write-host "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ"
     break
 }

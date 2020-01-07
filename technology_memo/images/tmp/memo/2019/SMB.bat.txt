@@ -1,4 +1,4 @@
 dism /online /Enable-Feature /FeatureName:SMB1Protocol /NoRestart
 
-echo SMB1.0‚ğ—LŒø‰»‚µ‚Ü‚·Bƒpƒ\ƒRƒ“‚ğÄ‹N“®‚µ‚Ä‚­‚¾‚³‚¢B
+echo SMB1.0ã‚’æœ‰åŠ¹åŒ–ã—ã¾ã™ã€‚ãƒ‘ã‚½ã‚³ãƒ³ã‚’å†èµ·å‹•ã—ã¦ãã ã•ã„ã€‚
 pause

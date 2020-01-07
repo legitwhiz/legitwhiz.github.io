@@ -1,11 +1,11 @@
 #-----------------------------------------------------
-# ‘O“ú‚ÌƒCƒxƒ“ƒgƒƒO(event-id:6005,6006)‚ğ30“ú•ªƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Éo—Í‚·‚é
-# o—Íƒtƒ@ƒCƒ‹:"D:\SakaTmp\eventlog_attendance_management.log"
+# å‰æ—¥ã®ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°(event-id:6005,6006)ã‚’30æ—¥åˆ†ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›ã™ã‚‹
+# å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«:"D:\SakaTmp\eventlog_attendance_management.log"
 #-----------------------------------------------------
 
 set-PSDebug -strict
 
-# o—ÍæƒtƒHƒ‹ƒ_‚ğİ’è‚·‚é
+# å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨­å®šã™ã‚‹
 $dir = [string]
 $dir = "D:\SakaTmp\logs\"    
 $hostname = "localhost"
@@ -16,26 +16,26 @@ $filter = @{}
 $filter.Add("LogName", "SYSTEM")
 $filter.Add("ID", $eventID)                             # EventID
 
-# system‚ÌƒƒO‚ğo—Í‚·‚é
+# systemã®ãƒ­ã‚°ã‚’å‡ºåŠ›ã™ã‚‹
 $type = [string]
 $name = [string]
 $fPath = [string]
 $event = [system.diagnostics.eventLogEntry]
 
 foreach ($type in "system"){
-    # o—ÍæƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ÌƒpƒX‚ğİ’è
-    $name = "eventlog_attendance_management" + ".log" # o—Íƒtƒ@ƒCƒ‹–¼
+    # å‡ºåŠ›å…ˆãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‚’è¨­å®š
+    $name = "eventlog_attendance_management" + ".log" # å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«å
     $fPath = $dir + "\" + $name
-    # ƒƒOæ“¾
+    # ãƒ­ã‚°å–å¾—
     $event_log = Get-WinEvent -ComputerName $hostname -ErrorAction SilentlyContinue -FilterHashtable $filter -maxevents 60
-    # ƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Éo—Í
+    # ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›
     $event_log > $fPath
 }
 
-Write-host "Š®—¹‚µ‚Ü‚µ‚½"
+Write-host "å®Œäº†ã—ã¾ã—ãŸ"
 
 trap{
-    Write-host "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½"
+    Write-host "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ"
     break
 }
 

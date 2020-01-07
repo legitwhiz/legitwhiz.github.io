@@ -1,39 +1,39 @@
 
 ###########################################################################
 #
-#  ƒVƒXƒeƒ€–¼      F  “‡”FØƒVƒXƒeƒ€ 
-#  ƒTƒuƒVƒXƒeƒ€–¼  F  ŠÇ——pWindowsServer
-#  ƒXƒNƒŠƒvƒg–¼    F  eventlog_backup_logrotate.ps1
-#  ‹@”\–¼          F  ƒCƒxƒ“ƒgƒƒOƒoƒbƒNƒAƒbƒv•ƒ[ƒe[ƒgƒXƒNƒŠƒvƒg
-#  ‹@”\ŠT—v@      F  ‘O“ú•ª‚ÌƒCƒxƒ“ƒgƒƒO‚ğƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Éo—Í‚µŒÃ‚¢ƒƒO‚ğíœ‚·‚éB
-#  CALLED BY       F  
-#  CALL TO         F  NONE
-#  ARGUMENT        F  1.–³‚µ
-#                      2.–³‚µ  
-#  RETURNS         F  0      ³í 
-#                      0ˆÈŠO  ˆÙí 
+#  ã‚·ã‚¹ãƒ†ãƒ å      ï¼š  çµ±åˆèªè¨¼ã‚·ã‚¹ãƒ†ãƒ  
+#  ã‚µãƒ–ã‚·ã‚¹ãƒ†ãƒ å  ï¼š  ç®¡ç†ç”¨WindowsServer
+#  ã‚¹ã‚¯ãƒªãƒ—ãƒˆå    ï¼š  eventlog_backup_logrotate.ps1
+#  æ©Ÿèƒ½å          ï¼š  ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ï¼†ãƒ­ãƒ¼ãƒ†ãƒ¼ãƒˆã‚¹ã‚¯ãƒªãƒ—ãƒˆ
+#  æ©Ÿèƒ½æ¦‚è¦ã€€      ï¼š  å‰æ—¥åˆ†ã®ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°ã‚’ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›ã—å¤ã„ãƒ­ã‚°ã‚’å‰Šé™¤ã™ã‚‹ã€‚
+#  CALLED BY       ï¼š  
+#  CALL TO         ï¼š  NONE
+#  ARGUMENT        ï¼š  1.ç„¡ã—
+#                      2.ç„¡ã—  
+#  RETURNS         ï¼š  0      æ­£å¸¸ 
+#                      0ä»¥å¤–  ç•°å¸¸ 
 #-------------------------------------------------------------------------
-#  ì¬Œ³          F  V‹K
-#  ì¬“ú@        F 2018/09/04    ì¬Ò@F@D.SAKAMOTO(MT)
-#  C³—š—ğ@      F
+#  ä½œæˆå…ƒ          ï¼š  æ–°è¦
+#  ä½œæˆæ—¥ã€€        ï¼š 2018/09/04    ä½œæˆè€…ã€€ï¼šã€€D.SAKAMOTO(MT)
+#  ä¿®æ­£å±¥æ­´ã€€      ï¼š
 #
 ###########################################################################
 
 set-PSDebug -strict
 
-# ƒCƒxƒ“ƒgƒƒOæ“¾ŠJn‚Ìİ’è
+# ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°å–å¾—é–‹å§‹æ™‚åˆ»ã®è¨­å®š
 $start_time_today = [system.datetime]
 $start_time_yesterday= [system.datetime]
 $start_time_today = get-date -hour "0" -minute "0" -second "0"
-$start_time_yesterday = $start_time_today.AddDays(-1)   # ‘O“ú‚Ì00•ª0•b
+$start_time_yesterday = $start_time_today.AddDays(-1)   # å‰æ—¥ã®0æ™‚0åˆ†0ç§’
 
-# ƒCƒxƒ“ƒgƒƒOæ“¾I—¹‚Ìİ’è
+# ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°å–å¾—çµ‚äº†æ™‚åˆ»ã®è¨­å®š
 $end_time_today = [system.datetime]
 $end_time_yesterday= [system.datetime]
 $end_time_today = get-date -hour "23" -minute "59" -second "59"
-$end_time_yesterday = $end_time_today.AddDays(-1)   # ‘O“ú‚Ì2459•ª59•b
+$end_time_yesterday = $end_time_today.AddDays(-1)   # å‰æ—¥ã®24æ™‚59åˆ†59ç§’
 
-# o—ÍæƒtƒHƒ‹ƒ_‚ğİ’è‚·‚é
+# å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨­å®šã™ã‚‹
 $EventLog_Dir = [string]
 $Script_Dir = [string]
 $Home_Dir = [string]
@@ -42,7 +42,7 @@ $Home_Dir = "D:\SakaTmp\logs"
 $EventLog_Dir = $Home_Dir + "\Backup_EventLog"
 $ScriptLog_Dir = $Home_Dir + "\Log"
 
-# ƒoƒbƒNƒAƒbƒv•Û‘¶ŠúŠÔİ’è
+# ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä¿å­˜æœŸé–“è¨­å®š
 [string] $saving_days = 365
 
 $Eventlog_type = [string]
@@ -51,28 +51,28 @@ $Full_Backup_Fname = [string]
 $ScriptLog = [string]
 $ScriptFName = [string]
 
-# Script Log File Nameİ’è
+# Script Log File Nameè¨­å®š
 $ScriptFName = Split-Path -Leaf $PSCommandPath
 [string] $ScriptLog = $ScriptLog_Dir + "\" + $ScriptFName + "_" + $start_time_today.tostring("yyyyMMdd") + ".log"
 
 # Script Messages
-[string] $START_MSG = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + $ScriptFName + "‚ªŠJn‚µ‚Ü‚µ‚½B"
-[string] $END_MSG = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + $ScriptFName + "‚ªI—¹‚µ‚Ü‚µ‚½B"
-[string] $Success_MSG01 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $EventLog_Dir + ")" + "ƒoƒbƒNƒAƒbƒv‚·‚éƒCƒxƒ“ƒgƒƒO‚ğŠi”[‚·‚éƒfƒBƒŒƒNƒgƒŠì¬‚É¬Œ÷‚µ‚Ü‚µ‚½B"
-[string] $Success_MSG02 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $ScriptLog_Dir + ")" + "ƒXƒNƒŠƒvƒgƒƒO‚ğŠi”[‚·‚éƒfƒBƒŒƒNƒgƒŠì¬‚É¬Œ÷‚µ‚Ü‚µ‚½B"
-[string] $Success_MSG03 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " ƒƒOæ“¾ƒRƒ}ƒ“ƒhÀs‚ª¬Œ÷‚µ‚Ü‚µ‚½B"
-[string] $Success_MSG04 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " " + $saving_days + "“ú‚æ‚èŒÃ‚¢ƒCƒxƒ“ƒgƒƒOƒtƒ@ƒCƒ‹íœ‚ª¬Œ÷‚µ‚Ü‚µ‚½B"
+[string] $START_MSG = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + $ScriptFName + "ãŒé–‹å§‹ã—ã¾ã—ãŸã€‚"
+[string] $END_MSG = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + $ScriptFName + "ãŒçµ‚äº†ã—ã¾ã—ãŸã€‚"
+[string] $Success_MSG01 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $EventLog_Dir + ")" + "ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã™ã‚‹ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°ã‚’æ ¼ç´ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä½œæˆã«æˆåŠŸã—ã¾ã—ãŸã€‚"
+[string] $Success_MSG02 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $ScriptLog_Dir + ")" + "ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ­ã‚°ã‚’æ ¼ç´ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä½œæˆã«æˆåŠŸã—ã¾ã—ãŸã€‚"
+[string] $Success_MSG03 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " ãƒ­ã‚°å–å¾—ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡ŒãŒæˆåŠŸã—ã¾ã—ãŸã€‚"
+[string] $Success_MSG04 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " " + $saving_days + "æ—¥ã‚ˆã‚Šå¤ã„ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«å‰Šé™¤ãŒæˆåŠŸã—ã¾ã—ãŸã€‚"
 
-[string] $Error_MSG01 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $EventLog_Dir + ")" + "ƒoƒbƒNƒAƒbƒv‚·‚éƒCƒxƒ“ƒgƒƒO‚ğŠi”[‚·‚éƒfƒBƒŒƒNƒgƒŠì¬‚É¸”s‚µ‚Ü‚µ‚½B"
-[string] $Error_MSG02 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $ScriptLog_Dir + ")" + "ƒXƒNƒŠƒvƒgƒƒO‚ğŠi”[‚·‚éƒfƒBƒŒƒNƒgƒŠì¬‚É¸”s‚µ‚Ü‚µ‚½B"
-[string] $Error_MSG03 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " ƒƒOæ“¾ƒRƒ}ƒ“ƒhÀs‚ª¸”s‚µ‚Ü‚µ‚½B"
-[string] $Error_MSG04 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " " + $saving_days + "“ú‚æ‚èŒÃ‚¢ƒCƒxƒ“ƒgƒƒOƒtƒ@ƒCƒ‹íœ‚ª¸”s‚µ‚Ü‚µ‚½B"
+[string] $Error_MSG01 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $EventLog_Dir + ")" + "ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã™ã‚‹ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°ã‚’æ ¼ç´ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚"
+[string] $Error_MSG02 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " (" + $ScriptLog_Dir + ")" + "ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ­ã‚°ã‚’æ ¼ç´ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚"
+[string] $Error_MSG03 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " ãƒ­ã‚°å–å¾—ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡ŒãŒå¤±æ•—ã—ã¾ã—ãŸã€‚"
+[string] $Error_MSG04 = (Get-Date).ToString("yyyy/MM/dd HH:mm:ss") + " " + $saving_days + "æ—¥ã‚ˆã‚Šå¤ã„ã‚¤ãƒ™ãƒ³ãƒˆãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«å‰Šé™¤ãŒå¤±æ•—ã—ã¾ã—ãŸã€‚"
 
 echo $START_MSG >> $ScriptLog
 
 $event_BKcommand = [system.diagnostics.eventLogEntry]
 
-# $ScriptLog_Dir ‚ª‚È‚¯‚ê‚Îì¬
+# $ScriptLog_Dir ãŒãªã‘ã‚Œã°ä½œæˆ
 if(!(Test-Path $ScriptLog_Dir)){
     New-Item $ScriptLog_Dir -ItemType Directory
     if ($? -eq $true) {
@@ -84,7 +84,7 @@ if(!(Test-Path $ScriptLog_Dir)){
     }
 }
 
-# $EventLog_Dir ‚ª‚È‚¯‚ê‚Îì¬
+# $EventLog_Dir ãŒãªã‘ã‚Œã°ä½œæˆ
 if(!(Test-Path $EventLog_Dir)){
     New-Item $EventLog_Dir -ItemType Directory
     if ($? -eq $true) {
@@ -96,17 +96,17 @@ if(!(Test-Path $EventLog_Dir)){
     }
 } 
 
-# systemAapplicationAsecurity‚ÌƒƒO‚ğo—Í‚·‚é
+# systemã€applicationã€securityã®ãƒ­ã‚°ã‚’å‡ºåŠ›ã™ã‚‹
 foreach ($Eventlog_type in "system","application","security"){
 
-    # o—ÍæƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğİ’è
-    $Backup_Fname = $Eventlog_type + "_" + $start_time_yesterday.tostring("yyyyMMdd") + ".txt" # o—Íƒtƒ@ƒCƒ‹–¼
+    # å‡ºåŠ›å…ˆãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¨­å®š
+    $Backup_Fname = $Eventlog_type + "_" + $start_time_yesterday.tostring("yyyyMMdd") + ".txt" # å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«å
     $Full_Backup_Fname = $EventLog_Dir + "\" + $Backup_Fname
 
-    # ƒƒOæ“¾ƒRƒ}ƒ“ƒhİ’è
+    # ãƒ­ã‚°å–å¾—ã‚³ãƒãƒ³ãƒ‰è¨­å®š
     $event_BKcommand = get-EventLog -logname $Eventlog_type -after $start_time_yesterday -before $end_time_yesterday 
 
-    # ƒƒOæ“¾ƒRƒ}ƒ“ƒhÀs‚µAƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚Éo—Í
+    # ãƒ­ã‚°å–å¾—ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œã—ã€ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›
     $event_BKcommand > $Full_Backup_Fname
 
     if ($? -eq $true) {
@@ -119,7 +119,7 @@ foreach ($Eventlog_type in "system","application","security"){
 }
 
 
-### ƒoƒbƒNƒAƒbƒvƒƒOƒtƒ@ƒCƒ‹ƒ[ƒe[ƒVƒ‡ƒ“ŠÖ”
+### ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ãƒ­ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³é–¢æ•°
 $today = Get-Date
 $logs = Get-ChildItem $EventLog_Dir
 foreach ($TargetFileName in $logs) {

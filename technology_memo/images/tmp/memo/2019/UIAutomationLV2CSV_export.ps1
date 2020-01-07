@@ -1,29 +1,29 @@
 ###########################################################################
 #
-#  ƒVƒXƒeƒ€–¼      F  
-#  ƒTƒuƒVƒXƒeƒ€–¼  F  
-#  ƒXƒNƒŠƒvƒg–¼    F  UIAutomationLV2CSV_export.ps1
-#  ‹@”\–¼          F  LV2CSV‚ğGUI‘€ì‚µCSV‚Éexport
-#  ‹@”\ŠT—v@      F  ListView to CSV(LV2CSV.exej‚ÌGUI‚©‚çƒ^ƒCƒv”ƒJƒEƒ“ƒ^[‚ğCSV‚Éexport‚·‚éB
-#  CALLED BY       F  
-#  CALL TO         F  NONE
-#  ARGUMENT        F  1.–³‚µ
-#                      2.–³‚µ  
-#  RETURNS         F  0      ³í 
-#                      0ˆÈŠO  ˆÙí 
+#  ã‚·ã‚¹ãƒ†ãƒ å      ï¼š  
+#  ã‚µãƒ–ã‚·ã‚¹ãƒ†ãƒ å  ï¼š  
+#  ã‚¹ã‚¯ãƒªãƒ—ãƒˆå    ï¼š  UIAutomationLV2CSV_export.ps1
+#  æ©Ÿèƒ½å          ï¼š  LV2CSVã‚’GUIæ“ä½œã—CSVã«export
+#  æ©Ÿèƒ½æ¦‚è¦ã€€      ï¼š  ListView to CSV(LV2CSV.exeï¼‰ã®GUIã‹ã‚‰ã‚¿ã‚¤ãƒ—æ•°ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ã‚’CSVã«exportã™ã‚‹ã€‚
+#  CALLED BY       ï¼š  
+#  CALL TO         ï¼š  NONE
+#  ARGUMENT        ï¼š  1.ç„¡ã—
+#                      2.ç„¡ã—  
+#  RETURNS         ï¼š  0      æ­£å¸¸ 
+#                      0ä»¥å¤–  ç•°å¸¸ 
 #-------------------------------------------------------------------------
-#  ì¬Œ³          F  V‹K
-#  ì¬“ú@        F 2018/09/10    ì¬Ò@F@D.SAKAMOTO(legit whiz)
-#  C³—š—ğ@      F
+#  ä½œæˆå…ƒ          ï¼š  æ–°è¦
+#  ä½œæˆæ—¥ã€€        ï¼š 2018/09/10    ä½œæˆè€…ã€€ï¼šã€€D.SAKAMOTO(legit whiz)
+#  ä¿®æ­£å±¥æ­´ã€€      ï¼š
 #
 ###########################################################################
 $exePath = "D:\SakaTmp\tool\lvcs2.25.05_x64\LV2CSV.EXE"
 $LogDir = "D:\SakaTmp\logs\type_count\"
 
-# [ Import-Module ]ƒRƒ}ƒ“ƒhƒŒƒbƒg‚ÅUIAutomation.dll‚ğƒCƒ“ƒ|[ƒg‚·‚éB
+# [ Import-Module ]ã‚³ãƒãƒ³ãƒ‰ãƒ¬ãƒƒãƒˆã§UIAutomation.dllã‚’ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹ã€‚
 Import-Module D:\SakaTmp\tool\UiAutomation\UIAutomation.dll
 
-# [ Start-Process ]ƒRƒ}ƒ“ƒhƒŒƒbƒg‚ÅLV2CSV.ex‚ğ‹N“®‚·‚éB
+# [ Start-Process ]ã‚³ãƒãƒ³ãƒ‰ãƒ¬ãƒƒãƒˆã§LV2CSV.exã‚’èµ·å‹•ã™ã‚‹ã€‚
 $process = Start-Process $exePath -PassThru | Get-UiaWindow;
 
 $start_time_today = [system.datetime]
@@ -32,50 +32,50 @@ $targetFile = $start_time_today.tostring("yyyyMMdd") + "_type.csv"
 
 $target_full_path = $LogDir + $targetFile;
 
-# $target_full_path ‚ª‚ ‚ê‚Îíœ
+# $target_full_path ãŒã‚ã‚Œã°å‰Šé™¤
 if(Test-Path $target_full_path){
     Remove-Item $target_full_path -Force
 }
 
-# ListView to CSV‰æ–Ê‚Ìtype”ƒJƒEƒ“ƒ^[‚ğ‘I‘ğ
-$process.Keyboard.KeyDown([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ƒL[‚ğ‰Ÿ‚·
-$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::VK_C) | Out-Null; # C ƒL[‚ğ‰Ÿ‚·
-$process.Keyboard.KeyUp([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ƒL[‚ğ•ú‚·
-$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::DOWN) | Out-Null; # « ƒL[‚ğ‰Ÿ‚·
-# 0.1 •b’â~
+# ListView to CSVç”»é¢ã®typeæ•°ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ã‚’é¸æŠ
+$process.Keyboard.KeyDown([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ã‚­ãƒ¼ã‚’æŠ¼ã™
+$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::VK_C) | Out-Null; # C ã‚­ãƒ¼ã‚’æŠ¼ã™
+$process.Keyboard.KeyUp([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ã‚­ãƒ¼ã‚’æ”¾ã™
+$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::DOWN) | Out-Null; # â†“ ã‚­ãƒ¼ã‚’æŠ¼ã™
+# 0.1 ç§’åœæ­¢
 Start-Sleep -m 500
-$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::UP) | Out-Null; # ª ƒL[‚ğ‰Ÿ‚·
-# 0.1 •b’â~
-Start-Sleep -m 500
-
-# Alt + v ¨ Enter ‚Ì‡‚ÅƒL[‚ğ‰Ÿ‚·‚ÆC[–¼‘O‚ğ•t‚¯‚Ä•Û‘¶]‰æ–Ê‚ªo‚é
-$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ƒL[‚ğ‰Ÿ‚·
-$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::VK_V) | Out-Null; # v ƒL[‚ğ‰Ÿ‚·
-$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::RETURN) | Out-Null; # Enter ƒL[‚ğ‰Ÿ‚·
+$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::UP) | Out-Null; # â†‘ ã‚­ãƒ¼ã‚’æŠ¼ã™
+# 0.1 ç§’åœæ­¢
 Start-Sleep -m 500
 
-# ƒŠƒXƒg’†‚É‚ ‚éƒAƒCƒeƒ€‚ğ‘I‘ğ‚µ‚ÄŠJ‚­
-$openWnd = Get-UiaWindow -Name '–¼‘O‚ğw’è‚µ‚Ä•Û‘¶';
-$selectItem = $openWnd | Get-UiaEdit -Name 'ƒtƒ@ƒCƒ‹–¼:';
+# Alt + v â†’ Enter ã®é †ã§ã‚­ãƒ¼ã‚’æŠ¼ã™ã¨ï¼Œ[åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜]ç”»é¢ãŒå‡ºã‚‹
+$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ã‚­ãƒ¼ã‚’æŠ¼ã™
+$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::VK_V) | Out-Null; # v ã‚­ãƒ¼ã‚’æŠ¼ã™
+$process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::RETURN) | Out-Null; # Enter ã‚­ãƒ¼ã‚’æŠ¼ã™
+Start-Sleep -m 500
+
+# ãƒªã‚¹ãƒˆä¸­ã«ã‚ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã‚’é¸æŠã—ã¦é–‹ã
+$openWnd = Get-UiaWindow -Name 'åå‰ã‚’æŒ‡å®šã—ã¦ä¿å­˜';
+$selectItem = $openWnd | Get-UiaEdit -Name 'ãƒ•ã‚¡ã‚¤ãƒ«å:';
 $selectItem.Value = $LogDir + $targetFile;
 $selectItem.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::RETURN) | Out-Null;
 
-# 0.7 •b’â~
+# 0.7 ç§’åœæ­¢
 Start-Sleep -m 700
 
-# [OK]ƒ{ƒ^ƒ“‚ğ‰Ÿ‚·
+# [OK]ãƒœã‚¿ãƒ³ã‚’æŠ¼ã™
 $window = Get-UiaWindow -Name 'ListView to CSV'
 $window | Get-UiaButton -Name 'OK' | Invoke-UiaButtonClick | Out-Null
 
-# 0.3 •b’â~
+# 0.3 ç§’åœæ­¢
 Start-Sleep -m 500
 
-# •Â‚¶‚é
-$window.Keyboard.KeyDown([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ƒL[‚ğ‰Ÿ‚·
-$window.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::F4) | Out-Null; # F4 ƒL[‚ğ‰Ÿ‚·
-$window.Keyboard.KeyUp([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ƒL[‚ğ‰Ÿ‚·
+# é–‰ã˜ã‚‹
+$window.Keyboard.KeyDown([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ã‚­ãƒ¼ã‚’æŠ¼ã™
+$window.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::F4) | Out-Null; # F4 ã‚­ãƒ¼ã‚’æŠ¼ã™
+$window.Keyboard.KeyUp([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt ã‚­ãƒ¼ã‚’æŠ¼ã™
 
-# 0.3 •b’â~
+# 0.3 ç§’åœæ­¢
 Start-Sleep -m 500
 
 if(!(Test-Path $target_full_path)){
