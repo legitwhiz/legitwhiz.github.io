@@ -1,0 +1,26 @@
+#テーマの設定（black, moon, night, beige, sky, whiteなど）
+theme : white
+
+#ロゴアイコンの設定
+logo : logo.png
+
+#スライドのページ数表示の設定
+slide-number: true
+
+#フットノート
+footnote : "© 2017 sample Inc."
+
+#コードのシンタックスハイライトの設定（highlight.jsを参照）
+highlight : monokai
+
+#スライド自動再生の設定（ms単位で設定）
+#autoslide : 5000
+
+#スライドのループ設定（最後のスライドから最初に戻る）
+loop : true
+
+#トランジションの設定（convex, concave, default, fade, none, slide, zoomなど）
+transition : fade
+
+#チャート / グラフ機能の設定（chart.jsを参照）
+charts : true
