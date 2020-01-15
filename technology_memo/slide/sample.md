@@ -44,3 +44,13 @@ __[Google](https://www.google.co.jp/)__
   1980, 65, 59, 80, 81, 56, 55, 40
   2017, 28, 48, 40, 19, 86, 27, 90
 </canvas>
+
+---
+## スライド５
+### 順番にアニメーション表示
+
+Java
+JavaScript |
+Kotlin |
+Go |
+Scala |
