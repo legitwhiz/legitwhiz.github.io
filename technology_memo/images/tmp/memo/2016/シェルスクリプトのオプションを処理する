@@ -1,0 +1,56 @@
+シェルスクリプトのオプションを処理する
+
+#!/bin/sh
+
+A_FLAG=FALSE
+B_FLAG=FALSE
+V_FLAG=FALSE
+V_VALUE=""
+OPTION=""
+MESSEAGE=""
+
+while getopts abv: OPTION        #getoptsコマンドを利用
+do
+    case $OPTION in
+        a) A_FLAG=TRUE            #-aオプションが指定されたときの処理
+        ;;
+        b) B_FLAG=TRUE            #-bオプションが指定されたときの処理
+        ;;
+        v) V_FLAG=TRUE            #-vオプションが指定されたときの処理
+          V_VALUE=$OPTARG        #このオプションに対する引数が変数OPTARGに入る
+          ;;
+        \?)echo "Usage$0 [-ab] [-v var] argumens ..." 1>&2
+          exit 1                #上記オプション以外はエラーで終了
+          ;;
+    esac
+done
+
+shift `expr $OPTIND - 1`
+
+if [ $# -eq 0 ]; then            #オプション部分をなくして残りの引数だけにする
+    echo "Usage$0 [-ab] [-v var] arguments ..." 1>&2
+    exit 1
+fi
+
+if [ $A_FLAG = TRUE ]; then        #-aオプションが指定されたときの処理
+    MESSAGE=${MESSAGE}a
+fi
+if [ $B_FLAG = TRUE ]; then        #-bオプションが指定されたときの処理
+    MESSAGE=${MESSAGE}b
+fi
+if [ $V_FLAG = TRUE ]; then        #-vオプションが指定されたときの処理
+    MESSAGE=${MESSAGE}v
+fi
+
+if [ "$MESSAGE}" != "" ]; then    #オプションに分けて
+    MESSAGE="${MESSAGE} flags ON"    #変数MESSAGEにセット
+    if [ V_FLAG = TRUE ]; then        #結果として出力
+        MESSAGE="${MESSAGE} , v's value is $V_VALUE"
+    fi
+else
+    MESSAGE="No flags set"
+fi
+
+echo "${MESSAGE}"
+echo "and arguments are $@".        #変数は全て$@に代入
+

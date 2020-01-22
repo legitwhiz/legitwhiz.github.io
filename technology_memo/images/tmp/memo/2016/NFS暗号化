@@ -1,0 +1,114 @@
+sec=krb5p はユーザー認証に Kerberos V5 を使用し、整合性チェックを実行し、トラフィックの傍受を防ぐため NFS トラフィックの暗号化を行います。これが最も安全な設定になりますが、パフォーマンスのオーバーヘッドも最も高くなります。
+
+NFSv4とKerberosを組み合わせる
+どうもNFSはパケットだだ漏れ、認証もへったくれもない、スピード狂のネットワークファイルシステムのイメージは拭えない。ただ、Linux のNFSv3では AUTH_SYSぐらいしか使えなかった(使わなかった？)のも大きいかも。
+
+NFSv3 から NFSv4 への移行に合わせて、まともなKerberos認証を組み合わせてみた。 丁度、OpenDirectory にはもれなく、即運用可能なKerberosサーバ群がついてくるので、、、。
+
+前提として
+
+NFS サーバ／クライアントは、Fedora2以上／CentOS4以上である。
+NFS サーバ／クライアントになるマシンのKerberos のクライアント設定(/etc/krb5.conf)が完了してる。
+NFS サーバ／クライアントにはユーザアカウント情報がある。
+/etc/passwd ファイル内であれ、LDAPサーバ上であれ、あればいい。
+参考
+
+Using NFSv4
+Kerberos 5 setup for NFSv4
+Kerberos/LDAP/NFSv4 HOWTO
+NFSv4 Testing for Linux
+NFSv4
+NFSv4 のドメイン設定
+NFSサーバ／クライアントの両方で、下記ファイルを編集してrpcidmapdを再起動
+
+/etc/idmapd.conf
+
+...
+Domain = example.com
+...
+nfs用のサービスプリンシパルの登録
+KDCにNFSサーバ／クライアントのサービスプリンシパルの登録し、それぞれをkeytabに保存。暗号化／ソルトをdes-cbc-crc:normal に限定するのがミソらしい。
+
+# kadmin -p diradmin
+Authenticating as principal diradmin with password.
+Password for diradmin@EXAMPLE.COM:
+kadmin: add_principal -randkey nfs/server1.example.com@EXAMPLE.COM
+...
+kadmin: add_principal -randkey nfs/client1.example.com@EXAMPLE.COM
+...
+kadmin: ktadd -k /tmp/server1.keytab -e des-cbc-crc:normal nfs/server1.example.com@EXAMPLE.COM
+...
+kadmin: ktadd -k /tmp/client1.keytab -e des-cbc-crc:normal nfs/client1.example.com@EXAMPLE.COM
+できた keytab をそれぞれのマシンの /etc/krb5.keytab にコピーする
+
+rpc.gssd を有効化
+/etc/sysconfig/nfs
+
+...
+SECURE_NFS=yes
+...
+で起動。
+
+# /etc/init.d/rpcgssd start
+...
+# ps `pidof rpc.gssd`
+  PID TTY      STAT   TIME COMMAND
+ 2644 ?        Ss     0:16 rpc.gssd
+#  lsmod | grep rpc
+rpcsec_gss_krb5        12873  7
+auth_rpcgss            42465  4 rpcsec_gss_krb5
+sunrpc                142973  10 nfs,lockd,nfs_acl,rpcsec_gss_krb5,auth_rpcgss
+ただし、Fedora2だけは事前に rpcsec_gss_krb5 をロードしておく必要がある。。。どうでもいいけど。
+
+NFSv4 のサーバの設定
+/etc/exports
+
+/srv/nfs4       gss/krb5(rw,sync,fsid=0,crossmnt,insecure,no_subtree_check)
+/srv/nfs4       gss/krb5i(rw,sync,fsid=0,crossmnt,insecure,no_subtree_check)
+/srv/nfs4       gss/krb5p(rw,sync,fsid=0,crossmnt,insecure,no_subtree_check)
+
+/srv/nfs4/home       gss/krb5(rw,sync,insecure,no_subtree_check)
+/srv/nfs4/home       gss/krb5i(rw,sync,insecure,no_subtree_check)
+/srv/nfs4/home       gss/krb5p(rw,sync,insecure,no_subtree_check)
+適当にディレクトリを作成して、nfsを起動
+
+# mkdir -p /srv/nfs4/home
+# mount --bind /path/to/home /srv/nfs4/home
+# /etc/init.d/nfs restart
+...
+# exportfs
+/srv/nfs4/home  gss/krb5
+/srv/nfs4/home  gss/krb5i
+/srv/nfs4/home  gss/krb5p
+/srv/nfs4       gss/krb5
+/srv/nfs4       gss/krb5i
+/srv/nfs4       gss/krb5p
+クライアントでNFSv4のマウント
+これで最後で root 権限で
+
+# mount -t nfs4 -o sec=krb5 server1:/home /mnt
+# mount | grep home
+server1:/home on /mnt type nfs4 (rw,sec=krb5,addr=XX.XX.XX.XX)
+一般ユーザでKerberosレルムに認証されている状態であれば、NFS上のファイルが触れる。。。
+
+# su - user1
+% klist -5
+klist: No credentials cache found (ticket cache FILE:/tmp/krb5cc_5002)
+% ls /mnt
+ls: cannot access /mnt: Permission denied
+% kinit
+Password for user1@EXAMPLE.COM:
+% klist -5
+Ticket cache: FILE:/tmp/krb5cc_5002
+Default principal: user1@EXAMPLE.COM
+
+Valid starting     Expires            Service principal
+11/16/07 03:34:16  11/16/07 13:34:16  krbtgt/EXAMPLE.COM@EXAMPLE.COM
+    renew until 11/17/07 03:34:17
+11/16/07 03:34:20  11/16/07 13:34:16  nfs/server1.example.com@EXAMPLE.COM
+    renew until 11/17/07 03:34:17
+% ls /mnt
+lost+found user1 user2 user3
+% touch /mnt/user1/a
+% ls -l /mnt/user1/a
+-rw-r--r-- 1 user1 users 0 Nov 16 03:34 /mnt/user1/a

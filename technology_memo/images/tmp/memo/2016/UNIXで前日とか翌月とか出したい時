@@ -1,0 +1,28 @@
+GNU dateならこんなに簡単に出来るのですが… 
+
+$ date -d yesterday 
+$ date -d '2 days ago' 
+$ date -d '1 week ago' 
+$ date -d tomorrow 
+$ date -d '2 days' 
+$ date -d '1 week' 
+
+
+AIXは-dオプションがない
+よって、翌日や前日、ある指定した日からの日数計算ができない｡
+HP-UXも同じく-dオプションがありません｡
+なので私はシェルスクリプトで面倒なうるう年判定とか含め計算していました…
+
+ですがAIXもHP-UXもデフォルトでperlがインストールされている
+
+localtimeから秒を加算、減算すればいいんです。
+
+昨日なら
+$ perl -e 
+'@T=localtime(time-86400);printf("%02d/%02d/%02d",$T[4]+1,$T[3],($T[5]+1900)%100)' 
+
+明日なら
+$ perl -e 
+'@T=localtime(time+86400);printf("%02d/%02d/%02d",$T[4]+1,$T[3],($T[5]+1900)%100)' 
+
+

@@ -1,0 +1,24 @@
+ntp.confにpeerというオプションがあり、多くのシステムで使用されていますがpeerは本来、次のような異なるNTP Serverを参照し、かつ階層(Stratum)が同じクライアント間で設定する。
+
+(正)
+NTP Server                    NTP Server
+    ↑                                     ↑
+    ↑参照                             ↑参照
+    ↑                                     ↑
+NTP Client ←←peer→→NTP Client
+
+しかし間違った使い方をしているシステムをよく見かけます。
+次のような同じNTP Serverを参照しているクライアント間でpeerを設定する。
+
+(誤)
+               NTP Server
+                 ／          ＼
+             ／ 参照         ＼参照
+    NTP Client ←peer→NTP Client
+
+これは本来のpeerの使用目的にはあわず、設定しても意味がない。
+また同一Serverを参照しているクライアント間ではpeer設定をしないようにといった記述もありました。
+(設定するとどのような弊害があるかまでは記述なし)
+
+
+ 

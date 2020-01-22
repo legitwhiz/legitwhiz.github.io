@@ -1,0 +1,752 @@
+コマンドを打つ前に覚えておく事 
+
+①サーバに負荷がかかるコマンドを打つ場合、下記をコマンドの先頭に付けましょう
+$ ionice -c 2 -n 7 nice -n 19
+# -c 2：ディスクI/Oの実行優先度をベストエフォートで実行
+# -n 7：さらにこのコマンドの優先度を低くする
+# -n 19：プロセスの実行優先度を一番低くする
+
+②less more cat viewの違い
+使い分けましょう。
+┌────┬─────────────────────────────────────┐
+│コマンド│ 説明                                                                     │
+├────┼─────────────────────────────────────┤
+│less    │ ファイルの中身を表示し、スクロール出来る。                               │
+│        │ viと違ってファイル全体を読み込まないので、起動が速い。                   │
+│        │ qを押すと終了。                                                          │
+│        │ 圧縮されたファイルの一覧を展開せずに表示できる。                         │
+├────┼─────────────────────────────────────┤
+│more    │ ファイルの中身を表示し、スクロール出来る。末行まで表示すると終了。       │
+│        │ lessと違ってqボタンで終了しても出力結果がターミナルに残る。              │
+├────┼─────────────────────────────────────┤
+│cat     │ ファイルを2つ以上選択するとファイルの中身を連結して表示することが出来る。│
+│        │ それ以外はめちゃくちゃ重たいファイルに当たると地獄なのであまり使わない。 │
+├────┼─────────────────────────────────────┤
+│vi      │ viのreadonlyでモード。どうしてもその用途で！ってときしかあまり使わない。 │
+│        │ lessのほうが速い。vim -Rでvimのreadonlyモードで良いかと。。              │
+└────┴─────────────────────────────────────┘
+※less で大文字Fを押すと tail -f の動作をして、^Cで普通のモードにも戻れる（逆スクロールとかできる）
+ただし、lessの大文字Fだと、大きいファイルを表示する際、読み込みに時間がかかってしまうので、
+リアルタイムに読み込めるtail -fがおすすめです
+
+③ファイルを一時的にバックアップしたい場合
+ 操作しているファイルと同じディレクトリに ".bk"ファイルを作成するなんて。。ということで私は/tmpと/var/tmpを使い分けて保管してます。
+┌──────────────────────────────────────────┐
+│ 説明                                                                               │
+├──────────────────────────────────────────┤
+│ ①/tmpは（tmpfsでマウントされている場合）再起動するとファイルは消えます。          │
+├──────────────────────────────────────────┤
+│ ②/var/tmpは再起動してもファイルは消えません。さらに/tmpより長い期間保持されます。 │
+│ lessと違ってqボタンで終了しても出力結果がターミナルに残る。                        │
+├──────────────────────────────────────────┤
+│ ③どちらも定期的に消されます。                                                     │
+│ （tmp⇒10日、/var/tmp⇒30日。）                                                    │
+│ （詳しくは$ less /etc/cron.daily/tmpwatch）                                        │
+└──────────────────────────────────────────┘
+
+④/etc/init.dより、serviceコマンドを使いましょう
+serviceのほうが、実行ユーザの環境変数の影響を受けにくくなります。
+
+###############################################################################
+1.メモリ、ディスク 
+①現在のメモリ使用量を確認する
+$ free -m
+$ less /proc/meminfo
+# メモリ数とバッファ数を見ましょう。バッファ数が大事です。
+
+②swapサイズを見る
+$ swapon -s
+
+③現在の全体ディスク使用量を確認する
+$ df -Th
+# ディスク容量が減った場合、全体で残りいくらか見ましょう
+
+④ディスク使用量を確認する
+$ sudo ionice -c 2 -n 7 nice -n 19 du -scm /* | sort -rn
+# sch: サブディレクトリは表示しない+ディスク総使用量表示+Mバイト形式で表示
+# (sortしないなら-mより-kが見やすいです)。
+# rn: 使用量が多い順にする+数値で比較
+# dfを打った後、なんのファイルが大きいのがを見ましょう
+###############################################################################
+2.ファイル転送、検索 
+
+①1MB/s制限でファイルを転送する（コマンド実施前に-n を付与してdry runしましょう）
+$ sudo rsync -av --progress --bwlimit=1000 /tmp/test.txt 1.1.1.1:/tmp/
+# test.txtを1.1.1.1の/tmpに転送。
+# av: a={-r -l -p -t -g -o -D }オプションを全部含む。vは転送状況を表示
+# progressを付けると残り転送時間が表示されます。大きいファイルを転送する際に是非。
+# bwlimitはByte指定です。
+
+"注意"
+### scpとrsyncの違い
+# rsyncは/tmp/配下に一時ファイルを作成します。
+# 全部転送が完了したとき、ファイルを書き込んでくれます。（checksumによってチェックされます）
+# scpはそのまま転送します。
+# 途中で失敗しても、不完全ですが書き込まれます。（正しく転送されたかはmd5をチェックしましょう）
+#
+# 「容量が少なくて、rsync出来ない。」
+# という理由でscpの動作をさせたいなら、rsync --inplaceを利用しましょう。
+
+②カレントディレクトリ内で.txtファイルを探し、ファイル名に空白が含む物も併せて削除する
+$ find . -maxdepth 1 -type f -name "*.txt" -print0 | xargs -0 rm
+# -maxdepthで探しにいくディレクトリを1階層（カレント）のみにします。
+# xargsに渡してrmを実行させてます。今回は空白という点がポイントです。
+# -print0: 空白（スペース）がに区切られる
+# -0: を区切り文字として扱う
+
+③カレントディレクトリ内で.txt、.rbファイル 「以外」を探す。
+$  find . -maxdepth 1 -type f ! ( -name "*.txt" -o -name "*.rb" ) 
+# 意外と便利です
+
+###############################################################################
+3.CPU,OS,パッケージ 
+
+①CPU情報、コア数など
+$ less /proc/cpuinfo
+
+②CPUの使用量
+$ ionice -c 2 -n 7 nice -n 19 top
+# 1を押すとcore毎の使用量が見れて、便利です
+
+$ sar
+# 時間毎に見る事が出来ます。
+# $ sar 1 5とすると、1秒おきに5回表示する事も出来ます。
+
+③プロセス数を確認
+$ ps auxww
+# wを付けると、表示幅が広がります。2つにすると制限がなくなり、コマンドが省略せず表示されます。
+
+④使ってるファイルのプロセスを調べる
+$ lsof
+# ps auxwwでPIDを調べ、「このコマンドどんなプロセス使用してるのかな？」と調べるときに使います
+
+⑤/bin/shで動いてるプロセスを全て停止する
+$ ps auxww | grep "/bin/sh" | awk '{print $2}' | xargs kill
+# awkでプロセス番号を取ってます。
+# よくexec rmを使う方がいますが、
+# xargsのほうが安全で速いのでこちらを使いましょう
+
+⑥OSバージョンを調べる
+$ cat /etc/redhat-release
+# よく使いますね。CentOSのバージョンとか見れます
+
+⑦kernelバージョンを調べる
+$ uname -a
+# こちらもよく見ます。
+
+⑧パッケージの確認
+$ rpm -qa
+# どのバージョンのパッケージが入ってる確認します。grepと併用してよく打ちますね
+
+###############################################################################
+4.ネットワーク 
+
+①インターフェイス、IP情報を見る
+$ ifconfig
+$ ip addr show
+# centos7からはipコマンドになります。
+
+②ルーティングを見る
+$ route
+# ネットに繋がらなくなったらまず確認しましょう。
+
+③ネットワークの経路を調べる
+$ traceroute -n 8.8.8.8
+# ネットに繋がらなくなったらまず確認しましょう。
+# -n: 逆引きさせない。経路を見るだけなので。
+
+④UDP通信を許可しない機器の場合は、ICMPを使ってtraceする
+$ traceroute -In
+# たまにUDPの通信をはじくネットワーク機器がある場合、こちらを使います。
+# I（アイの大文字）。ただUDPと違って速度はおそくなりますのでいざとなったら。
+
+④mysqlのコネクションを調べる
+$ netstat -ano | grep 3306
+# -ano: 全てのコネクション+逆引きしない+時間表示
+# メンテナンス時、外部からコネクションがないか確認出来ます。3306はmysqlのポート。
+
+⑤IPMIの情報を確認
+$ sudo ipmitool lan print
+# 意外と使ってます
+
+⑥iptablesの確認
+$ iptables -L
+
+⑦インターフェイス周りで重要なファイル
+$ less /etc/udev/rules.d/70-persistent-net.rules
+# NICが複数あるときはココをみると詳しい内容が載ってます。
+
+⑧ネットワークインターフェイスの状況を見る
+$ ethtool -i eth0
+# 冗長確認も出来るんですが、
+# NICってメーカー毎にベンダーコードって言って、MACアドレスの最初の値が決まってるんです。
+# 冗長NICのとき、MACアドレスの若い番号からethが割り当てられるので、
+# bus-infoの値と70-persistent-net.rulesファイルを使ってpciで起動した（挿した）順に
+# 割り当てたりする裏技も出来ます。
+
+###############################################################################
+5.アカウント、ログイン周り 
+
+①ログインしてるユーザを確認する
+$ w
+# 障害時、誰かの作業によるものか。サーバメンテナンスする際に誰か触ってないか確認出来ます
+
+②ログインしてるユーザ全員にメッセージを送る
+$ wall
+# サーバを落とすとき、ログインユーザがいる際に便利です
+
+③ユーザ一、グループ一覧を表示
+$ getent passwd
+# LDAPからユーザー情報とれてるかな0って時によく使ってます。
+
+④ユーザ作成
+$ sudo useradd -g hoge -u 600 -d /home/user/hogehoge hogehoge
+# hogeグループ+ユーザID:600+ホームディレクトリを/home/user/hogehogeで、hogehogeユーザ作成
+
+⑤ユーザ削除
+$ sudo userdel hogehoge
+
+⑥ユーザのパスワード設定
+$ passwd hogehoge
+
+###############################################################################
+6.apache 
+
+①apacheのログをみる
+$ tail -f /var/log/httpd/access.log
+# 再起動する際には一緒にログも見ましょう
+# 最後に  awk '{print $10}'  を入れると、200 OKだけ取る事も出来きます。
+
+②apacheのエラーログをみる
+$ tail -f /var/log/httpd/error.log
+# 再起動する際には一緒にログも見ましょう
+
+③apacheのconfigが正しいかどうかテスト
+$ sudo service httpd configtest
+# 再起動する前に実施しましょう
+
+④apacheのリロード（設定反映）
+$ sudo service httpd graceful
+# apacheを停止させずに、設定を反映します。
+# reloadと違ってリクエストを中止せずに再起動できます。
+
+⑤apacheの再起動
+$ sudo service httpd condrestart
+# 注意点として、apacheが一時停止するということ。
+# restartと違って、httpdが動いてるときのみに再起動します。
+
+⑥2014/10/24の朝5時07時までの127.0.0.1のPVアクセス数を見る
+$ less /var/log/httpd/access_log | grep "24/Oct/2014:05|24/Oct/2014:06" | grep -c "127.0.0.1"
+# -cでヒットした文字をカウント出来ます。
+# 併せて-vを付けると 以外 をもとめる事も出来ます。
+# 大きいサイズだとperlワンライナーのほうが速いので、私はこちらでやったりします。
+
+$ perl -nE 'if((/24/Oct/2014:05/ || /24/Oct/2014:06/) && /127.0.0.1/){$t++}END{say $t}' /var/log/httpd/access_log
+# 以外 をもとめるときはifではなくunlessを使います。
+
+⑦2014/10/24の朝5時07時までのUU（アクセス人数）を調べたい
+$ less /var/log/httpd/access_log | grep  "24/Oct/2014:05|24/Oct/2014:06" | awk '{print $2}' | sort | uniq | wc -l
+# 出力されるapacheログをカスタマイズしてたら違う結果になると思います。
+# ポイントは、sortで綺麗に並べて+uniqで重複を削除+wcで行数を調べてます。
+# 良く組み合わせて使う3つのコマンドですね
+
+###############################################################################
+7.HW,HDD, RAID,Selinux 
+※ MegaCliコマンドが使える前提。環境によってはpathが違うかもしれないので注意
+
+①物理ディスク情報を見る
+$ sudo /opt/MegaRAID/MegaCli/MegaCli64  -PDList -aALL
+
+②仮想ディスク情報を見る
+$ sudo /opt/MegaRAID/MegaCli/MegaCli64 -LDInfo -LALL -aAll
+# RAID10とRAID
+
+③筐体情報の確認（例はシリアル番号の確認）
+$ dmidecode -s system-serial-number
+# シリアルは棚卸しのときに活躍します。
+# その他にもサーバの型番なども見れますので、dmidecode -sなど打ってみてください
+
+④selinuxがenableになってるか確認
+$ getenforce
+# 基本使わないのでDisableになってるでしょう。。
+
+###############################################################################
+8.MySQL 
+
+①マスターの情報
+mysql> show master status G
+# slaveを作る際に必要です。
+# slaveを停止したら必ず打ってテキストに保管しておきましょう。
+
+②スレーブの情報
+mysql> show slave status G
+# 非常に良く打ちます。
+# slaveを停止したら必ず打ってテキストに保管しておきましょう。
+# replication周りのエラー時は、出力された結果の下記がYesになってるか見ましょう。
+# Slave_IO_Running:Yes
+# Slave_SQL_Running:Yes
+
+③実行中のプロセスを見る
+mysql> show processlist
+# 今どんなコマンドが打たれてるかみれます。
+# 連続して何度もshow processlistを打ったりしますよね。。
+
+④ユーザの情報
+mysql> select host,user from mysql.user;
+
+⑤ユーザ権限の確認
+mysql> show grants for user_name;
+
+⑥権限追加
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER 
+ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
+# *.*にDB_nameを入れると、そのDBのみの権限が与えられます。
+# *は、全てのDB.全てのTableの意味ですね。
+# *.*でなく、*だけだとバージョンによって動作が異なるので基本使用しないでください。
+# %はlocalhostを含みません。
+# ローカルから接続させたい場合は、localhostを明示して入れてください。
+
+⑦テーブルのカラムを調べる
+mysql> describe table_name;
+
+⑧テーブルにアクセスさせたくないときにlockを掛ける
+mysql> flush tables with read lock;
+mysql> show processlist;
+mysql> quit
+$ mysql -uroot -e "show status" | grep "Key_blocks_not"
+$ mysql -uroot -e "show engine innodb statusG" | grep "Log sequence"
+$ mysql -uroot -e "show engine innodb statusG" | grep "Log flush"
+# メンテナンス時によく使いますよね。サービス影響出るので非常に危ないです。
+# 打ったら必ず show processlistを何回も実行し、プロセスを確認しましょう。
+# 瞬時にlockされない可能性もあります。また安全性も込めて、下記も確認しましょう。
+# key_blocks...が「0」
+# Log sequence...がLog flush...と同じ値
+
+⑨スレーブスレッドによって現在開かれているtempテーブルの数の確認
+mysql> show status like "Slave_open_temp_tables";
+# lockした後に、値が「0」になったことを確認しましょう
+
+⑩shutdownの際、innodb buffer pool内のログをflushするようGLOBAL変数を変更
+mysql> set global innodb_fast_shutdown = 0;
+# innodbの場合、テーブルスペースに反映されてない部分をshutdown時に書き込むことにより
+# shutdown後のデータの整合性を高くする事が出来きます。
+
+⑪slave情報のreset
+mysql> reset slave all;
+# バックアップデータからSlaveを復旧した際、前のslave情報が残ってたりします。
+# その際はこのコマンドで一回クリアにしてから、Masterとreplicatioを貼りましょう。
+
+⑫innodbかmyisamか確認
+mysql> use information_schema;
+mysql> select table_name,engine,table_schema from tables where table_schema="DB_name";
+# innodbとmyisamで対応が変わります。仕様の分からないDBの障害時には確認しましょう。
+
+⑬ログ各種
+$ tail -f /var/log/mysql/mysqld.log
+# /etc/my.cnfで定義されてるlogは抑えておきましょう。
+# 何かあったときのlogは大事！
+
+⑭レプリケーションの開始
+mysql> ＼e
+CHANGE MASTER TO
+MASTER_HOST = '1.1.1.1',
+MASTER_USER = 'repilication_user',
+MASTER_PASSWORD = 'password',
+MASTER_PORT = 3306,
+MASTER_LOG_FILE = 'Master_Log_File',
+MASTER_LOG_POS = Exec_Master_Log_Pos ;
+#入力が終わったらESCを押して:wq
+>; 
+
+# ＼eは、入力するコマンドをviのように編集する事が出来て便利です。
+# hostにはレプリケーション先のIPを入力しましょう。
+# userにはレプリケーション用のuserを入力しましょう
+# 自分は mysql> reset slave all;を最初に実行してslave情報を一度クリアしてます
+# あとは mysql> start slave;をするなり。
+
+⑮データベースのインポート
+mysql> create database testdb
+mysql> quit
+$ mysql -uroot testdb < testdb.sql
+# 事前にデータベースを作成しましょう
+
+⑯全データベースのバックアップ
+$ mysqldump -uroot --all-databases --single-transaction > all_database.sql
+### --single-transaction
+#テーブルをロックせずに、トランザクションの範囲でバックアップしてくれます。
+
+⑰データベースのバックアップ
+$ mysqldump -uroot --quote-names --opt --single-transaction --master-data=2 --hex-blob -R --order-by-primary database_name > backup.sql
+
+### --master-data=2
+# mysqldumpのデータで復旧された後、binlogのどのファイルの何行目から、
+# 復旧させればいいかdumpファイルに書き込んでくれる。
+# 2（２行目から取得開始）にすることにより、先頭に有る「CHANGE MASTER TO」構文を排除してくれる。
+# ただのバックアップを取るだけなら必要。
+
+### --order-by-primary
+# 明示的に主キーでソートしてくれる
+
+### -hex-blob
+# バイナリデータを16進数に表記文字列にコンバートして出力
+
+### -R
+# 記憶されたルーチンをダンプされたデータベースからダンプする。
+
+### --quote-names
+# 文字でデータベース、テーブル、カラム名を食おーとする''
+
+### --opt
+# デフォルトで有効。速いダンプオペレーションを提供し、
+# MySQLサーバに素早く再ロードできるダンプファイルを生成。
+
+### --set-gtid-purged=OFF
+# SET @@GLOBAL.GTID_PURGED='71803be2-7816-11e2-8c99-5254003e1cec:1-665';
+# みたいなのも取得してしまう。（Global Transaction ID）
+# 5.6以前のバージョンのMySQLをimportする場合、
+# または5.5から5.6のmysqldumpを仕様してダンプする場合は必須。
+# GTIDが有効な場合、これも必要  -triggers  -routines - events
+
+### --quick
+# クエリをバッファせず、stdoutに直接ダンプする。大きなダンプの際に特に便利。
+
+### --add-drop-table
+# drop tableのステートメントをcreate tableステートメントの前に追加。
+# テーブルの有無に関わらず作成してくる。
+
+"MySQL注意点"
+①--skip-lock-tables
+ダンプ中にデータを更新された場合、整合性がとれなくなる。
+
+② flush-logs
+バイナリログがローテーションされる。5.5では付けては行けない。
+flush logsでトランザクションが暗黙的に終了（COMMIT）してしまう。
+
+###############################################################################
+9.ディスクの追加、新規作成(parted編) 
+
+### 2本目だとsdbになってるでしょう。終了サイズを確認します。
+$ parted -l | grep sdb
+
+### パーティションを作成していきます
+$ sudo parted /dev/sdb
+(parted) mklabel gpt
+(parted) mkpart primary 0% 100%
+(parted) set 1 lvm on  # 1番のパーティションにlvmのフラグを立てましょう。
+(parted) print
+
+### sdb1が作られたので、ファイルシステムを作ります。
+### 物理ボリュームじゃなくて、柔軟性の高い論理ボリュームにしましょう。
+### またボリュームグループは、先頭に"Vol"
+### 論理ボリュームは、先頭に"Log"を付けると分かり易いですよ。
+$ sudo pvcreate /dev/sdb1
+$ sudo vgcreate VolGroupName /dev/sdb1
+$ sudo lvcreate -l 100%free -n LogName VolGroupName
+
+### ファイルシステムを割り当てます。
+$ sudo mkfs -t ext4 /dev/VolGroupName/LogName
+
+### あとはマウントするだけです。
+'論理ボリュームなので、決してUUIDで登録しないように。'
+$ sudo mkdir /NewDisk
+$ sudo vim /etc/fstab
+/dev/mapper/VolGroupName/LogName /NewDisk  ext4    defaults 1 1
+$ sudo mount /NewDisk
+
+###############################################################################
+10.ディスクの拡張(fdisk編。2TBまではこれでいけます) 
+
+### ディスクが2本目の場合はvdbとかになってるでしょう。
+$ ls /dev | grep vd
+
+### LVMを作成します。
+$ sudo fdisk -cu /dev/vdb
+  n (add a new partition)
+  p (primary)
+  1 (number)
+  そのままenter (初めのセクタ。今回は全て使う手順です)
+  そのままenter (最後のセクタ。今回は全て使う手順です)
+  8e (Linux LVM。Lで一覧が見れます)
+  p (出来たパーティションを確認)
+  w (write)
+
+### 確認しましょう。
+$ sudo fdisk -l
+
+### 物理ボリューム作成
+$ sudo pvcreate /dev/vdb1
+
+# 確認しましょう
+$ sudo pvdisplay
+
+### ボリュームグループの拡張
+$ sudo vgextend VolGroupName /dev/vdb1
+
+# 確認しましょう
+$ sudo vgdisplay
+
+### +するサイズは計算して入れてください。失敗してもエラーが出るだけなので安心です。
+$ sudo lvextend -L +19270MB /dev/VolGroupName/LogName
+
+### オンライン拡張します
+$ sudo resize2fs -p /dev/VolGroupName/LogName
+
+### これで完了です。確認してみましょう
+$ df -Tmh
+
+###############################################################################
+11. ディスクの削除 
+
+
+### 論理ボリューム削除
+$ sudo lvremove /dev/VolGroupName/LogName
+
+### 仮想ボリューム削除
+$ sudo vgreomove VolGroupName
+
+### 物理ボリューム削除。sdbやsdcなどに注意しましょう。
+$ pvdisplay
+$ sudo pvremove /dev/sdb1
+
+あとはfdisk -cuで自由にお使い下さい。
+
+###############################################################################
+12.その他、よく使うコマンドのオプション、注意点 
+
+$grep
+-A after。-A3の場合、マッチ部分より後の3行も追加表示
+-B before。-B3の場合、マッチ部分より前の3行も追加表示
+-v マッチしない行を検索
+-w パターンマッチを単語全体で行う
+-x 行全体を検索
+-i 大文字小文字の区別をなくす
+-n 各行の前に行番号を表示する
+-c ヒットした文字をカウント出来る
+
+-e pattern 条件指定。grep -e "hoge|test"だとhogeとtestを検索してくれるor構文になる。
+. 任意の1文字
+^ 行の先頭
+$ 行の末尾
+[] かっこ内の任意の文字に一致
++ 直前の文字の１個以上の連続
+? 直前の文字の0または1文字にマッチ
+pattern1＼| pattern2 patter1or2のいずれかにマッチ
+
+$sort
+-r 逆順
+-n 先頭の数字や記号を数値と見なしてsortする。
+-k 2,2 フィールド指定。この場合は2列目から2列目まで
+
+$count
+-d 重複行を表示する
+
+$cut
+-d 区切り文字
+-f 表示する項目を指定。　区切った順に+から1,2,3
+
+tab区切りは-dを消すと出る。（デフォルトだから）
+
+$uniq
+ファイルで重複している行を削除する。
+ただしソートしている必要がある。
+
+任意のディレクトリ以下のファイルを検索する
+
+
+● カレントディレクトリ以下の全ファイルからxxxという文字列を検索
+find ./ -name '*'|xargs grep 'xxx'
+
+●任意のディレクトリ以下の画像ファイルを見つけて指定したディレクトリに全てコピー
+
+# pictureフォルダ以下のjpgファイルを見つけてデスクトップ以下にコピー
+find ./picture -name '*.jpg' | xargs -J% cp -f % ./cpy
+
+●ディレクトリ構造をコピー
+
+tree |pbcopy
+# 以下のような出力をコピー出来る
+# /Users/xxx/yyy/
+# ├── memo.txt
+# ├── dododo.txt
+# └── script.rb
+
+●空のファイル作成
+
+# xxx.txtというファイルを作成
+touch xxx.txt
+
+●日付をファイル名に入れたい場合は以下
+# 141227_18-48-41.txtを作成
+touch `date +%Y%m%d_%H-%M-%S`.txt
+
+●ファイルを空にする
+
+# sample.txtというファイルを空にする
+cat /dev/null > sample.txt
+or
+cp /dev/null sample.txt
+or
+echo -n > sample.txt
+or
+>sample.txt
+
+●ファイルに新規上書き保存
+・before
+sample.txt
+ 
+hello
+world
+
+・コマンド実行
+cat << EOF > sample.txt
+goodbye
+task
+EOF
+
+・after
+sample.txt
+
+goodbye
+task
+
+補足：以下でも同じようなことが出来ます。
+> sample.txt
+goodbye
+task
+
+●複数ファイル、フォルダを一括作成等
+# sample.txt, sample1.txt, sample2.txt sample3.txtをまとめて作成
+touch sample{,1,2,3}.txt
+
+# /taiyop/以下にdir_a,dir_b,dir_cのフォルダを作成
+mkdir /taiyop/dir_{a,b,c}
+
+ちなみにこの{a,b,c}とする方法をbrace expansionといいます。
+Brace Expansionで生産性5割増しな楽しいコマンドライン生活
+
+●任意のプロセスが動いているか確認
+
+# mysqlのプロセスが動いているか確認
+ps aux|grep mysql
+
+# pgrep -al mysql
+
+●ランダム文字列を生成
+head /dev/urandom | shasum |cut -f 1 -d ' '
+
+シェルのワンライナーの再利用性を高めるたった一つの方法
+ちなみに、乱数時のみ取得したい場合は下記がおすすめ。
+
+# 0~99999まで
+echo $RANDOM
+# 出力結果例：273
+
+●今日の日付を取得
+# 2014 12 27
+date '+%Y %m %d'
+# 2014-12-27
+date '+%Y-%m-%d'
+date +%F
+
+●定期的にコマンド実行
+# １秒ごとに`say hello`を実行
+while true; do `sleep 1; say hello`; done
+
+●ファイルの中をソートして重複行を削除
+# sample.txtの重複行を削除
+sort sample.txt -uo sample.txt
+
+ソートせずに実行したい場合はawkコマンドがおすすめ。
+# sample.txtの重複行削除
+awk '!val[$0]++' sample.txt
+
+●任意のディレクトリのファイル数をカウント
+ls -F |grep -v / |wc -l
+
+任意のディレクトリ以下のファイル数をカウントするときは以下
+# カレントディレクトリ以下のファイル数
+find . -type f| wc -l
+
+●treeコマンド入れてたら下記でも出来る。
+tree | tail -n 1
+※dot(.) で始まるファイルも対象とする場合、tree -a 
+
+●ファイルの先頭からn行目までを別ファイルに上書きor追記
+# input.txtの先頭５行をoutput.txtに上書き
+tail -n 5 input.txt > output.txt
+# input.txtの先頭５行をoutput.txtに追記
+tail -n 5 input.txt >> output.txt
+
+逆にファイルのn行目から末尾までの場合は以下
+# input.txtの11行目から末尾までをoutput.txtに上書き
+tail -n +11 input.txt > output.txt
+# input.txtの11行目から末尾までをoutput.txtに追記
+tail -n +11 input.txt >> output.txt
+
+合わせ技
+n行目からm行目までの場合
+# input.txtのn行目からm行目まで出力してoutput.txtに上書き
+# tail -n +N input.txt | head -n -(M-1) > output.txt
+
+# input.txtの3行目から5行目まで出力してoutput.txtに上書き
+tail -n +3 input.txt | head -n 4 > output.txt 
+
+$ awk 'NR>=n && NR<=m' ...
+$ sed -n 'n,mp' ...
+
+●パス出力を改行して表示
+echo $PATH | tr ":" "n"
+# --出力結果例--
+#/usr/local/bin
+#/usr/bin
+#/bin
+#/usr/sbin
+#/sbin
+
+printf ${PATH//:/'n'}
+
+●小文字、大文字変換
+#input.txtの小文字 -> 大文字でoutput.txtに上書き
+cat input.txt |tr '[a-z]' '[A-Z]' > output.txt
+
+#input.txtの大文字 -> 小文字でoutput.txtに上書き
+cat input.txt |tr '[a-z]' '[A-Z]' > output.txt
+
+●任意の数字一覧を出力
+# 12 13 22 23 32 33と出力
+echo {1..3}{2..3}
+# 00:00 00:01 00:02 00:03 ... 23:59と出力
+echo {0..1}{0..9}, 2{0..3}:{0..5}{0..9}
+
+●Bashのブレース展開で00:00から23:59まで
+
+下記のようにすれば各数字を改行してくれる。
+echo {1..3}{2..3} |tr " " "n"
+
+printf "%dn" {1..3}{2..3}
+
+●改行コードを変換
+cat ファイル名 | tr "rn" "n"
+
+●一定容量を持つフォルダを昇順表示
+#ルートディレクトリ以下で1~3GBのフォルダ一覧を昇順表示
+sudo du -h / | grep  -E '^ *[1-3]+.?[0-9]+G' | sort
+
+GNU coreutils 版 sort コマンドには --human-numeric-sort オプションがあります。
+$ sudo du -h / | sort -1,1h | grep -E '^ *[1-3].[0-9]+G'
+
+●n進数->10進数変換
+# 2進数
+echo $((2#101))
+# 16進数
+echo $((16#afaf))
+
+●見つかったファイルに対して適時シェル実行
+
+# カレントディレクトリ以下のファイルに全て.txtをつけて作成
+for val in `find ./*`; do cat $val > $val.txt; done
+
+この場合、ディレクトリにも cat ... が適用されてしまいますので、
+また、万が一、ファイル名に改行コードが含まれている場合を想定して -print0 オプションを付いておいた方が良いかと
+
+$ find . -type f -print0 | xargs -0 -I% bash -c 'cat "%" > "%.txt"'

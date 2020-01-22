@@ -1,0 +1,8 @@
+
+#!/bin/sh
+
+#最終処理用の関数
+cleanup(){
+  EXIT_CODE=$1
+  NUMBER='awk '{print $1}' $TMP_FILE'
+NUMSUM='awk '{print $2}' $'

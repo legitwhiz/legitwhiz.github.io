@@ -1,0 +1,8 @@
+NFSがversion4の場合に起こる!!
+
+vi /etc/nfsmount.conf
+
+#Defaultvers=4
+Defaultvers=3
+
+ 

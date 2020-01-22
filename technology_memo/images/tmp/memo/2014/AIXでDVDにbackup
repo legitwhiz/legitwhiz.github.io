@@ -1,0 +1,13 @@
+AIX5.3からmksysbに相当するmkdvdコマンドの存在をさっき知りました!!
+
+p Series POWER6からDVD-RAMが標準となったためか!?
+
+ただし、メディアが4.7GB/9.4GB DVD-RAMと制限あり…
+
+指定ディレクトリバックアップ
+mkdvd -r directory -d /dev/cd0
+
+ブート可能なシステムバックアップ
+mkdvd -d /dev/cd0
+
+あまり使われていないコマンドなのか"aix mkdvd"でググっても日本語で15件…

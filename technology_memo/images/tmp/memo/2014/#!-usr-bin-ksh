@@ -1,0 +1,16 @@
+#!/usr/bin/ksh
+
+${DEBUG:+set -x}
+function fnc_test
+{
+${DEBUG_testpoint1:+eval RC=1}
+if
+fi
+}
+
+シェル実行前に
+export DEBUG_testpoint1=on
+export DEBUG=on
+で異常系テストで実行する。
+
+終わった後、unset DEBUGすること

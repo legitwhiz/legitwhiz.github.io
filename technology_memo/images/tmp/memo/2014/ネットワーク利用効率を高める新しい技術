@@ -1,0 +1,7 @@
+OpenFlow：フレーム転送時にフレーム全体を検査することで、従来のネットワークよりも機能的にフレーム転送が出来る技術
+
+Virtual eXtensible Local Area Network(VXILL)：トランスポート層の上で、仮想的なLANを提供するネットワーク仮想化技術の一つ。全てのトラフィックをUDPでカプセル化して通信を行う。
+
+Transparent Interconnection of Lots of Links(TRILL)：STPより高効率の冗長化技術(またはルーティング技術)。Blocking状態ポートが発生しないため、ネットワーク全体のリンク利用効率を向上出来る。
+
+Locator/ID Separetion Protocol(LISP)：従来のIPアドレスを、位置情報と識別情報に分割して管理する技術。物理ネットワーク構成に応じてトラフィックを最適化出来る。

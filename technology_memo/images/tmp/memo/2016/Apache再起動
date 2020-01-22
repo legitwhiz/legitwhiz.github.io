@@ -1,0 +1,5 @@
+ps -ef | grep apache
+sudo kill 
+
+
+sudo /etc/init.d/apache2 start

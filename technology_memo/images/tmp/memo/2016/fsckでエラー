@@ -1,0 +1,117 @@
+OS起動時、下記メッセージでOS起動せず…
+
+Checking root filesystem
+fsck.ext3 /dev/<partition>: : Bad magic number in super-block while trying to open /dev/<partition>
+（省略）
+*** An error occurred during the file system check.
+*** Dropping you to a shell; the system will reboot
+*** when you leave the shell.
+Give root passwrd for maintenance
+(or type Control-D to continue):
+
+指示通りfsckするとブロックサイズで不整合…
+
+#fsck /dev/<partition>
+
+The filesystem size (according to the superblock) is 2097152 blocks
+The physical size of the device is 2096474 blocks
+Either the superblock or the partition table is likely to be corrupt!
+Abort? yes
+
+
+一応、OS再起動したが事象かわらず…
+
+mkfs.ext3コマンドでブロックサイズ（Block size）とスーパーブロックのバックアップが保存されている場所（Superblock backups）を調べる。
+
+# mkfs.ext3 -n /dev/<partition>
+mke2fs 1.35
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=2)　←ブロックサイズ
+Fragment size=1024 (log=2)
+<省略>
+Superblock backups stored on blocks:
+ 32768, 98304, 163840, 2294912, 294912, 819200, 884736, 1605632　←スーパーブロックのバックアップが保存されている場所
+
+次に、fsck.ext3コマンドでファイルシステムのチェックを行う。その際に、-bオプションでスーパーブロックバックアップの場所、-Bオプションでブロックサイズを指定する…
+
+# fsck.ext3 -b 32768 -B 1024 /dev/<partition>
+
+それでもダメだったので…
+
+スーパーブロックを再作成してみるとOSは起動したがmountされていない…
+# mke2fs -S /dev/<partition>
+
+# mount /dev/<partition> <mount point>
+mount: wrong fs type, bad option, bad superblock on <device name>,missing codepage or helper program, or other error
+In some cases useful info is found in syslog - try 
+dmesg | tail or so
+
+dmesgには何も出力されてない…
+
+ところが ext2 でなら mount 出来る…
+
+# mount -t ext2 /dev/<partition> <mount point>
+#umount  <mount point>
+
+ということは journal が壊れたということか…
+作り直してみよう。
+先ず journal file を削除する。
+
+# tune2fs -O ^has_journal  /dev/<partition>
+
+再度 journal file を作る
+
+# tune2fs -j /dev/<partition>
+tune2fs 1.40.4
+Creating journal inode: done
+This filesystem will be automatically checked every -1 mounts or
+0 days, whichever comes first. Use tune2fs -c or -i to override.
+
+# mount -t ext3 /dev/<partition> <mount point>
+
+ext3 で復活した…
+
+後はリブートしてmountを再確認して完了♪
+
+
+●Linux起動時の自動ファイルシステムチェックの間隔を変更する、無効にする方法
+
+Linuxではfsckを実行していない期間が長いと、起動時に自動ファイルシステムチェッックが行われる。
+
+# tune2fs -l /dev/<partition>
+
+Mount count:              3                   前回のfsckからマウントした回数
+Maximum mount count:      24                  前回のfsckから この回数マウントしたら起動時にfsckを行う
+Check interval:           15552000 (6 months) 前回のfsckから この期間経過したら起動時にfsckを行う。
+
+チェックの頻度を変更
+デフォルトでは、fsck は30回起動するたびにファイルシステムをチェックします (パーティションごとに別々にカウントされます)。
+また、Check intervalが設定されている場合(デフォルトは6ヶ月)は、その期間が超えた際に次回起動時fsckが行われます。
+
+マウント回数を変更する場合
+# tune2fs -c 20  /dev/<partition>
+
+fsck期間を変更する場合
+# tune2fs -i 15552000  /dev/<partition>
+単位は秒
+ここで数値の後に d を付けると「日」となり、w は「週」、m は「月」となります。
+
+またマウント回数、fsck期間ともに 0 を指定すると、起動時に自動でfsckは行われなくなります。
+
+マウント回数の無効
+tune2fs -c 0 /dev/<partition>
+
+Setting maximal mount count to -1
+インターバルの無効
+tune2fs -i 0 /dev/<partition>
+
+Setting interval between check 0 seconds
+設定の確認
+tune2fs -l /dev/<partition>
+
+Mount count:              3
+Maximum mount count:      -1
+Check interval:           0 (<none>)
+この場合、手動でfsckを実行する必要があります。
+

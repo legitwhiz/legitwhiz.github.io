@@ -1,0 +1,35 @@
+IRQ 割り込み要求
+各種デバイスとCPUがやりとりする際に発生し、どのデバイスかを識別するためのもの
+IRQ番号は、0～15
+cat /proc/interrupts
+
+I/Oアドレス
+CPUと各種デバイスがやりとりするための窓口
+0000h～FFFFhがアドレス
+cat /proc/ioports
+
+DMA
+チャネルはCPUを使わず直接メモリとのデータ転送で使われる。
+cat /proc/dma
+
+SCSI
+scsi id 8bit 0～8、16bit 0～15
+cat /proc/scsi/scsi
+scsi_infoコマンド
+
+/dev/sdX X番目のHDD
+/dev/scdX X番目のCD-ROM
+/dev/stX    X番目のtape
+
+PCI拡張カード
+cat /proc/pci
+lspciコマンド
+
+lsdevコマンド
+DMA,IRQ,I/Oアドレスの一覧
+
+シリアルポート
+/dev/ttyS0 COM1
+
+
+

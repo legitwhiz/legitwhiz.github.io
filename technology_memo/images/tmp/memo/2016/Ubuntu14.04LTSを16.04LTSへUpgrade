@@ -1,0 +1,62 @@
+Ubuntu14.04LTSを16.04LTSへUpgrade
+
+「Ubuntu 14.04 LTS」から「Ubuntu 16.04 LTS」Upgradeしてみました。
+まずは、現行の14.04 LTSを最新にアップグレードして、再起動をしておきます。
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo reboot
+
+再起動後に
+$ sudo apt-get install update-manager-core
+$ sudo do-release-upgrade
+
+「アップグレードをSSH越しに行うことは推奨されません。」と出力されたため
+コンソールから実行に変更。
+デスクトップにログインしたらポップアップで「アップグレードしますか？」と出力
+されたので「今すぐアプグレード」を選択。
+
+とこれだけでOSは簡単にアップグレード出来ましたが…
+Apacheが起動出来なくなってるし…
+
+まずApacheはデフォルトworkerで動作するがPHPがpreforkで動作するため、apacheをpreforkに変更!!
+a2dismod mpm_event
+a2enmod mpm_prefork
+service apache2 restart
+
+apachectl -V | grep 'Server MPM'
+Server MPM:     prefork
+
+upgradeでは、PHPはメジャーバージョンアップしなかったので個別に7に変更!!
+
+sudo apt-get -y install php php-cgi libapache2-mod-php php-common php-pear php-mbstring
+
+sudo a2enconf php7.0-cgi
+sudo vi /etc/php/7.0/apache2/php.ini
+
+sudo /etc/init.d/apache2 start
+
+だが、色々試してもも今までのオレオレ証明書でエラー…
+と調べていたら、無料で使えるSSLなんてあるんですね!!
+なんの証明書も載せ換え!!
+
+「Let's Encrypt 」で証明書を発行!!
+cd /etc/apache2
+sudo git clone https://github.com/letsencrypt/letsencrypt
+
+sudo cd letsencrypt/
+sudo ./letsencrypt-auto --apache -d <domain>
+
+sudo /etc/init.d/apache2 stop
+
+sudo vi ../sites-available/default-ssl.conf
+       ServerName <domain>
+       SSLCertificateFile /etc/letsencrypt/live/<domain>/fullchain.pem
+       SSLCertificateKeyFile /etc/letsencrypt/live/<domain>/privkey.pem
+
+sudo /etc/init.d/apache2 start
+
+これで、やっとPHPとSSLまで回復…
+owncloudの修復は、取り敢えず見送り…
+PHPのモジュールもまだ足りなさそう…
+php-gettext,php-mcrypt,php-curl,php-gd,php-xml

@@ -1,0 +1,14 @@
+Linux
+#ethtool ethX
+
+AIX
+#entstat -d enX
+
+HP-UX
+#lanscan
+
+Solaris
+#dladm show-dev
+
+Solaris10以前バージョンでは...
+# ndd -get /dev/bge0 link_status

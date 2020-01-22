@@ -1,0 +1,77 @@
+
+1.atimeとは
+atime（access time）とは，LinuxなどのUNIX系OSがファイルに記録する時刻情報の1つです。atimeには，文字通り，ファイルにアクセスした時刻が記録されます。より厳密には，ファイルの実データが読み込まれた際に，その時刻が記録されます。ファイルの管理情報（メタデータ）だけを読み込んだ場合になどには更新されません。
+
+
+2.ではatimeはいつ更新されるのか!?
+atimeは、データを読み出した時に更新される → メタデータを読んでも更新されない
+
+atimeが更新されるのは、だいたい
+readしたとき
+readdirしたとき
+readlinkしたとき（openの副作用による暗黙のリンクオープンも含む）
+mmapしたとき
+の４ケースで、writeは最初から入ってない。
+
+findはメタデータにはアクセスしても、データにはアクセスしないからです。考えてみれば当然で、findの実行そのものがメタデータを改変してしまってはfindの意味がなくなってしまうからです。findのオプションそのものに-atimeがあるのに、findがそれを更新してしまっては元も子もなくなってしまいます。
+
+3.atime更新による弊害
+こいつがなぜパフォーマンスを落とすかというとatime更新 ＝ inode情報の更新 ＝ ディスク書き込みの必要が発生という連鎖を引き起こすからです。
+さらに悪いことに、inode情報はたいていデータ本体とはディスクの物理的な位置が離れているので、無駄なシークが誘発されます。
+たいていのディスク系ベンチマークはシーク回数で勝負が決するので、これがベンチで性能がよく見える原因です。
+
+4.atimeオプション
+デフォルト：常にatimeを更新する
+noatime：常にatimeを更新しない
+nodiratime：対象がファイルのときは常に更新、ディレクトリの時は常に更新しない
+relatime：inode上でatimeがmtimeやctimeよりも古くなってしまった時だけ更新
+
+5.チューニング
+で、noatimeって効用あるの?
+
+初期状態(noatime, softupdateあり)で計測
+
+atimeありで計測
+
+softupdateもなしで計測
+
+
+#--- 計測用script ----
+#!/usr/local/bin/perl
+use strict;
+use warnings;
+use Time::HiRes qw/time/;
+
+my $count    = shift || 10000;
+my $filename = shift || 'test.txt';
+
+my @elapsed = ();
+
+for my $i (1..100){
+    my $started = time();
+    for my $i (1..$count){
+        open my $fh, '<', $filename or die "$filename:$!";
+        my $content = do{ local $/; <$fh> };
+        close $fh;
+    }
+    my $elapsed = time()-$started;
+    push @elapsed, $elapsed;
+    warn $elapsed;
+}
+
+my ($ave, $stdev) = sub{
+    my $a = 0;
+    $a += $_ for @_;
+    $a /= @_;
+    my $v = 0;
+    $v +=  ($_ - $a)**2 for @_;
+    $v /= @_;
+    ($a, sqrt($v));
+}->(@elapsed);
+
+warn sprintf "average: %f, stddev:%f (%f%%)", $ave, $stdev, ($stdev/$ave)*100;
+
+パフォーマンス向上は、この場合で12%と出ました。扱うファイルはたった一つですし、サイズも4Kbytesで、ファイルシステムには事実上これしかファイルがないという状態ですから、disk cacheはかなり効く、すなわち差が出にくい状況でしたが、有為な差が見られました。これが細かいファイルがもっと沢山あって、それらの内容が頻繁にアクセスされる状況ではもっと出るかと思われます。
+
+というわけで、noatimeというのは比較的損がないおまじないのようであるという結論でした。
+

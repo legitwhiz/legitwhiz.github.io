@@ -1,0 +1,66 @@
+Infrastructure as Code
+
+Infrastructure as Code という言葉が現れてから少なくとも10年以上経過した。
+
+2005年に Puppet が登場したことで、「Infrastructure as Code」 という言葉が浸透しはじめた。
+
+Infrastructure as Code のメリットは、当初は「Configurationの自動化」に焦点が当てられていたが、DevOps という考え方からテスト、継続的インテグレーションも自動化するという意味合いに変化した。
+
+●Infrastructure as Code とは
+
+では「Infrastructure as Code」 が何かと簡単に言えば「インフラ」をコードで記述することによって、ソフトウェアシステムで既に有効であると立証されているプラクティスを、インフラにも同じように適用できるというもの。
+
+●インフラ系構築技術の 3 つのレイヤー
+では、「Infrastructure as Code」 で実装出来るレイヤーというと以下のように各々にレイヤー分けされレイヤー毎に使用するソフトウェアが違う。
+だが、１つのソフトウェアが他のレイヤーの実装が出来ないかと言うと違う。(代用は可能)
+
+・Orchestration
+アプリケーションのデプロイ(Fabric, Capistrano, MCollective,ConrtolTier,Func,serf)
+
+・Configuration
+ミドルウェアレベルの設定(Chef, Puppet,AWS OpsWorks,Ansible,Terraform,Itamae,Bcfg2,cfengine.SmartFrog)
+
+・Bootstrapping
+OS のインストールにあたる領域(Kickstart,Jumpstart, Cobbler, OpenQRM,OpenStack, AWS,Docker, Vagrant, Packer,Xen,lxc,Ecalyptus.KVM)
+
+Bootstrapping はいわゆる OS インストールにあたる領域。Configuration はミドルウェアレベルまでの設定、Orchestration はアプリケーションデプロイとなる。
+
+「サーバ/インフラエンジニア養成読本 DevOps編 [Infrastructure as Code を実践するノウハウが満載! ] 」というムック本が出ていますね。
+
+●テスト
+構築は自動化できたけど、その確認作業、テストを従来通り、目視の手動チェックでやるのではなくcodeで自動的に確認、テストしたいと思うのが普通の流れだねw
+だが、やはりここでも実装が3レイヤーならテストも3レイヤーになってしまうのは普通ですよねw(はぁ～めんどくっさあ)
+
+・Orchestration
+アプリケーションのデプロイ(Nagios.zabbix)
+
+・Configuration
+ミドルウェアレベルの設定(Touryo,serverspec, Test-Driven Infrastructure with Chef,Test Kitchen)
+
+・Bootstrapping
+Bootstrapping のテストツールは...？
+何がインストレーションされたかは、Configurationレイヤーのツールでまかなえる気がする。
+
+●インフラCI
+テストしたら次は 継続的インテグレーションですね。
+
+アプリケーション、ミドルウェアレベルレイヤーもCIは、一緒のツール｡
+
+ukigumo、wercker、Jenkins 、CircleCI 、Travis、Drone、Shippable、CloudBees - Jenkins、MagnumCI、ContinuityApp、CODESHIP
+
+●組合せ
+ただどのツールもCIする対象によって得意、不得意があるので、どれか１つに絞るのは難しそうです…。
+そのため、相性、機能面でどのソフトウェアを選定するかがキモな感じ!!
+
+・Docker + Puppet + serverspec + Jenkins でのインフラ CI、テストが通ったらコンテナまるごとデプロイ
+Messos/YARNで自動的なリソース配分・最適化
+SerfでOrchestration
+
+・VMWare + Linux + apache + tomcat を
+chef でOSからConfigrationまで構築し、Test Kitchenでテストし、TravisでCIする組合せ等
+
+・Packerで仮想マシンを生成、Vagrantで仮想マシンを実行、Chefでツールのインストール、設定など
+
+なんか組合せによってスキルが変わってくるゲームを想像しちゃいました…f(^_^;
+
+

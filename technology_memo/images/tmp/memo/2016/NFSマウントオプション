@@ -1,0 +1,30 @@
+RHEL6
+mount -t nfs -o hard,
+
+RHEL7
+
+AIX
+mknfsmnt
+
+
+HPUX
+
+/etc/auto_master
+マウント先  オプション(ReadOnly)  NFSサーバ名：共有ディレクトリ
+/etc/fstab
+td253:/house    /house  nfs     rw,bg,nosuid,llock,vers=3       0 0
+
+
+Solaris
+/etc/vfstab
+
+#device           device             mount    FS       fsck   mount    mount
+#to mount         to fsck            point    type     pass   at boot  options
+
+luto:/export/man   -                /usr/man nfs      -      yes       ro,soft
+ 
+NFS cli有効化
+svcadm enable -r svc:/network/nfs/client:default
+
+
+mount [ -F nfs ] [ -o NFS固有オプション ] サーバ:ディレクトリ マウントポイント

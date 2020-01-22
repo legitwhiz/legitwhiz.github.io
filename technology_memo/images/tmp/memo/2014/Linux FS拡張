@@ -1,0 +1,5 @@
+lvextend -L +30720M /dev/vg1/lvol2
+
+resize2fs /dev/vg1/lvol2
+
+マウント状態でも実行可

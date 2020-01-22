@@ -1,0 +1,6 @@
+AIXではInfocenterに記載の通り-dオプションがない
+よって、翌日や前日、ある指定した日からの日数計算が実施できない｡
+
+
+perl -e 'my $delay = 3600;my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time + $delay);printf "%02d%02d%02d%02d\n",$mon,$mday,$hour,$min'
+

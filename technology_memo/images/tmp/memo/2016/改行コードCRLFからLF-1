@@ -1,0 +1,2 @@
+nkf -Lu file1 > file2
+sed "s/\r//g" file1 > file2

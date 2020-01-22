@@ -1,0 +1,20 @@
+■パス
+dlnkmgr view -path
+
+■HBA
+dlnkmgr view -hba
+
+■LUN
+dlnkmgr view -lu
+
+■HDLMログ採取
+DLMgetras 取得先ディレクトリ
+
+■LUN追加
+echo "_ _ _" > /sys/class/scsi_host/hostX/scan
+cat /proc/scsi/scsi
+
+/sbin/dlmcfgmgr -r
+reboot
+/sbin/dlmcfgmgr -v
+

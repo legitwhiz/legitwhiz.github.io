@@ -1,0 +1,53 @@
+Windowsでアクセス時間表示
+dir /ta
+
+
+If WScript.Arguments.Length = 0 Then
+    sMsg = "更新日時を変更したいファイルをドラッグし、このアイコンにドロップしてください"
+    MsgBox sMsg, vbOKOnly + vbInformation, "使い方"
+Else
+    sFile = WScript.Arguments.Item(0)
+    Set oFS = CreateObject("Scripting.FileSystemObject")
+    If oFS.FileExists(sFile) Then
+        Set oFile = oFS.GetFile(sFile)
+        sPath = oFile.ParentFolder & "\"
+        sFileName = oFile.Name
+        sCurrentDateTime = oFile.DateLastModified
+        sNewDateTime = InputBox("更新日時をいつに変更しますか？", sFileName, sCurrentDateTime)
+        If Len(sNewDateTime) > 0 Then
+            If IsDate(sNewDateTime) Then
+                sMsg = sFileName & " の更新日時を変更します" & vbCrLf & vbCrLf
+                sMsg = sMsg & "  変更前: " & sCurrentDateTime & vbCrLf
+                sMsg = sMsg & "  変更後: " & sNewDateTime & vbCrLf & vbCrLf
+                sMsg = sMsg & "よろしいですか？"
+                If MsgBox(sMsg, vbYesNo + vbQuestion, "確認") = vbYes Then
+                    Set oShell = CreateObject("Shell.Application")
+                    Set oFolder = oShell.Namespace(sPath)
+                    Set oFolderItem = oFolder.ParseName(sFileName)
+                    oFolderItem.ModifyDate = sNewDateTime
+                End If
+            Else
+                MsgBox "不正な日付です", vbOKOnly + vbInformation, "エラー"
+            End If
+        End If
+    Else
+        MsgBox "これはファイルではありません", vbOKOnly + vbInformation, "エラー"
+    End If
+End If
+
+
+
+■更新日時変更
+powershell -Command Set-ItemProperty C:\hoge.txt; -name LastWriteTime -value '2015/12/29 01:23:45'
+
+超大事な注意点として、日付を囲むのは「'（シングルクォート）」です。
+
+■確認
+Get-ChildItem C:\Windows | Sort-Object LastWriteTime
+
+PS> Get-ItemProperty %FileName% | Get-Member -MemberType Property
+   TypeName: System.IO.FileInfo
+
+Get-ItemProperty %FileName%  -name LastAccessTime
+
+

@@ -1,0 +1,10 @@
+＃ hponcfg -a -w <filename>.xml
+
+HP Lights-Out Standalone Remote Console for Windows
+
+http://h20564.www2.hpe.com/hpsc/swd/public/detail?swItemId=MTX_609a7ee2a6564022894ecd56ec
+
+コマンドライン起動もできますので、バッチファイルやショートカットを用意することでサーバーを大量に所持していてもワンクリックで接続できます。
+
+> hplocons.exe -addr address[:port] -name loginname -password password
+

@@ -1,0 +1,50 @@
+Wifi接続したスマホから接続を試験するためproxyサーバ構築
+
+Androidのhostsを修正するためにはroot化する必要があります。
+ですが、root化するメリット・デメリットは至るところで紹介されています。
+
+root化することは非常にリスクを伴いますし、なにかあってからではサポートが受けられません。
+そこで、Androidをproxyサーバー経由でネットワーク接続し、proxyサーバー側のhostsを書き換えるという手法をとりました。
+
+■まずは、proxyモジュールをアクティブ化
+sudo a2enmod proxy proxy_http proxy_connect
+
+■proxyの設定
+sudo vi /etc/apache2/mods-available/proxy.conf
+
+
+# 13-19行目：以下のようにコメント解除して変更
+ProxyRequests On
+# 追記
+ProxyVia On
+AllowCONNECT 80 443
+<Proxy *>
+    AddDefaultCharset off
+    Require all denied
+    Require local
+    # アクセス許可範囲追記
+    Require ip 192.168
+</Proxy>
+
+■Proxyで使用するポート設定
+sudo vi /etc/apache2/ports.conf
+
+<IfModule mod_proxy.c>
+        Listen 8080
+</IfModule>
+
+■Apache再起動
+systemctl restart apache2
+
+■Proxyで名前解決させるためにhosts修正
+sudo vi /etc/hosts
+
+192.168.x.x domainname
+
+■スマホ側のproxy設定
+　接続したアクセスポイントのネットワーク設定を変更で拡張オプションを表示。
+　プロキシ設定を手動で選択
+　プロキシホスト名をproxyサーバのIPに、
+　ポートを8080に設定。
+
+これで、wifi接続した時だけproxy接続されるようになりました。

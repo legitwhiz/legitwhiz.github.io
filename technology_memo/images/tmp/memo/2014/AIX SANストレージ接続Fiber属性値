@@ -1,0 +1,8 @@
+SAN接続のストレージと接続する場合、Fiberアダプタのfcsとfscsiデバイス属性を変更することがIBM推奨とされている。
+
+・fcsデバイス
+init_link  :al→pt2pt
+
+・fscsiデバイス
+fc_error_recov :delayed_fail → fast_fail
+drntrk :no → yes

@@ -1,0 +1,16 @@
+AIXでISOマウント
+
+AIX6から
+loopmount -i [iso file name] -o "-V cdrfs -o ro" -m [mount point]
+
+AIX6以前
+
+mklv -y cdlv -s n -L /dev/cdlv rootvg $(du -m [ISO image file] | awk '{ print int($1+64)"M"}') hdisk0
+
+lslv cdlv
+
+dd bs=1M if=[ISO image file] of=/dev/cdlv
+
+mount -v cdrfs -o ro /dev/cdlv [mount point]
+
+う～ん…loopmount便利だぁ♪

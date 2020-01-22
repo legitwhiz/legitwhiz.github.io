@@ -1,0 +1,37 @@
+評価基準
+
+使われ方などは今後、勉強する予定。
+
+Y:実測値、Y^:予測値とする。添字はそれぞれi(i=1,...,N)とする。
+
+ 
+
+・MRE (Magnitude of Relative Error) 相対誤差
+
+MRE = |Y - Y^| / Y
+
+ 
+
+・MER (Magnitude of Error Relative)
+
+MER = |Y - Y^| / Y
+
+ 
+
+・MMRE (Mean Magnitude of Relative Error)
+
+MMRE = 1/N * Sigma(i=1 to N) MRE_i
+
+ 
+
+・MdMRE (Median Magnitude of Relative Error)
+
+MdMRE = median(MRE)
+
+ 
+
+・PRED25.MRE (Percentage of Prediction...)
+
+相対誤差MREが25%以下の個体が母数に占める割合
+
+-> PRED25が大きいほど、MREにおいて良い予測精度を表している

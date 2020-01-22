@@ -1,0 +1,22 @@
+
+CentOS7からNetwork設定周りが大幅に変更された
+
+/etc/sysconfig/network-scripts配下のファイルを直接編集でも可能だが、「nmtui」「nmcli」コマンドでの設定が推奨されている。
+
+「nmtui」コマンドにてGUIで設定
+
+#systemctl restart NetworkManager
+
+でサービスを再起動で設定反映
+
+Active化
+#nmcli connection up <device name>
+
+Deactive化
+#nmcli connection down <device name>
+
+IF 詳細
+#nmcli device show <device name>
+#ip addr show
+
+

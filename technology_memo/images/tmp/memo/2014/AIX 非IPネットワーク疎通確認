@@ -1,0 +1,15 @@
+●RS232C疎通確認
+
+①稼働系
+#stty </dev/tty#
+②待機系
+#stty </dev/tty#
+③tty設定が両ノードで出力
+
+●ディスクハートビート
+①稼働系
+/usr/sbin/rsct/bin/dhb_read -p hdiskX -r
+②待機系
+/usr/sbin/rsct/bin/dhb_read -p hdiskX -t
+③両ノードに"Link operating normaly"と表示
+

@@ -1,0 +1,44 @@
+#!/bin/sh
+
+#最終処理用関数
+cleanup(){
+        EXIT_CODE=$1                                #関数の引数を終了コードに設定
+        NUMBER=`awk '{ print $1 }' $TMP_FILE`         #今まで足し合わせた数字
+        NUMSUM=`awk '{ print $2 }' $TMP_FILE`        #足し合わせた結果
+        echo "1 + 2 + 3 + ... + $NUMBER = $NUMSUM"    #どこまで計算したかを表示
+        rm -f $TMP_FILE                                #テンプファイル削除
+        rm -f $LOCL_FILE                            #ロックファイル削除
+        exit $1
+}
+
+#受けたシグナルで終了コードを分ける
+trap 'cleanup 1' 1
+trap 'cleanup 2' 2
+trap 'cleanup 3' 3
+trap 'cleanup 15' 15
+
+LOCK_FILE=/tmp/lockfile.$$                            #ロックファイル
+TMP_FILE=/tmp/tmpfile.$$                            #テンプファイル
+
+
+ALREADY_LOCKED=`ls /tmp/lockfile.* 2>/dev/null`        #ロックファイルが存在するかどうか
+if [ "$ALREADY_LOCKED" != "" ]; then                #存在したら
+    echo "Already running the same program."        #同じ処理を2つ走らせない
+    exit 0
+fi
+
+touch $LOCK_FILE                                    #ロックファイル作成
+
+SUM=0
+NUM=1
+
+whike [ $NUM -le 10000000 ]                            #上限が10000000まで
+do
+    SUM=`expr $SUM + $NUM`                            #その数まで足し算
+    echo $NUM $SUM > $TMP_FILE                        #数字と結果をテンプファイルに書き込む
+    NUM=`expr $NUM + 1`                                #足す数を1つ上げる
+    sleep 1
+done
+
+cleanup 0
+

@@ -1,0 +1,36 @@
+Unix系のatimeの動作は知っていたが、無効化とする事が出来るなら、どれだけの効果があるのか知りたかったので、ちょっと調べてみた!!
+
+1.atimeとは
+atime（access time）とは，UNIX系OSがファイルに記録する時刻情報の1つです。atimeには，文字通り，ファイルにアクセスした時刻が記録されます。
+
+2.では、atimeはいつ更新されるのか!?
+atimeが更新されるのは、ファイル内容を read(2) した場合に変更される。ファイルをオープンしただけでは変更されないし、ファイル内容を write(2) しても変更されない。当然ながら、read(2) する権限がなかった場合も変更されない。
+
+3.atime更新による弊害
+atimeがなぜパフォーマンスを落とすかというと
+
+atime更新 ＝ inode情報の更新 ＝ ディスク書き込み
+
+が発生するためです。
+SSDディスクを使用しているサーバでは無駄な書き込みは除外したいですよね!?
+
+4.atimeに関連するmountオプション
+デフォルト：常にatimeを更新する
+noatime：常にatimeを更新しない
+nodiratime：対象がファイルのときは常に更新、ディレクトリの時は常に更新しない
+relatime：inode上でatimeがmtimeやctimeよりも古くなってしまった時だけ更新
+<realtimeオプションを使ったマウントの例>
+mount  BlockDevice MountPoint -o relatime
+
+realtimeは、カーネル2.6.20で実装されているのですが、Fedora8やUbuntu8.04では ブートオプションとしてdefault_relatime 及び relatime_intervalがデフォルトで追加されてます!!
+
+また、RHEL6ではデフォルトrealtimeで実装されているので、無理にnoatimeを設定するのではなくrealtimeを推奨しているのでしょうね!!
+
+ちなみにrealtimeを外したい場合、fstabでnorealtimeと指定しないといけないみたいです。
+
+【調査結果】
+noatime、realtime、設定なしで検証しようかと思いましたがどのディストリビューションでもrealtime推奨しているのですし!!と言うか古いOSを探してまで検証する必要性は感じられないのでw
+
+まぁ、そもその影響がある事が分かっててnoatimeにするぐらいなら、性能のいいハードウェアを変えて下さい。
+
+

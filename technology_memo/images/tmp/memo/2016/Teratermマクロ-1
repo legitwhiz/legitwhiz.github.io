@@ -1,0 +1,125 @@
+;; ########################################
+LOG_PATH='G:log'
+getdir INI_PATH
+HOSTADDRESS=''
+HOST=''
+Login_User='root'
+Login_Password=''
+;; ########################################
+inputbox 'ログイン者氏名' '利用者確認'
+strlen inputstr
+if result=0 goto lbl_error4
+UsernameJ = inputstr
+if result=0 goto lbl_nextstep
+
+:lbl_nextstep
+
+;;SSH接続
+COMMAND=HOSTADDRESS
+strconcat COMMAND ':22 /ssh /2 /auth=password /user='
+strconcat COMMAND Login_User
+strconcat COMMAND ' /passwd='
+strconcat COMMAND Login_Password
+strconcat COMMAND ' /nosecuritywarning'
+
+connect COMMAND
+
+;; 接続判定1（接続出来ない場合はメッセージを表示しマクロ終了） 
+if result <> 2 then 
+    messagebox 'It could not be connected.' 'Connection Error' 
+    end 
+endif
+ 
+;; 接続判定2（10秒以内にプロンプトが表示されない場合TeraTerm終了） 
+timeout = 10 
+wait '$' '#' 
+if result = 0 end
+
+; ログディレクトリがなければ作成
+foldersearch LOG_PATH
+	if result=0 then
+	foldercreate LOG_PATH
+	endif
+
+getdate datestr
+strcopy datestr 1 4 yearstr
+strcopy datestr 6 2 monthstr
+strcopy datestr 9 2 daystr
+strconcat LOG_PATH2 LOG_PATH
+strconcat LOG_PATH2 yearstr
+strconcat LOG_PATH2 monthstr
+strconcat LOG_PATH2 daystr
+
+foldersearch LOG_PATH2
+	if result=0 then
+	foldercreate LOG_PATH2
+	endif
+
+;; ####TERATERM INIファイル
+;; 文字コードを判別し文字コードを設定 
+RESTORE=INI_PATH
+sendln 'echo $LANG'
+wait 'ja_JP.UTF-8' 'ja_JP.eucJP' 'ja_JP.SJIS'
+if result = 1 then
+    ; UTF8
+    strconcat RESTORE ''
+    strconcat RESTORE 'utf8.INI'
+    restoresetup RESTORE
+elseif result = 2 then
+    ; EUC
+    strconcat RESTORE ''
+    strconcat RESTORE 'euc.INI'
+    restoresetup RESTORE
+elseif result = 3 then
+    ; SJIS
+    strconcat RESTORE ''
+    strconcat RESTORE 'sjis.INI'
+    restoresetup RESTORE
+endif
+
+settitle HOST
+
+getdate datestr
+strcopy datestr 1 4 yearstr
+strcopy datestr 6 2 monthstr
+strcopy datestr 9 2 daystr
+gettime timestr
+strcopy timestr 1 2 hourstr
+strcopy timestr 4 2 minutestr
+strcopy timestr 7 2 secondstr
+
+filename = LOG_PATH2
+strconcat filename ''
+strconcat filename HOST
+strconcat filename '_'
+strconcat filename UsernameJ
+strconcat filename '_'
+strconcat filename yearstr
+strconcat filename monthstr
+strconcat filename daystr
+strconcat filename '_'
+strconcat filename hourstr
+strconcat filename minutestr
+strconcat filename secondstr
+strconcat filename '.log'
+
+logopen filename 0 0 0 0 1
+
+;端末情報確認
+wait '$' '#'
+sendln 'date'
+wait '$' '#'
+sendln 'hostname'
+wait '$' '#'
+sendln 'id'
+wait '$' '#'
+sendln 'cat /etc/redhat-release'
+wait '$' '#'
+sendln 'echo $LANG'
+wait '$' '#'
+
+end
+
+;何も入力されない場合の終了
+:lbl_error4
+messagebox 'TeratermMacro END' ' Information'
