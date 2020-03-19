@@ -1,0 +1,13 @@
+NetbackupをインストールしたサーバをOSリストアした際にキャッシュクリアが必要(ホスト名変更による影響)
+
+1.Netbackup停止
+/usr/openv/netbackup/bin/bp.kill_all
+
+2.キャッシュクリア
+/usr/openv/netbackup/bin/bpclntcmd -clear_host_cache
+
+3.ホストキャッシュファイル削除
+rm -rf /usr/openv/var/host_cache/*
+
+4.Netbackup起動
+/usr/openv/netbackup/bin/bp.start_all

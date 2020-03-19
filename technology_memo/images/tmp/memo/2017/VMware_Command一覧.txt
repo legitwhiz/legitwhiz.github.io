@@ -1,0 +1,146 @@
+VMware_Command一覧
+■VM一覧
+vim-cmd vmsvc/getallvms
+Vmid,Name,File,Guest OS,Version,Annotation
+
+■VMの起動・シャットダウン・再起動
+
+・起動
+vim-cmd vmsvc/power.on vmid
+
+・再起動
+vim-cmd vmsvc/power.reboot vmid
+
+・シャットダウン
+vim-cmd vmsvc/power.shutdown vmid
+
+・電源状態の確認
+vim-cmd vmsvc/power.getstate vmid
+
+
+■VMの情報
+vim-cmd vmsvc/get.summary vmid
+vim-cmd vmsvc/get.config vmid
+vim-cmd vmsvc/get.guest vmid
+vim-cmd vmsvc/get.runtime vmid
+
+色々出てきます．summary で，config, guest, runtime等のうちの良く使いそうな部分が一度に取れるので便利です．
+
+■VMの追加・削除
+VMのvmxファイルをイベントリへ登録することで，VMの一覧に出てきます．
+
+・vmxファイルを指定してイベントリへの登録．
+vim-cmd solo/registervm [vmxpath] [name]
+
+・イベントリから抹消．
+vim-cmd vmsvc/unregister [vmid]
+
+・VM削除(VM自体が削除されます)
+vim-cmd vmsvc/destroy [vmid]
+
+■VMの作成
+
+基本的にはvmxファイルを用意してイベントリに登録すれば良いです．
+vmxを手で作成する場合，ダミーのVMを作る機能があるので，作成したVMをひな形にすると少し楽ができます．
+
+vim-cmd vmsvc/createdummyvm name
+
+これで作ったvmはそのままでは起動できませんが，vmxファイルに使うゲストに合わせて，guestOS=～を追加するととりあえず起動するようにはなります．
+
+例：
+echo guestOS = "centos-64" >> hoge.vmx
+
+必要に応じて，memsizeやnumvcpusも設定しましょう．また，vmdkも作成されてますが，小さいので一旦消して再作成．
+
+vmid=`vim-cmd vmsvc/createdummyvm hoge`
+echo guestOS = "otherlinux-64" >> hoge.vmx
+echo memsize = "2048" >> hoge.vmx
+echo numvcpus = "2" >> hoge.vmx
+rm hoge.vmdk
+vmkfstools --createvirtualdisk 20G -d thin hoge.vmdk
+ # ...
+vim-cmd vmsvc/reload $vmid
+
+あとは，VNCとNICとCD-ROMドライブの設定をして起動すればOSインストールできます．
+
+
+■VMの複製
+
+基本的には，VMのファイルを丸ごとコピーしてイベントリに登録すれば良いです．
+
+vmdkファイルはcpコマンドでコピーすることもできますが，vmkfstoolsを使って複製するほうがプロビジョニングなども指定できますし，高速です．
+・ コピー元のVM止める(止められないなら vim-cmd vmsvc/snapshot.create スナップショット取る)
+・ vmdkディスク複製 vmkfstools -i from to
+・ .log以外のファイル諸々コピー
+・ .vmxファイルを良しなに編集(名前,MACアドレス等)
+・ イベントリに登録 vim-cmd solo/registervm vmxfile name
+
+イベントリに登録するとvmidが返ってきますが，このままだと起動途中で止まってしまいます．
+
+vmsvc/power.onで起動
+コピーしたのか移動したのか聞かれているのでメッセージを確認して質問に答えると起動します．
+
+vim-cmd vmsvc/message vmid
+vim-cmd vmsvc/message vmid msgid answer
+
+msgidはメッセージに含まれるIDです．answerは今回は複製したので， 2 を指定．
+
+■ゲストOSのコンソールを見たい
+ゲストにSSHで入れないときに備えて．
+VNCで接続するか，シリアルコンソールを使います．
+
+■VNC
+まず，ESXiのセキュリティプロファイルでVNCで使えそうなポートが開いているのを確認．
+vmxに以下の行を追加します．
+
+RemoteDisplay.vnc.enabled="true"
+RemoteDisplay.vnc.port="5901"
+RemoteDisplay.vnc.password="hoge"
+RemoteDisplay.vnc.keyMap="jp"
+
+あとはVMを起動した後に適当なVNCクライアントから接続できます．
+
+
+■シリアルコンソール
+無償版はネットワークシリアルポート使えません．ただし，名前付きパイプをシリアルポートとして登録できるのでシリアルコンソールのりようは不可能ではないです．
+・ 必要ならゲストのgrubとか/etc/inittabとか設定
+・ ゲストにシリアルポートデバイス追加
+・ 設定：名前付きパイプ，サーバ，仮想マシン
+
+名前付きパイプへの接続は，別のVMに同じ名前のパイプのクライアントとしてシリアルポートを追加するか，ESXi内のDomain Socketに直接接続するかです．前者の場合はログイン可能な別のVMが必要になります．
+
+
+■Unix Domain Socketの場所
+特に説明は無いっぽいですが，/var/run/vmware以下に指定したパイプ名でUnix Domain Socketが作られてるようなので自由に出来ます．(ソケットなのでファイルとしては不可視)
+
+netcat等でSocketに接続すればとりあえずログインくらいは出来ると思います．Pythonは入っているようなので，適当なプロキシを作るなり仮想端末で直接繋ぐなりするのが良さそうです．
+
+色々面倒なので他のゲストVMにクライアントとしてシリアルポートを作って，接続したほうが実用的かもしれません．
+
+■Webインターフェイス
+コマンドラインからやるのが面倒なのでWebインターフェイス作って見ました．
+https://github.com/binzume/esxi-monitor
+・ 仮想マシンの状態の確認
+・ 起動・再起動・シャットダウン
+・ VMの作成・削除・複製(やっつけ実装)
+
+普段使う機能だけ実装してあります．
+
+■esxcliコマンド
+ESXホストのシャットダウン
+
+まずはmaintanance modeにする
+
+# esxcli system maintenanceMode get
+Disables
+# esxcli system maintenanceMode set --timeout 0 --enable yes
+# esxcli system maintenanceMode get
+Enabled
+
+# esxcliからシャットダウン。poweroffかrebootが可能
+・パワーオフ
+esxcli system shutdown poweroff -r <reason>
+・リブート
+esxcli system shutdown reboot -r <reason>
+
+

@@ -1,0 +1,169 @@
+RHEL7 Teamingによる冗長化
+
+●Teaming
+・Bondingドライバーは、すべての機能が
+カーネルモジュールとして実装されており、機能拡張が困難。
+また、設定変更にはモジュールの再読み込みが必要。
+
+・Termドライバーは、カーネルモジュールとユーザランドで機能を分離したデザインとなっており、機能拡張や管理ツールの実装が容易。
+
+ネットワークチーミングとボンディングの比較は、以下のRedHatのサイトで確認できます。
+https://access.redhat.com/documentation/ja-JP/Red_Hat_Enterprise_Linux/7/html/Networking_Guide/sec-Comparison_of_Network_Teaming_to_Bonding.html
+
+●Teamデバイス作成
+
+Teamデバイス[team0]とその接続[team-team0]を作成し、IPアドレスを設定。
+# nmcli c add type team ifname team0 con-name team-team0
+# nmcli c mod team-team0 ipv4.method manual ipv4.address "192.168.0.30/24"
+
+物理NIC[ens38][ens39]を
+Teamデバイスのスレーブとして追加する
+接続[team-slave-ens38][team-slave-ens3]を作成
+
+# nmcli c add type team-slave ifname ens38 con-name team-slave-ens38 master team-team0
+接続 'team-slave-ens38' (28365b38-f015-4ec9-bd5d-6a7393c1744c) が正常に追加され ました。
+# nmcli c add type team-slave ifname ens39 con-name team-slave-ens39 master team-team0
+接続 'team-slave-ens39' (8456df7a-178a-4645-89da-267a9ccf9212) が正常に追加され ました。
+
+Teamingの構成は、デフォルト・ラウンドロビン方式となるためデフォルト構成で使用する場合は、それぞれの接続をdown/upしteamデバイスを有効化する。
+
+# nmcli c down team-team0
+接続 'team-team0' が正常に非アクティブ化されました (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/6)
+# nmcli c up team-slave-ens38
+接続が正常にアクティベートされました (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/9)
+# nmcli c up team-slave-ens39
+接続が正常にアクティベートされました (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/11)
+# nmcli c up team-team0
+接続が正常にアクティベートされました (マスターはスレーブを待機しています) (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/12)
+
+●Teamデバイス稼働状況確認
+# nmcli c
+名前              UUID                                  タイプ          デバイス
+eth0              15f03ecd-42c9-4cf6-89ec-6da8d0e08ce9  802-3-ethernet  ens33   
+team-slave-ens38  28365b38-f015-4ec9-bd5d-6a7393c1744c  802-3-ethernet  ens38   
+team-slave-ens39  8456df7a-178a-4645-89da-267a9ccf9212  802-3-ethernet  ens39   
+team-team0        03105443-4c9b-4c92-a386-79997a424ee1  team            team0
+
+Teamデバイスの稼働状況は、[teamdctl]で確認。
+# teamdctl team0 state
+
+# teamdctl team0 state
+setup:
+  runner: roundrobin
+ports:
+  ens38
+    link watches:
+      link summary: up
+      instance[link_watch_0]:
+        name: ethtool
+        link: up
+        down count: 0
+  ens39
+    link watches:
+      link summary: up
+      instance[link_watch_0]:
+        name: ethtool
+        link: up
+        down count: 0
+
+なお、ethtoolでは稼働状況は確認できません。
+ethtoolコマンドだと以下のように表示されます。
+# ethtool team0
+Settings for team0:
+        Link detected: yes
+
+[nmcli]コマンドで設定したTeamデバイス設定ファイルは、
+bonding同様[/etc/sysconfig/network-scripts]に保存されます。
+
+上記コマンドで設定したたTeamデバイス設定ファイル例
+# cat ifcfg-team-team0
+DEVICE=team0
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=team-team0
+UUID=03105443-4c9b-4c92-a386-79997a424ee1
+ONBOOT=yes
+DEVICETYPE=Team
+IPADDR=192.168.0.30
+PREFIX=24
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+
+# cat ifcfg-team-slave-ens38
+NAME=team-slave-ens38
+UUID=28365b38-f015-4ec9-bd5d-6a7393c1744c
+DEVICE=ens38
+ONBOOT=yes
+TEAM_MASTER=03105443-4c9b-4c92-a386-79997a424ee1
+DEVICETYPE=TeamPort
+
+Teamデバイスの構成は、JSONファイルに記述し、それを読み込む。
+設定サンプルファイル格納ディレクトリ
+[/usr/share/doc/teamd-1.25/example_configs]
+
+●TeamデバイスをActive-Backup(fail back無)に設定する
+
+# cp -p /usr/share/doc/teamd-1.25/example_configs/activebackup_ethtool_1.conf  /tmp/myconfig.conf
+# vi /tmp/myconfig.conf
+# cat /tmp/myconfig.conf
+{
+        "device":       "team0",
+        "runner":       {"name": "activebackup"},
+        "link_watch":   {"name": "ethtool"},
+        "ports":        {
+                "ens38": {
+                        "prio": -10,
+                        "sticky": true
+                },
+                "ens39": {
+                        "prio": 100
+                }
+        }
+}
+
+# nmcli c mod team-team0 team.config /tmp/myconfig.conf
+
+# nmcli c down team-team0
+接続 'team-team0' が正常に非アクティブ化されました (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/12)
+
+# nmcli c up team-slave-ens38
+接続が正常にアクティベートされました (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/9)
+# nmcli c up team-slave-ens39
+接続が正常にアクティベートされました (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/11)
+# nmcli c up team-team0
+接続が正常にアクティベートされました (マスターはスレーブを待機しています) (D-Bus アクティブパス: /org/freedesktop/NetworkManager/ActiveConnection/12)
+
+[teamdctl]コマンドで状態確認するとactivbackupに変更され、
+# teamdctl team0 state
+setup:
+  runner: activebackup
+ports:
+  ens39
+    link watches:
+      link summary: up
+      instance[link_watch_0]:
+        name: ethtool
+        link: up
+        down count: 0
+  ens38
+    link watches:
+      link summary: up
+      instance[link_watch_0]:
+        name: ethtool
+        link: up
+        down count: 0
+runner:
+  active port: ens38
+
+●その他機能
+RHEL7では、Teaming、Bonding以外に
+ブリッジやVLAN機能もありますが現状では使用する用途が私にはないので省略します。
+
+RHEL7/CentOS7のnmcliコマンドでTeamデバイス/Bondingデバイス/VLAN/ブリッジを組み合わせる方法
+http://enakai00.hatenablog.com/entry/20150118/1421587442

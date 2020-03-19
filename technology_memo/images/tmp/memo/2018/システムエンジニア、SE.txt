@@ -1,0 +1,7 @@
+システムエンジニア、SE
+
+日本においてSEやPGの定義が幅広く
+
+設計・製造に関わり、
+Bussines Developer(業務開発者)
+IT Infra Developer(ITインフラ開発者)

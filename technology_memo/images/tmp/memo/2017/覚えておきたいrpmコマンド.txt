@@ -1,0 +1,103 @@
+RHEL系Linuxでパッケージ管理に使われるrpmコマンドですが、色々とオプションがあって「あれ、何使えばいいんだっけ？」ってのが多くなったので、自分がよく使う物をまとめてみました。新しく出てきたら追記していきたいと思います。
+
+●●●インストール
+●rpmパッケージをインストールする
+ローカルにあるrpmファイルをインストールします。-i(--install)オプションを利用します。-v(--verbose)と-h(--hash)は、インストールの進行度を表示してくれます。
+
+$ rpm -ivh package-x.y.z.rpm
+
+また、リモートのファイルを指定することも可能です。
+$ rpm -ivh http://package.example.com/package-x.y.z.rpm
+
+●rpmパッケージをアップグレードする
+既にインストールされたrpmパッケージのより新しいバージョンをインストールします。
+
+$ rpm -Uvh package-x.y.z.rpm
+
+●以前のバージョンが、現在インストールされている場合にのみ パッケージを更新
+$ rpm -Fvh package-x.y.z.rpm
+
+●rpmパッケージをアンインストールする
+インストールされたパッケージをアンインストールします。-e(--erase)を利用します。
+
+$ rpm -e package-x.y.z.rpm
+
+依存性関連でエラーになる場合は、--nodepsで強制的にアンインストールすることが出来ます。(非推奨)
+$ rpm -e --nodeps package-x.y.z.rpm
+
+●●●検索系
+パッケージの情報などを取得する検索系のrpmコマンドは、-q(--query)オプションと、別のオプションを組み合わせて利用します。
+●パッケージの情報を表示する
+-i(--info)オプションで、パッケージの詳細情報を出力します。
+
+$ rpm -qi httpd24
+Name        : httpd24
+Version     : 2.4.6
+Release     : 2.49.amzn1
+Architecture: x86_64
+Install Date: 2013年10月31日 01時00分18秒
+Group       : System Environment/Daemons
+Size        : 3690991
+License     : ASL 2.0
+Signature   : RSA/SHA256, 2013年09月24日 20時30分40秒, Key ID bcb4a85b21c0f39f
+Source RPM  : httpd24-2.4.6-2.49.amzn1.src.rpm
+Build Date  : 2013年09月20日 18時02分24秒
+Build Host  : build-31003.build
+Relocations : (not relocatable)
+Packager    : Amazon.com, Inc. <http://aws.amazon.com>
+Vendor      : Amazon.com
+URL         : http://httpd.apache.org/
+Summary     : Apache HTTP Server
+Description :
+The Apache HTTP Server is a powerful, efficient, and extensible
+web server.
+
+●インストールされたrpmパッケージを一覧表示する
+a(--all)オプションで、インストールされたパッケージを一覧で表示できます。
+
+$ rpm -qa
+libjpeg-turbo-1.2.1-1.2.amzn1.x86_64
+setup-2.8.14-20.11.amzn1.noarch
+libSM-1.2.1-2.6.amzn1.x86_64
+ca-certificates-2010.63-3.7.amzn1.noarch
+libnih-1.0.1-7.5.amzn1.x86_64
+<snip...>
+grepと組み合わせて使うと効果的です。
+
+●特定のパッケージによってインストールされたファイルを一覧表示する
+-l(--list) ＜パッケージ名＞で、あるパッケージによってインストールされたファイルを一覧で出力できます。
+
+$ rpm -ql httpd24
+/etc/httpd
+/etc/httpd/conf
+/etc/httpd/conf.d
+/etc/httpd/conf.d/README
+<snip...>
+
+●特定パッケージから、設定系ファイルのみ表示する
+上の例の拡張版です。-c(--configfiles) ＜パッケージ名＞を使うと、パッケージに含まれるファイルのウチ、設定ファイルのみを取得できます。
+
+$ rpm -qc httpd24
+/etc/httpd/conf.d/autoindex.conf
+/etc/httpd/conf.d/notrace.conf
+/etc/httpd/conf.d/userdir.conf
+/etc/httpd/conf.d/welcome.conf
+<snip...>
+
+●あるファイルがどのパッケージに含まれているのかを確認する
+-f ＜ファイル名＞を使うと、指定したファイルがどのパッケージに含まれているのかを確認できます。
+
+$ rpm -qf /bin/ls
+coreutils-8.4-19.15.amzn1.x86_64
+
+●パッケージの更新履歴を確認する
+-q --changelog　＜パッケージ名＞を利用すると、指定したパッケージ名のCHANGELOGを新しい順に表示します。headと組み合わせてよく使います。
+
+$ rpm -q --changelog httpd24 | head -n 10
+バグフィックスが入ったバージョンかどうかをこのコマンドで確認しましょう。
+
+●特定rpmパッケージの依存関係を表示する
+-R(--requires) パッケージ名オプションで、特定パッケージの依存関係を表示します。
+
+$ rpm -qR httpd24
+ 

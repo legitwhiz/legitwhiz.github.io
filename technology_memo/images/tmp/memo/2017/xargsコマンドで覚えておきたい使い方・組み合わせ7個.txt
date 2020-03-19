@@ -1,0 +1,201 @@
+xargsコマンドで覚えておきたい使い方・組み合わせ7個
+
+LinuxやUNIXで、コマンドちょっと組み合わせて利用する際、非常に役に立つxargsコマンド。
+ 今回は、このxargsコマンドで覚えておきたい使い方・組み合わせについて紹介する。
+
+##################
+1.基本的な使い方
+
+まず、そもそもこのコマンドはどういう使い方をするのか。
+ 基本的には、以下のようにパイプでつなぐことで前のコマンド(コマンド1)で取得した値(標準出力)を利用してxargsで指定した別のコマンド(コマンド2)に引数として渡して実行させる事ができるコマンドだ。
+
+# コマンド1 | xargs コマンド2
+
+[root@test-centos7 ~]# find /work -type f
+/work/test2.txt
+/work/test.txt
+/work/aaaaa.txt
+/work/bbbbb.txt
+/work/ccccc.txt
+/work/ddddd.txt
+/work/sample
+/work/test.image
+/work/test1
+/work/test2
+/work/aaaaa2.txt
+/work/aaaaa3.txt
+/work/ln_aaaaa2.txt
+[root@test-centos7 ~]# find /work -type f | xargs ls
+/work/aaaaa.txt   /work/ccccc.txt      /work/test.image  /work/test2.txt
+/work/aaaaa2.txt  /work/ddddd.txt      /work/test.txt
+/work/aaaaa3.txt  /work/ln_aaaaa2.txt  /work/test1
+/work/bbbbb.txt   /work/sample         /work/test2
+
+##################
+2.実行されるコマンド内容を表示させる
+xargsで指定されたコマンドの実行内容を表示させるには、「-t」オプションを付与する。
+
+# コマンド1 | xargs -t コマンド2
+
+[root@test-centos7 ~]# find /work -type f | xargs ls
+/work/aaaaa.txt   /work/ccccc.txt      /work/test.image  /work/test2.txt
+/work/aaaaa2.txt  /work/ddddd.txt      /work/test.txt
+/work/aaaaa3.txt  /work/ln_aaaaa2.txt  /work/test1
+/work/bbbbb.txt   /work/sample         /work/test2
+[root@test-centos7 ~]# find /work -type f | xargs -t ls
+ls /work/test2.txt /work/test.txt /work/aaaaa.txt /work/bbbbb.txt /work/ccccc.txt /work/ddddd.txt /work/sample /work/test.image /work/test1 /work/test2 /work/aaaaa2.txt /work/aaaaa3.txt /work/ln_aaaaa2.txt
+/work/aaaaa.txt   /work/ccccc.txt      /work/test.image  /work/test2.txt
+/work/aaaaa2.txt  /work/ddddd.txt      /work/test.txt
+/work/aaaaa3.txt  /work/ln_aaaaa2.txt  /work/test1
+/work/bbbbb.txt   /work/sample         /work/test2
+
+これで、xargsで実行されているコマンドがどういった形になっているかを確認することができる。
+
+なお、この実行コマンドは標準エラー出力となっているため、実行コマンドのみ「test.cmd」、コマンドの実行結果のみ「test.lst」に出力させるといった事も可能だ。
+
+[root@test-centos7 ~]# find /work -type f | xargs -t ls
+ls /work/test2.txt /work/test.txt /work/aaaaa.txt /work/bbbbb.txt /work/ccccc.txt /work/ddddd.txt /work/sample /work/test.image /work/test1 /work/test2 /work/aaaaa2.txt /work/aaaaa3.txt /work/ln_aaaaa2.txt
+/work/aaaaa.txt   /work/bbbbb.txt  /work/ln_aaaaa2.txt  /work/test.txt  /work/test2.txt
+/work/aaaaa2.txt  /work/ccccc.txt  /work/sample         /work/test1
+/work/aaaaa3.txt  /work/ddddd.txt  /work/test.image     /work/test2
+[root@test-centos7 ~]# find /work -type f | xargs -t ls > test.lst 2>test.cmd
+[root@test-centos7 ~]# cat test.lst
+/work/aaaaa.txt
+/work/aaaaa2.txt
+/work/aaaaa3.txt
+/work/bbbbb.txt
+/work/ccccc.txt
+/work/ddddd.txt
+/work/ln_aaaaa2.txt
+/work/sample
+/work/test.image
+/work/test.txt
+/work/test1
+/work/test2
+/work/test2.txt
+[root@test-centos7 ~]# cat test.cmd
+ls /work/test2.txt /work/test.txt /work/aaaaa.txt /work/bbbbb.txt /work/ccccc.txt /work/ddddd.txt /work/sample /work/test.image /work/test1 /work/test2 /work/aaaaa2.txt /work/aaaaa3.txt /work/ln_aaaaa2.txt
+
+##################
+3.コマンドライン一行に引数をいくつ渡すか指定する
+「-n」オプションを指定することで、xargsで実行するコマンド一行にいくつまで引数を渡すのか指定することができる。
+
+# コマンド1 | xargs -n 引数の数 コマンド2
+
+[root@test-centos7 ~]# find /work -type f | xargs -t ls
+ls /work/test2.txt /work/test.txt /work/aaaaa.txt /work/bbbbb.txt /work/ccccc.txt /work/ddddd.txt /work/sample /work/test.image /work/test1 /work/test2 /work/aaaaa2.txt /work/aaaaa3.txt /work/ln_aaaaa2.txt
+/work/aaaaa.txt   /work/ccccc.txt      /work/test.image  /work/test2.txt
+/work/aaaaa2.txt  /work/ddddd.txt      /work/test.txt
+/work/aaaaa3.txt  /work/ln_aaaaa2.txt  /work/test1
+/work/bbbbb.txt   /work/sample         /work/test2
+[root@test-centos7 ~]# find /work -type f | xargs -t -n 2 ls
+ls /work/test2.txt /work/test.txt
+/work/test.txt  /work/test2.txt
+ls /work/aaaaa.txt /work/bbbbb.txt
+/work/aaaaa.txt  /work/bbbbb.txt
+ls /work/ccccc.txt /work/ddddd.txt
+/work/ccccc.txt  /work/ddddd.txt
+ls /work/sample /work/test.image
+/work/sample  /work/test.image
+ls /work/test1 /work/test2
+/work/test1  /work/test2
+ls /work/aaaaa2.txt /work/aaaaa3.txt
+/work/aaaaa2.txt  /work/aaaaa3.txt
+ls /work/ln_aaaaa2.txt
+/work/ln_aaaaa2.txt
+
+上記例のように、「-n」で指定しない場合はすべての引数がxargsで実行されるコマンドに渡される。
+ 一行づつ処理を指せるならば、「-n」オプションで引数を指定してあげると良いだろう。
+
+##################
+4.引数の値を明示的に利用する
+通常、ただxargsでコマンドを指定した場合、渡された引数はそのまま処理されるが、例えばファイル名の末尾に何か文字列を付け加えたりしたい事もあるだろう。
+そんなときは、「-I」オプションを使用し、コマンドで引数を明示的に使用すればいい。通常は、「{}」で引数の使用を表している。
+# コマンド1 | xargs -I{} コマンド2 {}
+
+例えば「/work」フォルダ配下にあるファイルに対し、元のファイル名の後ろに「.bk」という文字列を付け足してコピーする場合、以下のようにする。
+
+# find /work -type f | xargs -t -I{} cp {} {}.bk
+
+[root@test-centos7 ~]# find /work -type f | xargs -t -I{} cp {} {}.bk
+cp /work/test2.txt /work/test2.txt.bk
+cp /work/test.txt /work/test.txt.bk
+cp /work/aaaaa.txt /work/aaaaa.txt.bk
+cp /work/bbbbb.txt /work/bbbbb.txt.bk
+cp /work/ccccc.txt /work/ccccc.txt.bk
+cp /work/ddddd.txt /work/ddddd.txt.bk
+cp /work/sample /work/sample.bk
+cp /work/test.image /work/test.image.bk
+cp /work/test1 /work/test1.bk
+cp /work/test2 /work/test2.bk
+cp /work/aaaaa2.txt /work/aaaaa2.txt.bk
+cp /work/aaaaa3.txt /work/aaaaa3.txt.bk
+cp /work/ln_aaaaa2.txt /work/ln_aaaaa2.txt.bk
+
+##################
+5.コマンドの実行をするかどうか質問させる
+「-p」オプションを使用する事で、xargsで生成したコマンドを本当に実行するかどうかを確認させる事が出来る。
+
+# コマンド1 | xargs -p コマンド2
+
+[root@test-centos7 ~]# find /work -type f -name "*.bk" | xargs -p -n 1 rm
+rm /work/test2.txt.bk ?...y
+rm /work/test.txt.bk ?...y
+rm /work/aaaaa.txt.bk ?...y
+rm /work/bbbbb.txt.bk ?...y
+rm /work/ccccc.txt.bk ?...y
+rm /work/ddddd.txt.bk ?...y
+rm /work/sample.bk ?...y
+rm /work/test.image.bk ?...y
+rm /work/test1.bk ?...y
+rm /work/test2.bk ?...y
+rm /work/aaaaa2.txt.bk ?...y
+rm /work/aaaaa3.txt.bk ?...y
+rm /work/ln_aaaaa2.txt.bk ?...y
+
+##################
+6.複数プロセスを同時に実行させる
+xargsで実行させるコマンドを、複数のプロセスを同時に立ち上げて実行させる場合、「-P」オプションを利用する。
+
+# コマンド1 | xargs -P 最大プロセス数 コマンド2
+
+##################
+7.引数の区切り文字を指定する
+通常、xargsでコマンドに渡される引数はスペース区切りとなっているが、「-d」オプションを指定することでその区切り文字を変更することができる。
+
+# コマンド1 | xargs -d区切り文字 コマンド2
+
+例えば、以下のようにコマンドを実行することで、カンマ区切りとして引数を渡す事ができる。
+
+[root@test-centos7 ~]# echo "a b c d e f" | xargs -t -n 1 echo
+echo a
+a
+echo b
+b
+echo c
+c
+echo d
+d
+echo e
+e
+echo f
+f
+[root@test-centos7 ~]# echo "a b c,d e f" | xargs -t -n 1 -d, echo
+echo a b c
+a b c
+echo d e f
+d e f
+
+##################
+番外編 ～findコマンドとの組み合わせ凡例～
+xargsとよく組み合わせて利用されるfindコマンド。
+このfindコマンドとの組み合わせで覚えておくと便利そうな判例を幾つか記述する。
+
+●特定のファイルのバックアップファイルを作成する
+# find PATH -type f -name 'ファイル名' | xargs -n 1 -I{} cp {} {}.bk
+
+●特定のファイルをバックアップディレクトリにコピーする
+# find PATH -type f -name 'ファイル名' | xargs -n 1 -I{} cp {} バックアップ先PATH
+
+●特定のファイルに対してのみgrepを行う
+# find PATH -type f -name 'ファイル名' | xargs -n 1 -I{} grep '検索キーワード' {}

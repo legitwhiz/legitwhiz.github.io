@@ -1,0 +1,314 @@
+curlで簡単疎通(http,https,proxy等)
+
+ブラウザを使用しないでWebアクセス、proxy経由、UserAgentも思い通り。
+curl[カール]
+syntax
+curl [optinons] URL
+
+●基本
+protocolを省略するとdefaultではHTTPになるけど、ftp.exmaple.comのようなhostだったら名前から推測してFTPする。
+
+あと{}や[]を使って、複数指定することも可能。ただし、{}はシェルが展開してしまうので範囲指定のときはシングルクォートしたほうが無難。
+" コンマで複数指定
+curl 'http://{one,two,three}.example.com'
+" []を使って範囲指定
+curl 'ftp://example.com/[1-10].txt'
+curl 'ftp://example.com/[a-z].txt'
+
+1.txt ~ 10.txt, a.txt ~ z.txtまでをDL。
+" 範囲のstepも指定
+
+これが出来るのはcurl 7.15.1以降
+curl 'ftp://example.com/[1-10:2].txt'
+
+2つずつ、つまり1, 3, 5, 7, 9.txtをDL。
+
+●ページ取得 curl URL
+まず一番単純な例。example.comサイトのトップページを標準出力へ出力。
+curl http://www.example.com/
+
+
+●ページをファイルに保存 curl -o name URL
+標準出力ではなくローカルへ自由なファイル名で保存するには-oオプションで。
+$ curl -o my.jpg  http://www.example.com/top.jpg
+
+-O（オーの大文字）オプションの場合
+-O (大文字）はURL上のファイル名で保存する。
+$ curl -O http://www.example.com/images/photo1.jpg
+
+この場合 http://www.example.com/ のように、ファイル名が無いURLに使うと、ファイルが作成されないことに注意。
+
+●POST送信 -d オプション。
+フォームの送信と同様な事をCurlでする。POSTの送信。この場合は application/x-www-form-urlencodedに相当する。
+curl -d name=takuya -d hatena_id=takuya_1st  http://example.com/oauth.php
+
+-d KEY=VALUE を重ねて書けばいい 。
+POSTデータは、POST本文にGET引数と同じものを key=value&key1=value2&key2=value2 と続けて書く感じですね。詳しくはapplication/x-www-form-urlencodedについて知っておきましょう。
+
+●サーバーのHTTPヘッダー情報取得 curl -I URL
+私はこれを一番良く使います。ヘッダー情報を閲覧することでサーバーになるのがいい。
+takuya@air:~/Desktop$ curl -I  mixi.jp
+HTTP/1.1 200 OK
+Date: Wed, 21 Nov 2012 05:55:22 GMT
+Server: Apache
+X-Dealer: 151060
+Cache-Control: no-cache
+Pragma: no-cache
+X-XRDS-Location: https://mixi.jp/xrds.pl
+X-UA-Compatible: IE=EmulateIE7
+Vary: Accept-Encoding
+Content-Type: text/html; charset=EUC-JP
+Set-Cookie: _lcp=cb3e60b072c4cd530997c605e3012dd8; domain=.mixi.jp; path=/; expires=Wed, 21-Nov-2012 06:05:22 GMT
+X-Content-Type-Options: nosniff
+Connection: close
+
+●リダイレクトの確認に、ヘッダー情報閲覧
+curl -I オプションでヘッダーを見るのに一番重要なのがヘッダーの閲覧。正しくリダイレクトされているかが特に重要
+takuya@air:~/Desktop$ curl -I https://google.com
+HTTP/1.1 301 Moved Permanently
+Location: https://www.google.com/
+Content-Type: text/html; charset=UTF-8
+Date: Wed, 21 Nov 2012 05:56:03 GMT
+Expires: Fri, 21 Dec 2012 05:56:03 GMT
+Cache-Control: public, max-age=2592000
+Server: gws
+Content-Length: 220
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+
+●BASIC 認証のページにアクセスする。 curl -u
+これは通常のURL埋め込みでもいいようです
+curl -u username:password http://www.example.com/member/
+curl -basic username:password http://www.example.com/member/
+curl  http://username:password @www.example.com/member/
+
+たとえば、-u で渡すパスワードを間違えたとします。
+$ curl -sS 'http://localhost:8080/api/json' -I -u yasuhiroki:miss
+HTTP/1.1 401 Invalid password/token for user: yasuhiroki
+X-Content-Type-Options: nosniff
+WWW-Authenticate: Basic realm="Jenkins"
+Content-Type: text/html;charset=ISO-8859-1
+Cache-Control: must-revalidate,no-cache,no-store
+Content-Length: 1441
+Server: Jetty(winstone-2.8)
+
+$ echo $?
+0
+
+終了コードは0なのです。
+もし、何かエラーがあった時は、終了コードを 0 以外のを返して欲しい場合は、 --fail (-f) オプションが利用できます。
+
+$ curl -sS 'http://localhost:8080/api/json' -u yasuhiroki:miss -f
+curl: (22) The requested URL returned error: 401
+$ echo $?
+22
+
+●証明書エラーが出るんだけど。 curl -k URL
+SSL接続で証明書のエラーをスキップさせたかったら-k オプションを使う。
+curl -k https://www.example.com/
+一時的に使うんであればいいんではないでしょうか。
+
+
+●その他知っておくと便利な感じ
+-# プログレスバーを表示
+-s 不要なプログレスメータを出力しない
+
+
+●ファイルをFTPアップロードする。
+以下コマンドはftpでアップロードするのと同様のことを実行する。
+curl -T banner.jpg -u username:password ftp://ftp.example.com/static/imgs/
+-Tの後にアップロードするファイルを指定。
+
+
+別の書き方
+ユーザ名、パスワードはURL書式に含めてしまってもいい。
+curl -T banner.jpg -u  ftp://username:password@ftp.example.com/static/imgs/
+
+●証明書エラーは無視する。
+証明書エラーは無視する
+curl -k https://example.com/
+
+●curlはデフォルトで、↓のような転送情報をコンソールに出力します。
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   371  100   371    0     0  53489      0 --:--:-- --:--:-- --:--:-- 61833
+
+-# オプションを使うと、プログレスバーのような表記に変更できます。
+$ curl localhost:8080/api/json -o response -#
+######################################################################## 100.0%
+
+どちらにせよ、このプログレス情報を邪魔に思う日もあるでしょう。
+stderrに出力されているので、/dev/nullにでも突っ込んでしまうのも手ですが、素直に-sオプションで制御します。
+$ curl -s localhost:8080/api/json -O
+
+ただしこの時、エラーメッセージまで消えてしまいます。
+URLやPortを間違えた時に気づけないので、-Sを一緒に指定しておいた方が無難です。
+
+# Portを間違えてしまったが、エラーメッセージがない
+$ curl -s localhost:8081/api/json
+
+# -Sの効果で、エラーメッセージが出力される。
+$ curl -Ss localhost:8081/api/json
+curl: (7) Failed to connect to localhost port 8081: 接続を拒否されました
+
+●User-Agentを偽装する
+Webサイトによっては、curl コマンドによるアクセスを制御している場合があるそうです。
+そういう時は、 -A オプションを指定して、User-Agentを空にするとうまく行くかもしれません。
+
+$ curl -s -w '%{http_code}n' http://www.amazon.co.jp/dp/B00JEYPPOE/ -o /dev/null 
+503
+$ curl -s -w '%{http_code}n' http://www.amazon.co.jp/dp/B00JEYPPOE/ -o /dev/null  -A ''
+200
+
+●リファラ指定
+-e/--referer URL
+
+これも-Hで指定しても良いけど。○○な画像とかをDLするときとかに大活躍！
+curl -e 'http://example.com/upload.cgi' http://example.com/img/hoge.jgg
+
+●cookieを送信
+-b/--cookie cookie_data
+
+cookie_dataのformatは"NAME1=VALUE1; NAME2=VALUE2"のような文字列。もしcookie_dataに"="が含まれていない場合、filenameとして扱われる。つまり、後述するオプションでcookieを保存しておけば
+curl -b example.cookie http://example.com/
+
+●cookieを保存
+-c/--cookie-jar file_ame
+
+filenameが"-"だと、cookieは標準出力に出る。
+curl -c example.cookie http://example.com/
+
+●fileをftp upload
+-T/--upload-file file
+curl -T /path/to/file ftp://example.com/path/to/upload
+
+個人的にはごっつ便利でお気に入り機能です。今までサーバ間でファイル転送するときに手動でftp/scp叩いてたからなぁ。あと、manを見てたらhttpでもいけるらしいけど、どやってuploadするんだろう。webdav？
+
+EPSV (extended passive)を無効にする
+--disable-epsv
+
+defaultではEPSVを試行して、それがダメならその後にPASVモードになる。FTPサーバがEPSVに対応してても、NATルータとかがEPSVを解釈してくれないと、タイムアウトを待たないといけない。そんなときに指定すると良い。
+
+EPSVについてはこっちで。
+http://d.hatena.ne.jp/hogem/20091108/1257612023
+
+
+●proxyサーバを指定
+-x/--proxy host[:port]
+portはdefualtで1080
+
+●帯域制限
+" --limit-rate speed
+speedは10k, 1m, 1gなどで。回線/サーバに負荷を掛けたくないときに。
+
+●traceする
+Enables a full trace dump of all incoming and outgoing data
+
+tcpdump -Xのような感じ。16進数とASCIIを表示する。困ったときにdebugするときに使うかも。
+--trace filename
+
+filenameを"-"にすると標準出力に出る。
+curl example.com --trace trace.log
+--trace-ascii filename
+
+--traceと似ているが、16進数は表示しない。あとASCIIはLFで改行して表示してくれる。
+
+This is very similar to --trace, but leaves out the hex part and only shows the ASCII part of the dump
+
+●ファイルをアップロードする。-Tの後にアップロードするファイルを指定。
+$ curl -T image01.jpg -u userid:password ftp://ftp.example.com/images/
+ユーザ名とパスワードは以下のようにURLに含めて記述することも可能。
+$ curl -T image01.jpg ftp://name:passwd@example.com/images/
+
+●-d オプションでフォームを送信する。
+$ curl -d ID=userid -d PW=password http://www.hoge.com/login.php
+
+●curl設定
+curlも、bashなどのように、設定ファイルを作成することができます。
+curlにも、この「rcファイル」を読み込む機能があるので、ここに自分好みの設定を書くことができます。curlのrcファイルは、ユーザーホームで以下のように作成します。
+「-q」コマンドで、.curlrcの読み込みを抑制することができます。
+
+cd ~/
+vi .curlrc
+
+
+●他によく使うオプション
+-k SSL証明書を無視する。主に、オレオレ証明書を使っているWebサーバーにアクセスする時に。
+-x Proxyを指定。
+-H Request Headerを追加する。Content-Typeを指定する時など
+- 例: -H "Content-Type: application/json"
+-L リダイレクト先までアクセスする。
+-A UserAgentを指定する。
+
+###############################################################################
+●Webサイトのボトルネック調査
+あるサイトでアクセスが遅いなぁ、って話になったときにまず当たりをつけるために遅い部分を調べたい。
+って時のcurlの使い方。
+
+出力フォーマット用のファイル作成。
+cat <<'EOF' >/tmp/curl_env.txt
+url_effectivett: %{url_effective}n
+http_codett: %{http_code}n
+http_connecttt: %{http_connect}n
+time_totaltt: %{time_total}n
+time_namelookuptt: %{time_namelookup}n
+time_connecttt: %{time_connect}n
+time_appconnecttt: %{time_appconnect}n
+time_pretransfertt: %{time_pretransfer}n
+time_redirecttt: %{time_redirect}n
+time_starttransfertt: %{time_starttransfer}n
+size_downloadtt: %{size_download}n
+size_uploadtt: %{size_upload}n
+size_headertt: %{size_header}n
+size_requesttt: %{size_request}n
+speed_downloadtt: %{speed_download}n
+speed_uploadtt: %{speed_upload}
+EOF
+#------------------------------------------------------------------------------
+サイトアクセスと結果出力
+$ curl  -o /dev/null http://www.example.com -w @/tmp/curl_env.txt -s
+url_effective		: http://www.example.com
+http_code		: 200
+http_connect		: 000
+time_total		: 5.113
+time_namelookup		: 5.083
+time_connect		: 5.092
+time_appconnect		: 0.000
+time_pretransfer		: 0.000
+time_redirect		: 0.000
+time_starttransfer		: 5.102
+size_download		: 6435
+size_upload		: 0
+size_header		: 328
+size_request		: 177
+speed_download		: 1258.000
+
+
+この場合
+DNSのルックアップに時間がかかってるので、そこを改善しましょう、と言う話になります。
+ほかにも、time_starttransferが大きければアプリケーションかな？などの切り分けに使えます。
+#------------------------------------------------------------------------------
+各項目の意味
+他にもこんな項目がありますよ。
+url_effective		最後にアクセスした URL 。特に curl に対し location: ヘッダに従うように指示した場合に有意になるものです。
+http_code			直前の HTTP(S) あるいは FTP(s) 転送から取得された応答コード。 7.18.2 以降では同じ情報を示す response_code がエイリアスとして利用可能になりました。
+http_connect		curl による CONNECT リクエストに対する（プロクシからの）最後の応答コード。(7.12.4 以降)
+time_total			全体の処理にかかった時間（秒）。表示精度はミリ秒単位。
+time_namelookup		開始から名前解決が完了したときまでの時間（秒）。
+time_connect		開始からリモートのホスト（またはプロクシ）への TCP 接続完了までの時間（秒）
+time_appconnect		開始からリモートホストへの SSL/SSH/etc 接続／ハンドシェイク完了までの時間（秒）(7.19.0 以降)
+time_pretransfer	開始から最初のバイトの転送が行われようとするまでの時間（秒）。転送前になされるべきコマンドやプロトコル特有のネゴシエーションも含まれる。
+time_redirect		正引き（名前解決）, 接続, 前段転送処理, 最終的なトランザクションが開始される前の転送を含む、すべてのリダイレクションの段階に要した時間（秒）を表す。この変数は一連のリダイレクション全体に要した時間を表す。(7.12.3 以降)
+time_starttransfer	開始から最初のバイトが転送されるまでの時間（秒）。 time_pretransfer に加えてサーバが結果を算出するのに要した時間も含まれる。
+size_download		ダウンロードされた総バイト数。
+size_upload			アップロードされた総バイト数。
+size_header			ダウンロードされたヘッダの総バイト数。
+size_request		送信された HTTP リクエストの総バイト数。
+speed_download		curl により測定されたダウンロード完了までの平均ダウンロード速度。バイト数／秒。
+speed_upload		curl により測定されたアップロード完了までの平均アップロード速度。バイト数／秒。
+content_type		（存在するなら）リクエストした文書の内容型。
+num_connects		直前の転送による新規接続数。(7.12.3 以降)
+num_redirects		リクエストに応じて行われたリダイレクトの回数。(7.12.3 以降)
+redirect_url		リダイレクト追跡の -L を用いずにHTTP リクエストを生成した場合、実際のリダイレクト先になるものとされる URL がこの変数に示される。 (7.18.2 以降)
+ftp_entry_path		リモート FTP サーバにログインしたときに libcurl により最初に辿り着いたパス。(7.15.4 以降)
+ssl_verify_result	リクエストされた SSL ピア証明書の検証結果。 0 は検証の成功を意味する。(7.19.0 以降)

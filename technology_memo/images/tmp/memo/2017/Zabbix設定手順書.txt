@@ -1,0 +1,115 @@
+
+#------------------------------------------------------------------------------
+3.設定
+
+3.1.自動起動設定
+
+#mysqlの自動起動設定
+sudo chkconfig mysqld on
+
+#httpdの自動起動設定
+sudo chkconfig httpd on
+
+#zabbix-serverの自動起動設定
+sudo chkconfig zabbix-server on
+
+
+
+/etc/my.cnf の編集
+
+MySQL の起動
+service mysqld start
+
+
+DB と DBユーザーの作成
+mysqladmin password password -u root
+# mysql -ppassword
+mysql> CREATE DATABASE zabbix;
+mysql> GRANT ALL PRIVILEGES ON zabbix.* TO zabbix@localhost IDENTIFIED BY 'password';
+mysql> FLUSH PRIVILEGES;
+mysql> exit
+
+
+スキーマの拡張
+mysql -u zabbix -ppassword zabbix < /usr/share/doc/zabbix-server-mysql-2.2.1/create/schema.sql
+# mysql -u zabbix -ppassword zabbix < /usr/share/doc/zabbix-server-mysql-2.2.1/create/images.sql
+# mysql -u zabbix -ppassword zabbix < /usr/share/doc/zabbix-server-mysql-2.2.1/create/data.sql
+
+
+/etc/zabbix/zabbix_server.conf の編集
+
+#DBUser=root
+DBUser=zabbix
+
+# DBPassword=
+DBPassword=password
+
+日本語フォント表示対策
+mv /usr/share/zabbix/fonts/graphfont.ttf /usr/share/zabbix/fonts/graphfont.ttf.org
+# ln -s /usr/share/fonts/ipa-pgothic/ipagp.ttf /usr/share/zabbix/fonts/graphfont.ttf
+
+Zabbix の起動
+service zabbix-server start
+
+
+/etc/httpd/conf/httpd.conf の編集
+
+
+service httpd start
+
+
+/etc/php.ini の編集（以下を追記する）
+
+
+Apache の再起動
+service httpd restart
+
+
+
+ブラウザから次のURLへアクセス
+http://<IPアドレス>/zabbix/
+
+Zabbix の設定
+(1) Welcome to Zabbix 2.2
+
+
+「Next」を押して次へ
+
+(2) Check of pre-requisites
+すべて OK になっていることを確認し「Next」を押して次へ
+
+(3) Configure DB connection
+
+Type: MySQL
+Host: localhost
+Port: 0
+Name: zabbix
+User: zabbix
+Password: password
+上記を入力し、「Test connection」を押し OK になったら「Next」を押して次へ
+
+(4) Zabbix server details
+
+Host: localhost
+Port: 10051
+Name:上記を確認し、「Next」を押して次へ
+
+(5) Pre-Installation summary
+
+Database type: MySQL
+Database server: localhost
+Database port: default
+Database name: zabbix
+Database user: zabbix
+Database password: ********
+Zabbix server: localhost
+Zabbix server port: 10051
+Zabbix server name:上記を確認し、「Next」を押して次へ
+
+(6)Install
+
+「Finish」を押して完了アカウント： admin
+パスワード： zabbixログイン後、右上の「Profile」をクリック、「Language」から「Japanese(Ja_JP)」を選択すると、日本語メニューにできます。
+
+
+

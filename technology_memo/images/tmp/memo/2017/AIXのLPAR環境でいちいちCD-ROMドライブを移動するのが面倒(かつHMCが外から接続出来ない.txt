@@ -1,0 +1,38 @@
+AIXのLPAR環境でいちいちCD-ROMドライブを移動するのが面倒(かつHMCが外から接続出来ない時なんかに便利)
+
+なんで、NFS で他ホストのCD-ROMドライブを使うための手順
+
+(1)NFSデーモンの始動
+NFSサーバ、NFSクライアント共に
+# startsrc -s nfsd
+# startsrc -s rpc.mountd
+
+(2)NFSサーバ側でCD-ROMマウント
+# mount -r -v cdrfs /dev/cd0 /mnt
+
+(3)NFSサーバ側でNFSファイルシステムのエクスポート
+# mknfsexp -d /mnt -t ro
+
+(4)NFSクライアント側でNFSファイルシステムのマウント
+# mount -v nfs -oro server:/mnt /mnt
+
+(5)NFSクライアント側でCD-ROMを使ってインストール等の使う
+
+(6)NFSクライアント側でCD-ROMのNFSアンマウント手順
+umount /mnt
+
+(7)NFSサーバ側でNFSファイルシステムのアンエクスポート
+# rmnfsexp -d /mnt -B
+
+(8)NFSサーバ側でCD-ROMのアンマウント
+# umount /mnt
+
+(9)NFSデーモンの停止
+NFSサーバ、NFSクライアント共
+# stopsrc -s nfsd
+# stopsrc -s rpc.mountd
+
+
+export するものは、smit から指定することもできるが、 cdrom のように固定なものはコマンドから叩いた方が早かったりする。
+
+って調べたけど結局、isoをloopmountしたから使ってませんが…w

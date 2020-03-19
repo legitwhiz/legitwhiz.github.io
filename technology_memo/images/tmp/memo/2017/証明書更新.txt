@@ -1,0 +1,15 @@
+証明書更新
+
+sudo -H /etc/apache2/letsencrypt/certbot-auto renew --force-renewal
+
+sudo systemctl restart apache2
+
+ls -l /etc/letsencrypt/live/regulus0134.dip.jp/
+
+
+
+
+
+
+
+   

@@ -1,0 +1,685 @@
+sedコマンドで覚えておきたい使い方12個
+
+LinuxやUNIXを使う上で、ある程度使えると非常に便利な置換コマンドが、このsedコマンドだ。
+ 今回は、このsedコマンドで覚えておきたい使い方について紹介する。
+
+なお、今回の置換・編集の例として、以下のファイルを用いて説明する。
+[root@test-centos7 work]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+1.基本的な使い方
+sedコマンドの基本的な使い方としては、以下のようにコマンドを実行することでファイル・標準出力の内容で文字列の置換を行う事だ。
+なお、条件の最後に「g」を付けないと、”最初に、マッチした箇所のみ”置換するので注意。
+●ファイルの内容を置換する場合
+
+sed 's/置換前文字列/置換後文字列/g' ファイルPATH
+
+[root@test-centos7 work]# sed 's/line/gyou/g' /root/sed_test.conf
+# gyou 1
+gyou1=enable
+# gyou 2
+gyou2=disable
+# gyou 3
+gyou3=enable
+# gyou 4
+gyou4=enable
+
+●標準出力の内容を置換する場合
+
+コマンド | sed 's/置換前文字列/置換後文字列/g'
+
+[root@test-centos7 work]# cat /root/sed_test.conf | sed 's/line/gyou/g'
+# gyou 1
+gyou1=enable
+# gyou 2
+gyou2=disable
+# gyou 3
+gyou3=enable
+# gyou 4
+gyou4=enable
+
+指定出来る処理内容は、以下のように非常に多い。
+ 多いので、その中でもよく利用する処理について、個別に説明することにする。
+
+●コメント
+" # … #移行はコメントとして取り扱う
+
+●置換
+" c … 行をまるごと置換する
+" s … 文字列を置換する
+
+●追加・挿入
+" a … 行を”追加”する
+" i … 行を”挿入”する
+
+なお、複数行追加・挿入する場合は「n」で改行を表現する。
+
+●削除
+" d … 行を削除する
+" D … 先頭セグメントから最初の改行までを削除する
+
+●入力
+" r ファイル名 … ファイルの内容を読み込む
+" n … パターンスペースを入力の次の行で置換
+" N … 入力の次の行をパターンスペースに追加し，改行文字を埋め込む(‘n’ で改行として認識されるのはここで埋め込まれた改行文字だけとなる)
+
+ ●出力
+" p … パターンスペースを標準出力に出力
+" P … パターンスペースの先頭セグメントから最初の改行までを標準出力に出力
+" | … 明白な形式でパターンスペースを標準出力に一覧表示する
+" = … 現在の行番号を 1 行として標準出力に出力（タブ文字などは対応するエスケープシーケンスとして表示され，非印字文字は 8 進数表記法で表示される）
+" w ファイル名 … ファイルにパターンスペースを追加する。w コマンドが最初に呼び出されたときにはファイルの中身はクリアされる
+
+●ホールドスペースの利用
+" g … パターンスペースの内容をホールドスペースの内容で置換
+" G … ホールドスペースの内容をパターンスペースに追加
+" h … ホールドスペースの内容をパターンスペースの内容で置換
+" H … パターンスペースの内容をホールドスペースに追加
+" x … パターンスペースの内容とホールドスペースの内容を交換する
+
+●グループ化
+" {コマンドリスト}
+
+●制御構造
+" b ラベル … 指定したラベルの : コマンドに分岐
+" t ラベル … 入力行の最新の読みとりまたは t の実行以降に代入が行われている場合，指定したラベルの : コマンドに分岐
+" : ラベル … ラベル付け
+" q … 終了
+
+2.文字列を置換する
+
+sedの基本。以下のようにコマンドを実行することで、特定の行の文字列を置換する事もできる。
+●○行目にある特定の文字列を置換する場合
+
+sed '○s/置換前文字列/置換後文字列/g'
+
+[root@test-centos7 work]# sed '4s/line/gyou/g' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+gyou2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●◯行目～◯行目にある特定の文字列を置換する場合
+○行目～○行目までを置換する場合は、以下のように開始行と終了行をカンマで区切って記述してやると良い。
+
+sed '○,○s/置換前文字列/置換後文字列/g'
+
+[root@test-centos7 work]# sed '4,8s/line/gyou/g' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+gyou2=disable
+# gyou 3
+gyou3=enable
+# gyou 4
+line4=enable
+
+●特定の文字列を含む行のみ置換する場合
+特定の文字列(正規表現可)を含む行に対してのみ、置換することも出来る。
+
+sed '/検索文字列/s/置換前文字列/置換後文字列/g'
+
+[root@test-centos7 ~]# sed '/=/s/line/gyou/g' /root/sed_test.conf
+# line 1
+gyou1=enable
+# line 2
+gyou2=disable
+# line 3
+gyou3=enable
+# line 4
+gyou4=enable
+
+[root@test-centos7 ~]# sed '/^line/s/line/gyou/g' /root/sed_test.conf
+# line 1
+gyou1=enable
+# line 2
+gyou2=disable
+# line 3
+gyou3=enable
+# line 4
+gyou4=enable
+
+●その行に表示される◯番目の文字列を置換する
+その行で、◯番目に表示された文字列に対して処理をする場合は、以下のようにコマンドを実行する。
+
+sed 's/置換前文字列/置換後文字列/何文字目か'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1 line 2
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed 's/line/gyou/2' /root/sed_test.conf
+# line 1 gyou 2
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+3.行を挿入する
+sedでは、特定の行に対して指定した行を挿入することもできる。
+ 挿入の場合、実行する処理に応じて「i」と「a」を使い分ける。
+
+●指定した行番号の箇所に行を挿入する
+以下のようにコマンドを実行することで、◯行目に指定した行を挿入をすることが出来る。
+
+sed '◯i 挿入する行'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '4i testline' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+testline
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●指定した行の後ろに行を挿入する
+以下のようにコマンドを実行することで、◯行目の後ろに指定した行を挿入することが出来る。
+
+sed '◯a 挿入する行'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '4a testline' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+testline
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●指定した複数の各行の前、後ろに行を挿入する
+指定した行の範囲に対し、挿入を行う事も出来る。
+
+sed '◯,◯i 挿入する行' #前に挿入する場合
+sed '◯,◯a 挿入する行' #後に挿入する場合
+
+[root@test-centos7 ~]# sed '1,4i testline' /root/sed_test.conf
+testline
+# line 1
+testline
+line1=enable
+testline
+# line 2
+testline
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '1,4a testline' /root/sed_test.conf
+# line 1
+testline
+line1=enable
+testline
+# line 2
+testline
+line2=disable
+testline
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●指定したキーワードを持つ行の前・後に行を挿入する
+キーワードを指定して、その行の前・後に行を挿入することも出来る。
+
+sed '/キーワード/i 挿入する行' #前に挿入する場合
+sed '/キーワード/a 挿入する行' #後に挿入する場合
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '/line3/i testline' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+testline
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '/line3/a testline' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+testline
+# line 4
+line4=enable
+
+4.行を削除する
+指定した行を削除して表示させることも出来る。
+●◯行目を削除する
+
+削除する行が◯行目と決まっている場合、以下のようにコマンドを実行する。
+
+sed '◯d'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '4d' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●◯行目～◯行目を削除する
+◯行目～◯行目を削除する場合は、以下のようにする。
+
+sed '◯,◯d'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '1,4d' /root/sed_test.conf
+
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●決まったキーワードを持つ行を除外する
+特定のキーワードを持つ行を削除する場合は、以下のようにする。
+
+sed '/キーワード/d'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '/line2/d' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+5.行の内容を上書きする
+指定した行の内容を置換ではなく、上書きすることも出来る。
+●◯行目の内容を上書きする
+以下のようにコマンドを実行することで、指定した行の内容を上書きして置き換える事が出来る。
+
+sed '◯c 置き換え後の行'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '4c testline' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+testline
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+●特定のキーワードを持つ行を上書きする
+もちろん、特定のキーワードを持つ行を上書きすることも出来る。
+
+sed '/キーワード/c 置き換え後の行'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed '/line3/c testline' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+testline
+# line 4
+line4=enable
+
+6.ファイルの内容を上書きする
+sedで編集した内容をファイルに上書きしたい場合もあるだろう。
+そんなときは、「-i」オプションを付与すると上書きをすることが出来る。
+
+sed -i '置換条件' ファイルPATH
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed 's/line 1/line #/g' /root/sed_test.conf
+# line #
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed -i 's/line 1/line #/g' /root/sed_test.conf
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line #
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+保存時に直前の状態のバックアップを取得させることも出来る。
+
+sed -i.バックアップファイルの末尾に付与する文字列 '置換条件' ファイルPATH
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line #
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed -i.$(date +%Y%m%d) 's/line 2/line #/g' /root/sed_test.conf
+[root@test-centos7 ~]# cat /root/sed_test.conf.20150731
+# line #
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line #
+line1=enable
+# line #
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+なお、このオプションはGNU拡張のコマンドじゃないと用意されていないので注意。
+HP-UX等の場合だと使えないので、一度リダイレクトなどで別のファイルに書き出してから上書きすることをお勧めしたい。
+
+7.複数の置換条件を適用する
+複数の置換条件を使用する場合は、「-e」オプションでそれぞれの置換条件を指定してあげると良い。
+
+sed -e '置換条件' -e '置換条件' ...
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed -e 's/line/gyou/g' -e '5c aaaaaaa' /root/sed_test.conf
+# gyou 1
+gyou1=enable
+# gyou 2
+gyou2=disable
+aaaaaaa
+# gyou 3
+gyou3=enable
+# gyou 4
+gyou4=enable
+
+8. ファイルに書いた置換条件を読み込む
+「-f」オプションを使用することで、外部ファイルに記述した置換条件を読み込んで実行することが出来る。
+
+sed -f スクリプトファイルPATH
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# cat /root/sed_script
+s/line/gyou/g
+5c aaaaaaa
+[root@test-centos7 ~]# sed -f /root/sed_script /root/sed_test.conf
+# gyou 1
+gyou1=enable
+# gyou 2
+gyou2=disable
+aaaaaaa
+# gyou 3
+gyou3=enable
+# gyou 4
+gyou4=enable
+
+9.小文字/大文字の変換をする
+GNU拡張版のsedであれば、以下のようにコマンドを実行することで小文字⇔大文字の変換を行う事が出来る。
+●小文字→大文字の場合
+
+sed 's/(.*)/U1/'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+[root@test-centos7 ~]# sed 's/(.*)/U1/' /root/sed_test.conf
+# LINE 1
+LINE1=ENABLE
+# LINE 2
+LINE2=DISABLE
+# LINE 3
+LINE3=ENABLE
+# LINE 4
+LINE4=ENABLE
+
+●大文字→小文字の場合
+sed 's/(.*)/L1/'
+
+[root@test-centos7 ~]# cat /root/sed_test.conf
+# LINE 1
+LINE1=ENABLE
+# LINE 2
+LINE2=DISABLE
+# LINE 3
+LINE3=ENABLE
+# LINE 4
+LINE4=ENABLE
+
+[root@test-centos7 ~]# sed 's/(.*)/L1/' /root/sed_test.conf
+# line 1
+line1=enable
+# line 2
+line2=disable
+# line 3
+line3=enable
+# line 4
+line4=enable
+
+もしPosix標準のsedしか使えない場合は、以下のようにコマンドを実行することで変換出来る。
+
+sed "y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/" # 小文字→大文字の場合
+sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/" # 大文字→小文字の場合
+
+10.置換にコマンドの実行結果を利用する
+sedでの置換にコマンドの実行結果を利用する場合は、処理を「'(シングルクォーテーション)」で囲わず、「”(ダブルクォーテーション)」か特に囲まないで、コマンドの実行箇所だけを「`(バッククォート)」で囲んで記述するといいだろう。
+
+$ cat test.hostname
+hostname
+HOSTNAME
+TESTNAME
+$
+$ # シングルォーテーションだと、置換されない
+$ sed -e 's/hostname/`hostname`/g' ./test.hostname
+`hostname`
+HOSTNAME
+TESTNAME
+$
+$ # ダブルクォーテーションだと、置換される
+$ sed -e "s/hostname/`hostname`/g" ./test.hostname
+test-centos
+HOSTNAME
+TESTNAME
+$
+$ # 処理を囲まなくても置換される
+$ sed -e s/hostname/`hostname`/g ./test.hostname
+test-centos
+HOSTNAME
+TESTNAME
+$
+
+なお、sshコマンド経由でsedを実行させる場合は、sedコマンドの処理自体をシングルクォーテーションで括る必要があるので注意。
+
+11.ダブルクォーテーション・シングルクォーテーションで囲まれた文字列に対して処理を行う
+sedの使い方というよりも正規表現の書き方になりそうだが、ダブルクォーテーション・シングルクォーテーションで囲まれた文字列に対し処理を行う場合、以下のようにコマンドを実行する。
+●ダブルクォーテーションの場合
+
+sed 's/"([^"]*)"/"置換後の値"/' 対象のファイルPATH
+ 
+[root@test-centos7 work]# cat /work/test.txt
+testline1="test1"
+testline2="test2"
+
+testline3='test3'
+testline4='test4'
+
+[root@test-centos7 work]# sed 's/"([^"]*)"/"replace"/' /work/test.txt
+testline1="replace"
+testline2="replace"
+
+testline3='test3'
+testline4='test4'
+
+●シングルクォーテーションの場合
+sed 's/"([^"]*)"/"置換後の値"/' 対象のファイルPATH
+ 
+[root@test-centos7 work]# cat /work/test.txt
+testline1="test1"
+testline2="test2"
+testline3='test3'
+testline4='test4'
+[root@test-centos7 work]# sed "s/'([^']*)'/'replace'/" /work/test.txt
+testline1="test1"
+testline2="test2"
+testline3='replace'
+testline4='replace'
+
+12.ログから特定の時間帯の内容を抜き出す
+以下のようにコマンドを実行することで、特定の時間帯のログを出力させることも出来る。
+
+awk -F - '"開始時間" < $1 && $1 <= "終了時間"' /抽出を行うログのPATH
+
+パターン・使い道が多すぎて、とりあえず今回はこれだけ。
+sedコマンドはまだまだ便利な方法がある(というか、多分こんな程度ではない…)、これからも勉強していかないとなぁ。。。

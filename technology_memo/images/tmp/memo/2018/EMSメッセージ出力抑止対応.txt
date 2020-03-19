@@ -1,0 +1,8 @@
+ vi /var/stm/config/tools/monitor/default_disk_em.clcfg
+EQ:102676:CRITICAL:TRUE:1440:ANY:1:NONE:NO_OP:NO_OP:NONE
+=>
+EQ:102676:SERIOUS:TRUE:1440:ANY:1:NONE:NO_OP:NO_OP:NONE
+
+ # /sbin/init.d/cimserver stop
+ # /sbin/init.d/cimserver start
+

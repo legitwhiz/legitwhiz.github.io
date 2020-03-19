@@ -1,0 +1,36 @@
+RHEL7 Network続き
+
+●「nmcli」コマンドでのaliasでIPアドレスの追加や削除方法について
+
+IPエイリアスを追加
+項目を追加する場合、項目名に + を付ける。
+nmcli c mod ens33 +ipv4.addresses "192.168.1.4/24 192.168.1.254"
+
+IPを削除
+設定を外す場合は、 項目名に - を付ける。(del コマンドではないので注意。）
+nmcli c mod ens33 -ipv4.addresses "192.168.1.4/24 192.168.1.254"
+
+スタティックルートを追加
+nmcli c mod ens33 +ipv4.route "192.168.2.0/24 192.168.1.253"
+
+
+●host名変更
+# nmcli general hostname <host名>
+
+●IPv6無効化
+# echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+# echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+
+# sysctl -p
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+
+●speed,Duplex変更(一時的)
+ethtool -s ens38 speed 1000 duplex full autoneg off
+
+●speed,Duplex変更(永続的)
+
+
+●Bonding Mode確認
+# /proc/net/bonding/bond0 | grep “Bonding Mode”
+

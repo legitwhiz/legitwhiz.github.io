@@ -1,0 +1,129 @@
+SMIT高速パス一覧 
+
+【システム環境】
+smitty system　システム環境のメニュー。
+smitty shutdown　システムの停止。
+smitty chtz_date　日付･時刻やタイムゾーンの設定のメニュー。
+smitty date　日付･時刻の設定。
+smitty chtz_user　タイムゾーンの設定。
+smitty mlang　言語環境の管理。
+smitty chgsys　オペレーティング・システムの特性の変更/表示。
+smitty logs　システム・ログの管理のメニュー。
+smitty error　エラーログ（errptコマンド）の設定のメニュー。
+smitty errdemon　エラーログ（errptコマンド）の設定の変更/表示。
+smitty alog　Alogファイルの設定。　smitty dump　システム・ダンプの特性の変更･表示。
+
+【ユーザー管理】
+smitty security　セキュリティとユーザーのメニュー。
+smitty users　ユーザーの設定。
+smitty groups　グループの設定。
+smitty passwords　パスワードの設定。
+
+【システム記憶域管理】
+smitty storage　システム記憶域管理のメニュー。
+smitty lvm　論理ボリューム・マネージャーのメニュー。
+smitty chpv　ページング・スペースのメニュー。
+smitty chpv　別のページング・スペースの追加。
+smitty pgsp　ページング・スペースの特性の変更/表示。（容量の拡張･縮小）
+smitty rmps　ページング・スペースの除去。
+smitty swapon　ページング・スペースの活動化。
+smitty swapoff　ページング・スペースの非活動化
+
+【ボリューム･グループ】
+smitty vg　ボリューム･グループのメニュー。
+smitty mkvg　ボリューム・グループの追加。
+smitty reducevg　ボリューム・グループの除去。
+smitty lsvg　ボリューム・グループの内容を表示。
+smitty chvg　ボリューム･グループの設定の変更。
+smitty varyonvg　ボリューム・グループの活動化。
+smitty varyoffvg　ボリューム・グループの非活動化。
+smitty importvg　ボリューム・グループのインポート。
+smitty exportvg　ボリューム・グループのエクスポート。
+smitty mirrovg　ボリューム・グループのミラーリング。
+smitty unmirrorvg　ボリューム・グループのミラーリング解除。
+
+【物理ボリューム】
+smitty pv　物理ボリュームのメニュー。
+smitty chpv　物理ボリュームの設定の変更。
+smitty lspv　物理ボリュームの内容の表示。
+smitty migratepv　物理ボリュームの内容の移動。
+
+【論理ボリューム】
+smitty lv　論理ボリュームのメニュー。
+smitty mklv　論理ボリュームの追加。
+smitty rmlv　論理ボリュームの除去。　smitty lslv　論理ボリュームの特性の表示。
+smitty lvrc　論理ボリュームの設定の変更。
+smitty cplv　論理ボリュームのコピー。
+
+【ファイルシステム】
+smitty fs　ファイルシステムのメニュー。
+smitty mountfs　ファイルシステムのマウント。
+smitty umountfs　ファイルシステムのアンマウント。
+smitty fsck　ファイルシステムの検査。
+smitty backfilesys　ファイルシステムのバックアップ。
+smitty restfilesys　ファイルシステムの復元。
+smitty manfs　ファイルシステムのファイルシステムの追加/変更/表示/削除のメニュー。
+smitty jfs　ジャーナルファイルシステムのメニュー。
+smitty chjfs　既存のジャーナルファイルシステムの特性の変更/表示。
+rootvg が JFS の場合は "/" や "tmp" 等の容量拡張が行えます。
+smitty jfs2　拡張ジャーナルファイルシステムのメニュー。
+smitty chjfs2　既存の拡張ジャーナルファイルシステムの特性の変更/表示。
+rootvg が JFS2 の場合は "/" や "tmp" 等の容量拡張が行えます。
+smitty cdrfs　CD-ROMファイルシステムのメニュー。CD-ROMのマウントが行えます。
+
+【ソフトウェアのインストール】
+smitty install　ソフトウェアのインストール･保守のメニュー。
+smitty install_update　ソフトウェアのインストール･更新のメニュー。
+smitty install_latest　ソフトウェアのインストール。
+smitty update_all　インストール済みソフトウェアを最新レベルに全て更新。（パッチを適用する。）
+smitty install_bundle　ソフトウェア・バンドルのインストール。
+smitty update_by_fix　フィックス (APAR) によるソフトウェアの更新。
+smitty install_all　すべての使用可能なソフトウェアのインストール･更新。
+smitty list_software　ソフトウェアおよび関連情報の表示のメニュー。
+smitty list_installed　インストール済みソフトウェアおよび関連情報の表示。　smitty list_media　メディア上のソフトウェアおよび関連情報の表示。
+smitty maintain_software　ソフトウェアの保守･ユーティリティー。
+smitty commit　適用されたソフトウェア更新をコミット 。(保管ファイルを除去)
+smitty reject　適用されたソフトウェア更新をリジェクト 。(前のバージョンを使用)
+smitty remove　インストールされているソフトウェアの除去。
+
+【プロセスとサブシステム】
+smitty src　プロセスとサブシステムのメニュー。
+smitty process　プロセスのメニュー。
+smitty subsys　サブシステムのメニュー。
+smitty subserver　サブサーバーのメニュー。
+
+【デバイス】
+smitty dev　デバイス関連のメニュー。
+smitty devinst　デバイスのソフトウェア（ドライバ等）をインストール。
+smitty cdrom　CD-ROMの設定。
+smitty tty　TTYの設定。
+smitty idea　IDEアダプタの設定。
+smitty scsia　SCSIアダプタの設定。
+smitty fcsdd　ファイバチャネル･アダプタ（FCアダプタ）の設定。
+smitty disk　ディスクの設定。
+
+【TCP/IP】
+smitty tcpip　TCP/IPのメニュー。
+smitty mktcpip　初めてTCP/IPを構成する時のみ使用する設定メニュー。
+smitty configtcp　TCP/IPの追加構成メニュー。
+smitty mkhostname　ホスト名の設定。
+smitty inet　ネットワーク・インターフェースの設定のメニュー。
+smitty chinet　ネットワーク・インターフェースの特性の変更/表示。
+IPアドレスやサブネットマスクの設定ができます。
+smitty inetalias　IPエイリアス（別名IPアドレス）の設定。
+
+【NFS】
+smitty nfs　NFS(ネットワーク・ファイルシステム )のメニュー。
+smitty mknfs　NFS の開始。
+smitty rmnfs　NFS の停止。
+smitty mknfsexp　エクスポート・ディレクトリーを追加。
+smitty chnfsexp　エクスポート・ディレクトリーの属性の変更/表示。
+smitty rmnfsexp　エクスポート・ディレクトリーの属性の除去。
+smitty mknfsmnt　事前定義マウントの設定。（マウントするファイルシステムの追加）
+smitty chnfsmnt　NFS ファイルシステムの属性の変更/表示。
+smitty rmnfsmnt　NFS ファイルシステムの除去。
+
+【クラスター】
+smitty hacmp　クラスター（HACMP）のメニュー。
+smitty clstart　クラスター・サービスを開始。
+smitty clstop　クラスター・サービスを停止。

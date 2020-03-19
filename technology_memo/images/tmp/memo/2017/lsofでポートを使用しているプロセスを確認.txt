@@ -1,0 +1,78 @@
+ポートを使用しているプロセスを確認する
+
+lsofコマンドはLinuxが使用してるプロセス名や実行ユーザ名を表示するコマンドです。
+ポートの利用情報のみを確認したい場合は、オプション「-i」を付けて実行します。
+
+また、lsofコマンドで表示できるのは、このコマンドを実行するユーザーに対して
+読み取り権限が設定されるファイルに限ります。
+つまり、ポートなどの利用情報すべてを確認するためには、rootユーザーでlsof
+コマンドを実行しなければなりません。
+
+このlsofコマンドを実行する一番の目的は、稼働中のプロセスを確認することで
+不要プログラムが実行されてないか、不正なバックドアが仕掛けられてないかを調べ、
+Linuxのセキュリティ状況を確認することにあります。
+
+文法
+
+lsof (オプション) 
+
+オプション 
+
+-i 利用されているポートを表示する
+
+
+lsofコマンドで利用されてるポートを表示する
+
+[root@Dolphin src]# lsof -i
+ COMMAND PID USER FD TYPE DEVICE SIZE NODE NAME
+ httpd 1189 root 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1371 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1372 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1373 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1374 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1375 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1380 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1381 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1382 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ sshd 14671 root 3u IPv4 6212298 TCP *:SSH　(LISTEN)
+
+各項目の説明
+COMMAND　実行プログラム
+PID　　　プロセス番号
+USER　　 実行ユーザー
+NODE　　 プロトコル
+NAME　　 ポート
+(LISTEN) 待ち受け状態
+
+
+ポート番号から使用しているプログラムを表示する
+
+[root@Dolphin src]# lsof -i:80
+ COMMAND PID USER FD TYPE DEVICE SIZE NODE NAME
+ httpd 1189 root 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1371 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1372 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1373 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1374 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1375 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1380 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1381 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1382 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1396 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+ httpd 1397 nobody 16u IPv4 1995 TCP *:http (LISTEN)
+
+ポート80番はhttpd(Apache)により利用されていることがわかります。
+
+
+[root@Dolphin src]# lsof -i:32768
+ COMMAND PID USER FD TYPE DEVICE SIZE NODE NAME
+ postmaste 871 postgres 5u IPv4 1218 UDP Dolphin:32768->Dolphin:32768
+ postmaste 904 postgres 5u IPv4 1218 UDP Dolphin:32768->Dolphin:32768
+ postmaste 905 postgres 5u IPv4 1218 UDP Dolphin:32768->Dolphin:32768
+
+ポート32768番はpostgres(PosgreSQL)により利用されていることがわかります。
+
+
+※これらの結果はサーバー環境によって異なります。
+ 　上記と同じ結果を得るにはApache、PostgreSQLがLinuxに
+　インストールされている必要があります。

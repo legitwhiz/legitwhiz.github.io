@@ -1,0 +1,68 @@
+Linuxでシリアルコンソールを使うためには、シリアルポートが利用できるように設定されている必要があります。
+
+RHEL3/4/5の場合は、
+
+
+以下に、シリアルポート「ttyS0 (COM1)」、転送スピードを9600bps、パリティ無し8ビットで設定する例を記載します。(/etc/inittabに下記行を追記してください）
+
+# vi /etc/inittab
+s0:12345:respawn:/sbin/agetty -L 9600 ttyS0
+
+下記コマンドにて上記の設定を反映させます。
+
+# init q
+
+次に、デバイスファイル「/dev/console」（マスターコンソール）、「/dev/tty0」（仮想コンソール）を作成します。
+
+# cd /dev
+# rm -f console tty0
+# mknod -m 622 console c 5 1
+# mknod -m 622 tty0 c 4 0
+
+次にブートローダ（GRUB）の設定を行います。
+下記のように、grub.confにserial行、terminal行を追加し、背景画像を非表示にするためsplashimage行をコメントアウトします。
+
+# vi /boot/grub/grub.conf
+default=0
+timeout=10
+serial --unit=0 --speed=9600 --word=8 --parity=no --stop=1
+terminal --timeout=10 serial console
+
+
+title Red Hat Linux (2.4.9-21)
+root (hd0,0)
+kernel /vmlinuz-2.4.9-21 ro root=/dev/hda6 console=tty0 console=ttyS0,9600n8r
+initrd /initrd-2.4.9-21.img
+
+
+なお、ハードウェア自動検出デーモン「Kudzu」を自動起動させている場合には、サーバ起動時にシリアルポートがリセットされてしまいます。
+次のように設定しておけばリセットされません。
+
+# vi /etc/sysconfig/kudzu
+SAFE=yes
+
+/etc/securetty に 'ttyS0' を追加し、root が ttyS0 にログインできるようにします．
+
+# vi /etc/securetty
+ttyS0
+
+また、起動に表示されるカラー表示を制限したい場合は、/etc/sysconfig/initファイル内で次のように指定します。
+
+# vi /etc/sysconfig/init
+BOOTUP=serial
+
+
+#---------------------------------------
+RHEL6の場合は、
+/etc/init/serial-ttyS0.conf を作成してください
+
+
+# vi /etc/init/serial-ttyS0.conf
+# This service maintains a getty on /dev/ttyS0.
+start on stopped rc RUNLEVEL=[2345]
+stop on starting runlevel [016]
+respawn
+exec /sbin/agetty /dev/ttyS0 115200 vt100-nav
+
+加えて、/etc/grub.conf と、/etc/securetty の設定が必要となります。
+(RHEL3/4/5と同様ですので、省略します。)

@@ -1,0 +1,2335 @@
+###############################################################################
+yum --disablerepo=* --enablerepo=rhel67-dvd -v grouplist
+
+インストール済みグループ:
+   FTP サーバー (ftp-server)
+   Java プラットフォーム (java-platform)
+   MySQL データベース接続クライアント (mysql-client)
+   NFS ファイルサーバー (nfs-file-server)
+   Perl のサポート (perl-runtime)
+   PostgreSQL データベース接続クライアント (postgresql-client)
+   SNMP サポート (system-management-snmp)
+   Web サーバー (web-server)
+   X Window System (x11)
+   その他の開発 (additional-devel)
+   インターネットブラウザ (internet-browser)
+   グラフィカル管理ツール (graphical-admin-tools)
+   コンソールインターネットツール (console-internet)
+   サーバープラットフォーム開発 (server-platform-devel)
+   システム管理ツール (system-admin-tools)
+   セキュリティツール (security-tools)
+   ダイヤルアップネットワークサポート (dial-up)
+   ディレクトリ接続クライアント (directory-client)
+   デスクトップ (basic-desktop)
+   デスクトップのデバッグとパフォーマンスツール (desktop-debugging)
+   デスクトッププラットフォーム開発 (desktop-platform-devel)
+   ネットワーキングツール (network-tools)
+   ネットワークインフラストラクチャサーバー (network-server)
+   ネットワークファイルシステムクライアント (network-file-system-client)
+   ハードウェア監視ユーティリティ (hardware-monitoring)
+   パフォーマンスツール (performance)
+   フォント (fonts)
+   ベース (base)
+   レガシー UNIX の互換性 (legacy-unix)
+   レガシー X Windows システムの互換性 (legacy-x)
+   互換性ライブラリ (compat-libraries)
+   入力メソッド (input-methods)
+   汎用デスクトップ（GNOMEデスクトップ） (general-desktop)
+   開発ツール　 (development)
+   電子メールサーバー (mail-server)
+Installed Language Groups:
+   日本語のサポート (japanese-support) [ja]
+   韓国語のサポート (korean-support) [ko]
+###############################################################################
+利用可能なグループ
+   CIFS ファイルサーバー (cifs-file-server)
+   Eclipse (eclipse)
+   Emacs (emacs)
+   FCoE ストレージ接続クライアント (storage-client-fcoe)
+   Infiniband のサポート (infiniband)
+   KDE デスクトップ (kde-desktop)
+   MySQL データベースサーバー (mysql)
+   PHP サポート (php)
+   PostgreSQL データベースサーバー (postgresql)
+   Ruby サポート (ruby-runtime)
+   TeX のサポート (tex)
+   TurboGears アプリケーションフレームワーク (turbogears)
+   WBEM サポート (system-management-wbem)
+   Web サーブレットエンジン (web-servlet)
+   iSCSI ストレージ接続クライアント (storage-client-iscsi)
+   クライアント管理ツール (client-mgmt-tools)
+   グラフィックスツール (graphics)
+   ゲストエージェント (guest-agents)
+   サーバープラットフォーム (server-platform)
+   システム管理 (system-management)
+   ストレージ可用性ツール (storage-client-multipath)
+   スマートカードのサポート (smart-card)
+   ディレクトリサーバー (directory-server)
+   デスクトッププラットフォーム (desktop-platform)
+   デバッグツール (debugging)
+   ネットワークストレージサーバー (storage-server)
+   バックアップクライアント (backup-client)
+   バックアップサーバー (backup-server)
+   プリントサーバー (print-server)
+   メインフレームアクセス (mainframe-access)
+   メッセージング接続クライアントのサポート (system-management-messaging-client)
+   リモートデスクトップ接続クライアント (remote-desktop-clients)
+   仮想化 (virtualization)
+   仮想化クライアント (virtualization-client)
+   仮想化ツール (virtualization-tools)
+   仮想化プラットフォーム (virtualization-platform)
+   印刷クライアント (print-client)
+   大規模システムのパフォーマンス (large-systems)
+   技術文書 (technical-writing)
+   数学／科学系および並列計算 (scientific)
+   識別管理サーバー (identity-management-server)
+###############################################################################
+Available Language Groups:
+   アイスランド語のサポート (icelandic-support) [is]
+   アイルランド語のサポート (irish-support) [ga]
+   アゼルバイジャン語のサポート (azerbaijani-support) [az]
+   アッサム語のサポート (assamese-support) [as]
+   アフリカーンス語のサポート (afrikaans-support) [af]
+   アマジグ語のサポート (amazigh-support) [ber]
+   アラビア語のサポート (arabic-support) [ar]
+   アルバニア語のサポート (albanian-support) [sq]
+   アルメニア語のサポート (armenian-support) [hy]
+   イタリア語のサポート (italian-support) [it]
+   イヌクティトゥト語のサポート (inuktitut-support) [iu]
+   インターリングア語のサポート (interlingua-support) [ia]
+   インドネシア語のサポート (indonesian-support) [id]
+   ウェールズ語のサポート (welsh-support) [cy]
+   ウクライナ語のサポート (ukrainian-support) [uk]
+   ウズベク語のサポート (uzbek-support) [uz]
+   ウルドゥー語のサポート (urdu-support) [ur]
+   エストニア語のサポート (estonian-support) [et]
+   エスペラント語のサポート (esperanto-support) [eo]
+   エチオピア語のサポート (ethiopic-support) [am]
+   オランダ語のサポート (dutch-support) [nl]
+   オリヤー語のサポート (oriya-support) [or]
+   カザフ語のサポート (kazakh-support) [kk]
+   カシミール語のサポート (kashmiri-support) [ks]
+   カシューブ語のサポート (kashubian-support) [csb]
+   カタロニア語のサポート (catalan-support) [ca]
+   カンナダ語のサポート (kannada-support) [kn]
+   ガリシア語のサポート (galician-support) [gl]
+   ギリシャ語のサポート (greek-support) [el]
+   クメール語のサポート (khmer-support) [km]
+   クルド語のサポート (kurdish-support) [ku]
+   クロアチア語のサポート (croatian-support) [hr]
+   グジャラート語のサポート (gujarati-support) [gu]
+   グルジア語のサポート (georgian-support) [ka]
+   ゲール語のサポート (gaelic-support) [gd]
+   コサ語のサポート (xhosa-support) [xh]
+   コプト語のサポート (coptic-support) [cop]
+   コンカニ語のサポート (konkani-support) [kok]
+   サルディニア語のサポート (sardinian-support) [sc]
+   サンスクリット語のサポート (sanskrit-support) [sa]
+   シンド語のサポート (sindhi-support) [sd]
+   シンハラ語のサポート (sinhala-support) [si]
+   スウェーデン語のサポート (swedish-support) [sv]
+   スペイン語のサポート (spanish-support) [es]
+   スロバキア語のサポート (slovak-support) [sk]
+   スロベニア語のサポート (slovenian-support) [sl]
+   スワチ語のサポート (swati-support) [ss]
+   スワヒリ語のサポート (swahili-support) [sw]
+   ズールー語のサポート (zulu-support) [zu]
+   セルビア語のサポート (serbian-support) [sr]
+   ソマリ語のサポート (somali-support) [so]
+   ソンガス語のサポート (tsonga-support) [ts]
+   タイ語のサポート (thai-support) [th]
+   タガログ語のサポート (tagalog-support) [tl]
+   タジク語のサポート (tajik-support) [tg]
+   タミール語のサポート (tamil-support) [ta]
+   チェコ語のサポート (czech-support) [cs]
+   チェワ語のサポート (chichewa-support) [ny]
+   チベット語のサポート (tibetan-support) [bo]
+   チャッティースガリー語のサポート (chhattisgarhi-support) [hne]
+   ツワナ語のサポート (tswana-support) [tn]
+   テトゥン語のサポート (tetum-support) [tet]
+   テルグ語のサポート (telugu-support) [te]
+   デンマーク語のサポート (danish-support) [da]
+   トルクメン語のサポート (turkmen-support) [tk]
+   トルコ語のサポート (turkish-support) [tr]
+   ドイツ語のサポート (german-support) [de]
+   ヌデベレ語のサポート (southern-ndebele-support) [nr]
+   ネパール語のサポート (nepali-support) [ne]
+   ノルウェー語のサポート (norwegian-support) [nb]
+   ハンガリー語のサポート (hungarian-support) [hu]
+   バスク語のサポート (basque-support) [eu]
+   パンジャブ語のサポート (punjabi-support) [pa]
+   ヒリガイノン語のサポート (hiligaynon-support) [hil]
+   ヒンディー語のサポート (hindi-support) [hi]
+   フィジー語のサポート (fijian-support) [fj]
+   フィリピン語のサポート (filipino-support) [fil]
+   フィンランド語のサポート (finnish-support) [fi]
+   フェロー語のサポート (faroese-support) [fo]
+   フランス語のサポート (french-support) [fr]
+   フリウリ語のサポート (friulian-support) [fur]
+   フリジア語のサポート (frisian-support) [fy]
+   ブラジル系ポルトガル語のサポート (brazilian-support) [pt_BR]
+   ブルガリア語のサポート (bulgarian-support) [bg]
+   ブルターニュ語のサポート (breton-support) [br]
+   ブータン語のサポート (bhutanese-support) [dz]
+   ヘブライ語のサポート (hebrew-support) [he]
+   ベトナム語のサポート (vietnamese-support) [vi]
+   ベラルーシ語のサポート (belarusian-support) [be]
+   ベンガル語のサポート (bengali-support) [bn]
+   ベンダ語のサポート (venda-support) [ve]
+   ペルシア語のサポート (persian-support) [fa]
+   ポルトガル語のサポート (portuguese-support) [pt]
+   ポーランド語のサポート (polish-support) [pl]
+   マイチリ語のサポート (maithili-support) [mai]
+   マオリ語のサポート (maori-support) [mi]
+   マケドニア語のサポート (macedonian-support) [mk]
+   マダガスカル語のサポート (malagasy-support) [mg]
+   マラヤーラム語のサポート (malayalam-support) [ml]
+   マラーティー語のサポート (marathi-support) [mr]
+   マルタ語のサポート (maltese-support) [mt]
+   マレー語のサポート (malay-support) [ms]
+   マン島語のサポート (manx-support) [gv]
+   ミャンマー (ビルマ) 語のサポート (burmese-support) [my]
+   モンゴル語のサポート (mongolian-support) [mn]
+   ラオ語のサポート (lao-support) [lo]
+   ラテン語のサポート (latin-support) [la]
+   ラトビア語のサポート (latvian-support) [lv]
+   リトアニア語のサポート (lithuanian-support) [lt]
+   ルクセンブルグ語のサポート (luxembourgish-support) [lb]
+   ルワンダ語のサポート (kinyarwanda-support) [rw]
+   ルーマニア語のサポート (romanian-support) [ro]
+   ロクシタン語のサポート (occitan-support) [oc]
+   ロシア語のサポート (russian-support) [ru]
+   ワロン語のサポート (walloon-support) [wa]
+   中国語のサポート (chinese-support) [zh]
+   低ザクセン語のサポート (low-saxon-support) [nds]
+   北ソト語のサポート (northern-sotho-support) [nso]
+   南部ソト語のサポート (southern-sotho-support) [st]
+   英語 (イギリス) のサポート (british-support) [en_GB]
+   高地ソルブ語のサポート (upper-sorbian-support) [hsb]
+完了
+
+###############################################################################
+利用可能なグループ
+   CIFS ファイルサーバー (cifs-file-server)
+   Eclipse (eclipse)
+   Emacs (emacs)
+   FCoE ストレージ接続クライアント (storage-client-fcoe)
+   Infiniband のサポート (infiniband)
+   KDE デスクトップ (kde-desktop)
+   MySQL データベースサーバー (mysql)	
+   PHP サポート (php)
+   PostgreSQL データベースサーバー (postgresql)
+   Ruby サポート (ruby-runtime)
+   TeX のサポート (tex)
+   TurboGears アプリケーションフレームワーク (turbogears)
+   WBEM サポート (system-management-wbem)
+   Web サーブレットエンジン (web-servlet)
+   iSCSI ストレージ接続クライアント (storage-client-iscsi)
+   クライアント管理ツール (client-mgmt-tools)
+   グラフィックスツール (graphics)
+   ゲストエージェント (guest-agents)
+   サーバープラットフォーム (server-platform)
+   システム管理 (system-management)
+   ストレージ可用性ツール (storage-client-multipath)
+   スマートカードのサポート (smart-card)
+   ディレクトリサーバー (directory-server)
+   デスクトッププラットフォーム (desktop-platform)
+   デバッグツール (debugging)
+   ネットワークストレージサーバー (storage-server)
+   バックアップクライアント (backup-client)
+   バックアップサーバー (backup-server)
+   プリントサーバー (print-server)
+   メインフレームアクセス (mainframe-access)
+   メッセージング接続クライアントのサポート (system-management-messaging-client)
+   リモートデスクトップ接続クライアント (remote-desktop-clients)
+   仮想化 (virtualization)
+   仮想化クライアント (virtualization-client)
+   仮想化ツール (virtualization-tools)
+   仮想化プラットフォーム (virtualization-platform)
+   印刷クライアント (print-client)
+   大規模システムのパフォーマンス (large-systems)
+   技術文書 (technical-writing)
+   数学／科学系および並列計算 (scientific)
+   識別管理サーバー (identity-management-server)
+
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+### ベースシステム ###
+   FCoE ストレージ接続クライアント (storage-client-fcoe)
+   Infiniband のサポート (infiniband)
+   Java プラットフォーム (java-platform)
+   Perl のサポート (perl-runtime)
+   Ruby サポート (ruby-runtime)
+   iSCSI ストレージ接続クライアント (storage-client-iscsi)
+   コンソールインターネットツール (console-internet)
+   ストレージ可用性ツール (storage-client-multipath)
+   スマートカードのサポート (smart-card)
+   セキュリティツール (security-tools)
+   ダイヤルアップネットワークサポート (dial-up)
+   ディレクトリ接続クライアント (directory-client)
+   デバッグツール (debugging)
+   ネットワーキングツール (network-tools)
+   ネットワークファイルシステムクライアント (network-file-system-client)
+   ハードウェア監視ユーティリティ (hardware-monitoring)
+   バックアップクライアント (backup-client)
+   パフォーマンスツール (performance)
+   ベース (base)
+   レガシー UNIX の互換性 (legacy-unix)
+   互換性ライブラリ (compat-libraries)
+   印刷クライアント (print-client)
+   大規模システムのパフォーマンス (large-systems)
+   数学／科学系および並列計算 (scientific)
+   
+### サーバ ###
+   CIFS ファイルサーバー (cifs-file-server)
+   NFS ファイルサーバー (nfs-file-server)
+   FTP サーバー (ftp-server)
+   識別管理サーバー (identity-management-server)
+   サーバープラットフォーム (server-platform)
+   システム管理ツール (system-admin-tools)
+   ディレクトリサーバー (directory-server)
+   ネットワークインフラストラクチャサーバー (network-server)
+   ネットワークストレージサーバー (storage-server)
+   バックアップサーバー (backup-server)
+   プリントサーバー (print-server)
+   電子メールサーバー (mail-server)
+
+### Webサービス ###
+   PHP サポート (php)
+   TurboGears アプリケーションフレームワーク (turbogears)
+   Web サーバー (web-server)
+   Web サーブレットエンジン (web-servlet)
+
+### データベース ###
+   MySQL データベース接続クライアント (mysql-client)
+   MySQL データベースサーバー (mysql)
+   PostgreSQL データベース接続クライアント (postgresql-client)
+   PostgreSQL データベースサーバー (postgresql)
+
+### システム管理 ###
+   SNMP サポート (system-management-snmp)
+   WBEM サポート (system-management-wbem)
+   システム管理 (system-management)
+   メッセージング接続クライアントのサポート (system-management-messaging-client)
+
+### 仮想化 ###
+   ゲストエージェント (guest-agents)
+   仮想化 (virtualization)
+   仮想化クライアント (virtualization-client)
+   仮想化ツール (virtualization-tools)
+   仮想化プラットフォーム (virtualization-platform)
+
+### デスクトップ ###
+   KDE デスクトップ (kde-desktop)
+   X Window System (x11)
+   グラフィカル管理ツール (graphical-admin-tools)
+   デスクトップ (basic-desktop)
+   デスクトップのデバッグとパフォーマンスツール (desktop-debugging)
+   デスクトッププラットフォーム (desktop-platform)
+   フォント (fonts)
+   リモートデスクトップ接続クライアント (remote-desktop-clients)
+   レガシー X Windows システムの互換性 (legacy-x)
+   入力メソッド (input-methods)
+   汎用デスクトップ（GNOMEデスクトップ） (general-desktop)
+
+### アプリケーション ###
+   Emacs (emacs)
+   TeX のサポート (tex)
+   インターネットブラウザ (internet-browser)
+   グラフィックスツール (graphics)
+   技術文書 (technical-writing)
+
+### 開発 ###
+   Eclipse (eclipse)
+   その他の開発 (additional-devel)
+   サーバープラットフォーム開発 (server-platform-devel)
+   デスクトッププラットフォーム開発 (desktop-platform-devel)
+   開発ツール　 (development)
+
+### 言語 ###
+   日本語のサポート (japanese-support) [ja]
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+### ベースシステム ###
+#FCoE ストレージ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-client-fcoe
+#Infiniband のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo infiniband
+#Java プラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo java-platform
+#Perl のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo perl-runtime
+#Ruby サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo ruby-runtime
+#iSCSI ストレージ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-client-iscsi
+#コンソールインターネットツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo console-internet
+#ストレージ可用性ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-client-multipath
+#スマートカードのサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo smart-card
+#セキュリティツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo security-tools
+#ダイヤルアップネットワークサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo dial-up
+#ディレクトリ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo directory-client
+#デバッグツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo debugging
+#ネットワーキングツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo network-tools
+#ネットワークファイルシステムクライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo network-file-system-client
+#ハードウェア監視ユーティリティ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo hardware-monitoring
+#バックアップクライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo backup-client
+#パフォーマンスツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo performance
+#ベース
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo base
+#レガシー UNIX の互換性
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo legacy-unix
+#互換性ライブラリ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo compat-libraries
+#印刷クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo print-client
+#大規模システムのパフォーマンス
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo large-systems
+#数学／科学系および並列計算
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo scientific
+   
+### サーバ ###
+#CIFS ファイルサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo cifs-file-server
+#NFS ファイルサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo nfs-file-server
+#FTP サーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo ftp-server
+#識別管理サーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo identity-management-server
+#サーバープラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo server-platform
+#システム管理ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-admin-tools
+#ディレクトリサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo directory-server
+#ネットワークインフラストラクチャサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo network-server
+#ネットワークストレージサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-server
+#バックアップサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo backup-server
+#プリントサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo print-server
+#電子メールサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo mail-server
+
+### Webサービス ###
+#PHP サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo php
+#TurboGears アプリケーションフレームワーク
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo turbogears
+#Web サーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo web-server
+#Web サーブレットエンジン
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo web-servlet
+
+### データベース ###
+#MySQL データベース接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo mysql-client
+#MySQL データベースサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo mysql
+#PostgreSQL データベース接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo postgresql-client
+#PostgreSQL データベースサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo postgresql
+
+### システム管理 ###
+#SNMP サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-management-snmp
+#WBEM サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-management-wbem
+#システム管理
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-management
+#メッセージング接続クライアントのサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-management-messaging-client
+
+### 仮想化 ###
+#ゲストエージェント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo guest-agents
+#仮想化
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization
+#仮想化クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization-client
+#仮想化ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization-tools
+#仮想化プラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization-platform
+
+### デスクトップ ###
+#KDE デスクトップ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo kde-desktop
+#X Window System
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo x11
+#グラフィカル管理ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo graphical-admin-tools
+#デスクトップ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo basic-desktop
+#デスクトップのデバッグとパフォーマンスツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo desktop-debugging
+#デスクトッププラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo desktop-platform
+#フォント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo fonts
+#リモートデスクトップ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo remote-desktop-clients
+#レガシー X Windows システムの互換性
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo legacy-x
+#入力メソッド
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo input-methods
+#汎用デスクトップ（GNOMEデスクトップ）
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo general-desktop
+
+### アプリケーション ###
+#Emacs
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo emacs
+#TeX のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo tex
+#インターネットブラウザ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo internet-browser
+#グラフィックスツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo graphics
+#技術文書
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo technical-writing
+
+### 開発 ###
+#Eclipse
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo eclipse
+#その他の開発
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo additional-devel
+#サーバープラットフォーム開発
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo server-platform-devel
+#デスクトッププラットフォーム開発
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo desktop-platform-devel
+#開発ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo development
+
+### 言語 ###
+#日本語のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo japanese-support
+
+###???###
+#クライアント管理ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo client-mgmt-tools
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+### ベースシステム ###
+#FCoE ストレージ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-client -fcoe
+グループ: FCoE ストレージ接続クライアント
+ 説明: Fibre Channel over Ethernet (FCoE) のサポート
+ 強制的なパッケージ:
+   fcoe-utils
+ 標準パッケージ:
+   cgdcbxd
+   fcoe-target-utils
+   lldpad
+#------------------------------------------------------------------------------
+#Infiniband のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo infiniband
+グループ: Infiniband のサポート
+ 説明: RDMA ベースの InfiniBand や iWARP ファブリックを使用してクラスタリングやグリッドの接続性を サポートするように設計されているソフトウェアです。
+ 強制的なパッケージ:
+   libibcm
+   libibverbs
+   libibverbs-utils
+   librdmacm
+   librdmacm-utils
+   rdma
+ 標準パッケージ:
+   dapl
+   ibacm
+   ibsim
+   ibutils
+   libcxgb3
+   libehca
+   libibmad
+   libibumad
+   libipathverbs
+   libmlx4
+   libmlx5
+   libmthca
+   libnes
+   rds-tools
+ オプション パッケージ:
+   compat-dapl
+   glusterfs-rdma
+   infiniband-diags
+   libibcommon
+   libocrdma
+   mstflint
+   opensm
+   perftest
+   qperf
+   srptools
+#------------------------------------------------------------------------------
+#Java プラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo java-platform
+グループ: Java プラットフォーム
+ 説明: Red Hat Enterprise Linux Server Platform と Desktop Platform の Java サポート
+ 強制的なパッケージ:
+   java-1.6.0-openjdk
+   java-1.7.0-openjdk
+ オプション パッケージ:
+   icedtea-web
+   java-1.8.0-openjdk
+#------------------------------------------------------------------------------
+#Perl のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo perl-runtime
+グループ: Perl のサポート
+ 説明: 一般的なライブラリや機能への Perl インターフェース。
+ 強制的なパッケージ:
+   perl
+ 標準パッケージ:
+   perl-Crypt-SSLeay
+   perl-XML-Dumper
+   perl-XML-Grove
+   perl-XML-Twig
+   perl-core
+ オプション パッケージ:
+   perl-DBD-SQLite
+   perl-Date-Calc
+   perl-Date-Manip
+   perl-Frontier-RPC
+   perl-LDAP
+   perl-Mozilla-LDAP
+   perl-suidperl
+#------------------------------------------------------------------------------
+#Ruby サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo ruby-runtime
+グループ: Ruby サポート
+ 説明: 一般的なライブラリと機能への Ruby インターフェイスです
+ 強制的なパッケージ:
+   ruby
+ オプション パッケージ:
+   libyaml
+   ruby-irb
+   rubygems
+#------------------------------------------------------------------------------
+#iSCSI ストレージ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-client -iscsi
+グループ: iSCSI ストレージ接続クライアント
+ 説明: iSCSI 接続クライアントサポート
+ 強制的なパッケージ:
+   iscsi-initiator-utils
+
+#コンソールインターネットツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo console-intern et
+グループ: コンソールインターネットツール
+ 説明: 管理者によって頻繁に使用されるコンソールインターネットアクセスツール
+ 標準パッケージ:
+   elinks
+ オプション パッケージ:
+   fetchmail
+   ftp
+   irssi
+   jwhois
+   lftp
+   mutt
+#------------------------------------------------------------------------------
+#ストレージ可用性ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-client -multipath
+グループ: ストレージ可用性ツール
+ 説明: SAN のマルチパスを管理するためのツールセット
+ 強制的なパッケージ:
+   device-mapper-multipath
+#------------------------------------------------------------------------------
+#スマートカードのサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo smart-card
+グループ: スマートカードのサポート
+ 説明: スマートカード認証の使用に対するサポートです。
+ 標準パッケージ:
+   ccid
+   coolkey
+   esc
+   gdm-plugin-smartcard
+   pam_pkcs11
+ オプション パッケージ:
+   opencryptoki
+#------------------------------------------------------------------------------
+#セキュリティツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo security-tools s
+グループ: セキュリティツール
+ 説明: 整合性や信用を検証するセキュリティツール
+ 標準パッケージ:
+   scap-security-guide
+ オプション パッケージ:
+   aide
+   amtu
+   hmaccalc
+   openscap
+   openscap-utils
+   p11-kit-trust
+   scap-workbench
+   tpm-tools
+   trousers
+#------------------------------------------------------------------------------
+#ダイヤルアップネットワークサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo dial-up
+グループ: ダイヤルアップネットワークサポート
+ 説明: PPP または ISDN にてダイアルアップ接続するためのツール
+ 強制的なパッケージ:
+   ppp
+ 標準パッケージ:
+   lrzsz
+   minicom
+   wvdial
+ オプション パッケージ:
+   efax
+   isdn4k-utils
+   pptp
+   rp-pppoe
+#------------------------------------------------------------------------------
+#ディレクトリ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo directory-clie nt
+グループ: ディレクトリ接続クライアント
+ 説明: ディレクトリサービスによって管理されるネットワークに統合するための接続クライアント
+ 標準パッケージ:
+   ipa-client
+   oddjob-mkhomedir
+   sssd
+   ypbind
+ オプション パッケージ:
+   certmonger
+   hesinfo
+   krb5-appl-clients
+   krb5-pkinit-openssl
+   krb5-workstation
+   ldapjdk
+   libsss_sudo
+   nscd
+   nss-pam-ldapd
+   openldap-clients
+   pam_krb5
+   pam_ldap
+   samba-winbind
+   sssd-dbus
+#------------------------------------------------------------------------------
+#デバッグツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo debugging
+グループ: デバッグツール
+ 説明: 正しく動作しないアプリケーションをデバッグし、パフォーマンスの問題を分析するツールです。
+ 強制的なパッケージ:
+   gdb
+   kexec-tools
+   latrace
+   libreport-python
+   strace
+   systemtap-runtime
+ 標準パッケージ:
+   abrt-addon-ccpp
+   abrt-addon-python
+   abrt-cli
+   cas
+   crash
+   crash-gcore-command
+   crash-trace-command
+   elfutils
+   ltrace
+   trace-cmd
+   valgrind
+ オプション パッケージ:
+   flightrecorder
+   gdb-gdbserver
+   glibc-utils
+   lslk
+   memtest86+
+   ps_mem
+   systemtap-client
+   systemtap-initscript
+#------------------------------------------------------------------------------
+#ネットワーキングツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo network-tools
+グループ: ネットワーキングツール
+ 説明: コンピュータネットワークを設定し分析するためのツール
+ 強制的なパッケージ:
+   tcpdump
+ 標準パッケージ:
+   nc
+   openswan
+ オプション パッケージ:
+   NetworkManager-openswan
+   arptables_jf
+   arpwatch
+   dropwatch
+   ebtables
+   ipset
+   iptraf
+   iptstate
+   lksctp-tools
+   mipv6-daemon
+   mrtg
+   netlabel_tools
+   nmap
+   stunnel
+   wireshark
+#------------------------------------------------------------------------------
+#ネットワークファイルシステムクライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo network-file-s ystem-client
+グループ: ネットワークファイルシステムクライアント
+ 説明: システムがネットワークストレージに接続できるようにします。
+ 標準パッケージ:
+   autofs
+   cifs-utils
+   nfs-utils
+   nfs4-acl-tools
+   samba-client
+ オプション パッケージ:
+   cachefilesd
+   glusterfs-fuse
+#------------------------------------------------------------------------------
+#ハードウェア監視ユーティリティ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo hardware-monit oring
+グループ: ハードウェア監視ユーティリティ
+ 説明: サーバーハードウェアを管理するためのツールセット
+ 標準パッケージ:
+   mcelog
+   smartmontools
+ オプション パッケージ:
+   edac-utils
+   i2c-tools
+   lm_sensors
+#------------------------------------------------------------------------------
+#バックアップクライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo backup-client
+グループ: バックアップクライアント
+ 説明: バックアップサーバーに接続しバックアップを実行するためのクライアントツール
+ 強制的なパッケージ:
+   amanda-client
+ オプション パッケージ:
+   bacula-client
+#------------------------------------------------------------------------------
+#パフォーマンスツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo performance
+グループ: パフォーマンスツール
+ 説明: システムおよびアプリケーションレベルのパフォーマンス問題を分析するツールです。
+ 強制的なパッケージ:
+   blktrace
+   sysstat
+ 標準パッケージ:
+   dstat
+   iotop
+   latencytop
+   latencytop-tui
+   oprofile
+   perf
+   powertop
+   seekwatcher
+ オプション パッケージ:
+   oprofile-jit
+   papi
+   sdparm
+   sg3_utils
+   tuned
+   tuned-utils
+#------------------------------------------------------------------------------
+#ベース
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo base
+グループ: ベース
+ 説明: Red Hat Enterprise Linux の基本インストール
+ 強制的なパッケージ:
+   alsa-utils
+   at
+   authconfig
+   bc
+   bind-utils
+   crontabs
+   cyrus-sasl-plain
+   dbus
+   ed
+   file
+   logrotate
+   lsof
+   man
+   ntsysv
+   parted
+   pciutils
+   psacct
+   quota
+   redhat-indexhtml
+   setserial
+   tmpwatch
+   traceroute
+ 標準パッケージ:
+   Red_Hat_Enterprise_Linux-Release_Notes-6-en-US
+   abrt-addon-ccpp
+   abrt-addon-kerneloops
+   abrt-addon-python
+   abrt-cli
+   abrt-plugin-mailx
+   abrt-plugin-sosreport
+   acpid
+   b43-fwcutter
+   biosdevname
+   blktrace
+   bridge-utils
+   bzip2
+   cpuspeed
+   cryptsetup-luks
+   dmraid
+   dosfstools
+   eject
+   ethtool
+   fprintd-pam
+   gnupg2
+   hunspell
+   hunspell-en
+   irqbalance
+   ledmon
+   libaio
+   lvm2
+   man-pages
+   man-pages-overrides
+   mdadm
+   microcode_ctl
+   mlocate
+   mtr
+   nano
+   ntp
+   ntpdate
+   openssh-clients
+   openssl-ibmca
+   pam_passwdqc
+   pcmciautils
+   pinfo
+   plymouth
+   pm-utils
+   prelink
+   rdate
+   rdma
+   readahead
+   redhat-access-insights
+   redhat-support-tool
+   rfkill
+   rng-tools
+   rsync
+   scl-utils
+   setuptool
+   smartmontools
+   sos
+   strace
+   sysstat
+   system-config-firewall-tui
+   system-config-network-tui
+   systemtap-runtime
+   tcpdump
+   tcsh
+   time
+   unzip
+   usbutils
+   vconfig
+   vim-enhanced
+   virt-what
+   wget
+   which
+   wireless-tools
+   words
+   xz
+   yum-plugin-security
+   yum-utils
+   zip
+ オプション パッケージ:
+   PyPAM
+   audispd-plugins
+   brltty
+   convmv
+   cpupowerutils
+   cryptsetup-reencrypt
+   device-mapper-persistent-data
+   dos2unix
+   dumpet
+   ecryptfs-utils
+   edac-utils
+   gdisk
+   genisoimage
+   gpm
+   kabi-yum-plugins
+   kernel-doc
+   linuxptp
+   logwatch
+   mkbootdisk
+   mtools
+   ncurses-term
+   nss_db
+   oddjob
+   openssh-clients-fips
+   pax
+   python-dmidecode
+   python-volume_key
+   rsyslog-gnutls
+   rsyslog-gssapi
+   rsyslog-relp
+   servicelog
+   sgpio
+   sox
+   squashfs-tools
+   star
+   subscription-manager-migration
+   subscription-manager-migration-data
+   tboot
+   tunctl
+   udftools
+   unix2dos
+   uuidd
+   volume_key
+   wodim
+   x86info
+   yum-plugin-aliases
+   yum-plugin-changelog
+   yum-plugin-downloadonly
+   yum-plugin-protect-packages
+   yum-plugin-tmprepo
+   yum-plugin-verify
+   yum-plugin-versionlock
+   yum-presto
+   zsh
+#------------------------------------------------------------------------------
+#レガシー UNIX の互換性
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo legacy-unix
+グループ: レガシー UNIX の互換性
+ 説明: レガシー UNIX 環境の使用やこの環境からの移行するための互換性プログラム
+ 標準パッケージ:
+   xinetd
+ オプション パッケージ:
+   authd
+   cups-lpd
+   dump
+   finger
+   finger-server
+   krb5-appl-servers
+   ksh
+   mksh
+   ncompress
+   rsh
+   rsh-server
+   rusers
+   rusers-server
+   rwho
+   talk
+   talk-server
+   tcp_wrappers
+   telnet
+   telnet-server
+   tftp
+#------------------------------------------------------------------------------
+#互換性ライブラリ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo compat-librari es
+グループ: 互換性ライブラリ
+ 説明: 旧バージョンの Red Hat Enterprise Linux によって構築されたアプリケーションに対する互換性ライブラリ
+ 標準パッケージ:
+   compat-db
+   compat-expat1
+   compat-glibc
+   compat-libcap1
+   compat-libf2c-34
+   compat-libgcc-296
+   compat-libgfortran-41
+   compat-libstdc++-295
+   compat-libstdc++-296
+   compat-libstdc++-33
+   compat-libtermcap
+   compat-openldap
+   compat-openmpi
+   compat-openmpi-psm
+   compat-opensm-libs
+   compat-readline5
+   compat-xcb-util
+   openssl098e
+#------------------------------------------------------------------------------
+#印刷クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo print-client
+グループ: 印刷クライアント
+ 説明: ローカルのプリンタやリモートプリントサーバーへ印刷するためのツールです。
+ 強制的なパッケージ:
+   cups
+   cups-pk-helper
+   enscript
+   printer-filters
+ 標準パッケージ:
+   foomatic
+   foomatic-db-ppds
+   gutenprint
+   gutenprint-cups
+   hpijs
+   paps
+   system-config-printer
+   system-config-printer-udev
+ オプション パッケージ:
+   hplip
+   hplip-gui
+#------------------------------------------------------------------------------
+#大規模システムのパフォーマンス
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo large-systems
+グループ: 大規模システムのパフォーマンス
+ 説明: 大規模システム用パフォーマンスサポートツール
+ 強制的なパッケージ:
+   numactl
+   numad
+ 標準パッケージ:
+   hwloc
+   libcgroup
+   libhugetlbfs
+   libhugetlbfs-utils
+   libtopology
+ オプション パッケージ:
+   ksm_preload
+   numatop
+   tuna
+#------------------------------------------------------------------------------
+#数学／科学系および並列計算
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo scientific
+グループ: 数学／科学系および並列計算
+ 説明: 数学的計算や科学的計算、並列計算のツールです。
+ 標準パッケージ:
+   gnuplot
+   units
+ オプション パッケージ:
+   atlas
+   compat-openmpi
+   compat-openmpi-psm
+   fftw
+   fftw-devel
+   fftw-static
+   gsl
+   gsl-devel
+   gsl-static
+   lapack
+   mpich2
+   mpitests-mvapich
+   mpitests-mvapich2
+   mpitests-openmpi
+   mvapich
+   mvapich-psm-devel
+   mvapich-psm-static
+   mvapich2
+   mvapich2-psm-devel
+   numpy
+   openmpi
+   openmpi-devel
+   openmpi-psm-devel
+   scipy
+#------------------------------------------------------------------------------
+### サーバ ###
+#CIFS ファイルサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo cifs-file-serv er
+グループ: CIFS ファイルサーバー
+ 説明: Linux システムと Microsoft Windows システムの間でファイルを共有します。
+ 強制的なパッケージ:
+   samba
+ オプション パッケージ:
+   tdb-tools
+#------------------------------------------------------------------------------
+#NFS ファイルサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo nfs-file-serve r
+グループ: NFS ファイルサーバー
+ 説明: NFS ファイルサーバー
+ 強制的なパッケージ:
+   nfs-utils
+   nfs4-acl-tools
+#------------------------------------------------------------------------------
+#FTP サーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo ftp-server
+グループ: FTP サーバー
+ 説明: システムが FTP サーバーとして機能できるようにします。
+ 強制的なパッケージ:
+   vsftpd
+ オプション パッケージ:
+   xferstats
+#------------------------------------------------------------------------------
+#識別管理サーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo identity-manag ement-server
+グループ: 識別管理サーバー
+ 説明: ユーザー、サーバー、および認証ポリシーの中央管理を行います。
+ 標準パッケージ:
+   389-ds-base
+   ipa-admintools
+   ipa-pki-ca-theme
+   ipa-pki-common-theme
+   ipa-server
+   mod_revocator
+   pki-ca
+   pki-silent
+ オプション パッケージ:
+   nuxwdog
+   slapi-nis
+#------------------------------------------------------------------------------
+#サーバープラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo server-platfor m
+グループ: サーバープラットフォーム
+ 説明: Red Hat Enterprise Linux Server Platform のサポート対象ライブラリです。
+ 強制的なパッケージ:
+   db4
+   dbus-libs
+   glibc
+   krb5-libs
+   libgcc
+   libstdc++
+   ncurses-libs
+   nss
+   openldap
+   openssl
+   pam
+   redhat-lsb
+   zlib
+ オプション パッケージ:
+   libatomic
+   libcilkrts
+   libitm
+   libmpx
+#------------------------------------------------------------------------------
+#システム管理ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-admin-t ools
+グループ: システム管理ツール
+ 説明: システム管理に便利なユーティリティです。
+ オプション パッケージ:
+   conman
+   crypto-utils
+   dtach
+   expect
+   hardlink
+   lshw
+   lsscsi
+   mc
+   mgetty
+   pexpect
+   rdist
+   rrdtool
+   screen
+   scrub
+   symlinks
+   tree
+   vlock
+   xdelta
+#------------------------------------------------------------------------------
+#ディレクトリサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo directory-serv er
+グループ: ディレクトリサーバー
+ 説明: マシンおよびユーザーの認証サーバー
+ オプション パッケージ:
+   krb5-server
+   krb5-server-ldap
+   migrationtools
+   openldap-servers
+   samba
+   ypserv
+#------------------------------------------------------------------------------
+#ネットワークインフラストラクチャサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo network-server r
+グループ: ネットワークインフラストラクチャサーバー
+ 説明: DHCP や DNS などコアネットワークプロトコルやサービスのサーバーです。
+ オプション パッケージ:
+   bind
+   bind-chroot
+   bind-dyndb-ldap
+   dhcp
+   dnsmasq
+   freeradius
+   quagga
+   radvd
+   rsyslog-gnutls
+   rsyslog-gssapi
+   rsyslog-mysql
+   rsyslog-pgsql
+   rsyslog-relp
+   syslinux
+   tftp-server
+#------------------------------------------------------------------------------
+#ネットワークストレージサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo storage-server r
+グループ: ネットワークストレージサーバー
+ 説明: iSCSI、iSER、 iSNS ネットワークストレージサーバーです。
+ 標準パッケージ:
+   scsi-target-utils
+ オプション パッケージ:
+   isns-utils
+#------------------------------------------------------------------------------
+#バックアップサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo backup-server
+グループ: バックアップサーバー
+ 説明: インフラストラクチャのバックアップを集中化するソフトウェアです。
+ 強制的なパッケージ:
+   amanda-server
+ オプション パッケージ:
+   mt-st
+   mtx
+#------------------------------------------------------------------------------
+#プリントサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo print-server
+グループ: プリントサーバー
+ 説明: システムがプリントサーバーとして機能できるようにします。
+ 強制的なパッケージ:
+   cups
+   printer-filters
+ 標準パッケージ:
+   foomatic-db-ppds
+   gutenprint
+   gutenprint-cups
+   hpijs
+   paps
+#------------------------------------------------------------------------------
+#電子メールサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo mail-server
+グループ: 電子メールサーバー
+ 説明: システムが SMTP または IMAP 電子メールサーバーとして機能できるようにします。
+ 標準パッケージ:
+   dovecot
+   postfix
+   spamassassin
+ オプション パッケージ:
+   cyrus-imapd
+   cyrus-imapd-perl
+   dovecot-mysql
+   dovecot-pgsql
+   dovecot-pigeonhole
+   mailman
+   sendmail
+   sendmail-cf
+#------------------------------------------------------------------------------
+### Webサービス ###
+#PHP サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo php
+グループ: PHP サポート
+ 説明: PHP Web アプリケーションフレームワーク。
+ 強制的なパッケージ:
+   php
+ 標準パッケージ:
+   php-gd
+   php-pdo
+   php-pear
+   php-xml
+ オプション パッケージ:
+   php-ldap
+   php-mysql
+   php-odbc
+   php-pecl-apc
+   php-pecl-memcache
+   php-pgsql
+   php-soap
+   php-xmlrpc
+#------------------------------------------------------------------------------
+#TurboGears アプリケーションフレームワーク
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo turbogears
+グループ: TurboGears アプリケーションフレームワーク
+ 説明: TurboGears Web アプリケーションフレームワーク
+ 強制的なパッケージ:
+   TurboGears2
+#------------------------------------------------------------------------------
+#Web サーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo web-server
+グループ: Web サーバー
+ 説明: システムが Web サーバとして機能し、Perl や Python Web アプリケーションを実行できるようにします。
+ 強制的なパッケージ:
+   httpd
+ 標準パッケージ:
+   crypto-utils
+   httpd-manual
+   mod_perl
+   mod_ssl
+   mod_wsgi
+   webalizer
+ オプション パッケージ:
+   certmonger
+   libmemcached
+   memcached
+   mod_auth_kerb
+   mod_auth_mellon
+   mod_auth_mysql
+   mod_auth_pgsql
+   mod_authnz_pam
+   mod_authz_ldap
+   mod_intercept_form_submit
+   mod_lookup_identity
+   mod_nss
+   mod_revocator
+   perl-CGI
+   perl-CGI-Session
+   perl-Cache-Memcached
+   python-memcached
+   squid
+#------------------------------------------------------------------------------
+#Web サーブレットエンジン
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo web-servlet
+グループ: Web サーブレットエンジン
+ 説明: システムが Java サーブレットをホストできるようにします。
+ 強制的なパッケージ:
+   tomcat6
+#------------------------------------------------------------------------------
+### データベース ###
+#MySQL データベース接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo mysql-client
+グループ: MySQL データベース接続クライアント
+ 説明: MySQL データベース接続クライアントと関連パッケージ
+ 強制的なパッケージ:
+   mysql
+ 標準パッケージ:
+   MySQL-python
+   mysql-connector-odbc
+ オプション パッケージ:
+   libdbi-dbd-mysql
+   mysql-connector-java
+   perl-DBD-MySQL
+#------------------------------------------------------------------------------
+#MySQL データベースサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo mysql
+グループ: MySQL データベースサーバー
+ 説明: MySQL データベースサーバーと関連パッケージ
+ 強制的なパッケージ:
+   mysql-server
+ オプション パッケージ:
+   mysql-bench
+   mysql-test
+#------------------------------------------------------------------------------
+#PostgreSQL データベース接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo postgresql-cli ent
+グループ: PostgreSQL データベース接続クライアント
+ 説明: PostgreSQL データベース接続クライアントと関連パッケージ
+ 強制的なパッケージ:
+   postgresql
+ 標準パッケージ:
+   PyGreSQL
+   postgresql-odbc
+   python-psycopg2
+ オプション パッケージ:
+   libdbi-dbd-pgsql
+   perl-DBD-Pg
+   postgresql-jdbc
+   tcl-pgtcl
+#------------------------------------------------------------------------------
+#PostgreSQL データベースサーバー
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo postgresql
+グループ: PostgreSQL データベースサーバー
+ 説明: PostgreSQL データベースサーバーと関連パッケージ
+ 強制的なパッケージ:
+   postgresql-server
+ 標準パッケージ:
+   postgresql-docs
+ オプション パッケージ:
+   postgresql-contrib
+   postgresql-plperl
+   postgresql-plpython
+   postgresql-pltcl
+   postgresql-test
+   rhdb-utils
+#------------------------------------------------------------------------------
+### システム管理 ###
+#SNMP サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-managem ent-snmp
+グループ: SNMP サポート
+ 説明: SNMP 管理エージェント
+ 強制的なパッケージ:
+   net-snmp
+ 標準パッケージ:
+   net-snmp-utils
+ オプション パッケージ:
+   net-snmp-perl
+   net-snmp-python
+#------------------------------------------------------------------------------
+#WBEM サポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-managem ent-wbem
+グループ: WBEM サポート
+ 説明: Red Hat Enterprise Linux の WBEM インターフェイス
+ 標準パッケージ:
+   openwsman-client
+   sblim-sfcb
+   sblim-wbemcli
+   wsmancli
+ オプション パッケージ:
+   openwsman-server
+   sblim-cim-client
+   sblim-cim-client2
+   sblim-cmpi-dhcp
+   sblim-cmpi-dns
+   sblim-cmpi-fsvol
+   sblim-cmpi-network
+   sblim-cmpi-nfsv3
+   sblim-cmpi-nfsv4
+   sblim-cmpi-params
+   sblim-cmpi-samba
+   sblim-cmpi-sysfs
+   sblim-cmpi-syslog
+   sblim-gather
+   sblim-gather-provider
+   sblim-indication_helper
+   sblim-smis-hba
+   sblim-tools-libra
+   tog-pegasus
+#------------------------------------------------------------------------------
+#システム管理
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-managem ent
+グループ: システム管理
+ 説明: 多様な低レベルハードウェア管理フレームワークです。
+ オプション パッケージ:
+   OpenIPMI
+   fence-agents
+   freeipmi
+   freeipmi-bmc-watchdog
+   freeipmi-ipmidetectd
+   ipmitool
+   openhpi
+   openhpi-subagent
+   watchdog
+#------------------------------------------------------------------------------
+#メッセージング接続クライアントのサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo system-managem ent-messaging-client
+グループ: メッセージング接続クライアントのサポート
+ 説明: システム管理のための AMQP メッセージング接続クライアント
+ 強制的なパッケージ:
+   qmf
+   qpid-cpp-client
+ 標準パッケージ:
+   python-qmf
+   python-qpid
+   python-qpid-qmf
+   qpid-qmf
+   qpid-tools
+ オプション パッケージ:
+   python-saslwrapper
+   qpid-tests
+   ruby-irb
+   ruby-qmf
+   ruby-qpid-qmf
+#------------------------------------------------------------------------------
+### 仮想化 ###
+#ゲストエージェント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo guest-agents
+グループ: ゲストエージェント
+ 説明: Guest Agents tools.
+ 標準パッケージ:
+   hyperv-daemons
+   qemu-guest-agent
+#------------------------------------------------------------------------------
+#仮想化
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization n
+グループ: 仮想化
+ 説明: 仮想化ゲストをホストする環境を提供します。
+ 強制的なパッケージ:
+   qemu-kvm
+ オプション パッケージ:
+   qemu-kvm-tools
+   vios-proxy
+#------------------------------------------------------------------------------
+#仮想化クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization -client
+グループ: 仮想化クライアント
+ 説明: 仮想化マシンへOSをインストールしたり管理するための接続クライアント
+ 強制的なパッケージ:
+   python-virtinst
+   virt-manager
+   virt-viewer
+ 標準パッケージ:
+   virt-top
+#------------------------------------------------------------------------------
+#仮想化ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization -tools
+グループ: 仮想化ツール
+ 説明: 停止中の仮想マシンのディスクイメージを操作するためのツールです。
+ 標準パッケージ:
+   libguestfs
+ オプション パッケージ:
+   libguestfs-bash-completion
+   libguestfs-gfs2
+   libguestfs-java
+   libguestfs-mount
+   libguestfs-rescue
+   libguestfs-rsync
+   libguestfs-tools
+   libguestfs-xfs
+   virt-v2v
+#------------------------------------------------------------------------------
+#仮想化プラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo virtualization -platform
+グループ: 仮想化プラットフォーム
+ 説明: 仮想化ゲストやコンテナへアクセスしたり制御するためのインターフェースを提供します。
+ 強制的なパッケージ:
+   libvirt
+   libvirt-client
+   virt-who
+ オプション パッケージ:
+   fence-virtd-libvirt
+   fence-virtd-multicast
+   fence-virtd-serial
+   libvirt-cim
+   libvirt-java
+   libvirt-qmf
+   libvirt-snmp
+   perl-Sys-Virt
+#------------------------------------------------------------------------------
+### デスクトップ ###
+#KDE デスクトップ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo kde-desktop
+グループ: KDE デスクトップ
+ 説明: KDE デスクトップ
+ 強制的なパッケージ:
+   alsa-plugins-pulseaudio
+   kde-settings-pulseaudio
+   kdeaccessibility
+   kdeartwork-screensavers
+   kdebase
+   kdebase-workspace
+   kdelibs
+   xsettings-kde
+ 標準パッケージ:
+   NetworkManager-gnome
+   k3b
+   kcoloredit
+   kdeadmin
+   kdegames
+   kdegraphics
+   kdemultimedia
+   kdenetwork
+   kdepim
+   kdepim-runtime
+   kdeplasma-addons
+   kdeutils
+   kdm
+   kiconedit
+   kipi-plugins
+   kmid
+   konq-plugins
+   ksig
+   ksshaskpass
+   pinentry-qt
+   rhn-setup-gnome
+   subscription-manager-gui
+ オプション パッケージ:
+   kdebase-workspace-akonadi
+   kdebase-workspace-python-applet
+ 条件付パッケージ:
+   ibus-qt
+#------------------------------------------------------------------------------
+#X Window System
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo x11
+グループ: X Window System
+ 説明: X Window システムのサポート
+ 強制的なパッケージ:
+   xorg-x11-drivers
+   xorg-x11-server-Xorg
+   xorg-x11-xauth
+   xorg-x11-xinit
+ 標準パッケージ:
+   firstboot
+   glx-utils
+   hal
+   plymouth-system-theme
+   spice-vdagent
+   subscription-manager-firstboot
+   wacomexpresskeys
+   wdaemon
+   xorg-x11-server-utils
+   xorg-x11-utils
+   xvattr
+ オプション パッケージ:
+   xcb-util-image
+   xcb-util-keysyms
+   xcb-util-wm
+#------------------------------------------------------------------------------
+#グラフィカル管理ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo graphical-admi n-tools
+グループ: グラフィカル管理ツール
+ 説明: システムの多くの側面を管理するためのグラフィカルなシステム管理ツール
+ 強制的なパッケージ:
+   dbus
+ 標準パッケージ:
+   authconfig-gtk
+   gnome-disk-utility
+   gnome-packagekit
+   system-config-firewall
+   system-config-kdump
+   system-config-keyboard
+   system-config-services
+   system-config-users
+ オプション パッケージ:
+   audit-viewer
+   firstaidkit-gui
+   lshw-gui
+   policycoreutils-gui
+   sabayon
+   setroubleshoot
+   system-config-kickstart
+   system-config-lvm
+   wireshark-gnome
+ 条件付パッケージ:
+   system-config-services-docs
+   system-config-users-docs
+#------------------------------------------------------------------------------
+#デスクトップ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo basic-desktop
+グループ: デスクトップ
+ 説明: シンクライアントとして使用できる最低限のデスクトップ
+ 強制的なパッケージ:
+   NetworkManager
+   NetworkManager-gnome
+   alsa-plugins-pulseaudio
+   at-spi
+   control-center
+   dbus
+   gdm
+   gdm-user-switch-applet
+   gnome-panel
+   gnome-power-manager
+   gnome-screensaver
+   gnome-session
+   gnome-terminal
+   gvfs-archive
+   gvfs-fuse
+   gvfs-smb
+   metacity
+   nautilus
+   notification-daemon
+   polkit-gnome
+   xdg-user-dirs-gtk
+   yelp
+ 標準パッケージ:
+   control-center-extra
+   eog
+   gdm-plugin-fingerprint
+   gnome-applets
+   gnome-media
+   gnome-packagekit
+   gnome-vfs2-smb
+   gok
+   openssh-askpass
+   orca
+   pulseaudio-module-gconf
+   pulseaudio-module-x11
+   rhn-setup-gnome
+   subscription-manager-gui
+   vino
+ オプション パッケージ:
+   sabayon-apply
+   tigervnc-server
+   xguest
+#------------------------------------------------------------------------------
+#デスクトップのデバッグとパフォーマンスツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo desktop-debugg ing
+グループ: デスクトップのデバッグとパフォーマンスツール
+ 説明: アプリケーションやパフォーマンスのデバッグを行うための GUI ツール
+ 標準パッケージ:
+   abrt-desktop
+   libreport-gtk
+ オプション パッケージ:
+   abrt-gui
+   bltk
+   oprofile-gui
+   pcp
+   systemtap-grapher
+   xrestop
+#------------------------------------------------------------------------------
+#デスクトッププラットフォーム
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo desktop-platfo rm
+グループ: デスクトッププラットフォーム
+ 説明: Red Hat Enterprise Linux Desktop Platform のサポート対象ライブラリです。
+ 強制的なパッケージ:
+   atk
+   cairo
+   dbus
+   dbus-libs
+   fontconfig
+   freetype
+   glib2
+   gtk2
+   libICE
+   libSM
+   libX11
+   libXext
+   libXft
+   libXi
+   libXrender
+   libXt
+   libXtst
+   libjpeg-turbo
+   libpng
+   libxml2
+   mesa-libGL
+   mesa-libGLU
+   pango
+   qt
+   qt3
+   redhat-lsb-graphics
+   redhat-lsb-printing
+ オプション パッケージ:
+   qt-mysql
+   qt-odbc
+   qt-postgresql
+   qt3-MySQL
+   qt3-ODBC
+   qt3-PostgreSQL
+#------------------------------------------------------------------------------
+#フォント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo fonts
+グループ: フォント
+ 説明: 異なる言語やスクリプトにテキストをレンダリングするためのフォント
+ 標準パッケージ:
+   abyssinica-fonts
+   cjkuni-uming-fonts
+   dejavu-sans-fonts
+   dejavu-sans-mono-fonts
+   dejavu-serif-fonts
+   google-crosextra-caladea-fonts
+   google-crosextra-carlito-fonts
+   jomolhari-fonts
+   khmeros-base-fonts
+   kurdit-unikurd-web-fonts
+   liberation-mono-fonts
+   liberation-sans-fonts
+   liberation-serif-fonts
+   lklug-fonts
+   lohit-assamese-fonts
+   lohit-bengali-fonts
+   lohit-devanagari-fonts
+   lohit-gujarati-fonts
+   lohit-kannada-fonts
+   lohit-oriya-fonts
+   lohit-punjabi-fonts
+   lohit-tamil-fonts
+   lohit-telugu-fonts
+   madan-fonts
+   paktype-naqsh-fonts
+   paktype-tehreer-fonts
+   sil-padauk-fonts
+   smc-meera-fonts
+   stix-fonts
+   thai-scalable-waree-fonts
+   tibetan-machine-uni-fonts
+   un-core-dotum-fonts
+   vlgothic-fonts
+   wqy-zenhei-fonts
+ オプション パッケージ:
+   bitmap-fixed-fonts
+   bitmap-lucida-typewriter-fonts
+   cjkuni-fonts-ghostscript
+#------------------------------------------------------------------------------
+#リモートデスクトップ接続クライアント
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo remote-desktop -clients
+グループ: リモートデスクトップ接続クライアント
+ オプション パッケージ:
+   freerdp
+   rdesktop
+   spice-client
+   spice-xpi
+   tigervnc
+   tsclient
+   vinagre
+#------------------------------------------------------------------------------
+#レガシー X Windows システムの互換性
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo legacy-x
+グループ: レガシー X Windows システムの互換性
+ 説明: レガシー X Windows システム環境の使用やこの環境からの移行するための互換性プログラム
+ 標準パッケージ:
+   xorg-x11-fonts-100dpi
+   xorg-x11-fonts-ISO8859-1-100dpi
+   xorg-x11-fonts-Type1
+   xorg-x11-fonts-misc
+ オプション パッケージ:
+   libXmu
+   libXp
+   openmotif
+   openmotif22
+   xorg-x11-fonts-75dpi
+   xorg-x11-fonts-ISO8859-1-75dpi
+   xorg-x11-fonts-ISO8859-14-100dpi
+   xorg-x11-fonts-ISO8859-14-75dpi
+   xorg-x11-fonts-ISO8859-15-75dpi
+   xorg-x11-fonts-ISO8859-2-100dpi
+   xorg-x11-fonts-ISO8859-2-75dpi
+   xorg-x11-fonts-ISO8859-9-100dpi
+   xorg-x11-fonts-ISO8859-9-75dpi
+   xorg-x11-fonts-cyrillic
+   xorg-x11-fonts-ethiopic
+   xorg-x11-twm
+   xorg-x11-xdm
+   xterm
+#------------------------------------------------------------------------------
+#入力メソッド
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo input-methods
+グループ: 入力メソッド
+ 説明: 国際的なテキストを入力するためのソフトウェアです。
+ 強制的なパッケージ:
+   ibus-gtk
+ 標準パッケージ:
+   ibus-anthy
+   ibus-chewing
+   ibus-hangul
+   ibus-m17n
+   ibus-pinyin
+   ibus-rawcode
+   ibus-sayura
+   ibus-table-additional
+   m17n-contrib-assamese
+   m17n-contrib-bengali
+   m17n-contrib-gujarati
+   m17n-contrib-hindi
+   m17n-contrib-kannada
+   m17n-contrib-maithili
+   m17n-contrib-malayalam
+   m17n-contrib-marathi
+   m17n-contrib-oriya
+   m17n-contrib-punjabi
+   m17n-contrib-tamil
+   m17n-contrib-telugu
+   m17n-contrib-urdu
+   m17n-db-sinhala
+   m17n-db-thai
+ 条件付パッケージ:
+   gtk2-immodule-xim
+   ibus-qt
+#------------------------------------------------------------------------------
+#汎用デスクトップ（GNOMEデスクトップ）
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo general-deskto p
+グループ: 汎用デスクトップ（GNOMEデスクトップ）
+ 説明: Desktop への追加により全面的な GNOME の機能を提供する汎用デスクトップです。
+ 標準パッケージ:
+   PackageKit-gstreamer-plugin
+   authconfig-gtk
+   brasero-nautilus
+   cheese
+   compiz-gnome
+   evince
+   evince-dvi
+   file-roller
+   gcalctool
+   gedit
+   gnome-backgrounds
+   gnome-bluetooth
+   gnome-disk-utility
+   gnome-power-manager
+   gnome-system-monitor
+   gnome-themes
+   gnome-user-docs
+   gnome-user-share
+   gnome-utils
+   gnote
+   gthumb
+   gucharmap
+   gvfs-afc
+   gvfs-gphoto2
+   gvfs-obexftp
+   mousetweaks
+   nautilus-open-terminal
+   nautilus-sendto
+   rhythmbox
+   scenery-backgrounds
+   seahorse
+   sound-juicer
+   system-config-firewall
+   system-config-users
+   totem
+   totem-nautilus
+ オプション パッケージ:
+   alacarte
+   byzanz
+   dvgrab
+   gconf-editor
+   gedit-plugins
+   gnome-games
+   gnome-pilot
+   gnome-pilot-conduits
+   krb5-auth-dialog
+   rhythmbox-upnp
+   seahorse-plugins
+   totem-upnp
+   vim-X11
+#------------------------------------------------------------------------------
+### アプリケーション ###
+#Emacs
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo emacs
+グループ: Emacs
+ 説明: 拡張およびカスタマイズ可能な GNU Emacs テキストエディタ
+ 強制的なパッケージ:
+   emacs
+ オプション パッケージ:
+   ctags-etags
+   emacs-auctex
+   emacs-gnuplot
+   emacs-nox
+#------------------------------------------------------------------------------
+#TeX のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo tex
+グループ: TeX のサポート
+ 説明: TeX 文書フォーマットシステムのサポートです。
+ 強制的なパッケージ:
+   tex-cm-lgc
+   texlive
+   texlive-latex
+#------------------------------------------------------------------------------
+#インターネットブラウザ
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo internet-brows er
+グループ: インターネットブラウザ
+ 説明: インターネットブラウザ
+ 標準パッケージ:
+   firefox
+   nspluginwrapper
+   totem-mozplugin
+#------------------------------------------------------------------------------
+#グラフィックスツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo graphics
+グループ: グラフィックスツール
+ 説明: 静止画像の作成や修正を行うためのソフトウェアです。
+ 強制的なパッケージ:
+   gimp
+ 標準パッケージ:
+   gimp-data-extras
+   gimp-help
+   gimp-help-browser
+   gutenprint-plugin
+   libsane-hpaio
+   sane-backends-libs-gphoto2
+   sane-frontends
+   xsane
+   xsane-gimp
+ オプション パッケージ:
+   ImageMagick
+   dcraw
+   inkscape
+   netpbm-progs
+   xfig
+#------------------------------------------------------------------------------
+#技術文書
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo technical-writ ing
+グループ: 技術文書
+ 説明: 技術文書を書くためのツールです。
+ 強制的なパッケージ:
+   docbook-slides
+   docbook-style-xsl
+   docbook-utils
+   docbook5-schemas
+   docbook5-style-xsl
+ 標準パッケージ:
+   xmlto
+ オプション パッケージ:
+   docbook-utils-pdf
+   texinfo
+   xmlto-tex
+   xmltoman
+#------------------------------------------------------------------------------
+### 開発 ###
+#Eclipse
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo eclipse
+グループ: Eclipse
+ 説明: Eclipse ベースの統合開発環境
+ 強制的なパッケージ:
+   eclipse-cdt
+   eclipse-jdt
+ 標準パッケージ:
+   eclipse-callgraph
+   eclipse-changelog
+   eclipse-mylyn
+   eclipse-mylyn-java
+   eclipse-oprofile
+   eclipse-pde
+   eclipse-rpm-editor
+   eclipse-subclipse
+   eclipse-valgrind
+ オプション パッケージ:
+   eclipse-mylyn-cdt
+   eclipse-mylyn-pde
+   eclipse-mylyn-trac
+   eclipse-mylyn-webtasks
+   eclipse-mylyn-wikitext
+   eclipse-subclipse-graph
+#------------------------------------------------------------------------------
+#その他の開発
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo additional-dev el
+グループ: その他の開発
+ 説明: アプリケーションを開発するためのその他ヘッダファイルおよびライブラリ
+ 標準パッケージ:
+   GConf2-devel
+   alsa-lib-devel
+   audit-libs-devel
+   binutils-devel
+   boost-devel
+   bzip2-devel
+   cyrus-sasl-devel
+   dbus-glib-devel
+   elfutils-devel
+   elfutils-libelf-devel
+   evolution-data-server-devel
+   gnome-desktop-devel
+   gnome-keyring-devel
+   gstreamer-devel
+   gvfs-devel
+   hmaccalc
+   java-1.6.0-openjdk-devel
+   java-1.7.0-openjdk-devel
+   libacl-devel
+   libattr-devel
+   libcanberra-devel
+   libcap-ng-devel
+   libcgroup-devel
+   libcurl-devel
+   libgnome-devel
+   libnotify-devel
+   librsvg2-devel
+   libselinux-devel
+   libsoup-devel
+   mysql-devel
+   perl-ExtUtils-MakeMaker
+   perl-devel
+   polkit-devel
+   postgresql-devel
+   pulseaudio-libs-devel
+   pygtk2-devel
+   python-devel
+   readline-devel
+   sqlite-devel
+   tbb-devel
+ オプション パッケージ:
+   PyQt4-devel
+   SDL-devel
+   cups-devel
+   e2fsprogs-devel
+   expat-devel
+   freeglut-devel
+   fuse-devel
+   gmp-devel
+   gnome-python2-desktop
+   gnutls-devel
+   gstreamer-plugins-base-devel
+   httpd-devel
+   hunspell-devel
+   iptables-devel
+   java-1.8.0-openjdk-devel
+   java-gcj-compat-devel
+   junit
+   kdebase-devel
+   kdebase-workspace-devel
+   kdegraphics-devel
+   kdelibs-apidocs
+   kdelibs-devel
+   kdemultimedia-devel
+   kdenetwork-devel
+   kdepim-devel
+   kdepimlibs-devel
+   kdeplasma-addon-devel
+   kdesdk-devel
+   libXau-devel
+   libXaw-devel
+   libXinerama-devel
+   libXmu-devel
+   libXpm-devel
+   libXrandr-devel
+   libaio-devel
+   libblkid-devel
+   libbonobo-devel
+   libcap-devel
+   libdrm-devel
+   libgcrypt-devel
+   libglade2-devel
+   libgnomeui-devel
+   libgudev1-devel
+   libhugetlbfs-devel
+   libibverbs-devel
+   libnl-devel
+   libnl3-devel
+   libtiff-devel
+   libtopology-devel
+   libudev-devel
+   libusb-devel
+   libuuid-devel
+   libxslt-devel
+   mpfr-devel
+   net-snmp-devel
+   numactl-devel
+   openmotif-devel
+   papi-devel
+   pcre-devel
+   perl-Test-More
+   perl-Test-Pod
+   perl-Test-Pod-Coverage
+   popt-devel
+   python-setuptools-devel
+   sane-backends-devel
+   snappy-devel
+   startup-notification-devel
+   tcl-devel
+   tcp_wrappers-devel
+   tk-devel
+   unique-devel
+   unixODBC-devel
+   xorg-x11-proto-devel
+   xz-devel
+#------------------------------------------------------------------------------
+#サーバープラットフォーム開発
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo server-platfor m-devel
+グループ: サーバープラットフォーム開発
+ 説明: Red Hat Enterprise Linux Server Platform 上で実行するアプリケーションを開発するためのヘッダファイルおよびライブラリ
+ 強制的なパッケージ:
+   db4-devel
+   dbus-devel
+   glibc-devel
+   krb5-devel
+   libstdc++-devel
+   libvirt-devel
+   libvirt-java-devel
+   ncurses-devel
+   nss-devel
+   openldap-devel
+   openssl-devel
+   pam-devel
+   zlib-devel
+#------------------------------------------------------------------------------
+#デスクトッププラットフォーム開発
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo desktop-platfo rm-devel
+グループ: デスクトッププラットフォーム開発
+ 説明: Red Hat Enterprise Linux Desktop Platform 上で実行するアプリケーションを開発するためのヘッダファイルおよびライブラリ
+ 強制的なパッケージ:
+   atk-devel
+   cairo-devel
+   dbus-devel
+   fontconfig-devel
+   freetype-devel
+   glib2-devel
+   gtk2-devel
+   libICE-devel
+   libSM-devel
+   libX11-devel
+   libXext-devel
+   libXft-devel
+   libXi-devel
+   libXrender-devel
+   libXt-devel
+   libXtst-devel
+   libjpeg-turbo-devel
+   libpng-devel
+   libxml2-devel
+   mesa-libGL-devel
+   mesa-libGLU-devel
+   mesa-libGLw-devel
+   pango-devel
+   qt-devel
+   qt3-devel
+   xorg-x11-docs
+ オプション パッケージ:
+   desktop-file-utils
+   glade3
+   gnome-common
+   gnome-devel-docs
+   gtk2-devel-docs
+   kdesdk
+   qt-doc
+#------------------------------------------------------------------------------
+#開発ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo development
+グループ: 開発ツール　
+ 説明: 基本的な開発環境
+ 強制的なパッケージ:
+   autoconf
+   automake
+   binutils
+   bison
+   flex
+   gcc
+   gcc-c++
+   gettext
+   libtool
+   make
+   patch
+   pkgconfig
+   redhat-rpm-config
+   rpm-build
+ 標準パッケージ:
+   byacc
+   cscope
+   ctags
+   cvs
+   diffstat
+   doxygen
+   elfutils
+   gcc-gfortran
+   git
+   indent
+   intltool
+   patchutils
+   rcs
+   subversion
+   swig
+   systemtap
+ オプション パッケージ:
+   ElectricFence
+   PyYAML
+   ant
+   babel
+   bzr
+   chrpath
+   cmake
+   compat-gcc-34
+   compat-gcc-34-c++
+   compat-gcc-34-g77
+   cvs-inetd
+   dejagnu
+   expect
+   gcc-gnat
+   gcc-java
+   gcc-objc
+   gcc-objc++
+   imake
+   jpackage-utils
+   kdewebdev
+   ksc
+   libstdc++-docs
+   mercurial
+   mod_dav_svn
+   nasm
+   perltidy
+   python-docs
+   python-requests
+   python-six
+   rpmdevtools
+   rpmlint
+   systemtap-sdt-devel
+   systemtap-server
+#------------------------------------------------------------------------------
+### 言語 ###
+#日本語のサポート
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo japanese-suppo rt
+グループ: 日本語のサポート
+ Language: ja
+ 標準パッケージ:
+   Red_Hat_Enterprise_Linux-Release_Notes-6-ja-JP
+   ipa-gothic-fonts
+   ipa-mincho-fonts
+   ipa-pgothic-fonts
+   ipa-pmincho-fonts
+   vlgothic-fonts
+   vlgothic-p-fonts
+ 条件付パッケージ:
+   autocorr-ja
+   eclipse-nls-ja
+   ibus-anthy
+   kde-i18n-Japanese
+   kde-l10n-Japanese
+   libreoffice-langpack-ja
+   man-pages-ja
+   poppler-data
+#------------------------------------------------------------------------------
+###???###
+#クライアント管理ツール
+yum --disablerepo=* --enablerepo=rhel67-dvd groupinfo client-mgmt-to ols
+グループ: クライアント管理ツール
+ 説明: 物理マシンと仮想マシンの両方を管理するためのツールとデーモン
+ オプション パッケージ:
+   vios-proxy
+
+
+

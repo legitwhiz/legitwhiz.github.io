@@ -1,0 +1,2 @@
+HAモニター障害情報採取ツール
+/opt/hitachi/HAmon/bin/monts

@@ -1,0 +1,55 @@
+awkとxargs、evalを用いてcsv形式のファイルからchmodchownを実行する
+
+CSV形式で書かれているファイルにファイルPATH、オーナー、グループ、権限を書いておき、それを読みだしてワンライナーでchmod、chownを実行する方法を探していたが、とりあえず以下のようにすれば実現できることがわかった。
+
+なお、ファイルの中身は以下のように書かれているとする。
+[root@test-centos7 ~]# cat /root/test.lst
+755,test,test,/work/aaaaa.txt
+777,test,test,/work/aaaaa.txt.bk
+666,test,test,/work/aaaaa2.txt
+555,test,test,/work/aaaaa2.txt.bk
+755,test,test,/work/aaaaa3.txt
+775,test,test,/work/aaaaa3.txt.bk
+
+1.chmodを実行する
+CSVファイルの内容を元にchmodを実行する場合は、以下のようにコマンドを実行する。
+
+awk -F, '{ print $1" " $4 }' /root/test.lst | xargs  -t -n 1 -d'n' -I{} sh -c 'eval chmod {}'
+
+[root@test-centos7 ~]# awk -F, '{ print $1" " $4 }' /root/test.lst | xargs  -t -n 1 -d'n' -I{} sh -c 'eval chmod {}'
+sh -c eval chmod 755 /work/aaaaa.txt
+sh -c eval chmod 777 /work/aaaaa.txt.bk
+sh -c eval chmod 666 /work/aaaaa2.txt
+sh -c eval chmod 555 /work/aaaaa2.txt.bk
+sh -c eval chmod 755 /work/aaaaa3.txt
+sh -c eval chmod 775 /work/aaaaa3.txt.bk
+[root@test-centos7 ~]# ls -la /work/aaaaa*
+-rwxr-xr-x. 1 test test 0  6月  6 12:14 /work/aaaaa.txt
+-rwxrwxrwx. 1 test test 0  7月 26 11:28 /work/aaaaa.txt.bk
+-rw-rw-rw-. 1 test test 0  7月 12 08:35 /work/aaaaa2.txt
+-r-xr-xr-x. 1 test test 0  7月 26 11:28 /work/aaaaa2.txt.bk
+-rwxr-xr-x. 1 test test 0  7月 11 19:31 /work/aaaaa3.txt
+-rwxrwxr-x. 1 test test 0  7月 26 11:28 /work/aaaaa3.txt.bk
+
+2.chownを実行する
+同じく、CSVファイルの情報を元にchownを実行する場合は、以下のようにコマンドを実行する。
+
+awk -F, '{ print $2":"$3" " $4 }' /root/test.lst | xargs  -t -n 1 -d'n' -I{} sh -c 'eval chown {}'
+
+[root@test-centos7 ~]# awk -F, '{ print $2":"$3" " $4 }' /root/test.lst | xargs  -t -n 1 -d'n' -I{} sh -c 'eval chown {}'
+sh -c eval chown test:test /work/aaaaa.txt
+sh -c eval chown test:test /work/aaaaa.txt.bk
+sh -c eval chown root:root /work/aaaaa2.txt
+sh -c eval chown apache:apache /work/aaaaa2.txt.bk
+sh -c eval chown test:test /work/aaaaa3.txt
+sh -c eval chown test:test /work/aaaaa3.txt.bk
+[root@test-centos7 ~]# ls -la /work/aaaaa*
+-rwxr-xr-x. 1 test   test   0  6月  6 12:14 /work/aaaaa.txt
+-rwxrwxrwx. 1 test   test   0  7月 26 11:28 /work/aaaaa.txt.bk
+-rw-rw-rw-. 1 root   root   0  7月 12 08:35 /work/aaaaa2.txt
+-r-xr-xr-x. 1 apache apache 0  7月 26 11:28 /work/aaaaa2.txt.bk
+-rwxr-xr-x. 1 test   test   0  7月 11 19:31 /work/aaaaa3.txt
+-rwxrwxr-x. 1 test   test   0  7月 26 11:28 /work/aaaaa3.txt.bk
+
+awkだけでも実現できそうな気もするけど…
+とりあえず、当座はこれでいいかなぁ。

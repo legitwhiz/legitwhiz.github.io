@@ -1,0 +1,44 @@
+###################
+ドルレート
+wget https://rate-exchange-1.appspot.com/currency?from=USD&to=JPY -q -O - | jq -r ".from,.rate,.to" | tr 'n' ',' | awk -F, '{print "1 "$1"="$2" "$3}'
+
+金相場
+wget https://rate-exchange-1.appspot.com/currency?from=XAU&to=JPY -q -O - | jq -r ".from,.rate,.to" | tr 'n' ',' | awk -F, '{print "1 "$1"="$2" "$3}'
+
+###################
+pingで成功・失敗時に任意の音で通知させる
+任意の文字列を読み上げさせる場合
+
+pingの疎通成功・失敗時に任意の文字列を読み上げさせる場合は、Macであればsayコマンド、Linuxであればaplay+text2waveを用いると良いだろう。
+ 以下の例では、疎通成功時は「OK」、疎通失敗時は「NG」と読み上げさせる。
+
+while true; do ping -c 1 対象ホスト > /dev/null && (echo "OK" | text2wave | aplay) || (echo "NG" | text2wave | aplay) ; sleep 1; done
+
+###################
+Linuxで動作中のプロセスの出力内容をみる
+Linuxで、裏で実行中のプロセスが出力している内容を確認したい場合、「/proc」配下を直接みることで確認出来るようなのでやってみた。
+ 以下のようにコマンドを実行することで、そのプロセスの標準出力をみることができる。
+
+tail -F /proc/プロセス番号/fd/1
+
+各プロセスで0~3とあるのだが、この「1」というのは標準出力のこと。
+つまり、当然その他の番号も「0:stdin」「1:stdout」「2:stderr」と紐付いている。
+
+残念ながら他のコンソールで直接見ているプロセスの出力は見れなかったのだが、なんとなく裏で動いているプロセスの動作が気になった時などに使えるのではなかろうか。
+
+###################
+Linuxの場合
+ping + arpで調べる
+基本的なコマンドしかインストールされていない環境では、やはりpingとarpコマンドを組み合わせた方法が良く利用されるだろう。
+ 以下のようにforコマンドと組み合わせて実行することで、IPアドレスとそれに対応するMACアドレスを取得することが出来る。
+
+for a in `seq 1 254`; do ping -c 1 -w 0.5 対象セグメント(第３オクテットまで).$a > /dev/null && arp -a 対象セグメント(第３オクテットまで).$a | grep ether; done
+ 
+for a in `seq 1 254`; do ping -c 1 -w 0.5 192.168.0.$a > /dev/null && arp -a 192.168.0.$a | grep ether; done
+
+Windowsの場合
+ping + arpで調べる
+Windowsでローカルネットワーク内を調べる場合でも、pingとarpを組み合わせる方法は有効だ。
+ 以下のようにコマンドを実行することで、指定したネットワーク内のIPアドレスにpingを実行し続け、arpテーブルに記録していく。
+for /l %i in (0,1,255) do ping -w 1 -n 1 192.168.0.%i && arp -a 192.168.0.%i
+後は、「arp -a」コマンドを実行して現在利用されているIPアドレスを確認するだけだ。

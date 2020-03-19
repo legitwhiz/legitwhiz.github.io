@@ -1,0 +1,36 @@
+
+sudo a2enmod proxy proxy_http proxy_connect
+
+sudo vi /etc/apache2/mods-available/proxy.conf
+
+
+# 13-19行目：以下のようにコメント解除して変更
+ProxyRequests On
+# 追記
+ProxyVia On
+AllowCONNECT 80 443
+<Proxy *>
+    AddDefaultCharset off
+    Require all denied
+    Require local
+    # アクセス許可範囲追記
+    Require ip 192.168
+</Proxy>
+
+
+sudo vi /etc/apache2/ports.conf
+
+<IfModule mod_proxy.c>
+        Listen 8080
+</IfModule>
+
+systemctl restart apache2
+
+sudo vi /etc/hosts
+
+192.168.x.x domainname
+
+そして、routerに8080を通す設定を追加。
+
+and、スマホのwifi詳細設定にproxy設定を追加するとwifi接続した時だけproxy接続されるようになりました。
+

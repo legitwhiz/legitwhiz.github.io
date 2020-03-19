@@ -1,0 +1,47 @@
+
+■確認コマンド
+・筐体名確認
+#lssyscfg -r sys -F name
+
+・筐体設定確認
+#lssyscfg -r sys
+
+・LPAR名確認
+#for i in `lssyscfg -r lpar -r sys -F name`
+do
+ lssyscfg -r lpar -m $i -F name
+done
+
+・LPAR設定確認
+#for i in `lssyscfg -r sys -F name`
+do
+ lssyscfg -r lpar -m $i
+done
+
+・プロファイル名確認
+#for b in `lssyscfg -r sys -F name`
+do
+ for i in `lssyscfg -r lpar -m $b -F name`
+ do
+ lssyscfg -r prof -m $b --filter ""lparname=$i"" -F name
+ done
+done
+
+・プロファイル設定確認
+#for b in `lssyscfg -r sys -F name`
+do
+ for i in `lssyscfg -r lpar -m $b -F name`
+ do
+ lssyscfg -r prof -m $b --filter ""lparname=$i""
+ done
+done
+
+
+HMC起動方法
+chsysstate -m <筐体名> -r lpar -o on -n <LPAR名> -f <プロファイル名>
+
+lssyscfg -r lpar -m <筐体名> -F name,state
+
+
+
+

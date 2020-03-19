@@ -1,0 +1,12 @@
+仕事効率化(働き方改革)1
+
+勤怠用イベントログ抽出(windows7)
+
+eventlog.ps1
+
+Get-WinEvent System -filterxpath "*[System[Provider[@Name='EventLog'] and (EventID='6005' or EventID='6006')]]" -maxevents 10
+
+このスクリプトのショートカットを作成しリンク先の先頭に
+powershell -nowait
+を挿入して、スタートアップに移動すれば
+勤怠に必要な出勤時間と退社時間は一目瞭然です。

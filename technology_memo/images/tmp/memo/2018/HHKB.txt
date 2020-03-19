@@ -1,0 +1,70 @@
+HHKB
+
+Econlineshop　LENOVO THINKPAD T450S T440 T440S T440P トラック タッチパッド　T440TCH
+
+
+ユニーク ワイヤレス2.4G リモコン型トラックボールマウス Livina ブラック ML001GB
+
+TP500
+
+LogiCool T650(黒) T651(白)
+幅134 mm  奥行き129 mm  高さ8.7 - 12 mm 
+
+
+
+キーボードの筐体はBlenderで作ったので、
+Blenderを使ってモデリング
+→DMM3Dプリントに発注する
+という流れを説明したいと思います。
+
+┌──■─■─■─■─────■─■─■─■──┐
+│   home PgUp  ←    ↑                  ↓   →  PgDn   end    │
+│     ■    ■     ■    ■                         ■    ■    ■   ■      │   
+│ Enter CtrlC CtrlV CtrlX                   F2    F7   F10  右c   │
+│                            ■    ●         ●     ●                              │              
+│            wheel   joystick          ㊧     ㊨                              │
+
+
+
+
+●ESP32 (ESP-WROOM-32)
+
+Espressif Systems社によって開発されたWiFi, Bluetoothが搭載されたワイヤレスモジュールです。
+1500～2000円程度で購入可能な開発ボードを使えば、PCとUSB接続するだけでESP32の開発ができます。
+
+秋月電子 ESP32-DevKitC ESP-WROOM-32開発ボード
+スイッチサイエンス ESPr® Developer 32
+
+ESP32モジュール単体だと、開発には別途USB-シリアル変換モジュールですが600～700円程度で購入可能です。
+
+秋月電子 700円
+スイッチサイエンス 700円
+マルツオンライン 640円
+
+
+●ESP32の開発環境
+
+ESP32の開発環境として、ESP-IDF, Arduino ESP32, Micropythonなどがあります。
+
+ESP-IDF
+提供されている開発環境の中でもESP32の機能を最大限利用することが出来る
+
+Arduino ESP32
+Arduinoライクな開発が可能
+ESP32用のArduinoライブラリが公開されていて便利
+
+Micropython
+Python 3.xで開発できる、らしい。
+
+
+●ESP-IDFでのBluetooth Low Energy (BLE) HIDデバイスとしての利用について
+
+Bluetooth Low Energy (BLE)はBluetooth 4.0以降のことであり、省電力を目的とした規格です。
+BLEでHIDデバイスとして振る舞うにはHOGP (HID-over-GATT Profile)と呼ばれるプロファイルを使う必要があります。
+
+これまでには、Bluekichen’sによって開発された外部のライブラリBTstackを使うことで
+ライブラリの導入が少し面倒ではありますが、Bluetoothキーボードやマウスとして振る舞うことが出来ていました。
+また過去にはBTstackを用いたHOGPのデモコードについて紹介しています。
+
+
+

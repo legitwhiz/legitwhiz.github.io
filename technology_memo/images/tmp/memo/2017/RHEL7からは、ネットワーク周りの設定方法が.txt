@@ -1,0 +1,263 @@
+RHEL7からは、ネットワーク周りの設定方法が
+RHEL6と比較するとかなり変わってきています。
+
+
+RHEL6までは/etc/sysconfig/network-scripts配下の
+ifcfg-eth*ファイルを直接編集することで
+設定を変更することが可能であり、
+RHEL7でも継続して同様な方法で変更可能なのですが、
+RedHatではNetworkManagerに付属する
+「nmtui」と「nmcli」コマンドを使用した
+変更方法が推奨されています。
+
+「nmtui」と「nmcli」コマンドとなぜ２つ用意されているのかと
+「nmtui」は、メニュー方式で簡易で「nmcli」は、コマンド形式で
+ネットワーク設定が可能です。
+
+
+●「nmtui」
+「nmtui」は、以前の
+system-config-networkの
+代替となるコマンドです。
+
+「nmtui」を実行するとメニュー形式で
+ネットワーク周りの変更を実施することが可能です。
+
+設定を有効にするためには、
+以下のコマンドを実行することで
+変更が有効となります。
+
+# systemctl restart NetworkManager
+
+●「nmcli」
+設定変更をコマンドベースで実施することが可能です。
+まず、以下のコマンドでデバイス(ethernet)の
+一覧を以下のコマンドで取得します。
+
+# nmcli device
+デバイス    タイプ    状態      接続
+virbr0      bridge    接続済み  virbr0
+ens33       ethernet  接続済み  eth0
+lo          loopback  管理無し  --
+virbr0-nic  tun       管理無し  --
+
+特定のデバイスの状態を確認するには
+以下コマンドを実行。
+
+# nmcli device show ens33
+GENERAL.デバイス:                       ens33
+GENERAL.タイプ:                         ethernet
+GENERAL.ハードウェアアドレス:           00:0C:29:52:C0:C6
+GENERAL.MTU:                            1500
+GENERAL.状態:                           100 (接続済み)
+GENERAL.接続:                           eth0
+GENERAL.CON パス:                       /org/freedesktop/NetworkManager/ActiveConnection/3
+WIRED-PROPERTIES.キャリア:              オン
+IP4.アドレス[1]:                        192.168.109.128/24
+IP4.ゲートウェイ:                       192.168.109.2
+IP4.DNS[1]:                             192.168.109.2
+IP4.ドメイン[1]:                        localdomain
+IP6.アドレス[1]:                        fe80::20c:29ff:fe52:c0c6/64
+IP6.ゲートウェイ:
+
+nmcli deviceよりも詳細な
+インターフェイス接続の
+詳細情報を得るには
+showオプションを実行。
+
+# nmcli connection show eth0
+connection.id:                          eth0
+connection.uuid:                        15f03ecd-42c9-4cf6-89ec-6da8d0e08ce9
+connection.interface-name:              ens33
+connection.type:                        802-3-ethernet
+connection.autoconnect:                 yes
+connection.autoconnect-priority:        0
+connection.read-only:                   no
+connection.permissions:
+connection.master:                      --
+connection.slave-type:                  --
+connection.autoconnect-slaves:          -1 (default)
+connection.secondaries:
+connection.gateway-ping-timeout:        0
+connection.metered:                     不明
+802-3-ethernet.port:                    --
+802-3-ethernet.speed:                   0
+802-3-ethernet.duplex:                  --
+802-3-ethernet.auto-negotiate:          yes
+802-3-ethernet.mtu:                     自動
+ipv4.method:                            auto
+ipv4.dns:
+ipv4.dns-search:
+ipv4.dns-options:                       (デフォルト)
+ipv4.dns-priority:                      0
+ipv4.addresses:
+ipv4.gateway:                           --
+ipv4.routes:
+ipv4.route-metric:                      -1
+ipv4.ignore-auto-routes:                no
+ipv4.ignore-auto-dns:                   no
+ipv4.dhcp-client-id:                    --
+ipv4.dhcp-timeout:                      0
+ipv4.dhcp-send-hostname:                yes
+ipv4.dhcp-hostname:                     --
+ipv4.dhcp-fqdn:                         --
+ipv4.never-default:                     no
+ipv4.may-fail:                          yes
+ipv4.dad-timeout:                       -1 (default)
+GENERAL.名前:                           eth0
+GENERAL.UUID:                           15f03ecd-42c9-4cf6-89ec-6da8d0e08ce9
+GENERAL.デバイス:                       ens33
+GENERAL.状態:                           アクティベート済み
+GENERAL.デフォルト:                     はい
+IP4.アドレス[1]:                        192.168.109.128/24
+IP4.ゲートウェイ:                       192.168.109.2
+IP4.DNS[1]:                             192.168.109.2
+IP4.ドメイン[1]:                        localdomain
+
+手動でインターフェイスを
+Active/Deactiveに設定するには
+以下のコマンドを実行。
+
+インターフェイスをActive化
+# nmcli connection up ens33
+
+インターフェイスをDeactive化 
+# nmcli connection down ens33
+
+ただし、接続が切断されると
+インターフェイスは 「手動」 モードになるので、
+以下コマンドが推奨されます。
+
+# nmcli dev disconnect iface ens33
+
+ネットワークパラメータを
+修正したい場合の一例を下記に示します。
+
+IPアドレスを192.168.0.10, GWを192.168.0.1に変更
+# nmcli connection modify ens33 ipv4.addresses "192.168.0.10/24 192.168.0.1"
+
+DNSサーバを192.168.0.1と2に変更
+# nmcli connection modify ens33 ipv4.dns "192.168.0.1 192.168.0.2"
+
+StaticRouteの追加
+# nmcli connection modify ens33 ipv4.routes "192.168.17.0/24 192.168.0.1"
+
+以下のコマンドを実施後、有効となる。
+# systemctl restart NetworkManager
+
+RHEL6までは、ネットワーク周りのコマンドとして
+ifconfig / netstat / arp / routeなどの
+コマンドが使用されていましたが、
+RHEL7からはこれらは非奨励となりました。
+
+今後はiproute2というパッケージに
+付属しているコマンド群を使用することが
+奨励されています。
+
+但し、一部は上記のnmcliと重複しているものも
+ありますので好みで使い分ければ良いと思われます。
+
+   以前までのコマンドの対比表
+┌────┬──────────┐
+│RHEL6   │RHEL7               │
+├────┼──────────┤
+│ifconfig│ip addr , ip -s link│
+├────┼──────────┤
+│route   │ip route            │
+├────┼──────────┤
+│arp     │ip eigh             │
+├────┼──────────┤
+│netstat │ss                  │
+└────┴──────────┘
+
+ifconfigでIPを確認する方法は、
+以下のコマンドに置き換えられます。
+
+※実行している内容は
+[ip addr show]なのですが
+コマンドを省略することが
+出来るようになってます。
+
+# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 00:0c:29:52:c0:c6 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.109.128/24 brd 192.168.109.255 scope global dynamic ens33
+       valid_lft 1407sec preferred_lft 1407sec
+    inet6 fe80::20c:29ff:fe52:c0c6/64 scope link
+       valid_lft forever preferred_lft forever
+
+デバイスごとの処理パケット数の
+統計値を表すコマンド。
+※実行している内容は[ip -s link]です。
+
+# ip -s l
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    0          0        0       0       0       0
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT qlen 1000
+    link/ether 00:0c:29:52:c0:c6 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    239433     2788     0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    272599     860      0       0       0       0
+
+
+netstat -nrに相当する
+ルーティングテーブルを
+表示するコマンド。
+※実行している内容は[ip route]です。
+# ip r
+default via 192.168.109.2 dev ens33  proto static  metric 100
+192.168.109.0/24 dev ens33  proto kernel  scope link  src 192.168.109.128  metric 100
+
+arpコマンドの代替となるのが
+以下のコマンド。
+※実行している内容は[ip neigh]です。
+
+# ip n
+192.168.109.2 dev ens33 lladdr 00:50:56:ed:ea:5c STALE
+192.168.109.1 dev ens33 lladdr 00:50:56:c0:00:08 DELAY
+192.168.109.254 dev ens33 lladdr 00:50:56:f6:a2:3a STALE
+
+サービスが稼働しているか一覧表示するコマンドが下記です。
+コマンドのバグで左端には全てTCPと表示されておりますが、
+StateのところがUNCONNとなっているのがUDP、
+LISTENとなっているところがTCPです。
+
+# ss -ltu
+Netid  State      Recv-Q Send-Q Local Address:Port    Peer Address:Port
+udp    UNCONN     0      0       *:55810                 *:*
+udp    UNCONN     0      0       *:33284                 *:*
+udp    UNCONN     0      0       *:passwd_server         *:*
+udp    UNCONN     0      0       *:mdns                  *:*
+udp    UNCONN     0      0      192.168.122.1:domain     *:*
+udp    UNCONN     0      0       *:bootpc                *:*
+udp    UNCONN     0      0       *:sunrpc                *:*
+udp    UNCONN     0      0      :::passwd_server        :::*
+udp    UNCONN     0      0      :::sunrpc               :::*
+udp    UNCONN     0      0      :::39085                :::*
+tcp    LISTEN     0      128     *:sunrpc                *:*
+tcp    LISTEN     0      5      192.168.122.1:domain     *:*
+tcp    LISTEN     0      128     *:ssh                   *:*
+tcp    LISTEN     0      128    127.0.0.1:ipp            *:*
+tcp    LISTEN     0      100    127.0.0.1:smtp           *:*
+tcp    LISTEN     0      128    :::sunrpc               :::*
+tcp    LISTEN     0      128    :::ssh                  :::*
+tcp    LISTEN     0      128       ::1:ipp              :::*
+tcp    LISTEN     0      100       ::1:smtp             :::*
+
+既に通信が確立したもの ( established ) 
+だけを表示したい場合は以下コマンド。
+
+# ss -tu
+Netid  State      Recv-Q Send-Q Local Address:Port         Peer Address:Port
+tcp    ESTAB      0      96     192.168.109.128:ssh      192.168.109.1:49653

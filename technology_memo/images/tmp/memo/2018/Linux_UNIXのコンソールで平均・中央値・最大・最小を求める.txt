@@ -1,0 +1,109 @@
+Linux_UNIXのコンソールで平均・中央値・最大・最小を求める
+
+仕事で見積もりを作る際、ファイルサイズの統計(平均や中央値)が欲しかったので少し調べてみた。
+で、いくつかの手法があることがわかったので、備忘として残しておく。
+
+1.awkで計算する
+
+まずは、一番準備が手軽なawkでの計算方法。
+ 基本、どのUNIX系OSでも入ってるので、とりあえずはすぐ使えるだろう(Macとかの場合はgawkにしたほうが良いけど)。
+以下、項目別に出すコマンドを書いてみる。
+
+●平均
+awk '{x++;sum+=$1}END {print sum/x}'
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | awk '{x++;sum+=$1}END {print sum/x}'
+2645.75
+
+●中央値(ソートが必要)
+awk '{v[i++]=$1;}END {x=int((i+1)/2); if(x&amp;amp;amp;lt;(i+1)/2) print (v[x-1]+v[x])/2; else print v[x-1];}'
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" |sort -n | awk '{v[i++]=$1;}END {x=int((i+1)/2); if(x<(i+1)/2) print (v[x-1]+v[x])/2; else print v[x-1];}'
+352.5
+
+●最頻値
+awk '{col=$1}{{b[col]++}if(b[col]&amp;gt;hf){hf=b[col]}}END{for (i in b){if(b[i]==hf){(k=="")? (k=i):(k=k FS i)}{FS=","}}print&amp;nbsp;k}'
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root ! -size 0 -type f -printf "%sn" | awk '{col=$1}{{b[col]++}if(b[col]>hf){hf=b[col]}}END{for (i in b){if(b[i]==hf){(k=="") ? (k=i):(k=k FS i)}{FS=","}}print  k}'
+184
+
+●最大・最小値
+awk '{if(min==""){min=max=$1};if($1&amp;amp;amp;gt;max){max=$1};if($1&amp;amp;amp;lt; min){min=$1};} END {print min, max}'
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | awk '{if(min==""){min=max=$1};if($1>max){max=$1};if($1< min){min=$1};} END {print "min:"min,"nmax:" max}'
+min:0
+max:57828
+
+###############################################################################
+2.stコマンドで取得する
+以前、こちらでも紹介したstコマンドを用いた場合。(stコマンドはRHEL7より)
+ 統計用のコマンドなので、awkよりは簡単に結果を求める事が出来る。
+
+●基本
+st ファイルPATH
+
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | st
+N       min     max     sum     mean    stddev
+60      0       57828   158745  2645.75 8064.21
+
+●平均
+st --mean ファイルPATH
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | st --mean
+2645.75
+
+●中央値
+st --median ファイルPATH
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | st --median
+352.5
+
+●最大・最小値
+st --max --min ファイルPATH
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | st --max --min
+min     max
+0       57828
+
+###############################################################################
+3.R言語を用いる
+統計用の言語であるR言語でターミナル上で処理を行う事で、統計情報を取得する。
+
+●サマリー
+コマンド | xargs Rscript -e 'summary(as.numeric(commandArgs(TRUE)))'
+ 
+[root@BS-PUB-CENT7-01 ~]# find -type f -printf "%sn" | xargs Rscript -e 'summary(as.numeric(commandArgs(TRUE)))'
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+    0.0   100.8   352.5  2879.0  1405.0 57830.0
+
+●平均
+コマンド | xargs Rscript -e 'mean(as.numeric(commandArgs(TRUE)))'
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | xargs Rscript -e 'mean(as.numeric(commandArgs(TRUE)))'
+[1] 2832.197
+
+●中央値
+コマンド | xargs Rscript -e 'median(as.numeric(commandArgs(TRUE)))'
+ 
+[root@BS-PUB-CENT7-01 ~]# find /root -type f -printf "%sn" | xargs Rscript -e 'median(as.numeric(commandArgs(TRUE)))'
+[1] 342
+
+●最頻値
+コマンド | xargs Rscript -e 'names(which.max(table(as.numeric(commandArgs(TRUE)))))'
+ 
+[root@BS-PUB-CENT7-01 ~]# find -type f ! -size 0 -printf "%sn" | xargs Rscript -e 'names(which.max(table(as.numeric(commandArgs(TRUE)))))'
+[1] "184"
+
+●最大値
+コマンド | xargs Rscript -e 'max(as.numeric(commandArgs(TRUE)))'
+ 
+[root@BS-PUB-CENT7-01 ~]# find -type f ! -size 0 -printf "%sn" | xargs Rscript -e 'max(as.numeric(commandArgs(TRUE)))'
+[1] 57828
+
+●最小値
+コマンド | xargs Rscript -e 'min(as.numeric(commandArgs(TRUE)))'
+ 
+[root@BS-PUB-CENT7-01 ~]# find -type f ! -size 0 -printf "%sn" | xargs Rscript -e 'min(as.numeric(commandArgs(TRUE)))'
+[1] 18
+
+今後使うことがあるかわからないけど、とりあえずまた何かあったら役に立つだろう。

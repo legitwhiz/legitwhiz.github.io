@@ -1,0 +1,91 @@
+■AWS認定ソリューションアソシエイト
+
+
+・AWS Technical Essentials 1、および 2 を受講いただくことを強く推奨いたします。本コース受講レベルに達しているか、こちらの問題を解いて確認できます。
+
+http://media.amazonwebservices.com/jp/certification/selfassessment_architecting_ilt_external_010722_v3.2_updated.pdf
+
+・Architecting on AWS
+https://aws.amazon.com/jp/training/course-descriptions/architect/
+
+
+●2017/10
+1.受験要綱の確認
+AWS認定ソリューションアーキテクト アソシエイトから「試験ガイドのダウンロード」ができます。ここを読みます。
+
+2.AWS クラウドサービス活用資料集の「AWS認定試験準備に向けて」という部分を読む
+AWS認定試験準備に向けて
+AWS公式で、受験に向けてどのようなことをすればよいか公開されています。
+
+・合格対策 AWS認定ソリューションアーキテクト - アソシエイト
+https://www.amazon.co.jp/dp/486594043X?tag=qiitak-22
+
+10/18 1回目 読破
+
+●2017/11～12   
+・AWS WEB問題集で学習しよう
+https://aws.koiwaclub.com/
+
+・Amazon Web Services実践入門 (WEB+DB PRESS plus)
+https://www.amazon.co.jp/dp/4774176737?tag=qiitak-22
+
+・Amazon Web Services クラウドデザインパターン設計ガイド　改訂版
+https://www.amazon.co.jp/dp/4822277372
+
+●2018/1～2
+・AWS 認定試験準備ワークショップ: AWS 認定ソリューションアーキテクト – アソシエイト
+https://aws.amazon.com/jp/training/course-descriptions/exam-workshop-solutions-architect-associate/
+
+・AWS クラウドサービス活用資料集
+https://aws.amazon.com/jp/aws-jp-introduction/
+
+2018/3～4
+・AWS ホワイトペーパー
+https://aws.amazon.com/jp/whitepapers/
+
+・Architecting on AWS
+https://aws.amazon.com/jp/training/course-descriptions/architect/
+
+・模擬試験
+
+・本試験
+
+
+2018/5～6
+
+
+2018/7～8
+
+
+2018/9～10
+
+
+2018/11～12
+
+
+
+2018/04 Ubuntu18.04
+サーバリプレース
+DQ67OW
+リモート管理
+ASUS SABERTOOTH X99
+
+
+5/8『ヨシダ ナギ -HEROES- 写真展』
+4/25 加山又造展『Re:又造』
+
+「未来予測の技法」
+「図解 モチベーション大百科」
+
+
+Nulbarich（ナルバリッチ）の2ndアルバム『H.O.T』
+
+
+富士山世界遺産センター
+東京ステーションギャラリー(隅研吾)
+ヨコハマトリエンナーレ
+moa美術館
+クレマチスの丘
+ヨシダナギ
+
+非機能要求グレード(2018)

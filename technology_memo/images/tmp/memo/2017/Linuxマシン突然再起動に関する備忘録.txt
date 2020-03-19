@@ -1,0 +1,43 @@
+Linuxマシン突然再起動に関する備忘録
+
+Linuxマシンが予期せぬタイミングで再起動したとしたら、どんな原因が想定されるだろうか。あまり多くの有力事例は見当たらないが、切り分け参考のために集めた情報の備忘録。
+ 切り分けの確認として、基本は/var/log/messagesをみる、他にはcron、last、secureログも、かな。/var/log/messagesを確認しても異常を示す表示はなかった、という事例もあるようだが。
+http://mlog.euqset.org/archives/vine-users/072858.html
+ちなみに、マシンの電源が突然切れたかどうかを確認したかったら。正常な電源断時のメッセージは/var/log/messagesにキレイに吐かれてるので、そこを手がかりに判定可能。
+http://q.hatena.ne.jp/1193893387
+「エラーの瞬間のプロセスが不運だとログ書かない」らしい。
+ 特にハードが原因の場合。ドライバなどソフトウェアが問題の場合はログやCoreなど手がかりになるものが残ることが多い、とか。以下、ちょっと参考になる元ネタ。
+http://mlog.euqset.org/archives/linux-users/103782.html
+
+●カーネルパニックについて
+ カーネルパニックはOS内部の問題と思っていたが、メモリ不良やCPU高負荷時に頻発、ソフトウェアよりハード原因で発生することが多い気がする、といった意見もある。カーネルパニックが発生した場合、デフォルトではそのまま操作待ちの状態で待機するようになっている。カーネルパニックが起きた際に自動的に再起動させるには、以下のようにしておく。
+
+カーネルパニックが起きたら5秒後に自動的に再起動をさせる例
+# echo 5 > /proc/sys/kernel/panic
+
+が、これだと再起動後にデフォルトに戻ってしまうので、恒久的に設定するには/etc/sysctl.confに記述しておく。
+
+# vi etc/sysctl.conf
+以下のように記述
+kernel.panic = 5
+設定の反映
+# sysctl -p
+設定の確認
+# sysctl kernel.panic
+ kernel.panic = 5 
+
+自動再起動時のメール通知、なんか設定しておくとスマートかもしれない。以下cronにて、再起動されたタイミングで「dmesg」コマンドの出力結果と直近の/var/log/messages100行分のログをadmin@example.co.jp宛に通知する指定。
+
+# crontab -e
+ @reboot (dmesg ; tail -100 /var/log/messages)|
+ Mail -s “`hostname` rebooted” admin@example.co.jp
+※実際は1行
+
+●参考URL
+http://www.itmedia.co.jp/help/tips/linux/l0140.html
+http://www.itmedia.co.jp/help/tips/linux/l0486.html
+http://aozorlinux.exblog.jp/9365765/
+カーネルパニック発生時にCoreを吐かせるかどうかも、設定してやらないといけないみたいだ。これについては別途。
+
+●結論
+ 大雑把な切り分けとして、/var/log/messagesその他ログやコアダンプ出力があるかの確認、cronが変なことになってないか、侵入形跡の確認、そこに手がかりがなかったらハード起因（まれにネットワーク周り）を疑ってみる、ってところだろうか???

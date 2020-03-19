@@ -1,0 +1,125 @@
+mkdir -m 777 /home/radmin/20181017
+rpm -qa | grep zabbix
+rpm -Uvh /home/radmin/zabbix-agent-3.0.22-1.el7.x86_64.rpm
+rpm -qa | grep zabbix
+
+mkdir /log/zabbix
+touch /log/zabbix/zabbix_agentd.log
+chmod 644 /log/zabbix/zabbix_agentd.log
+chown zabbix:zabbix /log/zabbix/zabbix_agentd.log
+ls -ld /log/zabbix/
+ls -l /log/zabbix/zabbix_agentd.log
+
+cp -p /etc/logrotate.d/zabbix-agent /home/radmin/20181017/logrotate.d_zabbix-agent_20181017
+ls -l /etc/logrotate.d/zabbix-agent /home/radmin/20181017/logrotate.d_zabbix-agent_20181017
+vi /etc/logrotate.d/zabbix-agent
+
+/log/zabbix/zabbix_agentd.log {
+    missingok
+    daily
+    ifempty
+    copytruncate
+    olddir /log/zabbix
+    sharedscripts
+    delaycompress
+    su zabbix zabbix
+    postrotate
+
+        #
+        # Env. Variables
+        #
+        SaveDays=365
+        OldDir=/log/zabbix
+        ArcDir=/log/arclog
+        ServiceName=zabbix
+
+
+        # set delete date
+        Month=`date -d ""yesterday"" +%m`
+        Day=`date -d ""yesterday"" +%d`
+        
+                # set delete date
+        MonthOld=`date -d "" ${SaveDays} days ago"" +%m`
+        DayOld=`date -d "" ${SaveDays} days ago"" +%d`
+
+
+        #
+        # Make Archive Directory
+        #
+        if [ ! -d ${ArcDir}/${Month}/${Day}/${ServiceName} ]
+        then
+            mkdir -p ${ArcDir}/${Month}/${Day}/${ServiceName}
+        fi
+
+        #
+        # Compress & Move
+        #
+        Today=`date +%Y%m%d`
+        for f in $(ls ${OldDir} | grep ${Today});
+            do
+                FileName=`echo $f | sed ""s/-${Today}//"" | sed ""s#${OldDir}/##""`
+                mv ${OldDir}/${FileName}-${Today} ${ArcDir}/${Month}/${Day}/${ServiceName}/${FileName}${Month}${Day}
+                compress ${ArcDir}/${Month}/${Day}/${ServiceName}/${FileName}${Month}${Day}
+            done
+
+
+        #
+        # Delete Old Archive
+        #
+        if [ -d ${ArcDir}/${MonthOld}/${DayOld}/${ServiceName} ] ; then
+            rm -rf ${ArcDir}/${MonthOld}/${DayOld}/${ServiceName}
+        fi
+
+
+    endscript
+}
+
+diff /etc/logrotate.d/zabbix-agent /home/radmin/20181017/logrotate.d_zabbix-agent_20181017
+cp -p /etc/zabbix/zabbix_agentd.conf /home/radmin/20181017/zabbix_agentd.conf_20181017
+ls -l /etc/zabbix/zabbix_agentd.conf /home/radmin/20181017/zabbix_agentd.conf_20181017
+
+vi /etc/zabbix/zabbix_agentd.conf
+
+LogFile=/log/zabbix/zabbix_agentd.log
+Server=192.168.1.37
+ServerActive=192.168.1.37
+Hostname=
+UserParameter=ldap.connect,/usr/bin/netstat -an | grep .389 | grep ESTAB | wc -l
+diff /etc/zabbix/zabbix_agentd.conf /home/radmin/20181017/zabbix_agentd.conf_20181017
+
+nmcli device show
+
+cp -p /etc/firewalld/zones/ens192.xml /home/radmin/20181017/ens192.xml_20181017
+cp -p /etc/firewalld/zones/ens224.xml /home/radmin/20181017/ens224.xml_20181017
+cp -p /etc/firewalld/zones/public.xml /home/radmin/20181017/public.xml_20181017
+
+ls -l /etc/firewalld/zones/ens192.xml /home/radmin/20181017/ens192.xml_20181017
+ls -l /etc/firewalld/zones/ens224.xml /home/radmin/20181017/ens224.xml_20181017
+ls -l /etc/firewalld/zones/public.xml /home/radmin/20181017/public.xml_20181017
+
+firewall-cmd --list-all --zone=ens224
+
+firewall-cmd --add-port=10050/tcp --zone=ens224 --permanent
+firewall-cmd --add-port=10051/tcp --zone=ens224 --permanent
+firewall-cmd --reload
+firewall-cmd --list-all --zone=ens224
+
+ls -l /etc/firewalld/zones/ens192.xml /home/radmin/20181017/ens192.xml_20181017
+ls -l /etc/firewalld/zones/ens224.xml /home/radmin/20181017/ens224.xml_20181017
+ls -l /etc/firewalld/zones/public.xml /home/radmin/20181017/public.xml_20181017
+
+diff /etc/firewalld/zones/ens192.xml /home/radmin/20181017/ens192.xml_20181017
+diff /etc/firewalld/zones/ens224.xml /home/radmin/20181017/ens224.xml_20181017
+diff /etc/firewalld/zones/public.xml /home/radmin/20181017/public.xml_20181017
+
+systemctl status zabbix-agent
+systemctl start zabbix-agent
+systemctl enable zabbix-agent
+systemctl is-enabled zabbix-agent
+
+firewall-cmd --list-all --zone=ens224
+view /log/zabbix/zabbix_agentd.log
+
+
+
+

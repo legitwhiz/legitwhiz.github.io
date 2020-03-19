@@ -1,0 +1,35 @@
+
+UbuntuでEUC-JPを使用する
+
+UbuntuでEUC-Jを使用しようと思い確認すると標準では入ってない！？
+
+$ locale -a | grep EUC
+
+EUC-JP
+
+現在使用できるロケールを確認
+$ cat /var/lib/locales/supported.d/local
+ja_JP.UTF-8 UTF-8
+en_US.UTF-8 UTF-8
+
+locale-genで使用可能なロケールは/usr/share/i18n/SUPPORTEDに格納してあるので確認
+locale-genでja_JP.EUC-JPが使用可能なことを確認し
+
+$ grep -i 'ja' /usr/share/i18n/SUPPORTED
+ja_JP.UTF-8 UTF-8
+ja_JP.EUC-JP EUC-JP
+
+
+ja_JP.EUC-JP EUCを/var/lib/locales/supported.d/localに追加
+
+$ sudo vi /var/lib/locales/supported.d/local
+
+ja_JP.EUC-JP EUC-JPを追加
+
+locale-genで反映
+
+$ sudo locale-gen ja_JP.EUC-JP
+Generating locales...
+ ja_JP.EUC-JP... done
+Generation complete.
+

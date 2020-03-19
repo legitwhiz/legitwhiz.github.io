@@ -1,0 +1,30 @@
+How to disable telnet in AIX(default enable)
+
+By default the TELNET service is enabled in AIX (6.1 and 7.1) and the SSH service is not installed, but if you already installed the SSH service, then you can to disable the TELNET service following the steps below:
+
+Open the file /etc/inetd.conf:
+
+#vi /etc/inetd.conf
+
+Comment out the line below to disable telnet service:
+
+#telnet  stream  tcp6    nowait  root    /usr/sbin/telnetd      telnetd -a
+
+Save it and reload inetd:
+
+#refresh -s inetd
+
+起動
+# startsrc  -t telnet
+
+停止
+# stopsrc  -t telnet
+
+強制停止
+# stopsrc -f -t telnet  
+
+サービス状態
+# lssrc -t telnet
+
+
+

@@ -1,0 +1,25 @@
+●RHEL5
+CUIモードに切替え Ctrl+Alt+F1からF6
+GUIモードに切替え Ctrl+Alt+F7
+
+●RHEL6
+システムコンソールの切り替え
+Ctrl + Alt + F1 が X Window になってます。コンソールでテキストログインしたい時は、Ctrl + Alt + F2 0 F6 を使います。
+
+●RHEL7
+Ctrl + Alt + F1 が X Window になってます。コンソールでテキストログインしたい時は、Ctrl + Alt + F2 0 F6 を使います。
+
+●AIX
+X を起動したあとでもテキスト端末に切替えられる。 /etc/ttys で定義されているぶんだけ、 Ctl-Alt-Fx キーの組合せで、切り替わる (最初のテキスト端末(ttyv0)に戻るには Ctl-Alt-F1、 ２番目のテキスト端末(ttyv1)に戻るならば Ctl-Alt-F2)。 
+
+テキスト端末から最初の X に切り戻すには、Alt-Fx キーを押す (tty が 4 つ定義されていれば、その次なので、Alt-F5)。 
+
+
+●HP-UX
+コンソールでCTRL キーとB キーを同時に押すと、常にMP に切り替わります。
+
+●Solaris
+仮想コンソール端末を切り替えるには、Alt + Ctrl + F# のホットキーの組み合わせを使用します。
+
+●FreeBSD
+Alt+F1, Alt+F2 から Alt+F8 までを、 別の仮想コンソールに切り替える

@@ -1,0 +1,436 @@
+yumリポジトリ設定ファイルの作成
+vi /etc/yum.repos.d/rhel-dvd.repo
+
+[rhel67-dvd]
+name=Red Hat Enterprise Linux 6.7 - x86_64 - DVD
+baseurl=file:///media/Server/
+enabled=0
+gpgcheck=0
+gpgkey=file:///media/RPM-GPG-KEY-redhat-release
+
+
+RHEL6.7 mount
+mount -o loop /dev/sr0 /media
+
+yum --disablerepo=* --enablerepo=rhel67-dvd list
+パッケージのインストール
+#yum --disablerepo=* --enablerepo=rhel67-dvd install <package name>
+
+yum --disablerepo=* --enablerepo=rhel67-dvd install compat-libstdc++-296
+yum --disablerepo=* --enablerepo=rhel67-dvd install compat-libstdc++-33
+yum --disablerepo=* --enablerepo=rhel67-dvd install lm_sensors
+yum --disablerepo=* --enablerepo=rhel67-dvd install gcc
+yum --disablerepo=* --enablerepo=rhel67-dvd install rpm-build
+yum --disablerepo=* --enablerepo=rhel67-dvd install redhat-rpm-config
+yum --disablerepo=* --enablerepo=rhel67-dvd install net-snmp
+yum --disablerepo=* --enablerepo=rhel67-dvd install libXrandr.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libXcursor.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libSM.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install fontconfig.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libXi.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libstdc++.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install zlib.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install kernel-headers
+yum --disablerepo=* --enablerepo=rhel67-dvd install kernel-devel
+yum --disablerepo=* --enablerepo=rhel67-dvd install expect
+
+###################################################
+vi /etc/modprobe.d/bonding.conf 
+
+alias bondN bonding
+
+lsmod | greo bonding
+vi /etc/sysconfig/network-scripts/ifcfg-bond0.conf
+DEVICE=bond0
+IPADDR=192.168.254.39
+NETMASK=255.255.255.0
+ONBOOT=yes
+BOOTPROTO=none
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100"
+
+
+vi /etc/sysconfig/network-scripts/ifcfg-bond1.conf
+
+###################################################
+yum --disablerepo=* --enablerepo=rhel67-dvd install binutils
+yum --disablerepo=* --enablerepo=rhel67-dvd install compat-libcap1
+yum --disablerepo=* --enablerepo=rhel67-dvd install compat-libstdc++-33.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install compat-libstdc++-33
+yum --disablerepo=* --enablerepo=rhel67-dvd install gcc
+yum --disablerepo=* --enablerepo=rhel67-dvd install gcc-c++
+yum --disablerepo=* --enablerepo=rhel67-dvd install glibc.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install glibc
+yum --disablerepo=* --enablerepo=rhel67-dvd install glibc-devel
+yum --disablerepo=* --enablerepo=rhel67-dvd install glibc-devel.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install ksh-20120801
+yum --disablerepo=* --enablerepo=rhel67-dvd install libgcc.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libgcc
+yum --disablerepo=* --enablerepo=rhel67-dvd install libstdc++.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libstdc++
+yum --disablerepo=* --enablerepo=rhel67-dvd install libstdc++-devel.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libstdc++-devel
+yum --disablerepo=* --enablerepo=rhel67-dvd install libaio.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libaio
+yum --disablerepo=* --enablerepo=rhel67-dvd install libaio-devel.i686
+yum --disablerepo=* --enablerepo=rhel67-dvd install libaio-devel
+yum --disablerepo=* --enablerepo=rhel67-dvd install make
+yum --disablerepo=* --enablerepo=rhel67-dvd install sysstat
+yum --disablerepo=* --enablerepo=rhel67-dvd install glibc-common
+yum --disablerepo=* --enablerepo=rhel67-dvd install glibc-headers
+yum --disablerepo=* --enablerepo=rhel67-dvd install kernel-firmware
+yum --disablerepo=* --enablerepo=rhel67-dvd install nss-softokn-freebl
+
+yum --disablerepo=* --enablerepo=rhel67-dvd install rpm-libs
+
+#NG rpm nasi
+yum --disablerepo=* --enablerepo=rhel67-dvd install kmod-oracleasm
+
+
+binutils-2.20.51.0.2-5.43.el6.x86_64.rpm(既に)
+compat-libcap1-1.10-1.x86_64.rpm
+compat-libstdc++-33-3.2.3-69.el6.i686.rpm
+compat-libstdc++-33-3.2.3-69.el6.x86_64.rpm
+gcc-4.4.7-16.el6.x86_64.rpm
+gcc-c++-4.4.7-4.el6.x86_64.rpm
+glibc-2.12-1.166.el6.i686.rpm
+glibc-2.12-1.166.el6.x86_64.rpm
+glibc-devel-2.12-1.166.el6.i686.rpm
+glibc-devel-2.12-1.166.el6.x86_64.rpm
+ksh-20120801-28.el6.x86_64.rpm
+libgcc-4.4.7-16.el6.i686.rpm
+libgcc-4.4.7-16.el6.x86_64.rpm
+libstdc++-4.4.7-16.el6.x86_64.rpm
+libstdc++-4.4.7-16.el6.i686.rpm
+libstdc++-devel-4.4.7-16.el6.i686.rpm
+libstdc++-devel-4.4.7-16.el6.x86_64.rpm
+libaio-0.3.107-10.el6.i686.rpm
+libaio-0.3.107-10.el6.x86_64.rpm
+libaio-devel-0.3.107-10.el6.i686.rpm
+libaio-devel-0.3.107-10.el6.x86_64.rpm
+make-3.81-20.el6.x86_64.rpm
+sysstat-9.0.4-27.el6.x86_64.rpm
+(依存関係パッケージ)
+glibc-common-2.12-1.166.el6.x86_64.rpm
+glibc-headers-2.12-1.166.el6_7.3.x86_64.rpm
+kernel-firmware-2.6.32-573.el6.noarch.rpm
+nss-softokn-freebl-3.14.3-22.el6_6.x
+kmod-oracleasm-2.0.8-5.el6_7.x86_64.rpm
+(依存関係パッケージ)
+rpm-libs-4.8.0-47.el6.x86_64.rpm
+
+
+
+ls -dl /opt/hp/hpsmh
+ls -al /opt/hp/hpsmh
+
+cat /etc/group
+
+cat /etc/passwd
+cat /etc/ntp.conf
+cat /boot/efi/EFI/redhat/grub.conf
+
+############################################
+/sbin/hpsnmpconfig
+
+
+############################################
+
+
+
+############################################
+RHEL Option
+############################################
+#Network Interface config
+ethtool eth0
+ethtool eth1
+ethtool eth2
+ethtool eth3
+
+
+#static route
+netstat -r
+vi /etc/sysconfig/network
+cat /etc/sysconfig/network
+
+#IPフォワーディング設定
+#初期設定0であることの確認
+cat /proc/sys/net/ipv4/ip_forward
+
+sysctl -a | grep ip_forward
+
+#FORWARD_IPV4=yesの記載がないことの確認
+cat /etc/sysconfig/network 
+
+
+#SNMPv1,v2c監視設定
+cat /etc/snmp/snmpd.conf
+cat /etc/snmp/snmptrapd.conf
+chkconfig --list | grep snmp
+
+
+#Linux詳細設定
+#ファイアウォール
+ls -l /etc/sysconfig/iptables
+chkconfig --list | grep iptables
+chkconfig iptables off
+iptables -L
+
+#SELinux
+cat /etc/sysconfig/selinux
+getenforce
+
+#Ctrl + Alt + Del キー
+vi /etc/init/control-alt-delete.conf
+　下記の行をコメントアウトする
+　#exec /sbin/shutdown -r now "Control-Alt-Delete pressed"
+
+cat /etc/init/control-alt-delete.conf
+
+#シングルユーザモード
+vi /etc/sysconfig/init
+
+SINGLE=/sbin/sushellを下記に修正
+SINGLE=/sbin/sulogin
+
+cat /etc/sysconfig/init
+
+#kdump出力先の設定
+cat /etc/kdump.conf
+chkconfig --list kdump
+
+
+#ブラックアウト防止
+vi /etc/rc.d/rc.local
+
+setterm -blank 0
+
+cat /etc/rc.d/rc.local
+
+#パッケージアップデート (yum)
+yum-config-manager --disable
+cat /etc/yum.conf
+
+#起動ランレベル
+vi /etc/inittab
+
+cat /etc/inittab
+
+
+#vsftpd設定(/etc/vsftpd/vsftpd.conf)
+cat /etc/vsftpd/vsftpd.conf
+
+#sshd設定 (/etc/ssh/sshd_config)
+cat /etc/ssh/sshd_config
+
+
+#rsyslog全体設定 (/etc/rsyslog.conf)
+vi /etc/rsyslog.conf
+
+cat /etc/rsyslog.conf
+
+#OS標準ログローテーション (/etc/logrotate.conf)
+cat /etc/logrotate.conf
+
+
+#syslog (/etc/logrotate.d/syslog)
+cat /etc/logrotate.d/syslog
+
+#アップデート導入したパッケージ
+mkdir -m 777 /tmp/RHEL6.7Errata/
+
+cp -p ./bash-4.1.2-33.el6_7.1.x86_64.rpm /tmp/RHEL6.7Errata/
+cp -p ./kernel-2.6.32-573.12.1.el6.x86_64.rpm /tmp/RHEL6.7Errata/
+cp -p ./kernel-firmware-2.6.32-573.12.1.el6.noarch.rpm /tmp/RHEL6.7Errata/
+cp -p ./kernel-headers-2.6.32-573.12.1.el6.x86_64.rpm /tmp/RHEL6.7Errata/
+cp -p ./ntp-4.2.6p5-5.el6_7.2.x86_64.rpm /tmp/RHEL6.7Errata/
+cp -p ./ntpdate-4.2.6p5-5.el6_7.2.x86_64.rpm /tmp/RHEL6.7Errata/
+cp -p ./perf-2.6.32-573.12.1.el6.x86_64.rpm /tmp/RHEL6.7Errata/
+cp -p ./dracut-004-388.el6.noarch.rpm /tmp/RHEL6.7Errata/
+cp -p ./dracut-kernel-004-388.el6.noarch.rpm /tmp/RHEL6.7Errata/
+cp -p ./kmod-oracleasm-2.0.8-5.el6_7.x86_64.rpm /tmp/RHEL6.7Errata/
+
+cd /tmp/RHEL6.7Errata/
+rpm -Fvh ./*
+
+rpm -qa | grep bash
+rpm -qa | grep kernel
+rpm -qa | grep ntp
+rpm -qa | grep perf
+rpm -qa | grep dracut
+rpm -qa | grep curl
+rpm -qa | grep libcurl
+
+rpm -Uvh ./perf-2.6.32-573.12.1.el6.x86_64.rpm
+
+rpm -ivh ./kmod-oracleasm-2.0.8-5.el6_7.x86_64.rpm
+
+
+#SELinux設定(/etc/sysconfig/selinux)
+cat /etc/sysconfig/selinux
+
+#hosts設定(/etc/hosts)
+cat /etc/hosts
+
+
+#レゾルバ設定(/etc/resolv.conf)
+#後日
+vi /etc/resolv.conf
+nameserver 133.217.206.107
+cat /etc/resolv.conf
+
+#名前解決の参照順序設定(/etc/nsswitch.conf)
+cat /etc/nsswitch.conf
+
+#NTP設定(/etc/ntp.conf)
+vi /etc/ntp.conf
+
+cat /etc/ntp.conf
+
+
+
+#NTP起動設定(/etc/sysconfig/ntpd)
+vi /etc/sysconfig/ntpd
+cat /etc/sysconfig/ntpd
+
+#TCPWrappers(許可)設定(/etc/hosts.allow)
+#後日
+cat /etc/hosts.allow
+
+#TCPWrappers(拒否)設定(/etc/hosts.deny)
+#後日
+cat /etc/hosts.deny
+
+#ランレベル共通実行スクリプト（/etc/rc.d/rc.local）
+vi /etc/rc.d/rc.local
+
+cat /etc/rc.d/rc.local
+
+
+#システム起動時の挙動指定定義設定（/etc/inittab）
+cat /etc/inittab
+
+#マウント設定(/etc/fstab)
+cat /etc/fstab
+
+#sendmail設定(/etc/mail/sendmail.mc)
+#後日
+cat /etc/mail/sendmail.mc
+
+
+#SMTP AUTH設定(/etc/mail/auth/client-info)
+#後日
+cat /etc/mail/auth/client-info
+
+#メール転送エージェント (MTA)設定
+alternatives --config mta
+
+
+#メール起動設定(/etc/sysconfig/snmpd）
+cat /etc/sysconfig/snmpd
+
+
+#aliases設定(/etc/aliases）
+#後日
+cat /etc/aliases
+
+
+#OSサービス起動設定
+
+chkconfig abrt-ccpp off
+chkconfig abrtd off
+chkconfig auditd off
+chkconfig bluetooth off
+chkconfig cpuspeed off
+chkconfig lm_sensors on
+chkconfig rhnsd off
+chkconfig rhsmcertd off
+chkconfig rpcbind off
+chkconfig snmpd on
+chkconfig vsftpd on
+
+chkconfig --list
+
+#xinetd詳細設定(tftp) (/etc/xinetd.d/tftp)
+
+
+vi /etc/xinetd.d/tftp
+
+cat /etc/xinetd.d/tftp
+/etc/init.d/xinetd restart
+
+chkconfig --list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,930 @@
+■yumによるパッケージ管理
+yum はUbuntuでいうapt-getみたいなものと説明すれば一番わかりやすいでしょう。
+Red Hat の頃はup2date というパッケージをアップグレードするコマンドがありましたが、Fedora Core からはyum に置き換わっています。
+手元にパッケージがなくても依存関係を考慮しながら即座にインストール/アンインストールすることができるのでLinux初心者でなくとも重宝するでしょう。
+
+■yumの設定ファイルについて
+yumには大きく分けて2つの設定ファイルがあります。
+yum全体の動作に影響する設定ファイルと、個別のリポジトリに影響する設定ファイルです。
+
+■yum全体の設定ファイル
+まずはyum全体に影響する設定ファイルについて解説します。
+ 設定ファイルは「/etc/yum.conf」にあります。実際の設定ファイルを例に解説を進めます。
+
+#------------------------------------------------------------------------------ 
+[main]
+cachedir=/var/cache/yum
+keepcache=0
+debuglevel=2
+logfile=/var/log/yum.log
+distroverpkg=redhat-release
+tolerant=1
+exactarch=1
+obsoletes=1
+gpgcheck=1
+plugins=1
+bugtracker_url=http://bugs.centos.org/yum5bug
+ 
+# Note: yum-RHN-plugin doesn't honor this.
+metadata_expire=1h
+ 
+ 
+# PUT YOUR REPOS HERE OR IN separate files named file.repo
+# in /etc/yum.repos.d
+installonly_limit = 3
+#------------------------------------------------------------------------------
+
+●1行目：[main]
+yum全体の設定を示す、mainセクション
+
+●2行目：cachedir=/var/cache/yum
+キャッシュファイルの保存場所。
+1度ダウンロードしたファイルをキャッシュとして保存する。パッケージだけでなく、各パッケージのファイルリストである「filelists.sqlite」や、ミラーサーバのリストなども保存されている。
+ 長期運用している場合はサイズが肥大化するため「yum clean」で定期的に削除する必要がある。
+
+●3行目：keepcache=0
+0の場合、インストールの成功後、ヘッダーとパッケージのキャッシュを保持しない。
+1の場合、ヘッダーとパッケージのキャッシュを保持。
+
+●4行目：debuglevel=2
+デバッグレベルを1から10までで指定します。0だと無効になり、結果しか表示されません。デフォルトは2です。
+
+●5行目：logfile=/var/log/yum.log
+ログファイルの保存場所。このログファイルを見ればどのパッケージを削除して、何をインストールしたのかわかるため、以前の環境に戻すことも簡単にできます。
+
+インストールした場合のログ
+Mar 11 08:45:57 Installed: php
+削除した場合のログ
+Mar 06 16:50:49 Erased: mysql
+
+●6行目：distroverpkg=redhat-release
+ディストリビュージョンを判断するための指定。ちなみにFedoraの場合はfedora-releaseとなる。
+
+●7行目：tolerant=1
+エラーへの耐性（処理を続けるかどうか）を指定するらしいが、現在では動作しないとの指摘もある。
+
+●8行目：exactarch=1
+0の場合、アップデート時にアーキテクチャを考慮しない。
+1の場合、「i386用」パッケージがインストールされている時、それより新しいバージョンの「x86_64用」がある場合でも更新しない。
+
+●9行目：obsoletes=1
+0の場合、obsoletes処理ロジックを無効にする。
+1の場合、obsoletes処理ロジックを有効にする。obsoletes処理とはパッケージに添付されたスペックファイルを元にファイルを削除する処理。
+ 例えばアップデートの際にパッケージ名やライブラリなどの構成が大幅に変更されて、依存関係が更新された場合、元々必要だったが現在のバージョンでは必要のないライブラリ等を削除する。
+
+●10行目：gpgcheck=1
+0の場合、全リポジトリのGPG署名確認（リポジトリが本物であるか確認する作業）を無効にする。
+1の場合、全リポジトリのGPG署名確認を有効にする。
+
+●11行目：plugins=1
+0の場合、全プラグインを無効。
+1の場合、全プラグインを有効。yumのプラグインは機能の根幹に影響するため、デバック目的以外では有効にすることが推奨されています。
+
+●12行目：bugtracker_url=http://bugs.centos.org/yum5bug
+詳細不明。（バグを報告するか、バグを表示する機能でしょうか？）
+
+●15行目：metadata_expire=1h
+リポジトリのメタデータを更新する頻度。
+デフォルトは1時間。
+
+●20行目：installonlypkgs=space separated list of packages
+インストールはするが、アップデートはしないパッケージを指定する。後述の「installonly_limit」と組み合わせて利用する。
+デフォルトではカーネル系に対して有効なっています。有効になっているパッケージの詳細はyum.conf(5)に解説があります。
+
+以下抜粋
+installonlypkgs List of package provides that should only ever
+              be installed, never updated.  Kernels in particular fall into
+              this category. Defaults to kernel, kernel-bigmem, kernel-
+              enterprise, kernel-smp, kernel-modules, kernel-debug, kernel-
+              unsupported, kernel-source, kernel-devel, kernel-PAE, kernel-
+              PAE-debug.
+
+installonly_limit=value
+「installonlypkgs」で指定したパッケージのバージョン違いをいくつまでインストールするか指定する。
+
+例えばカーネルなどシステム全体に影響が及ぶものは、前の世代のものを残してインストールする。という指定ができます。
+デフォルトは3です。つまり上の抜粋にあるカーネルなどは3世代分保存されます。
+このようにすることでカーネルアップデート時に問題が出た場合でも2世代分、戻ることができます。
+
+■上記の設定ファイルにはないが重要な項目
+●assumeyes=value
+0の場合、インストールやアンインストール時など重要な実行の前に確認をする。
+1の場合、全ての実行時に確認を行わない。「-y」オプションを付けた場合と同じ。
+
+●exclude=package_name [more_package_names]
+指定したパッケージを除外する。
+
+例えば特定の機能を有効にするためソースからコンパイルして特殊なインストールをしたパッケージなど、アップデート処理の対象外にしたい場合、このオプションで指定することでyum updateでのアップデートを無効にすることができる。
+
+指定にはワイルドカードを使える。「？」は任意の1文字、「*」は0文字以上の任意の文字列に一致する。複数指定する場合は半角スペースで区切る。
+[main] セクションで指定をするとyum全体に影響をします。
+
+例）カーネルの更新を無効にする。
+exclude=kernel*
+
+例）PHPとMySQLの更新を無効にする。
+exclude=php* mysql*
+
+●includepkgs=package_name [more_package_names]
+excludeの逆で有効にするパッケージを指定します。
+注意が必要なのが、この項目を追加したリポジトリは、指定したパッケージのみ有効になります。その他一切のパッケージは更新できなくなるので注意してください。
+
+特定のパッケージを更新するためだけに追加した外部リポジトリなどの場合に利用します。
+
+●groupremove_leaf_only=value
+0の場合、パッケージグループの削除時に依存関係を確認しない。デフォルトは0。
+1の場合、パッケージグループの削除時に依存関係を確認して、他のパッケージやグループに必要とされていないものだけ削除する。
+
+●multilib_policy=value
+valueにはbestとallがあります。
+bestは現在のシステムに最適なアーキテクチャを常に選択する。
+allはx86_64であってもi386のパッケージも利用可能であればインストールする。
+デフォルトはall。
+
+その他mainセクションに関するオプション（ディレクティブ）については「yum.conf(5)」をご覧ください。以下のコマンドで閲覧することができます。
+# man yum.conf
+
+#------------------------------------------------------------------------------
+■リポジトリ個別の設定ファイル
+上記全体の設定ファイルにコメントで解説がありましたが、個別のリポジトリの設定ファイルは「/etc/yum.repos.d」に「ファイルネーム.repo」という名前で保存されています。
+
+新しく外部リポジトリ（サードパティリポジトリ）を追加した場合の設定ファイルは全て「/etc/yum.repos.d」に保存されます。
+ここでは個別の設定ファイルで気をつけることを公式リポジトリの設定ファイルである「/etc/yum.repos.d/CentOS-Base.repo」を例に解説します。
+
+#------------------------------------------------------------------------------
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+ 
+（省略）
+#------------------------------------------------------------------------------
+
+●2行目、name=CentOS-$releasever   Base
+リポジトリの名前を指定します。確認したい場合は「yum repolist」とコマンドを打てば利用可能なリポジトリと名前の一覧が表示されます。
+ 「repo name」に該当する部分がこの項目です。
+# yum repolist
+（省略）
+repo id                        repo name                                  status
+addons                         CentOS-5 - Addons                              0
+base                           CentOS-5 - Base                            3,662
+contrib                        CentOS-5 - Contrib                             0
+extras                         CentOS-5 - Extras                            265
+updates                        CentOS-5 - Updates                           350
+
+Yum変数について
+nameの設定で出てきた「$releasever」は「Yum変数」という特別な変数で、それぞれ以下の変数が定義されています。
+Red Hatの解説が詳しかったので引用します。
+
+$releasever
+この変数を使用すると、Red Hat Enterprise Linux のリリースバージョンを参照することができます。Yum は /etc/yum.conf 設定ファイルにある distroverpkg=value の行より $releasever の値を取得します。/etc/yum.conf にそのような行がない場合は、yum は redhat-release パッケージよりバージョン番号を取得することで、正しい値を導きます。
+
+$arch
+この変数を使用して、Python の os.uname() 機能を呼び出す時に返り値としてシステムの CPU アーキテクチャーを参照できます。$arch の有効な値は、i586、i686、x86_64 です。
+
+$basearch
+$basearch を使用すると、システムのベースアーキテクチャーを参照できます。例えば、i686 及び i586 両マシンは i386 のベースアーキテクチャーを持っており、AMD64 及び Intel64 マシンは x86_64 のベースアーキテクチャーを持っています。
+
+$YUM0-9
+これら 10 個の変数は、同じ名前を持つシェル環境変数の値とそれぞれ置換されます。これら変数のいずれかが (例えば /etc/yum.conf で) 参照され、同じ名前を持つシェル環境変数が存在しない場合は、設定ファイルの変数は置換されません。
+RedHat 6.3.3. Yum 変数の使用より
+
+●3行目、mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+後述する「baseurl」が応答しなかった場合に代理でダウンロードするサーバを返すURL。
+
+●4行目、baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+通常ダウンロードするリポジトリのURL。URLだけでなく、サーバ内部に作ったオリジナルのリポジトリなども参照することができる
+
+例）baseのリポジトリを理化学研究所のものに変更する。
+baseurl=http://ftp.riken.jp/Linux/centos/$releasever/os/$basearch/
+
+例）baseのリポジトリをDVDのものに変更する。
+baseurl=file:///mnt/dvdrom/
+
+●5行目、gpgcheck=1
+「/etc/yum.conf」にもあったGPG鍵認証を有効にする設定。
+
+●6行目、gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+GPG鍵の保存場所。指定したディレクトリにない場合は、正しいものか確認後、指定されたディレクトリへ保存される。
+
+■上記の例には無いが個別リポジトリの設定ファイルで重要な項目
+
+●enabled=value
+0の場合、当該するセクションのリポジトリが無効になります。
+1の場合、リポジトリが有効になります。
+
+通常、外部リポジリを追加した場合は公式のパッケージを更新しないように「enabled」を「0」にして無効にするのが一般的です。
+そして必要なときだけコマンドで「 enablerepo」オプションを付けることで有効にします。
+
+例）remiリポジトリを有効にしてphpに関するパッケージをインストールする。
+# yum install --enablerepo=remi php*
+
+●priority=value
+prioritiesプラグインをインストールすることで使えるパラメータ。
+valueには1から100の数字を指定する。数字が低いほど優先順位は高い。
+
+個別のリポジトリ同士の優先順位を指定することで、外部リポジトリのパッケージが公式のパッケージを上書きするのを防ぐことができる。（もちろんその逆も可能）
+Prioritiesプラグイン導入方法は「過去の投稿」をどうぞ。
+
+●includepkgs=package_name [more_package_names]
+このオプションで指定したパッケージだけを有効にする。
+ 特定のパッケージのインストール・更新時にだけ、リポジトリを利用するときに指定する。指定の仕方はexcludeと同じ。
+
+例）PHP更新時だけremiリポジトリを利用する場合の設定ファイル
+# vi /etc/yum.repos.d/remi.repo
+#----------------
+[remi]
+enabled=1
+includepkgs=php*
+#----------------
+このようにremiセクションで「enabled=1」としてリポジトリを有効にして、「includepkgs=php*」とすることで「phpという文字列からはじまる」パッケージだけを有効にすることができます。
+
+この設定だとremiリポジトリにある「phpという文字列からはじまるパッケージ」以外のものはインストールできません。
+
+enabledが「0」だとincludepkgsでパッケージを指定しても有効にならないので注意してください。
+
+#------------------------------------------------------------------------------
+■yumコマンドの基本的な使い方
+yumの基本的な使い方についても目を通して起きましょう。
+マニュアルを読み返すと、まだ知らない便利なコマンドを見つけるのはよくあることです。
+
+●パッケージを個別にインストール
+まずは基本の基本インストールする方法。複数パッケージを指定する場合はスペースで区切る。
+# yum install パッケージ名
+
+例）PHPとMySQL関連のパッケージを合わせてインストールする
+# yum install php* mysql*
+
+●システム全体のパッケージをアップデート
+パッケージを指定しないと、システム全体のアップデートを行います。
+# yum update
+
+例）個別のパッケージをアップデートする場合
+# yum update php*
+
+●アップデート可能な全パッケージを表示
+# yum check-update
+
+例）アップデート可能な全パッケージのうち、特定のパッケージのみ表示
+# yum check-update | grep php*
+
+●パッケージのアンインストール
+アンインストールにはremoveとeraseと2種類ありますが、どちらでも同じです。
+# yum remove パッケージ名
+# yum erase パッケージ名
+
+●インストールされている全パッケージを表示
+# yum list installed
+
+例）インストールされている全パッケージのうち、特定のパッケージのみ表示
+# yum check-update | grep php*
+
+●依存関係にあるパッケージを検索する
+providesとwhatprovidesどちらでもおなじです。使い方については後述します。
+# yum provides パッケージ名 or ファイル名
+
+●リポジトリ内のパッケージ情報を検索
+パッケージ名だけでなく、RPMファイルの「Name」「Packager」「Dummary」「Description」の各フィールドも検索できます。
+# yum search パッケージ名（検索ワード）
+
+●パッケージの詳細情報を表示
+パッケージに関する詳細な情報が表示されます。
+# yum info パッケージ名
+
+例）phpでイントールできるファイルの詳細を調べる
+# yum info php
+
+●メタデータやデータベースなど、キャッシュファイルの削除
+設定ファイルの「cachedir」項目で指定したキャッシュデータを削除します。デフォルトは「/var/cache/yum」です。
+メタデータの取得時に何らかの状態で停止して不完全になった場合など、キャッシュに起因する不具合の解消に役立ちます。
+allだけでなくメタデータやパッケージファイル限定で削除もできます。詳しくはマニュアル参照。
+# yum clean all
+
+例）キャッシュのサイズを調べてキャッシュを削除する
+# du -sh /var/cache/yum/
+54M     /var/cache/yum/
+# yum clean all
+※無効にしているリポジトリがある場合は「 enablerepo」オプションで有効にすることで削除できます。
+
+●最新のパッケージ情報に更新
+通常パッケージ情報は、インストール時やアップデート時に設定ファイルの「metadata_expire」で指定した間隔で更新されます。今すぐ更新したい場合は以下のコマンドを実行します。
+# yum makecache
+
+●パッケージグループのインストール
+指定したパッケージグループをインストールします。
+パッケージグループとは特定の用途で利用するパッケージをまとめたものです。
+# yum groupinstall パッケージグループ名
+
+●インストール済みのパッケージグループの更新
+# yum groupupdate パッケージグループ名
+
+●インストールした、またはインストール可能なパッケージグループの一覧表示
+インストールしたものは「Installed Groups:」、インストール可能なものは「Available Groups:」として表示されます。
+ 日本語環境だと日本語名で表示されますが、そのまま後述するgroupinstallでインストールすることができます。
+# yum grouplist
+
+●インストールしたパッケージグループの削除
+# yum groupremove パッケージグループ名
+
+●パッケージグループの詳細を表示
+パッケージグループに含まれるパッケージの詳細を表示します。
+# yum groupinfo パッケージグループ名
+
+例）開発ライブラリの詳細を表示する場合
+# yum groupinfo 開発ライブラリ
+
+●シェルを使ってyumを実行
+使い方があまり思いつかないｗ
+# yum shell
+
+●ローカルに保存されたrpmパッケージをyumでインストール
+通常リポジトリで提供されていないパッケージをwgetでダウンロードした場合、rpmコマンドでインストールを行います。
+しかし依存関係で別のパッケージをインストールする必要がある場合、その依存関係にあるパッケージもweb上で探してwgetでダウンロード、インストールする必要があります。
+このオプションでrpmパッケージをインストールすると、依存関係にあるパッケージが登録されているリポジトリにある場合、自動でダウンロード、インストールしてくれます。
+# yum localinstall rpm形式のパッケージ
+
+●ローカルに保存されたrpmパッケージでアップデートをする
+ネットに繋がっていない、または繋げないで、ローカルに保存されたパッケージを使ってアップデート作業を行う。
+# yum localupdate パッケージ名.rpm
+
+●インストールしたパッケージの再インストール
+# yum reinstall パッケージ名
+
+●インストールしたパッケージのダウングレード
+パッケージ名にバージョンも指定することで意図したバージョンにダウングレードすることができます。
+# yum downgrade パッケージ名
+
+●有効なリポジトリのリストを表示する
+表示されるリストは通常の状態で有効なリポジトリ。設定ファイルで無効になっている場合は表示されない。
+ 「 enablerepo」オプションを使えば通常無効なリポジトリの情報も表示することができる。
+# yum repolist
+
+例）enablerepoで通常無効なリポジトリの情報を表示
+# yum repolist --enablerepo=ius
+（省略）
+ius          IUS Community Packages for Enterprise Linux 5 - x86_64       193+2
+
+例）無効なものも含め全てのリポジトリの情報を表示
+# yum repolist all
+
+●ヘルプの表示
+# yum help
+
+■yumコマンドの動きを制御するオプションの使い方
+コマンドに追加することで機能するオプションの紹介
+
+●ヘルプの表示
+-h, --help
+
+●重要な実行の前に確認をしない
+設定ファイルの「assumeyes」を有効にした場合と同じ動作。
+-y （ハイフン2つのGNUオプションは無し）
+
+例）インストールの可否を確認することなく自動でインストール
+# yum -y install php*
+
+●設定ファイルの指定
+このオプションで指定されない場合「/etc/yum.conf」が適用される。
+-c 設定ファイル
+
+例）「/etc/yum.repos.d/epel.repo」を設定ファイルとしてインストール
+# yum -c /etc/yum.repos.d/epel.repo install php*
+
+●プロンプトへの出力をせずに実行
+一切の出力をなくす場合は確認を無効にする「-y」オプションも有効にする必要があります。
+-q, --quiet
+
+例）一切の画面出力をせずインストールする。
+# yum -yq install php*
+
+●デバック用の出力
+このオプションを指定すると普段より多くの情報が出力されます。サーバの応答速度や依存関係の詳細な照合内容も出力されます。
+どのファイルが、どのファイルと依存関係にあるのか把握するのには役立ちますが、反面エラーを依存関係を正常に解決した場合でも出力されるので、重要な情報が埋もれやすくなります。
+-v, --verbose
+
+例）デバック用の出力を表示してインストール
+# yum -v install php*
+（省略）
+Package php.x86_64 0:5.1.6-43.el5_10 set to be updated
+Checking deps for php.x86_64 0-5.1.6-43.el5_10 - u
+looking for ('php-cli', 'EQ', ('0', '5.1.6', '43.el5_10')) as a requirement of php.x86_64 0-5.1.6-43.el5_10 - u
+looking for ('php-common', 'EQ', ('0', '5.1.6', '43.el5_10')) as a requirement of php.x86_64 0-5.1.6-43.el5_10 - u
+looking for ('httpd-mmn', 'EQ', ('0', '20051115', None)) as a requirement of php.x86_64 0-5.1.6-43.el5_10 - u
+looking for ('file', 'GE', ('0', '4.0', None)) as a requirement of php.x86_64 0-5.1.6-43.el5_10 - u
+（省略）
+
+●デバッグレベルを指定する
+上記デバックの出力レベルを指定することができます。numberには0から10の数字を入力し、0は出力なし、10は全てのログを出力します。10は「-v」オプションよりも詳細な出力になります。
+デフォルトは2です。
+-d [number]
+
+例）デバック用の出力を全て表示してインストール
+# yum -d 10 install php*
+
+●エラーの出力レベルを設定する
+ここでいうエラーは依存性などのエラーではなく、yum自体の動作に関するエラー。
+numberには0から10の数字を入力し、0は出力なし、10は全てのエラーを出力します。
+ 設定ファイルでいう「errorlevel」の項目と同じ動作をします。
+-e [number]
+
+例）設定ファイルのベースURLが間違っていた場合のエラー出力
+# yum -e 10 install php
+（省略）
+Options Error: Error parsing '*http://mirrorlist.centos.org/?release=5&arch=x86_64&repo=os': URL must be http, ftp, file or https not ""
+（省略）
+http://mirror.centos.org/centos/5/os/x86_64/%2A/repodata/repomd.xml: [Errno 14] HTTP Error 404: Not Found
+
+●ランダムに実行時間のセット
+最大の実行時間を分数でセットします。セットした時間内でランダムに実行します。10と指定した場合、実行時から10分までの間でランダムに実行。
+-R [time in minutes]
+
+例）0～10分後にインストール処理を実行
+# yum -R 10 install php
+
+●キャッシュを利用して実行
+リポジトリへの接続を行わず、新しいメタデータをダウンロードせずにキャッシュを利用してインストールします。
+ 当然メタデータ等がキャッシュディレクトリにない場合は実行されません。（baseの場合の例：/var/cache/yum/base/primary.xml.gz.sqlite）
+-C （ハイフン2つのGNUオプションは無し）
+
+●バージョンの表示
+--version
+
+例）yumとrpmのバージョンを表示
+# yum --version
+3.2.22
+  Installed: rpm-4.4.2.3-34.el5.x86_64 at 2014-03-04 12:09
+  Built    : [] at 2013-10-01 19:45
+  Committed: Panu Matilainen  at 2013-04-24 22:00
+
+  Installed: yum-3.2.22-40.el5.centos.noarch at 2014-03-04 12:10
+  Built    : [] at 2012-07-26 08:17
+  Committed: Johnny Hughes  at 2012-07-26 22:00
+
+●重複したパッケージをリスト表示する
+インストール可能なパッケージのうち、複数のバージョンがある場合、全ての利用可能なパッケージを表示する。
+ 通常のlist表示では、利用可能なパッケージのうち最新のものだけが表示される。
+--showduplicates
+
+例）phpでインストール可能な複数のパッケージを表示
+# yum --showduplicates list php
+Available Packages
+php.x86_64                        5.1.6-40.el5_9                         base
+php.x86_64                        5.1.6-43.el5_10                        updates
+
+●インストールするディレクトリを指定する
+設定ファイルでいう「installroot」オプションと同じです。chroot環境を簡単に構築することができます。
+--installroot=root
+
+$releaseverが正しく取得できず、ミラーサーバのURLが得られない場合は以下のコマンドでバージョンを指定することができます。
+
+例）releaseverを指定して/tmp/testにyumのキャッシュファイルを作成する
+# yum --releasever=5 --installroot=/tmp/test makecache
+
+CentOS5.10、yum3.2.22の組み合わせでは、上記の方法でreleaseverオプションが使えず、$releaseverの値が正常に取得できずインストールできませんでした。
+その場合は「/etc/yum.repos.d」内の$releaseverをサーバのバージョンに変更します。
+
+1つ1つ編集するのが面倒な場合は以下のコマンドで置換処理をして、実行すると楽です。
+
+例）公式リポジトリのサーバのバージョンをyum変数から5.10に書き換える
+# sed -i -e "s/$releasever/5.10/g" /etc/yum.repos.d/CentOS-Base.repo
+# yum --installroot=/tmp/test makecache ← /tmp/testディレクトリへyumのキャッシュを取得
+# yum --installroot=/tmp/test groupinstall 開発ツール ← /tmp/testディレクトリへ「開発ツール」をインストールする
+
+●一時的に特定のリポジトリを有効にする
+普段のアップデートは公式を利用し、外部リポジトリは無効にすることが多いと思います。このオプションを利用することで特定のパッケージをインストールするときだけリポジトリを有効にすることができます。
+ 設定ファイルを編集すること無く有効にすることができるので、特定の用途で外部リポジトリを利用する場合に便利です。
+ 設定ファイルでいうenabled=1を指定したのと同じです。
+--enablerepo=repoidglob
+
+例）remiリポジトリを有効にしてphpをインストールする。
+# yum --enablerepo=remi php
+
+例）複数指定する場合は「,（カンマ）」で区切ります。
+# yum --enablerepo=remi,ius php
+
+●一時的に特定のリポジトリを無効にする
+設定ファイルで有効になっているリポジトリを一時的に無効にして実行します。
+ 公式と外部両方のリポジトリでパッケージが提供されている場合、Prioritysプラグインで優先順位が高いリポジトリのものが優先されます。しかし特定のパッケージはライブラリも含めて外部のものを利用したい、という場合に便利です。
+ 設定ファイルでいうenabled=0を指定したのと同じです。
+--disablerepo=repoidglob
+
+例）公式リポジトリを無効にしてphpをインストールする。
+# yum --disablerepo=base,updates,addons,extras,centosplus,contrib install php
+
+例）公式リポジトリを無効、外部リポジトリ（remi）を有効にしてphpをインストールする。
+# yum --enablerepo=remi --disablerepo=base,updates,addons,extras,centosplus,contrib install php
+
+●obsoletes処理ロジックを有効にする
+設定ファイルでいうobsoletesと同じ。
+--obsoletes
+
+●特定のパッケージを除外
+アップデートもしくはインストールする際に無視するパッケージを指定することができる。
+ 設定ファイルでいうexcludeと同じ。
+-x, --exclude=package
+
+例）mysql-serverを除外してシステム全体をアップデート
+# yum --exclude=mysql-server updeta
+
+例）mysql-serverを除外してmysqlではじまるパッケージをインストール
+（依存関係にあるパッケージを取得するとエラーになるので注意）
+# yum --exclude=mysql-server install mysql*
+
+●出力をカラー表示にする
+設定ファイルでいうcolorと同じ。
+--color=[always|auto|never]
+
+例）カラー表示でリストを出力する
+# yum --color=always list
+
+●一時的に設定ファイルの除外項目を無効にする
+allは全ての除外項目を無効。
+mainはmainセクションで設定した除外項目を無効。
+repoidはリポジトリの除外項目を無効にする。
+--disableexcludes=[all|main|repoid]
+
+●一時的に特定のプラグインを無効にする
+--disableplugin=plugin
+
+例）prioritiesプラグインを無効にしてphpをインストールする
+# yum --disableplugin=priorities install php
+
+●一時的に全てのプラグインを無効にする
+yumの基本動作にもプラグインは使われているため、デバック目的意外では推奨されません。
+--noplugins
+
+●一時的にGPG鍵の認証を無効にする
+--nogpgcheck
+
+●依存関係でエラーのパッケージを無視して実行
+依存関係でアップデートやインストールできないパッケージを無視して、インストール可能なパッケージは実行する。
+依存関係を無視してインストールするわけではなく、インストール可能なパッケージをインストールします。
+
+例）php*で依存関係でエラーなるパッケージを無視してインストール可能なものをインストールする。
+# yum --skip-broken install php*
+
+●実践で使えるyumの便利な使い方やエラーへの対応方法
+実際にパッケージをインストールする際、サーバの環境を把握する際、エラーが出た時の対処など、実際のサーバ管理に役立つ使い方を紹介します。
+
+●個別パッケージのインストールを例に基本動作を確認
+まずは基本の基本、パッケージのインストールについてです。rsyslogをインストールする例を元に、yumの基本的な出力の意味について見ていきます。
+
+普段何気なく流しているログだと思いますが、yumの基本的な動作を把握することで、いざエラー表示が出た際に、エラー発生の原因が究明しやすくなります。
+
+# yum install syslog
+Loaded plugins: downloadonly, fastestmirror, priorities
+Loading mirror speeds from cached hostfile
+ * addons: mirrors.skyshe.com
+ * base: www.ftp.ne.jp
+ * contrib: www.ftp.ne.jp
+ * extras: www.ftp.ne.jp
+ * updates: www.ftp.ne.jp
+0 packages excluded due to repository priority protections
+Setting up Install Process
+Resolving Dependencies
+--> Running transaction check
+---> Package rsyslog.x86_64 0:3.22.1-7.el5 set to be updated
+--> Finished Dependency Resolution
+
+・1行目、Loaded pluginsで有効になっているプラグインを表示しています。
+
+・2行目、保存されたキャッシュファイルを読み込んでいます。
+
+・3～7行目、リポジトリ名と接続するftpサーバが表示されます。この時点で有効なリポジトリを判断できます。
+
+・8行目、これはprioritiesプラグインの表示です。同じパッケージのバージョン違いが重複した際に、優先順位の高いリポジトリのものが優先されますが、いくつのパッケージが重複しているかを表示しています。
+もし重複したパッケージの全てを表示したい場合は「--showduplicates」オプションを付けてリスト表示すると見ることができます。
+・9行目、インストールプロセスを開始。
+
+・10行目、依存関係の解決を開始。
+
+・11行目、トランザクション履歴の処理。履歴は「cat /var/log/yum.log」とコマンド入力すれば表示できます。rhelでは「yum history」で表示することができます。
+
+・12行目、「Package ～」でインストールまたはアップデートするパッケージを表示。
+
+・13行目、依存関係の解決に関する処理が終了したことを示しています。もし依存関係に問題がある場合は問題の表示を開始します。
+無事依存関係が解決できると以下のような表示が続きます。
+#------------------------------------------------------------------------------
+Dependencies Resolved
+ 
+================================================================================
+ Package           Arch             Version                Repository      Size
+================================================================================
+Installing:
+ rsyslog           x86_64           3.22.1-7.el5           base           453 k
+ 
+Transaction Summary
+================================================================================
+Install       1 Package(s)
+Upgrade       0 Package(s)
+ 
+Total download size: 453 k
+Is this ok [y/N]: y
+Downloading Packages:
+rsyslog-3.22.1-7.el5.x86_64.rpm                          | 453 kB     00:00
+Running rpm_check_debug
+Running Transaction Test
+Finished Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing     : rsyslog                                                  1/1
+ 
+Installed:
+  rsyslog.x86_64 0:3.22.1-7.el5
+ 
+Complete!
+#------------------------------------------------------------------------------
+
+・1行目、Dependencies Resolvedとあるので分かる通り依存関係が正しく解決できたことを示しています。
+・4行目、パッケージに関する表示の見出しです。Packageはパッケージ名、Archは対応するアーキテクチャ、Versionはソフトのバージョンとリリース番号、Repositoryはそのままリポジトリ、Sizeはパッケージのサイズをそれぞれ示しています。
+・9～12行目、Transaction Summaryで概要を表示。上の例では1つのパッケージをインストールすることを示しています。
+・14行目、トータルのダウンロードサイズを表示。
+・15行目、以上の内容で実行してよいか確認しています。そのまま実行して良い場合はYesである「y」と入力、拒否する場合はNoである「n」を入力してエンターを押します。
+・16～21行目、ここでrpm_check_debugを実行します。トランザクションを書き出すファイルが無いなどエラーが出るとkilldという表示で停止します。正常に終了すると「Transaction Test Succeeded」と表示されます。
+・21行目、Running Transactionで実際にインストールやアップデート、削除などを行い、トランザクション処理を実行します。
+・25～26行目、Installedでインストールしたパッケージの表示
+・28行目、コンプリート！
+
+●インストールされている全パッケージを表示する方法
+サーバの環境を全体的に把握するのに役立ちます。
+# yum list installed
+（省略）
+Cluster_Administration-ja-JP.noarch      5.8-1.el5.centos              installed
+Deployment_Guide-ja-JP.noarch            5.8-1.el5.centos              installed
+GConf2.x86_64                            2.14.0-9.el5                  installed
+（省略）
+
+●インストールされたパッケージの内、phpから始まるファイルを表示
+実際のインストール作業の際に、パッケージの有無、バージョンの把握にはこの方法が適しています。
+# yum list installed | grep php*
+php-cli.x86_64                            5.4.26-1.el5.remi            installed
+php-common.x86_64                         5.4.26-1.el5.remi            installed
+（省略）
+
+●yumでインストールすることのできるパッケージの検索と説明の表示
+いきなりinstallとする前に、簡単な解説を読むことでパッケージを動作させるために必要なソフトの全体像を把握できます。
+# yum search php*
+（省略）
+================================= Matched: php =================================
+php.x86_64 : PHP HTML 埋め込みのスクリプト言語 (PHP: Hypertext Preprocessor)
+（省略）
+
+●パッケージの詳細について調べる
+バージョンの違いでパッケージが統廃合された際や、新しく必要なライブラリが増えるのはよくあることです。
+ 見たことのないファイルや、本当に必要かどうかわからない場合は詳細について調べます。
+# yum info php
+（省略）
+Available Packages
+Name       : php
+Arch       : x86_64
+Version    : 5.1.6
+Release    : 43.el5_10
+Size       : 2.4 M
+Repo       : updates
+Summary    : PHP HTML 埋め込みのスクリプト言語 (PHP: Hypertext Preprocessor)
+URL        : http://www.php.net/
+License    : The PHP License v3.01
+Description: PHP is an HTML-embedded scripting language that allows developers
+           : to write dynamically generated web pages. PHP is ideal for writing
+           : database-enabled websites, with built-in integration for several
+           : commercial and non-commercial database management systems. PHP is
+           : often used as a replacement for CGI scripts.
+           :
+           : The php package contains a module that adds support for the PHP
+           : language to the Apache HTTP Server.
+
+●設定ファイルで無効になっているリポジトリを一時的に有効にする
+外部リポジトリを追加している場合、通常のアップデート作業で公式のパッケージが上書きされないように、外部リポジトリを無効にしている場合が多いと思います。
+ 以下のオプションで特定の用途だけ外部リポジトリを有効にすることができます。
+# yum --enablerepo=remi install php*
+
+●公式を一時的に無効にして外部リポジトリのパッケージをインストールする
+Prioritysプラグインで公式パッケージの優先順位が高い場合、パッケージが競合するとバージョンに関わらず公式のものが優先されます。
+それは正しい動作ですが、特定のパッケージだけ外部リポジトリのものをインストールしたい場合もあると思います。
+その場合は以下のようにenablerepoとdisablerepoを組み合わせてインストールします。
+# yum --enablerepo=remi --disablerepo=base,updates,extras,centosplus,contrib install php*
+
+●設定ファイルで特定のパッケージだけ更新を無効にする
+公式だけが有効になっている場合、今度は逆に外部リポジトリのパッケージを公式のものが上書きするという自体も考えられます。
+そこで特定のパッケージだけ更新を無効にします。
+# vi /etc/yum.conf
+exclude=php* mysql* ←[main]セクションに追加。複数パッケージを指定する場合は半角スペースで区切る
+
+試しに以下のコマンドで動作を確認してください。
+# yum install php*
+
+ただしく除外できているとyumの出力に「Excluding Packages in global exclude list」というメッセージのみ表示されて、更新用のパッケージがあったとしても表示されなくなります。
+ちなみに個別の設定ファイルで除外した場合は「Excluding Packages from CentOS-5   Base」と表示されます。（Baseの場合）
+
+基本的に全体の設定ファイルで設定した項目でも、個別の設定ファイルで改めて設定し直すと上書きされますが、excludeは以下の様な扱いになります。
+ 全体の設定ファイルである「/etc/yum.conf」で除外すると、リポジトリ個別の設定ファイルで当該する項目を「exclude」に追加しなくても有効になります。
+
+全体のファイル「exclude=php* mysql*」
+ 個別のファイル「exclude=mysql*」
+ 個別の設定ファイルでは「mysql*」しか指定されていませんが、全体の設定ファイルで設定されているので「php*」と「mysql*」が無効になります。
+
+また、1度全体の設定ファイルで除外された項目は個別の設定ファイルで「includepkgs=php*」と指定しても有効にはなりません。
+ 公式を無効にして、外部リポジトリを有効にする場合は、個別設定ファイルで設定を指定ください。
+
+●依存関係のエラーでパッケージがインストールできない場合の対処法
+例えばmysql-serverのインストール時に以下の様なエラーが出た場合。
+# yum install mysql-server
+Error: Missing Dependency: perl-DBD-MySQL is needed by package mysql-server-5.5.36-1.el5.remi.x86_64 (remi)
+
+これはを直訳すると「エラー、依存関係の不足、mysql-server-5.5.36-1.el5.remi.x86_64 (remi)にはperl-DBD-MySQLが必要とされています。」という意味になります。
+
+つまり、mysql-serverをインストールする前に、perl-DBD-MySQLをインストールしてくださいという意味です。
+こうなると同じエラーメッセージへの対応をネットで検索する人が多いと思いますが、yumの機能で大抵のことがわかります。
+まずperl-DBD-MySQLについて調べる
+
+「info」オプションでパッケージの詳細についても調べておきます。
+# yum info perl-DBD-MySQL
+（省略）
+Name       : perl-DBD-MySQL
+Arch       : x86_64
+Version    : 3.0007
+Release    : 2.el5
+Size       : 328 k
+Repo       : installed
+Summary    : A MySQL interface for perl
+URL        : http://search.cpan.org/dist/DBD-mysql/
+License    : GPL or Artistic
+Description: An implementation of DBI for MySQL for Perl.
+
+以上の出力から以下のことがわかります。
+
+パッケージ名:perl-DBD-MySQL 
+アーキテクチャ:x86_64 
+バージョン番号:3.0007 
+リリース番号:2.el5 
+ファイルサイズ:328 k 
+リポジトリ:installed 
+概略:perlを利用したMySQLのインターフェイス 
+ライセンス:GPL 
+説明:Perlを利用したMySQLのデータベースインターフェースの実装 
+
+以上のことから、mysql-serverを正常に動作させるために必要なPerlのデータベースインターフェイスであるperl-DBD-MySQLをインストールする必要がある。ということがわかります。
+perl-DBD-MySQLがインストール可能か調べる
+
+詳細を調べたパッケージがyumでインストール可能か調べます。
+# yum list | grep perl-DBD-MySQL
+perl-DBD-MySQL.x86_64                    3.0007-2.el5                      base
+
+baseで提供されていることがわかりました。そのままインストール作業を進めます。
+# yum install perl-DBD-MySQL
+# yum install mysql-server
+または
+# yum install perl-DBD-MySQL mysql-server
+
+このようにyumだけで依存関係のエラーを解決することができました。
+ファイル名で依存関係のエラーが表示された場合の対処法
+
+困るのはパッケージ名でなく、ライブラリ名やモジュール名で依存関係の不足を指摘された場合です。
+ 以下の様なエラーが出る場合があります。
+# yum install perl-DBD-MySQL
+Error: Missing Dependency: libmysqlclient.so.15()(64bit) is needed by package perl-DBD-MySQL-3.0007-2.el5.x86_64 (base)
+
+上の例と同じようにyumでインストール可能か調べます。
+# yum list | grep libmysqlclient.so.15
+しかし何も表示されません。「yum list」で表示されるのはパッケージ名だけで、個別のファイル名では検索ができません。
+ 仕方なくネットで検索…。となると面倒です。
+
+そんなときでもyumの「provides」コマンドを使えば、ファイルがどのパッケージ含まれるか調べることができます。
+# yum provides libmysqlclient.so.15
+mysql-5.0.95-5.el5_9.i386 : MySQL client programs and shared libraries
+Repo        : base
+Matched from:
+Other       : libmysqlclient.so.15
+
+以上の情報から、baseというリポジトリにある「mysql-5.0.95-5.el5_9.i386」というパッケージの中に「libmysqlclient.so.15」が含まれている、ということがわかります。
+
+検索に使うファイル名ですが、単純にファイル名だけでなく、ディレクトリも含めてリスト化されている場合もあります。
+その場合はファイル名だと検索が失敗するので、ワイルドカードを使って検索します。
+# yum provides */libmysqlclient.so.15
+mysqlclient15-5.0.67-1.el5.remi.x86_64 : Backlevel MySQL 共有ライブラリ。
+Repo        : installed
+Matched from:
+Filename    : /usr/lib64/mysql/libmysqlclient.so.15
+
+これで「mysqlclient15-5.0.67-1.el5.remi.x86_64」をインストールすれば「libmysqlclient.so.15」が必要という依存関係を解決することができる、ということがわかりました。
+
+●依存関係でエラーが出た際のエラーメッセージの意味
+依存関係でエラーが出た場合以下のようなメッセージが出力されます。いかにもこのオプションをつけると解決しそうに見えます。
+ネット上でも「表示されたオプションを付けることで目的のパッケージがインストールできた」と解説されていることがありますが、注意が必要です。
+
+You could try using --skip-broken to work around the problem
+ You could try running: package-cleanup --problems
+                        package-cleanup --dupes
+                        rpm -Va --nofiles --nodigest
+The program package-cleanup is found in the yum-utils package.
+
+まず「--skip-broken」オプションですが、これは依存関係でエラーの出ているパッケージを無視して、インストールまたはアップデート可能なパッケージだけ実行するというオプションです。
+そのため、このオプションを付けて「Complete!」と出力されても、エラーの出ているパッケージは依存関係が解決していません。
+
+その後に「package-cleanup」を使った解決法も提示されていますが、そもそもyum-utilsがインストールされていないと利用することができません。
+インストールされていない場合は以下のコマンドでインストールしておきましょう。
+# yum install yum-utils
+
+使えるようになったところで、紹介されているコマンドについて解説します。
+・package-cleanup --problems
+これはRPMの依存関係に関するデータベースに問題がある場合に正常に戻してくれるオプションです。
+
+・package-cleanup --dupes
+こちらは上記データベースの重複項目を調べるオプションです。もし重複項目が見つかった場合は「--cleandupes」オプションで削除します。
+
+・rpm -Va --nofiles --nodigest
+それぞれのオプションは以下の意味があります。
+
+-V：パッケージを検査する。 
+-a：インストールされているすべてのパッケージを選択する。 
+--nodigest：パッケージのヘッダーやダイジェスト値を検査しない。 
+--nofiles：パッケージ内のファイル属性を検査しない。 
+要約すると、インストールしたパッケージのメタデータと、rpmデータベースの内容を比較して検査する。というコマンドになります。
+
+以上のことから分かるように「1つ目は依存関係が解決できないものをスキップする方法」。それ以降は「正しい依存関係であるにもかかわらずメタデータやデータベースが壊れている場合に修正する方法」です。
+
+つまり実際に依存関係でお互いのパッケージが必要な場合、これらのコマンドでは何も解決しません。
+すこし手間がかかりますが、上記の検索等を利用して依存関係を解決するのが正攻法です。
+
+■yum自体がエラーで正しく動作しない時に試すコマンド
+最後にyum自体がエラーで動作しない場合の対象法を紹介します。
+
+まずは全てのキャッシュを削除するコマンド。リポジトリのURLや、ファイルのメタデータ、リスト等のデータベース全てが削除されます。
+ 通信障害などの理由でキャッシュファイルが正しく構成できなかった時などに使います。
+# yum clean all
+
+何らかの理由でトランザクション処理が正しく終了しなかった場合は以下のコマンドで治る場合があります。
+ 利用するには「package-cleanup」がインストールされている必要があります。
+# yum-complete-transaction
+
+●yum updateでkernelを除外する方法
+・コマンドラインで指定する方法
+yum -y update --exclude=kernel*
+とすればkernel関係がアップデートされるのを防ぐことができます。 一瞬、「この書き方だとワイルドカードがファイル一欄に展開されてしまうのでは？」という気がするのですが、この書き方で大丈夫です。 
+
+・/etc/yum.confで指定する方法
+exclude=kernel*
+と記述すればOKです。 
+
+●yumコマンドを使うと公開鍵のインポートを促すメッセージが表示される。
+これが嫌な人は先にインストールしておく。以下はCentOS4の場合。
+
+#rpm --import /usr/share/doc/centos-release-4/RPM-GPG-KEY
+ #rpm --import /usr/share/doc/centos-release-4/RPM-GPG-KEY-CentOS-4
+
+●プロキシサーバ経由の場合は以下の変数を設定しておく。
+yumコマンドを実行するたび設定する必要がないように~/.bash_profileなどに記述しておくと便利でしょう。
+export http_proxy="http://プロキシサーバ:ポート番号"
+
+
+###############################################################################
+RHELでisoからyumを行う方法
+###############################################################################
+RHELはライセンスを買うか、評価版を入手しない限りyumが使えません。
+インストールの時に、RPMパッケージを入れ忘れるととても最悪なことになり、手動で依存関係を解決する羽目になります。
+しかし、今回のテクニックを使えば、ISOイメージにたいしてyumをすることができます！
+もう依存関係に悩む必要はありません！
+
+1.ISOを用意
+ISOをマシンにマウントしましょう。物理マシンの方はメディアを挿入するか、isoイメージをOS上に用意しましょう。
+仮想マシンの方は仮想ホストにisoイメージを割り当てるか、isoイメージをOS上に用意しましょう。
+※インストールに使ったやつですよ
+
+2.ISOをマウント
+マシンに割り当てている場合
+mount /dev/cdrom /media
+マウントポイントや、ディスクの割り当てられている場所が違う場合は環境によって変更して下さい。
+ISOをマウントする場合
+mount -o loop -t iso9660 xxx.iso /media
+いずれもls /media直下にファイルが見えれば成功です。
+
+3.リポジトリ追加
+viで/etc/yum.repos.d/dvd.repoを作成・編集します。
+/etc/yum.repos.d/dvd.repo
+
+#----------------------------------------------------------
+[dvd]
+name=dvd
+baseurl=file:///media/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+#----------------------------------------------------------
+
+4.yumします
+yum search zsh
+#----------------------------------------------------------
+[root@ ~]# yum search zsh
+読み込んだプラグイン:langpacks, product-id, subscription-manager
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+dvd                                                                                | 4.1 kB  00:00:00
+(1/2): dvd/group_gz                                                                | 134 kB  00:00:00
+(2/2): dvd/primary_db                                                              | 3.4 MB  00:00:00
+============================================ N/S matched: zsh ============================================
+zsh.x86_64 : Powerful interactive shell
+  Name and summary matches only, use "search all" for everything.
+#----------------------------------------------------------
+はい！成功しました！
+

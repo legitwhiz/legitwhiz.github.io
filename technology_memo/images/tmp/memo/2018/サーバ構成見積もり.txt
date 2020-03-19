@@ -1,0 +1,48 @@
+
+Mother Board
+Z11PA-U12
+最安価格(税込)：¥59,615
+
+CPU
+Xeon Silver 4108 BOX
+最安価格(税込)：¥55,481
+
+
+
+SATA3
+
+DDR4-2666MHzメモリ
+CMK64GX4M4A2666C16 [DDR4 PC4-21300 16GB 4枚組]
+最安価格(税込)：¥61,750
+
+
+WD60EZRZ-RT [6TB SATA600 5400]
+最安価格(税込)：¥13,096 x4
+
+ウルトラ 3D SSD SDSSDH3-500G-J25
+最安価格(税込)：¥8,816 x2
+
+
+Power Connectors:  24-pin main power connector, 8-pin ATX12V connector
+
+
+RM850x CP-9020180-JP
+最安価格(税込)：¥13,881
+
+(8816x2)+(13096x4)+61750+13881+55481+59615
+
+CM 690 III CMS-693-KKN1-JP
+最安価格(税込)：¥11,845
+
+
+17632	SDD
+52384	HDD
+61750	mem
+13881	PS
+55481	CPU
+59615	MB
+11845	Case
+
+272588
+
+

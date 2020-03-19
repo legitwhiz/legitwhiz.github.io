@@ -1,0 +1,70 @@
+Oracleの各種一覧を取得するSQL
+
+●一覧テーブルの一覧
+select * from DICT 
+
+●トリガー一覧
+select * from USER_TRIGGERS; select * from user_objects where object_type = 'TRIGGER'; 
+
+●実行sql一覧（dba)
+select * from v$sql where PARSING_SCHEMA_NAME='スキーマ名'; 
+
+●テーブル一覧
+select * from USER_TABLES; 
+
+●カラム一覧
+select * from USER_TAB_COLUMNS; 
+
+●オブジェクト一覧
+select OBJECT_NAME, OBJECT_TYPE from USER_OBJECTS; 
+
+●データディクショナリ一覧
+上記のような各データを持つテーブルの一覧
+select * from DICT; 
+
+●テーブルのコメント一覧
+select * from USER_TAB_COMMENTS; 
+
+●カラムのコメント一覧
+select * from USER_COL_COMMENTS; 
+
+●PK, FK, 制約一覧
+select * from USER_CONSTRAINTS; -- 対象カラム select * from USER_CONS_COLUMNS; 
+
+●ロール一覧
+select * from SYS.DBA_ROLES 
+
+●セッション一覧
+select * from v$session 
+
+●インデックス一覧
+select * from USER_INDEXES; -- 対象カラム select * from USER_IND_COLUMNS;
+
+●USER_TABLES 静的ディクショナリビュー
+
+select table_name, tablespace_name, status from user_tables
+ または 
+select table_name, tablespace_name, status from tabs
+
+tabs は user_tables のエイリアス
+
+テーブル定義を見るには SQL*Plus の DESC コマンド を使用する。
+SQL（DDL） として取り出したい場合には DBMS_METADATA パッケージ を使用する。
+
+●ビューとビューの定義文の一覧 
+USER_VIEWS 静的ディクショナリビュー
+select view_name, status, text from user_views
+
+●インデックス一覧 
+USER_INDEXES 静的ディクショナリビュー
+select index_name, table_owner, table_name, status from user_indexes
+
+●インデックス・カラム一覧 
+USER_IND_COLUMNS 静的ディクショナリビュー
+select index_name, column_position, table_name, column_name  from user_ind_columns order by index_name, column_position
+
+
+
+●
+
+

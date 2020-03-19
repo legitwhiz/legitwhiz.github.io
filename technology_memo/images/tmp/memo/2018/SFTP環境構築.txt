@@ -1,0 +1,49 @@
+sso_sftpuser:x:1003:1004::/logst/filercv/incomming/auto_load/sso:/bin/bash	SFTPアカウント
+
+sso_sftpuser:x:1004:	SFTPアカウント
+
+### SFTP Server
+cp -p /etc/ssh/sshd_config /etc/ssh/sshd_config_20181227
+cp -p /etc/passwd /etc/passwd_20181227
+cp -p /etc/group /etc/group_20181227
+
+vi /etc/ssh/sshd_config
+Subsystem	sftp	/usr/libexec/openssh/sftp-server
+AllowUsers root sso_sftpuser
+
+mkdir -m 777 -p /logst/filercv/incomming/auto_load
+groupadd -g 1004 sso_sftpuser
+useradd -u 1003 -g sso_sftpuser -d /logst/filercv/incomming/auto_load/sso -s /bin/bash sso_sftpuser
+
+#Directory Permittion
+ls -ld /logst/filercv/incomming/auto_load/sso
+chmod 755 /logst/filercv/incomming/auto_load/sso
+chown sso_sftpuser:sso_sftpuser /logst/filercv/incomming/auto_load/sso
+ls -ld /logst/filercv/incomming/auto_load/sso
+
+### SFTP Client
+#key create
+ssh-keygen -t rsa
+
+cat ./.ssh/id_rsa.pub
+mkdir -m 777 /opt/sftp_log
+cp -p ./.ssh/id_rsa /opt/sftp_log/sso_id_rsa
+chmod 600 /opt/sftp_log/sso_id_rsa
+
+sftp -o IdentityFile=/opt/sftp_log/sso_id_rsa radmin@192.168.1.37
+
+### SFTP Server
+#cd /logst/filercv/incomming/auto_load/sso
+cd /home/radmin
+mkdir -m 777 ./.ssh
+vi ./.ssh/authorized_keys
+chmod 600 ./.ssh/authorized_keys
+chmod 700 ./.ssh
+#chown sso_sftpuser:sso_sftpuser ./.ssh
+chown radmin:users ./.ssh
+chown radmin:users ./.ssh/authorized_keys
+
+
+
+
+

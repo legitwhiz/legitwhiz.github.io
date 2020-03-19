@@ -1,0 +1,119 @@
+RHEL7 Bondingによる冗長化
+
+●Bondingとは
+1台のマシンに複数のネットワーク・インタフェース・カード（NIC）を搭載し，それらのNICを束ね一つの仮想的なNICとして扱うための技術です。
+
+このボンディングを実現する機能は，Linuxカーネルの標準ドライバ（ボンディング・ドライバ）として実装されています。そのため，NICを複数枚搭載したLinuxマシンを用意して，カーネルにボンディング・ドライバを組み込み，簡単な設定を施すだけでボンディングが利用できます。
+
+●Bonding Mode
+・balance-rr
+全スレーブを順繰り(ラウンドロビン)に使ってパケットを送信。
+送信のみ負荷分散。
+
+・active-backup
+1つのスレーブのみを active interfaceとしパケットを送信。
+active interfaceに障害が発生した場合、他の backup slave を active interfaceに切り替え、冗長性を確保。
+
+・balance-xor
+送信元/先 MACアドレスを元に送信スレーブを決定しパケットを送信。
+送信のみ負荷分散。
+
+・802.3ad
+IEEE 802.3ad(LACP)に準拠したリンクアグリゲーション。
+
+・balance-tlb
+スレーブの負荷に応じて送信スレーブを決定しパケットを送信。
+送信のみ負荷分散
+
+・balance-alb
+balance-tlbの機能に加え、受信も負荷分散。
+
+・balance-alb
+balance-tlbの機能に加え、受信も負荷分散。
+
+注意しなければならないのがactive-backup以外は、接続するスイッチに依存すること。(active-backupでも対向のスイッチはトランクが設定されているなど)
+
+それとリンクアグリゲーションであっても1Gbps x 2本だからといって、通信帯域は2Gbpsにはならないことだ。(私の経験上、2本にしたところ1.1倍～1.3倍程度しか帯域は増えない)
+
+●Bonding 設定
+
+・bondingモジュール有効化
+# modprobe --first-time bonding
+
+・bonding デバイス追加
+# nmcli connection add type bond  autoconnect no con-name  <bond con-name> ifname <bond I/F name> mode <bonding mode>
+
+Connection '<bond con-name>' (<uuid>) successfully added. 
+
+・slave 追加
+# nmcli connection add type bond-slave autoconnect no ifname <slave con-name>  master <bond con-name>
+
+ ( Connection 'bond-slave-<slave con-name>' (<uuid>) successfully added. 
+
+・BondingインターフェースにIPアドレス設定
+# nmcli connection modify <bond con-name> ipv4.method manual ipv4.address <ip address/suffix> ipv4.gateway <gateway address> ipv6.method ignore
+
+# nmcli  connection modify <bond con-name> ipv4.dns <dns address>
+
+・設定確認
+# nmcli -f ipv4 connection show <bond con-name>
+
+・自動接続設定(物理I/F)
+# nmcli connection modify <slave con-name①> connection.autoconnect no
+# nmcli connection modify <slave con-name②> connection.autoconnect no
+
+・自動接続設定(slave,bond I/F)
+# nmcli connection modify bond-slave-<slave con-name①> connection.autoconnect yes
+
+# nmcli connection modify bond-slave-<slave con-name②> connection.autoconnect yes
+ 
+# nmcli connection modify <bond con-name> connection.autoconnect yes
+
+# nmcli connection modify <bond con-name> connection.autoconnect-slaves 1
+
+・設定反映
+# nmcli connection reload
+# systemctl restart network.service 
+
+・active-backup mode時のprimary slave設定
+※ただし、ここは従来通り、デバイス名の指定が必要
+
+# nmcli connection modify <bond con-name> +bond.options primary=<slave I/F name①>
+
+・設定確認
+cat /proc/net/bonding/<bond con-name>
+
+
+・slave を切り替えテスト
+
+# ifenslave -c <bond con-name> <slave con-name①> 
+
+# grep 'Active Slave:' /proc/net/bonding/<bond con-name>
+Currently Active Slave:  <slave con-name①>
+
+ # ifenslave -c <bond con-name>  <slave con-name②> 
+$ grep 'Active Slave:' /proc/net/bonding/<bond con-name> 
+Currently Active Slave:  <slave con-name②>  
+
+・bonding 解除(slave)
+# nmcli connection del bond-slave-<slave con-name>  
+
+・bonding 解除(bond)
+# nmcli connection del <bond con-name>
+
+●スループット
+スループットが視覚的にしかも直感的に理解できるiptraf-ngというツールがあります。
+iptraf-ngは、OSが認識しているネットワークインタフェース全てについて、トラフィックの有無、パケットの通信の様子を確認することができる。
+スループットを見るツールは、まだまだ色々あるようなので後述とします。
+
+●参考
+
+RedHatサイトにBondingとTeaming比較表があるので、どちらを選定するか参考にするといい。
+
+5.3. ネットワークチーミングとボンディングの比較
+https://access.redhat.com/documentation/ja-JP/Red_Hat_Enterprise_Linux/7/html/Networking_Guide/sec-Comparison_of_Network_Teaming_to_Bonding.html
+
+
+
+詳細はRHEL7のマニュアル「ネットワークガイド第4章 ネットワークボンディングの設定」をご覧ください。
+https://access.redhat.com/documentation/ja-JP/Red_Hat_Enterprise_Linux/7/html/Networking_Guide/ch-Configure_Network_Bonding.html

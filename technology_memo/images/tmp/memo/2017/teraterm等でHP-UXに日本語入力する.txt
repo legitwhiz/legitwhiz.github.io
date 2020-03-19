@@ -1,0 +1,40 @@
+teraterm等でHP-UXに日本語入力する
+
+ログイン直後のLOCALEは
+『C』となります。
+その後で、(.profileの中で）LANGを、
+ja_JP.SJISに変更したとしても、
+POSIX SH内部のLOCALEは変更されません。
+
+したがって、入力された文字が2バイトコードだった場合それが正しくエコーバックされる保障はありません。
+次に、LANG変数を、
+ja_JP.SJISに変更した状態で、
+新たにPOSIX SHELLを起動すると、
+今度は内部のLOCALEが
+ja_JP.SJISに設定されます。
+ここで、2バイトコードを入力すると、
+今度は正しくエコーバックされます。
+
+ただし、HP-UX の
+Posix Shell(/usr/bin/sh) は
+日本語にフルに対応していませんので注意して下さい。
+
+# export LANG=ja_JP.SJIS
+
+# locale
+LANG=ja_JP.SJIS
+LC_CTYPE="ja_JP.SJIS"
+となっていればOK
+
+# /usr/bin/sh
+新たにPOSIX SHELLを起動
+（LANGの設定が内部の
+LOCALEにも反映される）
+
+# 確認コマンド
+stty -a
+
+# 設定コマンド（パリティなし、文字サイズ8ビット、8ビット目をクリアしない）
+stty -parenb cs8 -istrip
+
+

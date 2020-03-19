@@ -1,0 +1,136 @@
+0.事前準備
+
+・作業場所　(　　　　　　　)
+・使用端末　(　　　　　　　)
+・使用端末ユーザ/パスワード
+・使用可能時間帯　(　　　　　　　)
+・ログイン方法(telnet・SSH・コンソール)
+・ログイン先(ホスト名：　　　　　IPアドレス：　　　　)
+・RHELメディア　(　　　　　　　)
+・rootユーザ/パスワード　(　　　　　　　)
+・ログインユーザ/パスワード　(　　　　　　　)
+
+#-------------##### RHEL CD-ROMからZabbix Server install #####------------------------
+1.準備作業
+
+1.1.RHELメディアのマウント
+sudo mount -t iso9660 -o ro /dev/cdrom /mnt
+
+
+1.2.yumレポジトリの設定
+
+file /etc/yum.repos.d/mnt_rhel60.repo
+※ファイルが存在しないことを確認
+
+sudo vi /etc/yum.repos.d/mnt_rhel60.repo
+
+#---追記内容(Start)---#
+[rhel60_dvd]
+name=RHEL6.0(x86_64) DVD
+baseurl=file:///mnt/Server/
+enabled=1
+gpgcheck=1
+gpgkey=file:///mnt/RPM-GPG-KEY-redhat-release
+#---追記内容(End)---#
+
+ls -l /etc/yum.repos.d/*.repo
+#Permittionが他と違えば合わせること。
+
+
+1.3.RHN接続の無効化（任意）
+RHNの接続エラーが毎回出るので抑止する。(enabled=0とする）
+
+sudo cp -p /etc/yum/pluginconf.d/rhnplugin.conf /etc/yum/pluginconf.d/rhnplugin.conf.org
+
+ls -l /etc/yum/pluginconf.d/rhnplugin.conf /etc/yum/pluginconf.d/rhnplugin.conf.org
+※ファイルが存在しタイムスタンプが同じことを確認
+
+sudo vi /etc/yum/pluginconf.d/rhnplugin.conf
+
+#---修正結果(Start)---#(enabled=0とする）
+[main]
+#enabled = 1
+enabled = 0
+gpgcheck = 1
+#---修正結果(End)---#
+
+ls -l /etc/yum/pluginconf.d/rhnplugin.conf /etc/yum/pluginconf.d/rhnplugin.conf.org
+※ファイルが存在しタイムスタンプが違うことを確認
+
+1.4.確認
+yumコマンドで、DVDのパッケージが認識できるか確認。
+yum list
+※指定したレポジトリ名のパッケージが表示されることを確認。
+
+#------------------------------------------------------------------------------
+
+2.Install
+
+2.1.ZabbixのInstall
+sudo yum install zabbix-server-mysql zabbix-web-mysql
+
+2.2.日本語パッケージのInstall
+sudo yum install zabbix-web-japanese
+
+#------------------------------------------------------------------------------
+
+#-------------##### RHEL CD-ROMからZabbix Agent install #####------------------------
+1.準備作業
+
+1.1.RHELメディアのマウント
+sudo mount -t iso9660 -o ro /dev/cdrom /mnt
+
+
+1.2.yumレポジトリの設定
+
+file /etc/yum.repos.d/mnt_rhel60.repo
+※ファイルが存在しないことを確認
+
+sudo vi /etc/yum.repos.d/mnt_rhel60.repo
+
+#---追記内容(Start)---#
+[rhel60_dvd]
+name=RHEL6.0(x86_64) DVD
+baseurl=file:///mnt/Server/
+enabled=1
+gpgcheck=1
+gpgkey=file:///mnt/RPM-GPG-KEY-redhat-release
+#---追記内容(End)---#
+
+ls -l /etc/yum.repos.d/*.repo
+#Permittionが他と違えば合わせること。
+
+
+1.3.RHN接続の無効化（任意）
+RHNの接続エラーが毎回出るので抑止する。(enabled=0とする）
+
+sudo cp -p /etc/yum/pluginconf.d/rhnplugin.conf /etc/yum/pluginconf.d/rhnplugin.conf.org
+
+ls -l /etc/yum/pluginconf.d/rhnplugin.conf /etc/yum/pluginconf.d/rhnplugin.conf.org
+※ファイルが存在しタイムスタンプが同じことを確認
+
+sudo vi /etc/yum/pluginconf.d/rhnplugin.conf
+
+#---修正結果(Start)---#(enabled=0とする）
+[main]
+#enabled = 1
+enabled = 0
+gpgcheck = 1
+#---修正結果(End)---#
+
+ls -l /etc/yum/pluginconf.d/rhnplugin.conf /etc/yum/pluginconf.d/rhnplugin.conf.org
+※ファイルが存在しタイムスタンプが違うことを確認
+
+1.4.確認
+yumコマンドで、DVDのパッケージが認識できるか確認。
+yum list
+※指定したレポジトリ名のパッケージが表示されることを確認。
+
+#------------------------------------------------------------------------------
+
+2.Install
+
+2.1.Zabbix AgentのInstall
+yum install zabbix-agent
+
+

@@ -1,0 +1,15 @@
+NIM Clientの状態が異常(意図しないステータス)になった時の状態リセット
+
+nim -o reset -a force=yes <NIM Client name>
+nim -Fo deallocate -a subclass=all <NIM Client name>
+lsnim -l <NIM Client name>
+
+NIMでmksysbを取った時に以下メッセージが出たらNFSサーバのキャッシュがいっぱいの可能性があるためNFSサーバを再起動してキャッシュクリア
+
+0042-154 c_stat: the file or directory 
+
+refreshsrc -g nfs
+
+他、要因は
+fsize limit in both client and NIM server is 'unlimited'
+even though /tmp

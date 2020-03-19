@@ -1,0 +1,103 @@
+CentOS7にSensuをインストールする
+
+今回は、最近名前を聞く監視ツール『Sensu』をCentOS7にインストールしてみることにする。
+あくまでも、入れてみての動作検証を目的としているので、細かい所にツッコミどころがあると思うが今回は考慮しない事とする。
+なお、動作検証を目的としている事から、Firewalld、SELinuxは停止しておく。
+
+1.前提パッケージのインストール・設定
+まずは、以下のコマンドで前提となるパッケージ群をインストールする。
+
+yum install -y epel-release # epelのインストール
+yum -y install erlang # erlangのインストール
+ 
+# RabbitMQ関連
+rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+rpm -Uvh http://www.rabbitmq.com/releases/rabbitmq-server/v3.4.1/rabbitmq-server-3.4.1-1.noarch.rpm
+chkconfig rabbitmq-server on
+/etc/init.d/rabbitmq-server start
+rabbitmq-plugins enable rabbitmq_management
+ 
+# redis関連
+yum -y install redis
+chkconfig redis on
+systemctl start redis
+
+次に、RabbitMQに関係する設定を実施する。
+
+rabbitmqctl add_vhost /sensu
+rabbitmqctl add_user sensu sensu
+rabbitmqctl set_permissions -p /sensu sensu ".*" ".*" ".*"
+
+2.Sensuのインストール
+前提パッケージのインストール、設定ができたら、次はSensuのインストールを行う。
+ 今回はyumからインストールするため、まずrepoファイルを作成し、インストールを行う。
+
+cat << EOF >> /etc/yum.repos.d/sensu.repo
+[sensu]
+name=sensu-main
+baseurl=http://repos.sensuapp.org/yum/el/7/x86_64/
+gpgcheck=0
+enabled=1
+EOF
+yum -y install sensu
+
+Sensuの設定ファイルを、テンプレートをコピーして作成する。
+
+cp /etc/sensu/config.json.example /etc/sensu/config.json
+
+自分自身を監視対象サーバとするため、クライアントの設定ファイルを作成する。
+
+cat << EOF >> /etc/sensu/conf.d/client.json
+{
+  "client": {
+    "name": "Sensu Server",
+    "address": 127.0.0.1,
+    "subscriptions": [ "all" ]
+  }
+}
+EOF
+
+サービスの起動、自動起動設定を行う。
+
+/etc/init.d/sensu-server start
+/etc/init.d/sensu-client start
+/etc/init.d/sensu-api start
+chkconfig sensu-server on
+chkconfig sensu-client on
+chkconfig sensu-api on
+
+次に、Sensuの標準ダッシュボードであるUchiwaをインストール、起動設定をする。
+ 
+yum install -y uchiwa
+cat << EOF > /etc/sensu/uchiwa.json
+{
+    "sensu": [
+        {
+            "name": "Sensu",
+            "host": "localhost",
+            "ssl": false,
+            "port": 4567,
+            "user": "",
+            "pass": "",
+            "path": "",
+            "timeout": 5000
+        }
+    ],
+    "uchiwa": {
+        "user": "",
+        "pass": "",
+        "port": 3000,
+        "stats": 10,
+        "refresh": 10000
+    }
+}
+EOF
+/etc/init.d/uchiwa start
+chkconfig uchiwa on
+
+3.WEBコンソールへ接続
+パッケージのインストールが完了したら、WEBコンソール(http://SensuサーバIPアドレス:3000)からSensu(というか、Uchiwa)にアクセスしよう。
+ 現在の設定ではログイン時にID/PWを要求されないので、そのままステータス確認画面を見れるはずだ。
+
+
+無事、クライアントに自分自身が表示される事が確認できた。

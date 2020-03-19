@@ -1,0 +1,14 @@
+自宅サーバをhttps化したので、Windowsのドライブ割当てにもAndroidのWebdavクライアントからも接続出来るようになりました。(https化は1年ぐらい前にしていましたが…)
+■URL
+https://regulus0134.dip.jp/webdav/
+
+■接続方法
+Windows 10 からの WebDAV 接続
+http://support.kagoya.jp/kir/manual/webdav/win10/index.html
+
+Mac OS X からの接続
+http://support.kagoya.jp/kir/manual/webdav/macosx/index.html
+
+AndroidからのWebDavDroid Lite で接続
+http://www.drivee.jp/private/support/man/connect_webdavdroid.php
+

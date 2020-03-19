@@ -1,0 +1,732 @@
+###############################################################################
+### ‚Ü‚¾À‹@‚Å‚â‚Á‚Ä‚¢‚È‚¢– ##################################################
+###############################################################################
+cgi‚ğ—LŒø‚É‚·‚éB
+a2enmod cgi 
+
+sudo vi /etc/hosts
+
+127.0.0.1       localhost
+127.0.1.1        Server1 localhost.localdomain localhost@m’Ç‰Á‚µ‚Ü‚·n
+
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚ÖSSLØ–¾‘‚ğì¬‚·‚é
+SSL‚ğ—p‚¢‚½M—Š«‚Ì‚‚¢’ÊMŒo˜H‚ğ’z‚·‚é‚½‚ß‚É•K—v‚ÈØ–¾‘‚ğì¬
+(1)OpenSSL‚ÌƒCƒ“ƒXƒg[ƒ‹
+1.OpenSSL‚ÌƒCƒ“ƒXƒg[ƒ‹
+sudo aptitude show openssl
+sudo apt-get install openssl
+sudo openssl version
+
+2.F/WƒAƒNƒZƒX‚ğ‹–‰Â
+sudo ufw allow 443
+sudo ufw reload 
+
+3.İ’èƒtƒ@ƒCƒ‹uopenssl.cnfv‚ğ•ÒW‚·‚é
+sudo cp /etc/ssl/openssl.cnf /etc/ssl/openssl.cnfBAK
+sudo vi /etc/ssl/openssl.cnf
+
+[ CA_default ]
+dir =  /etc/ssl/CA # Where everything is kept@@@<42s–Ú>@./demoCA@¨@/etc/ssl/CA@‚É•ÏX‚µ‚Ü‚·
+
+default_days = 3650  # how long to certify for @@@<73s–Ú>@365“ú¨3650“úi10”Nj‚É‚µ‚Ä‚¨‚«‚Ü‚·
+
+# This is OK for an SSL server.
+nsCertType = server <176s–Ú>@#‚ÌƒRƒƒ“ƒgƒAƒEƒg‚ğŠO‚µ‚Ü‚·
+
+# Some might want this also
+nsCertType = sslCA, emailCA <248s–Ú>  #‚ÌƒRƒƒ“ƒgƒAƒEƒg‚ğŠO‚µ‚Ü‚·
+
+[ proxy_cert_ext ]
+cccccc
+# This is OK for an SSL server.
+nsCertType = server #<281s–Ú>@#‚ÌƒRƒƒ“ƒgƒAƒEƒg‚ğŠO‚µ‚Ü‚·
+
+# For normal client use this is typical
+nsCertType = client, email #<287s–Ú>@#‚ÌƒRƒƒ“ƒgƒAƒEƒg‚ğŠO‚µ‚Ü‚·
+ 
+[ tsa_config1 ]
+# These are used by the TSA reply generation only.
+dir = /etc/ssl/CA  # TSA root directory@<330s–Ú>@./demoCA@¨@/etc/ssl/CA@‚É•ÏX‚µ‚Ü‚·
+
+(2) ”é–§Œ®‚Ìì¬
+1.ƒfƒBƒŒƒNƒgƒŠì¬
+sudo mkdir /etc/apache2/ssl/
+cd /etc/apache2/ssl/
+
+2.RSA”é–§Œ®‚Ìì¬
+sudo openssl genrsa -des3 -out server-sec.key 2048
+
+Enter pass phrase for server.key:# ƒpƒXƒtƒŒ[ƒYİ’è
+Verifying - Enter pass phrase for server.key:# Šm”FÄ“ü—Í
+server-sec.key‚ªo—ˆ‚é
+
+3.Ø–¾‘‚Ì–¼—v‹iCSRj‚Ìì¬
+sudo openssl req -new -key server-sec.key -out server.csr
+
+Country Name (2 letter code) [AU]:JP ©©©# ‘
+State or Province Name (full name) [Some-State]:Kanagawa  ©©©# ’nˆæiŒ§j
+Locality Name (eg, city) []:Yokohama ©©©# “ss
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Private  ©©©# ‘gD–¼
+Organizational Unit Name (eg, section) []:  ©©©# ‘gD‚Ì•”–å–¼
+Common Name (e.g. server FQDN or YOUR name) []:192.168.11.11  ©©©# ƒT[ƒo[‚ÌFQDNorIPAddress
+Email Address []:xxx@sakatmp ©©©# ŠÇ—ÒƒAƒhƒŒƒX
+
+server.csr ‚ªo—ˆ‚é
+
+4.X.509Œ`®‚ÌØ–¾‘”­s—v‹‚Ìì¬
+”FØ‘‚ÍAserver.crt‚Æ‚¢‚¤–¼‘O‚Åssl.crt
+sudo openssl x509 -req -days 3650 -in server.csr -signkey server-sec.key -out server.crt
+
+Signature ok
+subject=***
+Getting Private key
+
+server.crt‚ªo—ˆ‚é
+
+5.RSA”é–§Œ®‚ÌƒpƒXƒtƒŒ[ƒYíœBApache—p‚ÉƒpƒXƒtƒŒ[ƒY‚ğ“ü—Í‚µ‚È‚­‚Ä‚à”é–§Œ®‚ğg—p‚Å‚«‚é‚æ‚¤‚É‚·‚éB
+sudo openssl rsa -in server-sec.key -out server.key
+
+Enter pass phrase for server.key:# ƒpƒXƒtƒŒ[ƒY
+writing RSA key
+server.key ‚ªo—ˆ‚é
+
+6./etc/apache2/ssl/‚ÉˆÈ‰º‚Ì4‚Â‚Ìƒtƒ@ƒCƒ‹‚ªì¬‚³‚ê‚½
+ls -l /etc/apache2/ssl/
+cd /etc/apache2/ssl/
+sudo chmod 400 server.*
+server-sec.key (server key)
+server.csr (certificate signing request)
+server.crt (certificate)
+server.key (passwordless key for Apache)
+
+(3)Apache2‚ÉSSLİ’è‚ğ‚·‚é
+1.apache2İ’èƒtƒ@ƒCƒ‹‚ÌƒoƒbƒNƒAƒbƒv
+sudo cp -p /etc/apache2/sites-available/default-ssl.conf /tmp/default-ssl.conf_`date +%Y%m%d`
+
+2.apache2İ’èƒtƒ@ƒCƒ‹‚Ì•ÒW
+sudo vi /etc/apache2/sites-available/default-ssl.conf
+
+###### •ÒW“à—e #######
+
+NameVirtualHost 192.168.11.11:80
+<VirtualHost 192.168.11.11:80>
+DocumentRoot /var/www/html
+</VirtualHost>
+
+
+NameVirtualHost *:443
+<IfModule mod_ssl.c>
+<VirtualHost _default_:443> 
+SSLEngine on
+SSLCertificateFile /etc/apache2/ssl/server.crt
+SSLCertificateKeyFile /etc/apache2/ssl/server.key
+
+	<Directory /usr/lib/cgi-bin>
+		SSLOptions +StdEnvVars
+	</Directory>
+
+</VirtualHost>
+</IfModule>
+
+(3) Apache2‚ÌSSLİ’è‚ğ—LŒø‚É‚·‚é
+1.Apache2‚Ìsslƒ‚ƒWƒ…[ƒ‹‚ğ‚ğ—LŒø‚É‚·‚é
+sudo a2enmod ssl
+
+2.Apache2‚Ì"000-default"İ’è‚ğ–³Œø‚É‚·‚é
+sudo a2disite 000-default
+
+3.Apache2‚Ì"default-ssl"İ’è‚ğ—LŒø‚É‚·‚é
+sudo a2ensite default-ssl
+
+4.ƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚ªì¬‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
+ls -l /etc/apache2/sites-enabled/
+lrwxrwxrwx 1 root Root   26 2009-06-14 21:33 000-default -> ../sites-available/default
+lrwxrwxrwx 1 root Root   30 2009-07-04 21:09 default-ssl -> ../sites-available/default-ssl
+
+5.Apache2‚ÌÄ‹N“®
+sudo service apache2 restart 
+
+6.LISTEN‚Å‚ ‚é‚±‚Æ‚ğŠm”F
+netstat -an | grep 443
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN 
+
+7.‘Ò‚¿‚¤‚¯ƒ|[ƒg‚Ìİ’è‚ªs‚í‚ê‚Ä‚¢‚é‚©A”O‚Ì‚½‚ß‚ÉŠm”FB
+cat /etc/apache2/ports.conf
+ 
+NameVirtualHost *:80
+Listen 80
+ 
+<IfModule mod_ssl.c>
+    Listen 443
+</IfModule>
+
+8.apache2ƒT[ƒrƒX‚ğƒŠƒXƒ^[ƒg‚·‚é‚ÆAŸ‚Ì‚æ‚¤‚ÈŒx‚ªo‚éB i•ú‚Á‚Ä‚¨‚¢‚Ä‚à–â‘è‚È‚¢‚ªcj
+sudo /etc/init.d/apache2 restart
+ * Restarting web server apache2
+apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
+ ... waiting apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
+   ...done.
+ 
+9.Apache2İ’èƒtƒ@ƒCƒ‹‚ÉƒT[ƒo–¼‚ğ‹­§w’è‚·‚é‚±‚Æ‚ÅAŒx‚ğ‰ñ”ğ‚Å‚«‚éB
+
+sudo vi /etc/apache2/apache2.conf
+### Section 1: Global Environment
+#
+# The directives in this section affect the overall operation of Apache,
+# such as the number of concurrent requests it can handle or where it
+# can find its configuration files.
+#
+ 
+Servername  localhost     © /etc/hosts ‚É‘¶İ‚·‚é–¼‘O‚É‚·‚é
+
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚ÖPHP‚Å“®‚­ƒIƒ“ƒ‰ƒCƒ“ƒtƒ@ƒCƒ‹ƒ}ƒl[ƒWƒƒ[AAjaXplorer‚à‚Æ‚¢Pydio‚ğ“±“ü‚·‚éè‡
+
+1.AjaXplorer‚ÌŒö®ƒTƒCƒg‚©‚çÅV”Å‚ğƒ_ƒEƒ“ƒ[ƒh
+http://ajaxplorer.info/
+
+‚Æv‚Á‚½‚ç–¼‘O‚ªPydio‚Æ•Ï‚í‚Á‚Ä‚é‚µURL‚à•Ï‚í‚Á‚Ä‚½EEEB
+http://pyd.io/
+
+‚µ‚©‚àƒ_ƒEƒ“ƒ[ƒh‚µ‚È‚­‚Ä‚àƒpƒbƒP[ƒW‰»‚³‚ê‚Ä‚¢‚é‚µEEEB
+
+2.PydioƒCƒ“ƒXƒg[ƒ‹
+cp -p /etc/apt/sources.list  ${BKDIR}/sources.list_`date +%Y%m%d`
+
+sudo vi /etc/apt/sources.list
+
+deb http://dl.ajaxplorer.info/repos/apt testing main
+deb-src http://dl.ajaxplorer.info/repos/apt testing main
+
+wget -O - http://dl.ajaxplorer.info/repos/charles@ajaxplorer.info.gpg.key | sudo apt-key add -
+
+sudo apt-get update
+sudo apt-get install php-mbstring php-gd php-mcrypt php-xml
+sudo apt-get install pydio
+
+3.Pydio
+sudo cp /usr/share/doc/pydio/apache2.sample.conf /etc/apache2/sites-enabled/pydio.conf
+
+sudo vi /etc/apache2/sites-enabled/pydio.conf
+“Á‚Éİ’èƒtƒ@ƒCƒ‹‚ç‚µ‚«‚à‚Ì‚Í‚ ‚è‚Ü‚¹‚ñ‚ªAconf/bootstrap_conf.php ‚Ì 33s–ÚA
+
+//define("AJXP_LOCALE", "");
+
+‚Æ‚È‚Á‚Ä‚¢‚é‚Æ‚±‚ë‚ğA
+
+define("AJXP_LOCALE", "ja_JP.UTF-8");
+
+‚Æ‚¾‚¯‘‚«Š·‚¦‚Ä‚¨‚¢‚½•û‚ª—Ç‚³‚°‚Å‚·OO
+// ‚Ííœ‚µ‚Ü‚·B
+
+4.ƒtƒ@ƒCƒ‹ƒAƒbƒvƒ[ƒh‚ÌãŒÀ‚ğ•ÏX 
+ƒtƒ@ƒCƒ‹‚ÌƒAƒbƒvƒ[ƒhãŒÀ‚ÍƒfƒtƒHƒ‹ƒg‚Å2MB‚È‚Ì‚Å‘‚â‚µ‚Ä‚¨‚­B
+/etc/php5/apache2/php.ini ‚ÌˆÈ‰ºİ’è‚ğ•ÏX‚µ apache Ä‹N“®B
+
+memory_limit = 500M
+post_max_size = 500M
+upload_max_filesize = 500M
+‚Ü‚½APydio‚Ìİ’è‚©‚çƒAƒbƒvƒ[ƒhãŒÀ‚ğ•ÏX‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚éB
+ƒoƒCƒg”‚Åİ’è‚³‚ê‚Ä‚¢‚é‚ªA0‚ğİ’è‚·‚é‚Æphp‚Åİ’è‚µ‚Ä‚¢‚éãŒÀ‚ªİ’è‚³‚ê‚Ü‚·B
+
+output_buffering‚ğ–³Œø‚É‚·‚é 
+ƒpƒtƒH[ƒ}ƒ“ƒXŒüã‚Ì‚½‚ß‚É
+/etc/php5/apache2/php.ini ‚ÌˆÈ‰ºİ’è‚ğ•ÏX‚µ apache Ä‹N“®B
+* output_buffering = Off
+
+5.apache2İ’è
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+	Alias /pydio/ "/usr/share/pydio"
+	<Directory "/usr/share/pydio">
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+sudo /etc/init.d/apache2 restart
+
+6.pydio‚ÖƒAƒNƒZƒX
+http://[ip]/pydio/
+
+click here to continue to Pydio.
+
+“ú–{Œê‚Å‘I‘ğ‚µ‚Ästart wizard‚ğƒNƒŠƒbƒN
+
+Admin Login			Admin
+Admin Display Name	Admin
+Admin Password		******
+Confirm				******
+[Global options]‚ğƒNƒŠƒbƒN
+Application Title		Pydio
+Welcome Message			Welcome to Pydio
+Default Language		“ú–{Œê
+Enable emails			NO(you can enable mails later)
+
+[Configurations storage]‚ğƒNƒŠƒbƒN
+Storage Type		No Database(Quick Start)
+
+[Install Pydio Now]‚ğƒNƒŠƒbƒN
+‚µ‚Î‚ç‚­‘Ò‚Â‚ÆƒƒOƒCƒ“‰æ–Ê‚ªo‚éII‚±‚ê‚Åİ’u‚ÍI‚í‚è
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚ÖMunin‚ğƒCƒ“ƒXƒg[ƒ‹‚·‚é 
+Emunin ‚Æ‚ÍCƒfƒBƒXƒNCƒlƒbƒgƒ[ƒNCCPU •‰‰×“™‚ÌƒƒOƒtƒ@ƒCƒ‹‚ğ©“®‚ÅƒOƒ‰ƒt‰»‚µCWeb ƒuƒ‰ƒEƒU‚©‚çŠÈ’P‚ÉŒ©‚ê‚é‚±‚Æ‚ª‚Å‚«‚é‚æ‚¤‚É‚·‚éƒƒtƒgƒEƒGƒAD
+
+1.Munin‚ÌƒpƒbƒP[ƒW‚ğƒCƒ“ƒXƒg[ƒ‹
+sudo apt-get install munin munin-node munin-plugins-extra
+
+2.munin—p‚ÌƒfƒBƒŒƒNƒgƒŠ‚ğ—pˆÓ‚·‚é
+sudo mkdir /var/www/html/munin/
+sudo chown munin:munin /var/www/html/munin/
+
+3.munin‚Ìİ’èƒtƒ@ƒCƒ‹‚ÌƒoƒbƒNƒAƒbƒv
+sudo cp -p /etc/munin/munin.conf /etc/munin/munin.conf.backup
+
+4.munin‚Ìİ’èƒtƒ@ƒCƒ‹‚Ì•ÏX
+sudo vi /etc/munin/munin.conf
+
+ˆÈ‰º‚Ì•”•ª‚ğ•ÏX
+# htmldir /var/cache/munin/www
+ˆÈ‰º‚Ì‚æ‚¤‚É
+htmldir /var/www/html/munin
+(98s–Ú)
+[ANDBOX44]
+
+sudo vi /etc/munin/apache.conf
+
+ˆÈ‰º‚Ì•”•ª‚ğ•ÏX
+# htmldir /var/cache/munin/www
+ˆÈ‰º‚Ì‚æ‚¤‚É
+htmldir /var/www/html/munin
+
+Allow from localhost 127.0.0.0/8 ::1
+ˆÈ‰º‚Ì‚æ‚¤‚É
+Allow from all
+Require all granted
+
+5.apacheİ’è
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+
+	Alias /admin/munin/ /var/www/admin/munin/
+	<Directory /var/www/admin/munin/>
+		Options None
+		order deny,allow
+		deny from all
+		allow from 127.0.0.0/24 192.168.1. ::1
+
+	<IfModule mod_expires.c>
+		ExpiresActive On
+		ExpiresDefault M310
+	</IfModule>
+	</Directory>
+
+6.munin‚Ìİ’èƒtƒ@ƒCƒ‹‚Ì•ÏX‚ğ“K—p‚·‚é
+sudo /etc/init.d/munin-nod restart
+
+7.munin-node‚ª‹N“®‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğ’²‚×‚é
+ps aux |grep munin-node
+sudo /etc/init.d/munin-node status
+
+8.apache2Ä‹N“®
+sudo /etc/init.d/apache2 restart
+
+9.munin‚ÉƒAƒNƒZƒX‚·‚é
+http://server.ip.address/munin/
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚ÉApacheMap‚ğƒCƒ“ƒXƒg[ƒ‹
+EApacheMap‚Æ‚ÍAƒEƒFƒuƒTƒCƒg‚Ì–K–âÒ‚ª‚¢‚éêŠ‚ğIPƒAƒhƒŒƒX‚ğŒ³‚ÉGoogle Mapã‚É•¦‚·‚éƒc[ƒ‹‚Å‚ ‚éB
+—˜—p‚É‚ ‚½‚Á‚Ä‚Í Google API ‚ÌƒL[‚ğæ“¾‚·‚é•K—v‚ª‚ ‚éB
+
+•K—v‚ÈPerlƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
+ApacheMap‚Ílibwww-perl‚Æperl-YAML‚ÉˆË‘¶‚µ‚Ä‚¢‚é‚Ì‚ÅA‚±‚ê‚ç‚ÌƒpƒbƒP[ƒW‚ğƒCƒ“ƒXƒg[ƒ‹‚·‚éB
+sudo apt-get install libwww-perl libyaml-perl
+
+ƒCƒ“ƒXƒg[ƒ‹
+ƒ[ƒXƒR[ƒh‚Í subversion ‚ÅŠÇ—‚³‚ê‚Ä‚¢‚é‚Ì‚ÅASVN ‚ğg‚Á‚ÄÅV”Å‚ğƒ_ƒEƒ“ƒ[ƒh‚·‚éB
+
+sudo apt-get install subversion
+‚Ü‚¾ subversion ‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚È‚¢ê‡
+mkdir /tmp/workdir
+cd /tmp/workdir
+svn co http://dev.squarecows.com/svn
+cd svn
+sudo mkdir /var/www/html/apache-geo-map
+sudo cp apachemap.html data.xml /var/www/html/apache-geo-map
+sudo cp -r img /var/www/html/apache-geo-map
+sudo cp default.conf /etc/apache-ge-map.conf
+sudo cp apache-geo-map.pl /usr/local/sbin/
+sudo chown -R www-data:www-data /var/www/apache-geo-map
+sudo chwon www-data:www-data /usr/local/sbin/apache-geo-map.pl
+sudo chmod ug+x /usr/local/sbin/apache-geo-map.pl
+
+İ’è
+/etc/apache-geo-map.conf‚ğ•ÒW‚·‚éB
+sudo vi /etc/apache-geo-map.conf
+
+data_dir: /var/www/html/apache-geo-map/
+
+Google Maps‚ÌAPIƒL[‚ğæ“¾‚µ‚ÄA/var/www/apache-geo-map/apachemap.html‚É–„‚ß‚Ş
+
+24s–Ú‚Ì
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<YOUR_API_KEY>" type="text/javascript"></script>
+
+ƒeƒXƒg
+ƒ†[ƒU www-data ‚ÅÀs‚µ‚ÄA/var/www/html/apache-geo-map/data.xml ‚ªXV‚³‚ê‚é‚©’²‚×‚éBiŒ‹ŠÔ‚ª‚©‚©‚é‚Ì‚Å’ˆÓj
+
+su - www-data -c "/usr/local/sbin/apache-geo-map.pl -c /etc/apache-geo-map.conf"
+http://servername/apache-geo-map/apachemap.html ‚ÉƒAƒNƒZƒX‚µ‚ÄAGoogle Maps ‚ÉƒAƒNƒZƒXŒ³‚ª•¦‚³‚ê‚ê‚ÎOKB
+
+
+cron ‚É“o˜^
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚Åtty.js‚ğg‚¤
+EUbuntuŠÂ‹«‚ÉAWebƒuƒ‰ƒEƒU‚©‚çg‚¦‚é’[––ƒGƒ~ƒ…ƒŒ[ƒ^‚Ìtty.js‚ğ“ü‚ê‚é•û–@‚Å‚·B
+
+sudo apt-get install nodejs npm
+
+cd ~
+sudo npm install tty.js
+
+ƒJƒŒƒ“ƒg‚Énode_modules‚Æ‚¢‚¤ƒtƒHƒ‹ƒ_‚ª‚Å‚«‚é‚Ì‚ÅAˆÈ‰º‚Ì—l‚È“à—e‚Ìconf.json‚ğì¬‚µ‚ÄA
+###### •ÒW“à—e #######
+{
+  "shell": "bash",
+  "users": {
+    "user": "password"
+  },
+  "port": 8080
+}
+#######################
+
+
+ˆÈ‰º‚Ì‚æ‚¤‚É‚µ‚Ätty.js‚ğ‹N“®‚µ‚Ü‚·B
+
+> ./node_modules/tty.js/bin/tty.js --config ~/conf.json --daemonize
+
+
+Œã‚Íƒuƒ‰ƒEƒU‚©‚ç8080ƒ|[ƒg‚ÉÚ‘±‚·‚é‚ÆAƒ^[ƒ~ƒiƒ‹‚ğŠJ‚¯‚Ü‚·B
+
+İ’èƒtƒ@ƒCƒ‹‚È‚µ‚Å‚à‹N“®‚µ‚Ü‚·‚ªA”FØ‚È‚µ‚Åƒ^[ƒ~ƒiƒ‹‚ªŠJ‚¯‚Ä‚µ‚Ü‚¤‚Ì‚ÅAÅ’á‚Å‚àƒpƒXƒ[ƒh‚Íİ’è‚µ‚½‚Ù‚¤‚ª—Ç‚¢‚©‚Æv‚¢‚Ü‚·B
+
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚ÅApache ƒAƒNƒZƒXƒƒO‰ğÍ "AWstats"‚ğg‚¤
+EƒAƒNƒZƒXƒƒO‰ğÍƒc[ƒ‹ AWstats ‚ğƒCƒ“ƒXƒg[ƒ‹‚µ‚Ü‚·B 
+
+‚PD"AWstats"‚ğƒCƒ“ƒXƒg[ƒ‹
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install awstats
+
+‚QDİ’èƒtƒ@ƒCƒ‹‚Ì•ÒW
+sudo cp -p /etc/awstats/awstats.conf /tmp/awstats.conf_`date +%Y%m%d`
+sudo vi /etc/awstats/awstats.conf 
+
+###### •ÒW“à—e #######
+#ƒƒOƒtƒ@ƒCƒ‹–¼‚ªˆÙ‚È‚éê‡‚Í‘‚«Š·‚¦‚Ü‚· 
+LogFile="/var/log/apache2/access.log"
+# 122s–ÚF•ÏX
+# Apache ‚ÌƒƒOƒtƒH[ƒ}ƒbƒg‚ª"combined"‚Ìê‡‚Íu1v
+# "common"‚Ìê‡‚Íu4v( ‚½‚¾‚µ‚±‚Ìê‡ƒuƒ‰ƒEƒUî•ñ“™Aˆê•”‚Ì‰ğÍ‚Í‚Å‚«‚È‚­‚È‚é)
+LogFormat=1
+# 153s–ÚFƒzƒXƒg–¼w’è
+SiteDomain="www.server.world" 
+# 168s–ÚFœŠO‚·‚éƒhƒƒCƒ“–¼/IPƒAƒhƒŒƒX’Ç‹L
+HostAliases="localhost 127.0.0.1 REGEX[server.world$] REGEX[^10.0.0.]" 
+# 222s–ÚF•ÏX
+DirIcons="./icon" 
+# 905s–ÚF•ÏX
+Lang="jp"
+#######################
+
+3."AWstats"—pƒfƒBƒŒƒNƒgƒŠ‹y‚ÑƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚Ìì¬
+sudo mkdir /var/www/html/awstats
+sudo ln -s /usr/share/awstats/icon /var/www/html/awstats/icon
+
+4.apache2İ’èƒtƒ@ƒCƒ‹‚Ì•ÒW
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+###### •ÒW“à—e #######
+<Directory "/usr/lib/cgi-bin">
+AllowOverride None
+Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+Order allow,deny
+Allow from 10.0.0.0/24# ƒAƒNƒZƒX‹–‰ÂIP
+
+</Directory>
+
+# ƒeƒLƒg[‚É‰º‚Ì•û‚É’Ç‹L
+<Location /awstats>
+Order deny,allow
+Deny from all
+Allow from 10.0.0.0/24# ƒAƒNƒZƒX‹–‰ÂIP
+</Location>
+</VirtualHost> 
+#######################
+
+5.Apache–{‘Ì‚ğÄ‹N“®
+/etc/init.d/apache2 restart 
+
+6.ƒŒƒ|[ƒgo—Í
+/usr/lib/cgi-bin/awstats.pl -config=apache -update 
+
+7.o—Í‚µ‚½ƒŒƒ|[ƒg‚ğHTML‚É‚·‚é
+/usr/lib/cgi-bin/awstats.pl -config=apache -LogFile=access_log -output -staticlink > /var/www/awstats/index.html 
+
+cronİ’è
+
+#-----------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚Åcronİ’è‚ğGUI‚Ås‚¤B
+
+sudo apt-get install gnome-schedule
+
+sudo ln -s /usr/local/sbin/daily /etc/cron.daily/0my_daily
+
+ƒtƒ@ƒCƒ‹–¼‚ğ 0‚©‚ç‚É‚µ‚½‚Ì‚Í /etc/cron.daily/logrotate (‚Â‚Ü‚èƒƒO‚Ìƒ[ƒe[ƒgˆ—)‚æ‚èæ‚ÉÀs‚³‚¹‚é‚½‚ß‚Å‚·B
+
+‚±‚ê‚ğ‚·‚é‚ÆA/etc/crontab‚Åİ’è‚µ‚½ŠÔ‚Å©“®‚ÅÀs‚³‚ê‚Ü‚·B
+¡Œ©‚é‚Æ –ˆ“ú 6:25 ‚ÉÀs‚·‚é‚æ‚¤‚É‚È‚Á‚Ä‚¢‚Ü‚·B
+
+#-----------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚ÅHinemos
+
+Ubuntu‘Î‰”ÅHinemos‚ÍAOSS“‡‰^—pŠÇ—ƒƒtƒgƒEƒFƒAuHinemosv‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì‚¤‚¿AHinemosƒ}ƒl[ƒWƒƒ‹y‚ÑHinemosƒG[ƒWƒFƒ“ƒg‚ğUbuntuã‚Å“®ì‚·‚é‚æ‚¤‰ü•Ï‚µ‚½‚à‚Ì‚Å‚·B
+Ubuntu‘Î‰”ÅHinemos‚Å‚ÍAƒIƒŠƒWƒiƒ‹‚ÌHinemos‚ÅŠÇ—‰Â”‚ÈRHELŒnLinux‚âWindows Server“™‚É‰Á‚¦‚ÄAUbuntu‚ÌŠeíŠÄ‹A«”î•ñûWAƒWƒ‡ƒuÀs“™‚ğs‚¤‚±‚Æ‚ª‰Â”‚Å‚·B
+
+1.‰º‹L‚ÌURL‚æ‚èƒ_ƒEƒ“ƒ[ƒh
+http://sourceforge.jp/projects/hinemosonubuntu/
+
+2.SSHAFTP“™‚Å"/tmp"‚ÖƒAƒbƒvƒ[ƒh
+hinemos_manager-4.1.0_precise_64.tar.gz
+
+3.‰ğ“€
+cd /tmp
+tar zxvf ./hinemos_manager-4.1.0_precise_64.tar.gz
+
+4.‘O’ñƒpƒbƒP[ƒW‚ÌƒCƒ“ƒXƒg[ƒ‹(openjdk-7-jre-headless unzip expect krb5-clients snmpd openssh-server)
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install openjdk-7-jre-headless unzip expect krb5-clients snmpd
+
+5.HinemosƒCƒ“ƒXƒg[ƒ‹
+ƒCƒ“ƒXƒg[ƒ‹—pƒXƒNƒŠƒvƒgimanager_installer_JP.shj‚ğÀs
+cd Hinemos_Manager-4.1.0_precise_64
+./manager_installer_JP.sh
+________________________________________________________________________________
+-------------------------------------------------------
+Welcome to the installation for Hinemos Manager
+Version 4.1.0
+Copyright (C) 2013 NTT DATA Corporation
+-------------------------------------------------------
+Hinemosƒ}ƒl[ƒWƒƒ‚ÌƒCƒ“ƒXƒg[ƒ‹‚ğŠJn‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H(Y/N ƒfƒtƒHƒ‹ƒg:Y) : Y
+________________________________________________________________________________
+
+ˆÈ‰º‚ÌƒƒbƒZ[ƒW‚ª•¦‚³‚ê‚Ü‚·B NG‚Æ‚È‚Á‚½ê‡‚ÍA–‚½‚³‚ê‚Ä‚¢‚È‚¢‘O’ñğŒ‚ğ‰ğÁ‚µ‚½ŒãAmanager_installer_JP.sh‚ğÄÀs‚µ‚Ü‚·B
+Àsƒ†[ƒU‚ÌŠm”F’†... [OK]
+SELinux ‚ÌŠm”F’†... [OK]
+OSƒo[ƒWƒ‡ƒ“‚ÌŠm”F’†... [OK]
+rpm ƒpƒbƒP[ƒW‚ÌŠm”F’†...
+java-1.7.0-openjdk... [OK]
+rsyslog... [OK]
+rsyslog.conf‚ÌŠm”F’†... [OK]
+
+ƒ†[ƒUhinemos‚ÌƒpƒXƒ[ƒh‚ğİ’è‚µ‚Ü‚·B
+ƒpƒXƒ[ƒh‚Ì“ü—Í‚ğ‹‚ß‚ç‚ê‚Ü‚·Bƒ†[ƒUhinemos‚ÌƒpƒXƒ[ƒh‚ğ“ü—Í‚µ‚Ü‚·B
+________________________________________________________________________________
+ƒ†[ƒU hinemos ‚ÌŠm”F’†...
+ƒOƒ‹[ƒv hinemos ‚ğì¬‚µ‚Ü‚µ‚½B
+V‚µ‚¢ƒpƒXƒ[ƒh: [ƒpƒXƒ[ƒh‚ğ“ü—Í(“ü—Í“à—e‚Í‰æ–Ê‚É•¦‚³‚ê‚Ü‚¹‚ñ)]
+V‚µ‚¢ƒpƒXƒ[ƒh‚ğÄ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢: [ƒpƒXƒ[ƒh‚ğ“ü—Í(“ü—Í“à—e‚Í‰æ–Ê‚É•¦‚³‚ê‚Ü‚¹‚ñ)]
+________________________________________________________________________________
+
+ˆÈ‰º‚ÌƒƒbƒZ[ƒW‚ª•¦‚³‚ê‚Ü‚·B
+________________________________________________________________________________
+ƒ†[ƒU[ hinemos ‚ÌƒpƒXƒ[ƒh‚ğ•ÏXB
+passwd: ‘S‚Ä‚Ì”FØƒg[ƒNƒ“‚ª³‚µ‚­XV‚Å‚«‚Ü‚µ‚½B
+ƒ†[ƒU hinemos iƒOƒ‹[ƒv hinemosj‚ğì¬‚µ‚Ü‚µ‚½B
+ƒCƒ“ƒXƒg[ƒ‹ƒfƒBƒŒƒNƒgƒŠ /opt/hinemos ‚ÌŠ—LÒ‚ğ hinemos:hinemos ‚É•ÏX‚µ‚Ü‚µ‚½B
+________________________________________________________________________________
+
+JAVA_HOME‚ğw’è‚µ‚Ü‚·B
+JAVA_HOME‚ÌƒfƒBƒŒƒNƒgƒŠ‚Ì“ü—Í‚ª‹‚ß‚ç‚ê‚Ü‚·BOpenJDK‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚éƒfƒBƒŒƒNƒgƒŠ‚ğ“ü—Í‚µ‚Ü‚·B
+________________________________________________________________________________
+JAVA_HOME ‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B(ƒfƒtƒHƒ‹ƒg:/usr/lib/jvm/jre-1.7.0-openjdk.x86_64) :
+________________________________________________________________________________
+
+“ü—Í‚³‚ê‚½JAVA_HOME‚ÌƒfƒBƒŒƒNƒgƒŠ‚ÌŠm”F‚ªo—Í‚³‚ê‚Ü‚·‚Ì‚ÅA–â‘è‚ª‚È‚¯‚ê‚ÎgYh‚Æ“ü—Í‚µ‚Ü‚·B
+________________________________________________________________________________
+/usr/lib/jvm/jre-1.7.0-openjdk.x86_64 (/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/java)
+‚Å‚æ‚ë‚µ‚¢‚Å‚µ‚å‚¤‚©H(Y/N ƒfƒtƒHƒ‹ƒg:Y) : Y
+________________________________________________________________________________
+
+SNMP or WBEM‚Ç‚¿‚ç‚ÅŠÄ‹‚·‚é‚©‘I‘ğ
+WBEMg—p‚µ‚È‚¢ê‡‚ÍgNh‚Æ“ü—Í‚µ‚Ü‚·B ƒfƒtƒHƒ‹ƒg‚Å‚ÍƒvƒƒZƒXŠÄ‹‚âƒŠƒ[ƒXŠÄ‹‚Å‚ÍSNMPƒvƒƒgƒRƒ‹‚ğ—˜—p‚µ‚Ü‚·B
+________________________________________________________________________________
+ƒvƒƒZƒXŠÄ‹‚âƒŠƒ[ƒXŠÄ‹‚ÉWBEM‚ğ—˜—p‚µ‚Ü‚·‚©H(Y/N ƒfƒtƒHƒ‹ƒg:N) : Y
+________________________________________________________________________________
+
+ˆêŠ‡§Œä‹@”‚Å—˜—p‚·‚éFTPƒT[ƒo‚ÌIPƒAƒhƒŒƒX‚ğİ’è‚µ‚Ü‚·B
+FTPƒT[ƒo‚ÌIPƒAƒhƒŒƒX‚Ì“ü—Í‚ª‹‚ß‚ç‚ê‚Ü‚·‚Ì‚ÅAFTPƒT[ƒo‚ÌIPƒAƒhƒŒƒX‚ğ“ü—Í‚µ‚Ü‚·B (IPv6‚Ìê‡‚ÍAIPƒAƒhƒŒƒX‚Ì‘O
+Œã‚É[]‚ğ“ü‚ê‚È‚¢‚Å‚­‚¾‚³‚¢B) ˆêŠ‡§Œä‹@”‚ğ—˜—p‚µ‚È‚¢ê‡‚ÍA–¢“ü—Í‚ÅƒŠƒ^[ƒ“ƒL[‚ğ‰Ÿ‚µ‚Ü‚·BiƒfƒtƒHƒ‹ƒgİ’è‚Æ
+‚È‚è‚Ü‚·j
+________________________________________________________________________________
+ˆêŠ‡§Œä‚Å—˜—p‚·‚éFTPƒT[ƒo‚ÌIPƒAƒhƒŒƒX‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢BiƒfƒtƒHƒ‹ƒg:127.0.0.1j : [IPAddress]
+________________________________________________________________________________
+
+“ü—Í‚µ‚½IPƒAƒhƒŒƒX‚ÌŠm”F‚ªo—Í‚³‚ê‚Ü‚·‚Ì‚ÅA–â‘è‚ª‚È‚¯‚ê‚ÎgYh‚Æ“ü—Í‚µ‚Ü‚·B
+________________________________________________________________________________
+192.168.0.1 ‚Å‚æ‚ë‚µ‚¢‚Å‚µ‚å‚¤‚©H(Y/N ƒfƒtƒHƒ‹ƒg:Y) : Y
+________________________________________________________________________________
+
+•K—v‚Èƒtƒ@ƒCƒ‹‚ÌƒRƒs[‚Æİ’è‚ªÀs‚³‚ê‚Ü‚·B
+ˆÈ‰º‚ÌƒƒbƒZ[ƒW‚ª•¦‚³‚ê‚Ü‚·B
+________________________________________________________________________________
+ƒ}ƒEƒ“ƒg‚³‚ê‚Ä‚¢‚éƒtƒ@ƒCƒ‹ƒVƒXƒeƒ€ˆê——
+/dev/sda2 - /
+/dev/sda1 - /boot
+ƒf[ƒ^ƒx[ƒXƒfƒBƒŒƒNƒgƒŠ(/opt/hinemos/var/data)‚Íƒp[ƒeƒBƒVƒ‡ƒ“ /“à‚ÉŠi”[‚³‚ê‚Ü‚·B
+ƒƒOƒfƒBƒŒƒNƒgƒŠ(/opt/hinemos/var/log)‚Íƒp[ƒeƒBƒVƒ‡ƒ“ /“à‚ÉŠi”[‚³‚ê‚Ü‚·B
+•K—v‚Èƒtƒ@ƒCƒ‹‚ÌƒRƒs[Às’†... [OK]
+İ’èƒtƒ@ƒCƒ‹ihinemos.cfg, postgresql.conf, persistence.xml, selfcheck-service.propertiesj‚Ì¶¬’†... [OK]
+________________________________________________________________________________
+‘±‚¯‚ÄArsyslog‚Ìİ’èA‹N“®‚ğs‚¢‚Ü‚·B
+________________________________________________________________________________
+rsyslog.conf‚ÌŠm”F’†...
+rsyslog.conf‚Éİ’è‚ğ’Ç‹L‚µ‚Ü‚·BƒVƒXƒeƒ€ƒƒK[‚ğ’â~’†: [ OK ]
+ƒVƒXƒeƒ€ƒƒK[‚ğ‹N“®’†: [ OK ]
+ƒtƒ@ƒCƒ‹ƒp[ƒ~ƒbƒVƒ‡ƒ“‚Ì•ÏX’†... [OK]
+________________________________________________________________________________
+
+‰º‹LƒƒbƒZ[ƒW‚ª•¦‚³‚ê‚ê‚ÎAƒCƒ“ƒXƒg[ƒ‹‚ÍŠ®—¹‚Å‚·B
+________________________________________________________________________________
+“à•”ƒf[ƒ^ƒx[ƒX‚Ì‰Šú‰»’†...
+checking database directory(/opt/hinemos/var/data)... done
+checking current user(hinemos)... done
+initializing database directory(/opt/hinemos/var/data)... done
+configuring database... done
+starting up database... done
+configuring database users... done
+configuring database schemas and loading initial data... done
+done
+shutting down database... done
+configuring authentication... done
+Hinemosƒ}ƒl[ƒWƒƒ‚ÌƒCƒ“ƒXƒg[ƒ‹‚ªŠ®—¹‚µ‚Ü‚µ‚½B
+________________________________________________________________________________
+
+6.ƒ}ƒl[ƒWƒƒ‘¤OS‚Ìrsyslogd‚Ìİ’è
+Ubuntu 12.04 LTS‚ÌrsyslogdƒpƒbƒP[ƒW‚ÌƒfƒtƒHƒ‹ƒg‚Ìİ’è‚Å‚ÍArsyslogd‚ÌÀsƒ†[ƒU‚ªusyslogv‚É‚È‚Á‚Ä‚¢‚Ü‚·B
+syslogƒ†[ƒU‚Í“ÁŒ ƒ|[ƒg(TCP‚Ì1023”ÔˆÈ‰º‚Ìƒ|[ƒg)‚ğbind‚Å‚«‚È‚¢‚½‚ßA‚±‚Ìİ’è‚Ì‚Ü‚Ü‚Å‚ÍA514/TCPƒ|[ƒg‚ÅsyslogƒƒbƒZ[ƒW‚ğóM‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB
+‘Îˆ•û–@‚Æ‚µ‚ÄAUbuntu‘Î‰”ÅHinemos ƒ}ƒl[ƒWƒƒ‚ğƒCƒ“ƒXƒg[ƒ‹‚·‚é‚±‚Æ‚É‚æ‚Á‚Ä’Ç‰Á‚³‚ê‚éİ’èƒtƒ@ƒCƒ‹(/etc/rsyslog_hinemos.conf)‚Ì‰º‹L‚Ì‰ÓŠ‚ğ•ÒW‚µA‘Ò‚¿ó‚¯ƒ|[ƒg‚ğ1024”ÔˆÈã‚É•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
+¡‰ñ‚ÍAg—p‚µ‚Ä‚¢‚È‚¢"2514"‚ğrsyslog‚ÖŠ„‚è“–‚Ä‚éB
+
+sudo cp -p /etc/rsyslog_hinemos.conf /tmp/rsyslog_hinemos.conf_`date +%Y%m%d`
+sudo vi /etc/rsyslog_hinemos.conf
+
+###### •ÒW“à—e #######
+`È—ª`
+$InputTCPServerRun 2514
+#######################
+
+7.•¹‚¹‚ÄAŠÄ‹‘ÎÛƒm[ƒh‘¤‚Ìsyslog‘—Mæƒ|[ƒg‚àA“¯‚¶”Ô†‚É•ÏX‚µ‚Ä‚­‚¾‚³‚¢B‰º‹L‚Írsyslog‚Ìİ’è—á‚Å‚·B
+sudo cp -p /etc/rsyslog.conf /tmp/rsyslog.conf_`date +%Y%m%d`
+sudo vi /etc/rsyslog.conf
+
+###### •ÒW“à—e #######
+`È—ª`
+# Hinemos Agent 4.1.0 (for syslog monitoring)
+#
+*.info;mail.none;authpriv.none;cron.none @@{ƒ}ƒl[ƒWƒƒIP}:2514
+#######################
+
+8.rsyslog‚ğÄ‹N“®
+service rsyslog restart
+
+
+9.Hinemosƒ}ƒl[ƒWƒƒ‚Ì‹N“®
+/opt/hinemos/bin/hinemos_start.sh
+
+
+‹N“®‚ÌŠm”F
+/opt/hinemos/bin/hinemos_status.sh
+ps -ef | grep /opt/hinemos/
+
+
+Hinemosƒ}ƒl[ƒWƒƒ‚Ì’â~
+/opt/hinemos/bin/hinemos_stop.sh
+
+Hinemosƒ}ƒl[ƒWƒƒ‚ÌƒT[ƒrƒX‰»
+sudo cp /opt/hinemos/sbin/service/hinemos_manager /etc/init.d/
+
+OS‹N“®‚ÉHinemosƒ}ƒl[ƒWƒƒ‚ª©“®“I‚É‹N“®‚·‚é‚æ‚¤İ’è
+sudo update-rc.d hinemos_manager defaults
+
+ƒG[ƒWƒFƒ“ƒg‘¤OS‚Ìsnmpd‚Ìİ’è
+
+sudo cp -p /etc/snmp/snmpd.conf /tmp/snmpd.conf_`date +%Y%m%d`
+sudo vi /etc/snmp/snmpd.conf
+
+###### •ÒW“à—e #######
+`È—ª`
+# Listen for connections from the local system only
+agentAddress udp:127.0.0.1:161
+`È—ª`
+#######################
+
+ƒT[ƒrƒX‚Ì‹N“®
+service hinemos_manager start
+
+‹N“®ó‘Ô‚ÌŠm”F
+service hinemos_manager status
+
+ƒT[ƒrƒX‚Ì’â~
+service hinemos_manager stop
+
+
+
+#------------------------------------------------------------------------------
+y©‘îƒT[ƒozUbuntu14.04LTS‚Öowncloud(ƒAƒvƒŠ‚Ì—˜—p)
+ownCloud‚ÍuƒAƒvƒŠv‚ÆŒÄ‚Î‚ê‚éƒAƒhƒIƒ“‚ğ’Ç‰Á‚·‚é‚±‚Æ‚ÅC‚à‚Á‚Æ•Ö—˜‚È‹@”‚ğŠg’£‚Å‚«‚Ü‚·B
+OpenBuildService‚©‚çƒpƒbƒP[ƒW‚ğƒCƒ“ƒXƒg[ƒ‹‚µ‚½ê‡‚ÍCˆê•”‚ÌƒAƒvƒŠ‚µ‚©ƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚È‚¢‚Ì‚ÅC’Ç‰Á‚ÅŸ‚ÌƒpƒbƒP[ƒW‚ğƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚­‚¾‚³‚¢B
+
+sudo apt-get install ownclound-unsupported
+
+
+İ’è‚ÌuƒAƒvƒŠv‚ğ‘I‘ğ‚·‚é‚ÆC‚½‚­‚³‚ñ‚ÌƒAƒvƒŠ‚ª•¦‚³‚ê‚é‚Í‚¸‚Å‚·B‘¾š‚ª—LŒø‰»Ï‚İ‚ÌƒAƒvƒŠ‚Å‚·BŒÂX‚ÌƒAƒvƒŠ‚ğ‘I‘ğ‚µ‚ÄCuEnablevuDisablev‚ğƒNƒŠƒbƒN‚·‚ê‚Î‚»‚ê‚¼‚ê—LŒø‰»C–³Œø‰»‚Å‚«‚Ü‚·B‚±‚Ì‚¤‚¿“Á‚É•Ö—˜‚È‚à‚Ì‚ğ‚¢‚­‚Â‚©Œ©‚Ä‚¢‚«‚Ü‚µ‚å‚¤B
+
+EPDFEODFƒrƒ…[ƒ[
+PDF Viewer‚ÆODF Viewer‚Í‚»‚ê‚¼‚êCPDF‚âLibreOffice‚Ìƒtƒ@ƒCƒ‹‚ğƒuƒ‰ƒEƒU“à•”‚Å•¦‚·‚éƒAƒvƒŠ‚Å‚·B—LŒø‰»‚µ‚Ä‚¨‚­‚ÆC‚í‚´‚í‚´ƒtƒ@ƒCƒ‹‚ğƒ_ƒEƒ“ƒ[ƒh‚µ‚È‚­‚Ä‚à’†g‚ğŠm”F‚Å‚«‚Ü‚·B
+
+EƒJƒŒƒ“ƒ_[
+Calendar‚ÍownCloud“à•”‚ÉƒJƒŒƒ“ƒ_[‚ğÀ‘•‚µ‚Ü‚·BThunderbird‚Ì‚æ‚¤‚ÈCalDavŒ`®‚É‘Î‰‚µ‚½ƒXƒPƒWƒ…[ƒ‰[‚Å‚ ‚ê‚ÎCŒÂlİ’è‚É‚ ‚éCalDav‚ÌƒAƒhƒŒƒX‚ğ“n‚·‚±‚Æ‚ÅƒXƒPƒWƒ…[ƒ‹‚Ì“¯Šú‚ª‰Â”‚Å‚·B
+
+‚¿‚È‚İ‚É—LŒø‚É‚µ‚½‚çˆê“xCŒÂlİ’è‚Åƒ^ƒCƒ€ƒ][ƒ“‚àİ’è‚µ‚Ä‚¨‚«‚Ü‚µ‚å‚¤B
+
+
+EƒƒfƒBƒAƒT[ƒo[
+MediaƒAƒvƒŠ‚ğ—LŒø‚É‚·‚é‚ÆCAmpache‚Æ‚¢‚¤ƒEƒFƒuƒx[ƒX‚ÌƒƒfƒBƒA”zMƒƒtƒgƒEƒFƒA‚ğg‚Á‚ÄownCloudã‚ÌƒƒfƒBƒA‚ğƒXƒgƒŠ[ƒ~ƒ“ƒO‚Å‚«‚é‚æ‚¤‚É‚È‚è‚Ü‚·B
+
+ŒÂlİ’è‚É”zMƒT[ƒo[‚ÌƒAƒhƒŒƒX‚ª•¦‚³‚ê‚Ü‚·‚Ì‚ÅCAmpache‘Î‰ƒNƒ‰ƒCƒAƒ“ƒg‚É‚±‚ÌƒAƒhƒŒƒX‚ğİ’è‚µ‚Ü‚µ‚å‚¤B
+
+Ampache address: http://192.168.56.101/owncloud/remote.php/ampache/
+
+Rhythmbox‚Å‚ ‚ê‚ÎŸ‚ÌƒRƒ}ƒ“ƒh‚ÅAmpacheƒvƒ‰ƒOƒCƒ“‚ğƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚­‚¾‚³‚¢B
+sudo apt-get install rhythmbox-ampache
+
+Rhythmbox‚ğÄ‹N“®‚µ‚½‚çC•ÒW‚Ìİ’è‚©‚çuAmpache Libraryv‚ğ—LŒø‚É‚µ‚Ü‚·B‚³‚ç‚Éİ’èƒ{ƒ^ƒ“‚©‚ç”zMƒT[ƒo[‚ÌƒAƒhƒŒƒX‚ÆownCloud‚Ìƒ†[ƒU[–¼‚ÆƒAƒJƒEƒ“ƒg‚ğ“ü—Í‚µ‚½‚çCƒTƒCƒhƒyƒCƒ“‚Ì‹¤—L‚ÉAmpache‚ª•¦‚³‚ê‚é‚Í‚¸‚Å‚·B‚ ‚Æ‚Í‚»‚±‚©‚ç©—R‚Éƒtƒ@ƒCƒ‹‚ğÄ¶‚Å‚«‚Ü‚·B
+
+Android—p‚ÌAmpache‘Î‰ƒNƒ‰ƒCƒAƒ“ƒg‚Æ‚µ‚Ä‚ÍCŒö®‚ÌAmdroid‚â“ú–{l‚ªŠJ”­‚µ‚Ä‚¢‚éJUST PLAYER‚ª—L–¼‚Å‚·B
+
+
+
+

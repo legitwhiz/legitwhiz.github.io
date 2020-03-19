@@ -1,0 +1,7 @@
+AIX LVCD壊れた時にODMからLVを復活させる。
+
+getlvcd -AT <lv name>
+
+synclvodm <vg name> <lv name>
+
+getlvcd -AT <lv name>

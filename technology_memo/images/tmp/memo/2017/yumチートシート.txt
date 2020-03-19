@@ -1,0 +1,244 @@
+YUM コマンド チートシート
+for Red Hat Enterprise Linux
+
+■YUM クエリ
+サブコマンド  説明およびタスク
+help          yum コマンドおよびオプションを表示する
+              yum help
+              yum サブコマンドおよびオプションを表示する
+
+●各パッケージ
+list          リポジトリのパッケージ名を一覧表示する
+              yum list available
+              利用可能なパッケージを一覧表示する
+              yum list installed
+              インストールしたパッケージを一覧表示する
+              yum list all
+              インストールしたパッケージと利用可能なパッケージをすべて
+              表示する
+              yum list kernel
+              インストールしたカーネルパッケージと利用可能なカーネ
+              ルパッケージをすべて表示する
+
+info          パッケージの情報を表示する
+              yum info vsftpd
+              vsftpd パッケージの情報を一覧表示する
+        
+deplist       パッケージの依存関係を表示する
+              yum deplist nfs-utils
+              依存関係と依存関係が提供されているパッケージの一覧を表
+              示する
+
+provides      クエリしたファイルを提供するパッケージを検索する
+              yum provides “*bin/top”
+              top コマンドを含むパッケージを表示する
+              yum provides “*/README.top”
+              README.top ファイルを含むパッケージを表示する
+
+search        その用語が含まれるパッケージ名と説明を検索する
+              yum search samba
+              その名前と説明に samba という言葉が含まれるパッケー
+              ジを検索する
+
+updateinfo    利用可能なパッケージアップデートの情報を取得する
+              yum updateinfo security
+              利用可能なセキュリティアップデートの情報を取得する
+
+●パッケージグループ
+grouplist     インストールしたパッケージグループと、利用可能なパッ
+              ケージグループの名前を一覧表示する
+
+groupinfo     パッケージグループの説明とコンテンツを表示する
+              yum groupinfo “Web Server”
+              Web Server グループのパッケージを表示する
+
+check-update  利用可能なパッケージアップデートのリポジトリをクエリする
+
+#------------------------------------------------------------------------------
+YUM リポジトリの管理
+サブコマンド  説明およびタスク
+repolist      有効なソフトウェアリポジトリを表示する
+
+repoinfo      有効な yum リポジトリの情報を表示する *
+              yum repoinfo rhel-7-server-rpms
+              rhel-7-server-rpms リポジトリの情報を表示する
+              repo-pkgs   特定のリポジトリのパッケージ操作する *
+              yum repo-pkgs my-rpms list
+              my-rpms リポジトリのパッケージを一覧表示する
+              yum repo-pkgs my-rpms install
+              my-rpms リポジトリのパッケージをすべてインストール
+              する
+              yum repo-pkgs my-rpms remove
+              my-rpms リポジトリからすべてのパッケージを削除する
+
+makecache     yum リポジトリデータをキャッシュにダウンロードする
+
+●YUM のトラブルシューティングおよび保持
+サブコマンド  説明およびタスク
+check         問題についてローカルの RPM データベースを確認する (実
+              行には時間がかかります)
+              history yum トランザクションを表示および使用する
+              yum history list
+              yum でインストール、アップデート、および削除した操作を
+              一覧表示する
+              yum history info 3
+              yum トランザクション 3 の詳細を表示する
+              yum history undo 3
+              トランザクション 3 の yum 操作を取り消す
+              yum history redo 3
+              トランザクション 3 で取り消した yum 操作をやり直す
+
+clean         キャッシュしたパッケージデータを削除する
+              yum clean packages
+              キャッシュに保存したパッケージを削除する
+              yum clean all
+              キャッシュからパッケージおよびメタデータをすべて削除
+              する
+
+fssnapshot    (パッケージのアップデート後のロールバックのために) LVM スナップショットを一覧表示する
+              fs ファイルシステムを操作する (最小システムにドキュメント
+              または言語ファイルをインストールしない)
+              yum fs filters
+              有効なファイルシステムのフィルターを一覧表示する
+              yum fs documentation
+              インストールしたすべてのドキュメントにフィルターをかける (注
+              意が必要)
+
+●YUM を使用したパッケージのインストール、削除、およびアップデート
+サブコマンド  説明およびタスク
+install       リポジトリからシステムにパッケージをインストールする
+              yum install vsftpd
+              vsftpd パッケージをインストールする
+
+update        システムのパッケージを 1 つまたはすべてアップデートする
+              yum update
+              アップデートが可能なパッケージをすべてアップデートする
+              yum update httpd
+              httpd パッケージが利用可能な場合はアップデートする
+              yum update --security
+              セキュリティ関連のパッケージアップデートを適用する
+              update-to 1 つまたはすべてのパッケージを特定のバージョンにアッ
+              プデートする
+
+upgrade       廃止が検討されているパッケージをアップデートする
+              localinstall ローカルファイル、http、または ftp からパッケージをイン
+              ストールする
+              yum localinstall abc-1-1.i686.rpm
+              ローカルディレクトリから abc パッケージをインストールする
+              yum localinstall http://myrepo/abc-1-1.i686.rpm
+              FTP サイトから abc をインストールする
+
+downgrade     パッケージを以前のバージョンにダウングレードする
+              yum downgrade abc
+              abc パッケージを以前のバージョンにダウングレードする
+
+reinstall     現在のバージョンのパッケージを再インストールする
+              yum reinstall util-linux
+              (削除したファイルを置き換えるために) util-linux を再イン
+              ストールする
+
+swap          パッケージを 1 つ削除して別のパッケージをインストールする
+              yum swap ftp lftp
+              ftp パッケージを削除して lftp パッケージをインストール
+              する
+
+erase         パッケージ (と依存関係) をシステムから削除する
+              yum remove vsftpd
+              vsftpd パッケージと依存関係を削除する
+
+remove        erase と同様
+
+autoremove    erase と同様。さらに不要なパッケージを削除する *
+              yum autoremove httpd
+              httpd と、その他の不要なパッケージを削除する
+
+groupinstall  選択したグループのパッケージをすべてインストールする
+              yum groupinstall “Web server”
+              Web Server パッケージをインストールする
+
+●YUM で言語パッケージの管理
+サブコマンド  説明およびタスク
+              langavailable 利用可能な言語をすべて表示する *
+              langinfo 言語に利用できるパッケージを一覧表示する *
+              yum langinfo es
+              スペイン語に関連するパッケージをすべて表示する
+
+langinstall   特定の言語に関連するパッケージをインストール *
+              yum langinstall es
+              スペイン語に関係するパッケージをインストールする
+
+langlist     インストールした言語を一覧表示する *
+              langremove 1 つの言語について、インストールした言語パッケー
+              ジを削除 する*
+              yum langremove es
+              スペイン語に関連するパッケージを削除する
+
+●YUM コマンドでよく使用されるオプション **
+オプション        説明
+-y                  プロンプトが表示された時の答えが yes
+
+--assumeno          プロンプトが表示された時の答えが no
+
+-q                  出力を生成しない
+
+-v                  追加のデバッグ出力を生成する
+
+--noplugins yum     プラグインをロードせずにコマンドを実行する
+
+--disableplugin=    1つのコマンドの特定のプラグインを無効にする
+                    yum --disableplugin=langpacks info vsftpd
+
+--enableplugin=     インストール済みで無効になっているプラグインを無効にする
+                    yum --enableplugin=ps ps
+                    実行しているプロセスに関係するパッケージを表示する
+
+--enablerepo=       1つのコマンドで現在無効になっているリポジトリを
+                    有効にする (ワイルドカードも使用できます)
+                    yum install docker 
+                    --enablerepo=rhel-7-server-extras-rpm
+
+--disablerepo=      1つのコマンドで現在有効になっているリポジトリを
+                    無効にする (ワイルドカードも使用できます)
+                    yum list available --disablerepo=epel
+                    --downloadonly /var/cache/yum/arch/prod/repo/packages/ にダウン
+                    ロードするがインストールはしない
+                    yum install --downloadonly vsftpd
+                    vsftpd パッケージをキャッシュにダウンロードする
+
+--filter-???=       ???をvendors、rpm-groups、arches などを指定して
+                    出力にフィルターを設定する
+
+--changelog         パッケージの changelog 情報を出力する
+
+●YUM 関連のその他のコマンド (yum-utils パッケージのインストール)
+COMMAND DESCRIPTION
+find-repos-of-install    パッケージが含まれるリポジトリを検索する
+
+needs-restarting         アップデートして再起動が必要なプロセスを検索する
+repoclosure              リポジトリから unmet 依存関係リストを取得する
+repoquery                リモートのレポジトリとローカルの RPM データベースをクエリする
+                         repoquery --requires --resolve bash
+                         依存関係パッケージを表示する
+
+reposync                 yum リポジトリをローカルディレクトリに同期する
+                         reposync -r rhel-atomic-host-beta-rpms
+                         リポジトリからパッケージを取得する
+
+repotrack                パッケージとそのすべての依存関係をダウンロードする
+
+show-installed           インストールした RPM パッケージと統計をすべて表示する
+
+verifytree                一貫性についてローカルの yum リポジトリを確認する
+
+yum-complete-transaction  終了していない yum トランザクションを完了する
+
+yumdb                     yum データベースを確認し変更する
+
+yumdownloader             リポジトリから現在のディレクトリにパッケージをダウンロードする
+
+-------------------------------------------------------------------------------
+すべての yum のサブコマンドとオプションの詳細については、man yum を参照してください。
+* RHEL 7 の新機能です。
+** 一部のオプションには yum プラグインが必要です。利用可能なプラグイ
+ンを表示するには、yum list “yum-plugin*” コマンドを実行してくだ
+さい。

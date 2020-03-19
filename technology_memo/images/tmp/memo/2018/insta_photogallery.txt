@@ -1,0 +1,70 @@
+photo gallery
+https://regulus0134.dip.jp/
+https://regulus0134.dip.jp/instagram_api.php
+
+d.sakamoto@legitwhiz.biz
+
+
+
+Client ID
+b3ac6e5d3dd54e56a5937d420bdbb27b 
+
+Support Email
+d.sakamoto@legitwhiz.biz 
+
+Client Status
+Sandbox Mode  
+
+
+https://instagram.com/oauth/authorize/?client_id=b3ac6e5d3dd54e56a5937d420bdbb27b&redirect_uri=https://regulus0134.dip.jp/instagram_api.php&response_type=token
+
+
+https://regulus0134.dip.jp/instagram_api.php#access_token=1940752109.b3ac6e5.35bbc036f8ec4293a133de7beab433de
+
+
+https://api.instagram.com/v1/users/self/media/recent?access_token=1940752109.b3ac6e5.35bbc036f8ec4293a133de7beab433de
+
+
+
+
+
+ID
+1897657076639241629_1940752109
+1940752109
+
+
+
+<?php
+//POSTリクエストの場合のみ受付
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    //アクセストークン
+    $access_token = "1940752109.b3ac6e5.35bbc036f8ec4293a133de7beab433de"; //取得したアクセストークンを設置
+    //JSONデータを取得して出力
+    echo @file_get_contents("https://api.instagram.com/v1/users/self/media/recent/?access_token={$access_token}");
+    //終了
+    exit;
+}
+?>
+
+
+
+<?php
+    //アクセストークンからインスタのデータをjsonで取得
+    $json = file_get_contents("https://api.instagram.com/v1/users/self/media/recent/?access_token=1940752109.b3ac6e5.35bbc036f8ec4293a133de7beab433de");
+    $json = mb_convert_encoding($json, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
+ 
+    $arr = json_decode($json,true);
+ 
+    // JSONをPHPの配列に変換
+    foreach( $arr as $key => $value ){
+                $arr[$key] = $value;
+            }
+ 
+    //最新の投稿から8つ目までをループ表示
+    for($i=0;$i<8;$i++){
+        $Link = $arr['data'][$i]['link'];
+        $imgSrc = $arr['data'][$i]['images']['standard_resolution']['url'];
+        echo '<li><a href="'.$Link.'" target="_blank" ><img src="'.$imgSrc.'"></li>';
+    }
+?>
+

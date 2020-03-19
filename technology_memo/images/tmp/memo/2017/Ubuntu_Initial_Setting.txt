@@ -1,0 +1,975 @@
+【自宅サーバ】Ubuntu DeskTop 14.04LTS Install
+Ubuntu 14.04は、2年に1度のLTS(Long Term Support)なので、そのサポート期間は5年です。
+前バージョンからの大きな変更点は、LIM (Locally Integrated Menus)の採用です。あとは、LTSとしてより安定性と完成度を高めたバージョンになっています。
+
+
+1.下記URLからUbuntu Desktop 14.04LTS 日本語Remix 64bit版のISOイメージをダウンロード
+https://www.ubuntulinux.jp/
+
+2.仮想マシンの電源をONにしてからコンメ[ルを開き、[CD/DVDドライブ1]→[ローカルディスクのISOイメージに接続]を選択しダウンロードしたISOを選択する。
+[インベントリ]→[仮想マシン]→[ゲスト]→[Ctrl+Alt+Deleteの送信]にてリブート
+※リセットをしてしまうとマウントしたCD/DVDも切断されてしまい、さらにCD/DVD接続中と侮ヲされ再度マウント出来なくなってしまい結局ESXiのリブートしないと解消されなかったのでご注意を!!!
+
+3.リブート後、CD-ROMからブートし[ようこそ]画面で[Ubuntuをインストール]を選択
+
+4.[Ubuntuのインストール準備]画面で[インストール中にアップデートをダウンロードする]と[サードパーティのャtトウェアをインストールする]にチェックを付け[続ける]をクリック。
+
+5.[インストールの種類]画面で[ディスクを削除してUbuntuをインストール]を選択し[インストール]をクリック。
+
+6.[どこに住んでいますか？]画面で[Tokyo]を選択し[続ける]をクリック。
+
+7.[キーボードレイアウト]画面で[日本語]-[日本語]を選択し[続ける]をクリック。これで109キーボードが選択されているのかな!?
+
+8.[あなたの情報を入力して下さい]画面で[あなたの名前][コンピュータの名前][ユーザ名の入力][パスワードの入力][パスワードの確認]を入力し[続ける]をクリック。
+
+9.これで実際のインストールが始まるのでしばらく待ちます。
+インストールが終わると再起動を促すポップアップが出るのでCD-ROMを外し[今すぐ再起動する]をクリック
+
+#-----------------------------------------------------------------------------
+【自宅サーバ】Ubuntu Initial Setting Network設定
+
+1.設定ファイルバックアップ
+sudo cp -p /etc/network/interfaces ${BKDIR}/interfaces_`date +%Y%m%d`
+
+2.設定ファイル編集
+sudo vi /etc/network/interfaces
+
+### 編集内容 ####
+auto lo
+iface lo inet loopback
+
+### 追加 ####
+auto eth0
+iface eth0 inet static
+address 192.168.11.11
+netmask 255.255.255.0
+network 192.168.11.0
+broadcast 192.168.11.255
+gateway 192.168.11.1
+dns-nameservers 192.168.11.1
+#################
+
+3.ネットワークサービスの再起動
+sudo /etc/init.d/networking restart
+
+4.設定反映確認
+ifconfig -a
+
+以上で問題ないと思ってたが反映されず・・・orz
+そもそもinterfacesにはDHCPの設定すら入ってなかったが、どうやって動いているのか???
+
+色々調べたらDeskTop版は、NetworkManagerなる者が管理しているらしい・・・。
+ファイルを直接編集するのはUbuntuでは推奨していないらしく、強制的するにはNetworkManagerをアンインストールしてから設定するらしい。(Server版は、最初から直接ファイル編集で問題ない)
+
+強制的にする事の影響が見えないのでとりあえずGUIにてIPアドレスを設定。
+まぁ、ESXiの仮想マシンなんで簡単にコンメ[ルでGUIが使えるので、まぁぁいっかってSEっぽくないな・・・www
+あっ!!!interfacesファイルはバックアップを戻してます。
+
+#------------------------------------------------------------------------------
+【自宅サーバ】OpenSSHサーバーをインストール・設定
+・OpenSSHとは、OpenSSH はネットワーク経由の通信を暗号化し、情報の漏出をふせぐ「SSH」と呼ばれるツールの一種です。
+
+1.OpenSSHインストール
+sudo apt-get install openssh-server
+
+2.設定ファイルバックアップ
+sudo cp -p /etc/ssh/sshd_config ${BKDIR}/sshd_config_`date +%Y%m%d`
+
+3.設定ファイル編集
+sudo vi /etc/ssh/sshd_config
+
+### 編集内容 ####
+PermitRootLogin no
+PasswordAuthentication yes
+#################
+
+4.sshdを再起動
+sudo /etc/init.d/ssh restart
+
+5.ポート開放確認
+sudo lsof -nPi:22
+
+特に異常なしw
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu 14.04LTS サービス/ジョブの管理
+Ubuntuでは、Upstartで管理される現在のジョブの状態をリストするには以下のようにします。
+sudo initctl list
+
+「start/running」となっているものが起動時に実行され「process ***」と赴Lされるものはデーモン起動していることを示します。
+
+Upstartで管理される各ジョブの設定ファイルは「/etc/init」配下に配置されており、この設定ファイルでジョブの起動を制御します。
+
+また、initctlコマンドにて起動・停止させることが可狽ナす。
+initctl stop atd
+
+ですが、chkconfig等の動作定義コマンドが存在しないため下記ファイルを編集する必要があります。
+sudo vi /etc/init/<サービス名>.conf
+
+ちなみに下記コマンドで自動起動するサービスが分かります。
+grep "start on" /etc/init/* 
+
+Upstart で管理されていないものは SysVinit で管理されています。
+SysVinit で管理されるものは 以下のように RedHat の chkconfig ライクな管理ツールをインストールすることで管理しやすくなります。
+
+sudo apt-get install sysv-rc-conf 
+
+sysv-rc-conf --list # サービス一覧侮ヲ
+sysv-rc-conf vsftpd off # vsftpdの自動起動設定オフ
+sysv-rc-conf # 引数なしで対話モード起動
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへ"VMware Tools"のインストール
+
+ESXi上の仮想マシンに"VMware Tools"をインストールすると様々な点で便利性が向上します。
+仮想マシン上のデバイスに対してVMware純正のドライバが利用できるほか、vSphere Clientとの連携性が向上し、OSに対するシャットダウンの指示やIPアドレス等の情報の取得が可狽ノなりコンメ[ルの動作もスムーズとなります。
+
+1.インストール対象のゲストのコンメ[ルを開き、メニューから「仮想マシン」→「ゲスト」→「VMware Toolsのインストール/アップグレード」をクリック
+
+2.UbuntuにログインしCD-ROMをマウント
+mount /dev/cdrom /media
+
+3.ファイルコピー・解凍・インストール
+sudo cp /media/VMware*.tar.gz /tmp
+cd /tmp
+sudo tar xvzf VMware*.tar.gz
+cd vmware-tools-distrib
+sudo ./vmware-install.pl 
+
+すべてデフォルトのEnterで進める。
+
+4.ダイアログが終了したら、Ubuntuを再起動。
+
+5.vSphere Clientの仮想マシンのサマリでVMware-tools　実行(現在)となっていればOK
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへNTPインストール
+・NTPとは. NTP（Network Time Protocol）とは、コンピュータに内蔵されているシステム
+クロックを、ネットワークを介して 正しく同期させるためのプロトコルです。
+
+1.NTPインストール
+sudo apt-get install ntp xview-clients
+
+2.NTP停止
+sudo /etc/init.d/ntp stop
+
+3.設定ファイル編集
+sudo vi /etc/ntp.conf
+
+### 編集内容 ####
+server ntp1.jst.mfeed.ad.jp
+server ntp2.jst.mfeed.ad.jp
+server ntp3.jst.mfeed.ad.jp
+
+restrict 10.0.0.0 mask 255.255.255.0 nomodify notrap
+#################
+
+4.オプション設定ファイルの編集
+sudo vi /etc/default/ntp
+
+### 編集内容 ####
+SYNC_HWCLOCK=yes
+NTPD_OPTS='-g -4 -x'
+#################
+※OPTIONSの-xは、ntpをSlewモードで動作させる為のオプション
+※SYNC_HWCLOCKのyes設定は、ntp起動時にRTCと同期する為のオプション
+
+5.強制時刻同期
+ntpdate -s ntp.nict.jp
+
+6.H/Wと時刻同期
+clock -w
+
+7.NTP起動
+sudo /etc/init.d/ntp start
+
+8.同期確認
+sudo ntpq -p
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへClam AntiVirusインストール
+・Clam AntivirusはTomasz Kojm等によって開発・メンテナンスされているLinuxやBSD、
+Mac OS Xなど各種UNIX系のシステムで動作するアンチウイルスャtトです。
+
+1.インストール
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install clamav clamtk clamav-daemon arj
+
+2.手動ウイルスデータベース更新
+sudo freshclam
+
+3.自動更新設定
+#毎日２回更新するように設定(defaultで、1時間ごとに更新)
+#一応、less /var/log/clamav/freshclam.log　で確認しときましょう。
+sudo freshclam -d -c 2
+
+4.お試し無害ウィルスをダウンロード
+cd /tmp
+wget http://www.eicar.org/download/eicar.com
+
+5.動作確認
+clamscan --infected --remove --recursive /tmp
+
+6.ウイルスのスキャン方法
+#スキャン結果をファイルに保存
+sudo clamscan -l /var/log/scanlog.log -r /share
+
+7.GUI起動
+sudo clamtk
+
+#------------------------------------------------------------------------------
+【自宅サーバ】ESXi5.5でデータ用領域として2TBx4をデータストアに追加
+1.vSphere Clientでesxiを選択し、[告ャ]タブ-[ストレージ]-[ストレージの追加...]をクリック。
+2.[ストレージの追加]画面で[ディスク/LUN]を選択し[次へ]をクリック。
+3.[ディスクまたはLUNの選択]画面で対象のディスクを選択し[次へ]をクリック。
+4.[ファイルシステムのバージョン]画面で[VMFS-5]を選択し[次へ]をクリック。
+5.[現在のディスクレイアウト]画面で内容を確認し、[次へ]をクリック。
+6.[プロパティ]画面で[データストア名]を入力し、[次へ]をクリック。
+7.[ディスク/LUN-フォーマット化]画面で[使用可狽ネ最大領域]を選択し、[次へ]をクリック。
+8.[終了準備の完了]画面で内容を確認し、[終了]をクリック。
+※ちなみに2TBx4に夜仕掛けて朝確認したところ70%程度しか終わってなく結局終了したのが20時間以上かかっていた・・・www
+
+#------------------------------------------------------------------------------
+【自宅サーバ】ESXi5.5で仮想マシンへのディスク追加(仮想マシンP-OFF状態で設定)
+1.vSphere Clientで仮想マシンで右クリックし、[設定の編集] を選択
+2.[仮想マシンプロパティ]画面で、[追加] をクリック。
+3.[ハードウェアの追加]画面でデバイスリストから[ハードディスク]を選択。
+4.[ディスクの選択]画面で[新規仮想ディスクを作成]にチェックを付け、[次へ]をクリック。
+5.[ディスクの作成]画面で[データストアまたはデータストアクラスターの指定]を選択し[参照]ボタンをクリックし一覧から選択し[OK]ボタンをクリックし、[ディスクプロビジョニング]を選択し、[容量]を入力し[次へ]をクリック。
+6.[詳細オプション]画面で[仮想デバイスノード][モード]を選択し、[次へ]をクリック。
+7.[終了準備の完了]画面で内容を確認し[終了]をクリック。
+8.[仮想マシンのプロパティ]画面で新規ハードディスクが追加されたことを確認し[OK]ボタンをクリック。
+※ちなみにここでも仮想マシンの再告ャでかなりの時間を有した。
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへmdadmを使ったRAIDの穀z
+
+1.Install
+sudo apt-get update
+sudo apt-get install mdadm
+
+2.Linux raid用パーティションの作成
+システムディスクがsdaで2TBx4が sdb,sdc,sdd,sde
+
+sudo fdisk /dev/sdb
+コマンド (m でヘルプ): n				 ←新規作成なので"n"を入力
+コマンドアクション
+    e   拡張
+    p   基本パーティション (1-4) 
+p										 ←基本パーティションなので"p"を入力
+パーティション番号 (1-4): 1				 ←１つ目のパーティションなので"1"を入力
+最初 シリンダ (1-121601, 初期値 1): 	 ←defaultなのでそのままEnter
+初期値 1 を使います
+Last シリンダ, +シリンダ数 or +size{K,M,G} (1-121601, 初期値 121601): ←defaultなのでそのままEnter
+初期値 121601 を使います
+コマンド (m でヘルプ): t ←パーティションタイプを変更するので"t"を入力
+選択した領域 1 16進数コード (L コマンドでコードリスト侮ヲ): fd ←パーティションタイプを"Linux raid 自動検出"変更するので"fd"を入力
+領域のシステムタイプを 1 から fd (Linux raid 自動検出) に変更しました
+コマンド (m でヘルプ): w ←設定を保存するので"w"を入力
+パーティションテーブルは変更されました！
+ioctl() を呼び出してパーティションテーブルを再読込みします。
+ディスクを同期しています。 
+
+※（sdc,sdd,sdeも同様に設定）
+
+3.Raid5作成
+sudo mdadm --create --verbose --assume-clean /dev/md0 --level=5 --raid-devices=4 /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
+
+4.確認
+cat /proc/mdstat
+
+sudo mdadm --detail /dev/md0
+
+5.設定ファイルの作成
+sudo mdadm --detail --scan
+※UUIDの値が侮ヲされる行をメモしておく。ただしmetadata=**.**は必要ないので消す。
+
+sudo vi /etc/mdadm/mdadm.conf
+
+### 編集内容 ####
+DEVICE partitions
+ARRAY /dev/md0 name=Server1:0 UUID=0c6b0a3f:b833c377:1a44cd1d:394a56ac
+#################
+
+6.パーティション作成
+fdisk /dev/md0
+
+7.フォーマット(蘭uロック-m 0でなしに設定)
+sudo mke2fs -t ext4 -m 0 -b 4096 /dev/md0
+
+8.マウントポイントの作成
+sudo mkdir -m 777 /share
+
+9.マウント
+sudo mount -t ext4 /dev/md0 /share
+
+10.md0のUUIDを確認
+sudo tune2fs -l /dev/md0 |grep UUID
+
+11.自動マウント設定
+#fstabのに以下を追加
+#※/dev/md* は変更される場合があるのでUUIDを使う。
+#この際、mdadm --detailで得られるUUIDとは値が異なるので注意が必要
+
+sudo vi /etc/fstab
+
+### 編集内容 ####
+#最終行に追加
+UUID=0aa87a71-0787-484f-a593-d919cef0c2be /share ext4 defaults 0  0
+#################
+
+12.状態の確認 
+cat /proc/mdstat
+
+sudo mdadm --detail --scan
+
+sudo mdadm --detail -s
+
+sudo mdadm --detail /dev/md0
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへWebminインストール
+・Webminとは、LinuxなどのUnixライクなシステムを設定できるウェブブラウザベースのツールである。 
+
+1.設定ファイルのバックアップ
+cp -p /etc/apt/sources.list  ${BKDIR}/sources.list_`date +%Y%m%d`
+
+2.リポジトリの追加
+sudo vi /etc/apt/sources.list
+
+### 編集内容 ####
+#最終行に追加
+deb http://download.webmin.com/download/repository sarge contrib
+#################
+
+sudo wget -q http://www.webmin.com/jcameron-key.asc -O- | sudo apt-key add -
+
+3.Install
+sudo apt-get update
+sudo apt-get install webmin
+
+4.Webmin確認
+https://192.168.11.11:10000
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへsambaインストール
+sambaとは、UNIX および UNIX互換マシンをWindows NT/2000互換のファイルサーバ/プリント・サーバにするオープン・メ[ス・ャtトウェア
+です。
+1.sambaインストール
+sudo apt-get install samba
+
+2.設定ファイルのバックアップ
+sudo cp -p /etc/samba/smb.conf ${BKDIR}/sources.list_`date +%Y%m%d`
+
+3.sambaの設定
+sudo vi /etc/samba/smb.conf
+
+### 編集内容 ####
+# security = user
+#となっている部分を
+#security = share
+#とします。また、最後に以下を追加
+
+[share]
+   comment=Share Disk
+   writable=yes
+   path=/share
+   public=yes
+#################
+
+4.sambaパスワードの設定
+sudo smbpasswd -a <user name>
+パスワードはWindowsのと同じにしとくと便利
+
+5.samba再起動
+sudo /etc/init.d/samba restart
+
+6.Windows端末から接続可狽ゥ確認
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへapache2、PHP、Perlのインストール
+・Apache HTTP Server（アパッチ エイチティーティーピー サーバ）は、世界中でもっとも
+使われているWebサーバャtトウェアであり、大規模な商用サイトから自宅サーバまで
+幅広く利用されている。
+・PHPとは、動的にWebページを生成するWebサーバの拡張機狽フ一つ。
+・Perlとは、Larry Wall氏が開発したプログラミング言語。
+テキストの検索や抽出、レポート作成に向いた言語で、赴L法はC言語に似ている。
+
+1.apache2のインストール
+sudo apt-get install apache2
+
+2.ブラウザで確認
+Windows端末から接続確認
+http://192.168.11.11/
+
+3.php5 php-mysql php-pearのインストール
+sudo apt-get install php5 php5-mysql php-pear
+sudo apt-get install php5 php5-cgi libapache2-mod-php5 php5-common php-pear
+
+4.設定ファイルの編集
+sudo vi /etc/apache2/mods-enabled/mime.conf
+
+### 編集内容 ####
+# 220行目あたりにでも追記：PHPとして扱う拡張子を設定
+AddHandler php5-script .php
+#################
+
+5.設定ファイルの編集
+sudo vi /etc/php5/apache2/php.ini
+
+### 編集内容 ####
+# 879行目：コメント解除しタイムゾーン設定
+date.timezone = "Asia/Tokyo"
+#################
+
+6.php5高速化モジュールインストール
+sudo apt-get install libapache2-mod-php5
+
+7.PHP のディレクトリを /usr/local/php としてアクセスできるようにシンボリックリンクを作成します。
+ls -l /usr/local/php
+sudo ln -sfn /usr/local/php-5.2.0 /usr/local/
+
+8.Apache2の設定
+/etc/apache2/sites-available/000-default.confを編集する.
+cd /etc/apache2/sites-available/
+sudo vi 000-default.conf
+
+### 編集内容 ####
+<VirtualHost *:80>
+	DocumentRoot /var/www/html
+	AddHandler cgi-script .cgi .pl
+	AddType application/x-httpd-cgi .cgi .pl
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/html>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride All
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		#Require all granted	
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+	LogLevel warn
+
+	Alias /doc/ "/usr/share/doc/"
+	<Directory "/usr/share/doc/">
+		 Options Indexes MultiViews FollowSymLinks
+		 AllowOverride None
+		Order deny,allow
+		Deny from all
+		Allow from 127.0.0.0/255.0.0.0 ::1/128
+	</Directory>
+DirectoryIndex index.php
+</VirtualHost>
+#################
+
+9.PHP動作確認
+適当なスクリプトでテストする。
+例えば、
+cd /var/www/html
+sudo vi index.php 
+<?php phpinfo(); ?>
+
+ブラウザで動作確認
+http://192.168.11.11/index.php
+
+10.Perlインストール
+sudo apt-get install libjcode-perl libjcode-pm-perl libmime-perl libnkf-perl perlmagick libxml-atom-perl libdbd-pg-perl libdbi-perl libio-pty-perl libnet-ssleay-perl libauthen-pam-perl
+sudo apt-get install perl
+
+11.シンボリックリンクの作成
+ln -s /usr/bin/perl /usr/local/bin/perl
+
+12.AddHandlerの設定をする為、/etc/apache2/mods-enabled/mime.conf を編集する。
+sudo vi /etc/apache2/mods-available/mime.conf
+
+### 編集内容 ####
+以下の行をさがしてコメントアウトをはずす。
+最後に .pl を追加する。
+AddHandler cgi-script .cgi .pl .rb
+#################
+
+13.CGIモジュールを有効にする。
+sudo a2enmod cgi
+
+14.Apache2の再起動。
+sudo /etc/init.d/apache2 restart
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへMySQLのインストール
+・MySQLは無償で入手できる扱いやすい軽快なRDBMS(リレーショナルデータベース管理システム)です。
+
+1.MySQLのインストール
+sudo apt-get install mysql-server
+	
+途中、MySQLのrootパスワードを入力
+
+2.設定ファイルの編集
+sudo cp -p /etc/mysql/my.cnf ${BKDIR}/my.cnf_`date +%Y%m%d`
+sudo vi /etc/mysql/my.cnf
+
+### 編集内容 ####
+bind-address = 127.0.0.1
+注）インストール途中にrootのパスワードの設定がある
+エディタで次の行を変更　「127.0.0.1」 を 「あなたのIPアドレス」
+注）ローカルでしか使わないので私は変更しない
+#################
+
+3.MySQLに接続して確認する.
+mysql -u root -p
+
+4.MySQL停止と起動
+sudo /etc/init.d/mysql stop
+sudo /etc/init.d/mysql start
+
+5.phpMyAdminのインストール
+sudo apt-get install libapache2-mod-auth-mysql phpmyadmin
+
+6.インストールの途中phpMyAdminの設定がある
+自動的に再設定するwebサーバ：apache2
+
+7.Apache再起動
+sudo /etc/init.d/apache2 restart
+
+8.ブラウザで動作確認
+http://192.168.11.11/phpmyadmin
+user:root pass:設定したpass
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへvsFTPdインストール
+・vsftpdとはFTPサーバーを穀zするためのャtトです。vsftpdは「Very Secure FTP Daemon」の略です。
+
+1.vsFTPdインストール
+sudo apt-get install vsftpd
+
+2.設定ファイルの編集
+sudo vi /etc/vsftpd.conf
+
+### 編集内容 ####
+write_enable=YES
+ascii_upload_enable=YES
+ascii_download_enable=YES
+chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+ls_recurse_enable=YES
+local_root=public_html
+seccomp_sandbox=NO
+#################
+
+sudo vi /etc/vsftpd.chroot_list
+
+3.vsftpdサービスの再起動
+sudo /etc/init.d/vsftpd restart
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへWebDAV、Digest認証インストール
+・WebDAVとは、WWWでファイルの転送に使われるHTTPを拡張し、クライアント(Web
+ブラウザ)からWebサーバ上のファイルやフォルダを管理できるようにした仕様。
+
+・Digest認証（ダイジェストにんしょう）とは、HTTPの認証方法の一つ。ユーザ名と
+パスワードをMD5でハッシュ（ダイジェスト）化して送る。Basic認証では防げなかった
+盗聴や改竄を防ぐために考案された。
+
+
+1.WebDAV ディレクトリの作成
+sudo mkdir -p /var/www/webdav
+sudo chown www-data:www-data /var/www/webdav
+cd /var/www
+sudo ln -s /share/Archive webdav
+
+2.encoding Install Setup
+sudo apt-get install libapache2-mod-encoding
+sudo apt-get install apache2-utils
+
+3.encoding設定ファイルの編集
+vi /etc/apache2/mods-available/encoding.conf 
+
+### 編集内容 ####
+# 新規作成
+EncodingEngine on
+SetServerEncoding UTF-8
+DefaultClientEncoding UTF-8 CP932 EUCJP-MS
+AddClientEncoding "Microsoft .* DAV 1.1" ASCII CP932 UTF-8
+AddClientEncoding "Microsoft .* DAV" UTF-8 CP932
+AddClientEncoding "(Microsoft .* DAV $)" UTF-8 CP932
+AddClientEncoding "(Microsoft .* DAV 1.1)" CP932 UTF-8
+AddClientEncoding "Microsoft-WebDAV*" UTF-8 CP932
+AddClientEncoding "RMA/*" CP932
+AddClientEncoding "xdwin9x/" CP932
+AddClientEncoding "cadaver/" UTF-8 EUCJP-MS
+AddClientEncoding "Mozilla/" EUCJP-MS
+#################
+
+4.apahceモジュールを確認にする
+※dav_module がapacheにインストールされているか確認します
+sudo httpd -M | grep dav
+※しかし、apache 2.4.7では、Mオプションがなくなってる・・・。
+
+5.WebDAV Encodinf Digest認証モジュールを有効にする
+sudo a2enmod encoding
+sudo a2enmod dav
+sudo a2enmod dav_lock
+sudo a2enmod dav_fs
+sudo a2enmod auth_digest
+
+6.WebDAV のディレクティブ設定
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+### 編集内容 ####
+<VirtualHost *:80>
+	・
+	・
+	・
+#WebDAV[Digest認証版]
+	<Directory /var/www/html/webdav>
+		Dav On
+		AuthType Digest
+		AuthName        "Tmp Login WebDAV"
+		AuthDigestDomain /webdav/
+		#AuthDigestFile    "/etc/apache2/.webdav"
+		AuthUserFile    "/etc/apache2/.webdav"
+		Require valid-user
+	</Directory>
+	・
+	・
+	・
+</VirtualHost>
+
+###以下の記述を「httpd.conf」ファイルの最下部に追記します。
+<IfModule mod_dav_fs.c>
+    # Location of the WebDAV lock database.
+    DAVLockDB /var/lib/dav/lockdb
+</IfModule>
+
+SetEnvIf Request_URI "default.ida" worm
+SetEnvIf Request_URI "cmd.exe" worm
+SetEnvIf Request_URI "root.exe" worm
+SetEnvIf Request_URI "NULL.IDA" worm
+
+SetEnvIf Request_URI "ShareDocs" dav
+SetEnvIf Request_URI "DVD" dav
+SetEnvIf User-Agent  "DAV" dav
+
+CustomLog /usr/local/apache/log/access_log combined env=!worm
+CustomLog /usr/local/apache/log/worm_log combined env=worm
+CustomLog /usr/local/apache/htdocs/Webdav.txt  combined env=dav
+ErrorDocument 405 /Webdav.txt
+#################
+
+なお、最初AuthDigestFileを設定した場合、下記エラーとなったので調べたらapache2.2からはAuthUserFileへとパラメータ名が変わったらしいｗ
+Invalid command 'AuthDigestFile', perhaps mis-spelled or defined by a module not included in the server configuration
+
+7.WebDAV のDigest認証パスワードファイル
+sudo htdigest -c /etc/apache2/.webdav "Tmp Login WebDAV" <username>
+Adding password for <username> in realm Tmp Login WebDAV.
+New password:
+Re-type new password:
+パスワードを2回入力する。
+※ここで指定する"Tmp Login WebDAV"は、000-default.confのAuthNameを同一内容でないとNGらしい。
+オプションの"-c"は初回だけ必要なオプション2回目以降"-c"を付けると最初にユーザは消えてしまう。と言うかやってしまった・・・orz
+
+8.ファイルロック用のディレクトリの設定
+sudo mkdir -m 700 /var/lock/dav
+sudo chown www-data:www-data /var/lock/dav
+
+9.Apache の再起動
+sudo /etc/init.d/apache2 restart 
+
+10.ブラウザで動作確認
+http://192.168.11.11/wabdav
+Digest認証パスワードファイルで設定したユーザ・パスワードを入力。
+
+
+
+###############################################################################
+### まだ実機でやっていない事 ##################################################
+###############################################################################
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへownCloud 導入
+
+1.リポジトリの鍵のインストール
+sudo wget -q  http://download.opensuse.org/repositories/isv:ownCloud:community/xUbuntu_14.04/Release.key  -O- | sudo apt-key add -
+
+2.リポジトリの追加
+sudo sh -c "echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/owncloud.list"
+sudo apt-get update
+
+3.パッケージのインストール
+sudo apt-get install owncloud php-pear-mdB2-driver-mysql php5-gd
+sudo php5enmod mcrypt
+
+##### ブラウザからDB、DBユーザの作成が可煤I？ #################################
+4.MySQLログイン
+sudo mysql -u root -p
+
+5.MySQLデータベース作成(owncloud用)
+CREATE DATABASE owncloud default character set utf8;
+
+6.ユーザ作成
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+(Changed 'username' and used the password for the MyPHP-root-User. Certainly not correct, but works)
+
+7.データベース確認
+CREATE DATABASE IF NOT EXISTS owncloud;
+
+8.GRANT黒カの実行権限をもつユーザを作成
+GRANT ALL PRIVILEGES ON owncloud.* TO 'username'@'localhost' IDENTIFIED BY 'password';
+(Replace 'username" with above username and the MySQL-root-passwort)
+
+9.owncloud用ディレクトリの作成
+sudo mkdir /var/www/html/owncloud
+sudo chown -R www-data:www-data /var/www/html/owncloud
+
+10.sslサイトの有効化
+sudo a2enmod ssl
+sudo a2ensite default-ssl
+sudo service apache2 reload
+
+11.Added/changed this in /etc/apache2/sites-available/default-ssl.conf
+sudo vi /etc/apache2/sites-available/default-ssl.conf
+
+ServerName <my_hostname>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www
+
+	alias   /owncloud       /var/www/html/owncloud
+	<Directory /var/www/html/owncloud>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		Allow from all
+		Satisfy Any
+	</Directory>
+
+	<Directory />
+	Options FollowSymLinks
+	AllowOverride None
+	</Directory>
+
+	<Directory /var/www/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+##### ブラウザからDB、DBユーザの作成が可煤I？ #################################
+
+php.iniの設定
+
+sudo vi /etc/php.ini
+
+### 編集内容 ####
+post_max_size = 1000G ※デフォルトは8
+upload_max_filesize = 1000G
+memory_limit = 2048M
+#################
+
+sudo a2enmod rewrite
+sudo service apache2 restart
+
+
+4.ownCloudのセットアップ
+PCのWebブラウザで以下のURLにアクセスする。
+ownCloudに関するデータやツールは/var/www/html/owncloudにインストールされる。
+http://localhost/owncloud 
+
+ownCloudが正常にインストールされていれば、以下のような画面が侮ヲされます。以下の画面で、任意のadmin用アカウントのユーザ名とパスワードを入力し、下の「Advanced」をクリックします。
+
+データベース選択などの項目が浮黷驍フで、MySQLを選択。
+Database user		owncloud
+Database password	*******
+Dtabase name		owncloud
+Database host		localhost
+
+入力したら、下の「Finish setup」をクリックします。
+
+「Welcome to ownCloud」を閉じれば管理画面に入り、ownCloudを使えるようになります。
+
+ここでは、ファイルの追加や削除、フォルダの追加や削除が行えます。基本的にDropBoxと同じ感じで使用できます。また、adminアカウントの管理画面ではownCloudを使用する新しいユーザアカウントや共有フォルダの作成を行えます。これらについて以下にメモしておきます。
+
+参考
+http://www.virment.com/linux/1861/
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへPHPで動くオンラインファイルマネージャー、AjaXplorerもといPydioを導入する手順
+
+1.AjaXplorerの公式サイトから最新版をダウンロード
+http://ajaxplorer.info/
+
+と思ったら名前がPydioと変わってるしURLも変わってた・・・。
+http://pyd.io/
+
+しかもダウンロードしなくてもパッケージ化されているし・・・。
+
+2.Pydioインストール
+cp -p /etc/apt/sources.list  ${BKDIR}/sources.list_`date +%Y%m%d`
+
+sudo vi /etc/apt/sources.list
+
+deb http://dl.ajaxplorer.info/repos/apt testing main
+deb-src http://dl.ajaxplorer.info/repos/apt testing main
+
+wget -O - http://dl.ajaxplorer.info/repos/charles@ajaxplorer.info.gpg.key | sudo apt-key add -
+
+sudo apt-get update
+sudo apt-get install php-mbstring php-gd php-mcrypt php-xml
+sudo apt-get install pydio
+
+3.Pydio
+cp /usr/share/doc/pydio/apache2.sample.conf /etc/apache2/sites-enabled/pydio.conf
+
+特に設定ファイルらしきものはありませんが、conf/bootstrap_conf.php の 33行目、
+
+//define("AJXP_LOCALE", "");
+
+となっているところを、
+
+define("AJXP_LOCALE", "ja_JP.UTF-8");
+
+とだけ書き換えておいた方が良さげです＾＾
+// は削除します。
+
+4.ファイルアップロードの上限を変更 
+ファイルのアップロード上限はデフォルトで2MBなので増やしておく。
+/etc/php5/apache2/php.ini の以下設定を変更し apache 再起動。
+
+memory_limit = 500M
+post_max_size = 500M
+upload_max_filesize = 500M
+また、Pydioの設定からアップロード上限を変更しておく必要がある。
+バイト数で設定されているが、0を設定するとphpで設定している上限が設定されます。
+
+output_bufferingを無効にする 
+パフォーマンス向上のために
+/etc/php5/apache2/php.ini の以下設定を変更し apache 再起動。
+* output_buffering = Off
+
+5.apache2設定
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+	Alias /pydio/ "/usr/share/pydio"
+	<Directory "/usr/share/pydio">
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+sudo /etc/init.d/apache2 restart
+
+6.pydioへアクセス
+http://[ip]/pydio/
+
+click here to continue to Pydio.
+
+日本語で選択してstart wizardをクリック
+
+Admin Login			Admin
+Admin Display Name	Admin
+Admin Password		******
+Confirm				******
+[Global options]をクリック
+Application Title		Pydio
+Welcome Message			Welcome to Pydio
+Default Language		日本語
+Enable emails			NO(you can enable mails later)
+
+[Configurations storage]をクリック
+Storage Type		No Database(Quick Start)
+
+[Install Pydio Now]をクリック
+しばらく待つとログイン画面が出る！！これで設置は終わり
+
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへMuninをインストールする 
+
+1.Muninのパッケージをインストール
+sudo apt-get install munin munin-node munin-plugins-extra
+
+2.munin用のディレクトリを用意する
+sudo mkdir /var/www/html/munin/
+sudo chown munin:munin /var/www/html/munin/
+
+3.muninの設定ファイルのバックアップ
+sudo cp -p /etc/munin/munin.conf /etc/munin/munin.conf.backup
+
+4.muninの設定ファイルの変更
+sudo vi /etc/munin/munin.conf
+
+以下の部分を変更
+# htmldir /var/cache/munin/www
+以下のように
+htmldir /var/www/html/munin
+(98行目)
+[ANDBOX44]
+
+sudo vi /etc/munin/apache.conf
+
+以下の部分を変更
+# htmldir /var/cache/munin/www
+以下のように
+htmldir /var/www/html/munin
+
+Allow from localhost 127.0.0.0/8 ::1
+以下のように
+Allow from all
+Require all granted
+
+5.apache設定
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+
+	Alias /admin/munin/ /var/www/admin/munin/
+	<Directory /var/www/admin/munin/>
+		Options None
+		order deny,allow
+		deny from all
+		allow from 127.0.0.0/24 192.168.1. ::1
+
+	<IfModule mod_expires.c>
+		ExpiresActive On
+		ExpiresDefault M310
+	</IfModule>
+	</Directory>
+
+6.muninの設定ファイルの変更を適用する
+sudo /etc/init.d/munin-nod restart
+
+7.munin-nodeが起動しているかどうかを調べる
+ps aux |grep munin-node
+sudo /etc/init.d/munin-node status
+
+8.apache2再起動
+sudo /etc/init.d/apache2 restart
+
+9.muninにアクセスする
+http://server.ip.address/munin/
+
+
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+
+

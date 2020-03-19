@@ -1,0 +1,8 @@
+シェルスクリプト(応答)
+
+echo -n "実行しますか？[y：n]"
+set rtn = $<
+if [$rtn != y] ; then
+echo "中止します"
+fi
+

@@ -1,0 +1,343 @@
+RHL7/CentOS7の時代なのでcoreutils 8.22まで追いかけてみた
+
+はじめに
+<余談> Amazon Linux 2015.09 は coreutils 8.22です。まだまだいける。
+2014年はついにRHLやCentOSが7系に移りました。古い環境が CentOS 6.x だったもので、
+いろいろ変わっていて戸惑うところです。ホットなのは systemd とか mariaDB とか 
+OpenLMI とか net-tools 周りでしょうか。
+ここではあまり注目されていない気がする、 coreutils のリリースノートを読んだメモ
+を公開します。翻訳ではありません。メモです。
+なお、私はSELinuxやSMACK周りは改めて勉強中の身なので、そこら辺の改善点について
+は特に触れません。dd とかファイルシステムとの連携周りも改修大量に入っていました
+が、あんまり面白くなかったのでそこら辺もスルーしました。ご容赦下さい。詳細につ
+いては各リンク先をご覧下さい。
+
+改めて coreutils パッケージについて
+http://ja.wikipedia.org/wiki/Coreutils
+
+GNU Core Utilities または coreutils はUNIX系のOSに必要とされるcat、ls、rmなどの
+中心的（core）なユーティリティ群のパッケージ、ないし、その開発とメンテナンスを行
+うGNUUプロジェクトの1サブプロジェクトである。以前はfileutils、textutils、
+shellutilsに分かれていた。
+
+ということで、普段使っているコマンド連中が含まれてるパッケージです。
+たとえば、ls のバージョンを確認すると、
+
+[vagrant@localhost ~]$ ls --version
+ls (GNU coreutils) 8.22
+Copyright (C) 2013 Free Software Foundation, Inc.
+ライセンス GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+作者 Richard M. Stallman および David MacKenzie。
+このようにcoreutils に入ってるねーそうだねーということがわかるわけです。
+公式には以下を参照してください。たまに知らない子とかいます。
+http://www.gnu.org/software/coreutils/manual/coreutils.html
+
+CentOS6.4は coreutil 8.4だった
+yum info coreutils を打つと、バージョン8.4であることがわかります。2010年のバージョンです。
+
+Installed Packages
+Name        : coreutils
+Arch        : x86_64
+Version     : 8.4
+Release     : 19.el6_4.1
+Size        : 12 M
+Repo        : installed
+From repo   : updates
+Summary     : A set of basic GNU tools commonly used in shell scripts
+URL         : http://www.gnu.org/software/coreutils/
+License     : GPLv3+
+Description : These are the GNU core utilities.  This package is the combination of
+            : the old GNU fileutils, sh-utils, and textutils packages.
+
+長らくありがとうございました。
+
+CentOS7 はといえば 8.22 でした
+バージョンは 8.22 です。2013年リリースで割と新しいものです。（2015/1/5現在の最新版は8.23です）
+
+$ yum info coreutils
+インストール済みパッケージ
+名前                : coreutils
+アーキテクチャー    : x86_64
+バージョン          : 8.22
+リリース            : 11.el7
+容量                : 14 M
+リポジトリー        : installed
+提供元リポジトリー  : anaconda
+要約                : A set of basic GNU tools commonly used in shell scripts
+URL                 : http://www.gnu.org/software/coreutils/
+ライセンス          : GPLv3+
+説明                : These are the GNU core utilities.  This package is the combination of
+                    : the old GNU fileutils, sh-utils, and textutils packages.
+
+これからよろしくお願いします。
+ということで、8.4から8.22まで見ていきます
+
+最初に感想
+・ファイルシステム周りが大きくサポート増えている。また、SELinuxや
+SMACKといったセキュリティ機能のサポートも強化されている。それに伴い、du、dd、df
+といったファイルシステムに直結する部分や、cp、rm、mv、lsといったファイル操作周
+りのコマンドに数多くのバグフィックス、追加サポートが入っている。
+・引数の順序で受け付けていたものが、オプションで指定できるようになったりしている。
+・引数を複数取れるようになったコマンドがちょいちょいある。それらはデフォルトで
+改行区切りで結果を出力するようになっていて、-z/--zeroで NUL 区切りの文字列を出
+力するようになっている。これは新しい標準的なインターフェイス設計指針のようだ。
+・sort や join、cut、md5sum といったメモリを大量消費するコマンドが継続的にスルー
+プット改善されている。
+・思ったよりシンボリックリンク周りのバグが多い。
+・realpathやnumfmt など、いくつか追加されたコマンドがある。
+
+8.4 -> 8.5
+http://savannah.gnu.org/forum/forum.php?forum_id=6301
+・join が --header オプションを受け付けるようになった。
+・timeout コマンドで "-k --kill-after ・オプションがサポートされました。これは 
+-s でシグナル一回送って、そのあと指定した時間が経っても終了してなければKILLシグ
+ナルを送るというものです。これちょっと面白いですね。
+・ls "-color・が終わった後、カラーリセットのエスケープシーケンスを発行するように
+変更。
+・who -T のインジケータの出力が実態に即して改善されたらしいのだが普段全く使わな
+いのであんまりピンと来なかった。
+
+8.5 -> 8.6
+http://savannah.gnu.org/forum/forum.php?forum_id=6553
+・cp に --attributes-only オプション追加。使い所はよくわからない。属性だけコピー…。
+・du が --max-depth と打たなくても -d とショートオプションでできるように。
+・sort に --debug が追加され、ソートロジックのデバッグが見えるようになる。また、-d, -f, -i, -R, -V などの組み合わせがサポートされる。（それまではダメだった）　これ面白いですね。
+・tail -F で、一度見てるファイルのディレクトリが無効になった後でもちゃんと動作するようになった。これはカーネルの方のバグに起因する。
+
+8.6 -> 8.7
+http://savannah.gnu.org/forum/forum.php?forum_id=6608
+・cp, install, mv, and touch などで Solaris 10 update 9 形式のタイムスタンプ書かれたファイルを扱おうとするとコアダンプ吐いて落ちるバグを修正した。うわー。
+・csplit で大量のファイルを処理する時のメモリリーク問題解消。
+・stats コマンドのフォーマット周りであれこれ挙動変更。
+
+8.7 -> 8.8
+http://savannah.gnu.org/forum/forum.php?forum_id=6662
+・sort コマンドがデフォルトでは8スレッド以上作らないようになった。パフォーマンス上の問題だ。一方で --pararels オプションは利用可能なプロセッサ数に制限をうけなくなったぜ。
+・split コマンドに --number オプションが追加され、分割するファイル数を指定できるようになった。これも興味深い変更。平行度に合わせて分割みたいなのがやりやすくなった。
+
+8.8 -> 8.9
+http://savannah.gnu.org/forum/forum.php?forum_id=6679
+・split コマンドのバグフィックス。8.8で追加された部分の緊急対応リリースなのかな。
+
+8.9 -> 8.10
+http://savannah.gnu.org/forum/forum.php?forum_id=6711
+・rm -f が、ダメなファイル名を含むディレクトリを削除しようとした時に形式エラーか引数エラーで落ちる現象を修正。
+・cp コマンドが断片化した(sparse file)を効率的にコピーすることができるようになった。
+・join に -o オプションが追加。autoでoとは。
+・join の片方が空の時、一行目で警告メッセージが出なくなった。
+
+8.10 -> 8.11
+http://savannah.gnu.org/forum/forum.php?forum_id=6785
+・cut が異常なデミリタ文字を指定された際にセグフォで落ちてた件。
+・du が --files0-from= にディレクトリ指定した時無限ループしてた件。
+・sort が 16行をソートするために 7スレッド起動してた件。
+・Solaris9にインストールされた touch が Solaris10でセグフォで落ちてた件。
+・install コマンドが "--preserve_context・オプションをサポートしなくなりました。"--preserve-context"を使いましょう。
+・test コマンドが == を = と同等のものとして受け付けるようになった。（あれ、でも8.4でもできる気が…）
+
+8.11 -> 8.12
+http://savannah.gnu.org/forum/forum.php?forum_id=6798
+・tail --follow で --retry ではなくシステムの inotify サポートを利用するようになったよ。
+
+8.12 -> 8.13
+http://savannah.gnu.org/forum/forum.php?forum_id=6937
+・cp -r で存在するディレクトリに対してコピーした時、パーミッション変更がうまくいかない問題が修正された。
+・rm, du, chmod, chgrp, chown, chcon などでメモリの使用量がファイル数に左右されなくなった。たとえば、rm -rf で、それまでは 4,000,000エントリが含まれるディレクトリを消すと1Gほど使っていたが、今では30MBだ!
+・date コマンドが　ISO 8601 date-time 形式を受け付けるようになった。こんな感じ。"2004-02-29T16:21:42"
+・split で --filter=CMDが使えるようになった。
+
+これは面白い。
+以下のようにして、分割してすぐに何か実行して、その結果が失敗してなければ次の処理をする、という風にできる。また一時ファイルを作らなくてもよい。
+split -b2 --filter='cat - > $FILE' big.txt
+
+・timeout は --forground オプションを受け付けるようになり、また1秒未満のタイムアウト指定もできるようになった。
+・ファイルシステム周りのサポートが少しよくなった。
+  cp -p now copies trivial NSFv4 ACLs on Solaris 10.  Before, it would
+  mistakenly apply a non-trivial ACL to the destination file.
+  cp and ls now support HP-UX 11.11's ACLs, thanks to improved support
+  in gnulib.
+  df now supports disk partitions larger than 4 TiB on MacOS X 10.5
+  or newer and on AIX 5.2 or newer.
+
+・ランダム順列を生成する shuf でメモリ効率がよくなった。
+
+8.13 -> 8.14
+http://savannah.gnu.org/forum/forum.php?forum_id=6978
+・ls "--dereference・した時、ダメなシンボリックリンクに対して argetm という謝った文字列を出力していた問題を修正。
+・sort -g で NaN を含む場合に無限ループになっていたのを解決した。と書いてる気がするけど手元では再現しないなぁ。
+・pwd が長さPATH_MAX/3以上の要素を含む位置の時に失敗する問題を解決した。
+
+8.14 -> 8.15
+http://savannah.gnu.org/forum/forum.php?forum_id=7076
+・realpath コマンドが追加された。これはあるファイルの参照を指定して、絶対パスとか参照先のシンボリックリンクの先とか、逆に相対パスを生成してくれるもの。けっこう便利そう。
+・du -x でルートディレクトリを含めていたのを解消した。
+・ls -k が廃止された。 --block-size=1KiB を使おう。
+・ls -l が SELinux 有効時にちょっとだけメモリリークしてたので直した。（すごいバグだ）
+・tail -f でファイルシステムが unknown の場合、inotify を使わずポーリングするようになった。警告も出る。
+
+8.15 -> 8.16
+http://savannah.gnu.org/forum/forum.php?forum_id=7170
+・chmodとかパーミッション指定するところで + とか - とかして数字をあれこれできるようになった。chmod =0 foobarとかすると全部削れる。嬉しいのかどうかは悩むところ。
+・dd がconv=sparse を受け付けるようになり、スカスカなファイルを高速に作れるようになる。
+・ln が --relative オプションを受け付けるようになった。明示的に相対パスのリンクが作れる。realpathコマンドの追加と並んでこれは嬉しいかもしれない。
+・split で 数値サフィックスとか使うとき、from オプションを指定できるようになった。デフォルトは0。後 --additional-suffix も使えるよ。
+・basename で複数の値を渡せる -a と、接頭辞を明示的に指定できる -s が追加された。第二引数が接頭辞というのは分かりづらかったようだ。
+・dirname は複数の値を取れるようになった。dirname、basename共に -z を渡せる。これは、改行区切りではなく nil 区切りで結果を返すもの。
+・realpath がルートディレクトリを // としてしまう問題。
+・mv がハードリンクやシムリンクの上書きでおかしな動作をするので修正。
+・ls の効率がよくなり、もっとでかいディレクトリにも対応できるようになった。
+・split が無限にでかい分割数（unlimited number of split）を受け取れるようになった。
+
+8.16 -> 8.17
+http://savannah.gnu.org/forum/forum.php?forum_id=7230
+・cp コマンドが、コピー先がすでに存在する時、処理の途中で対象が削除されても失敗しなくなりました。
+・cp,mv,install,cat,split とかが32kb から 64kb に最小読み書き単位を増やした。これは64bitシステムへの対応である。
+・split が split --number=C /dev/null としても無限ループしなくなりました。
+・stat が巨大なファイルに対して、マイナスのファイルサイズを報告しなくなりました!
+・split や truncate でファイルサイズを必要とする部分では、シーク可能ファイルならなんでもよくなりました!（ここよくわからんかった）
+
+8.17 -> 8.18
+http://savannah.gnu.org/forum/forum.php?forum_id=7333
+・ls --color がルートに存在する相対パスのシンボリックリンクで処理を誤っていたのを修正。
+・su を coreutils から削除したよ!（util-linux　に入ってるよ!）
+・sort は出力に書き込めなかったら処理をしないことにした。これはすごい。
+・sort は物理メモリの使用を75%までしか使わないようにした。それまでは50%-100%使っていた。sortはじまった。
+・split が入力ファイルで出力ファイルを上書きしないようにした。
+
+touch xaa
+split xaa
+split: `xaa' would overwrite input; aborting
+ほんまや!
+
+8.18 -> 8.19
+http://savannah.gnu.org/forum/forum.php?forum_id=7342
+・df がマウントされたファイルシステムが読み込めない時 fail するようになった。ファイルシステムの情報がどうしても見たければ -a とか -x とか-l とか -t とか使ってね。
+・rm で空のディレクトリを消すために -d で消せるようになった。BSDスタイルだ。
+・sort -u が freed memory を read するようになった。
+・sort で (yes 7 | head -11; echo 1) | sort --p=1 -S32b -u が"1"で終了してしまうバグを修正したということだが、coreutils 8.6からのバグらしく手元では検証環境がなかった。
+
+8.19 -> 8.20
+http://savannah.gnu.org/forum/forum.php?forum_id=7407
+・dd が status=none を指定することで何もアウトプットを出力しなくなる。これは嬉しい。
+・cp が解放されたメモリ領域を読んでしまうバグを修正。
+・rm -r でシンボリックリンクのディレクトリを消そうとした時、"Too many levels of symbolic links"で失敗する問題を修正。
+・rm -i -d を一緒に利用すると、-d が無視されて"Is a Directory"と怒られる問題を修正。
+・seq でたとえばこんなことをすると変な動作をする問題を修正。
+
+b=100000000000000000000; seq $b $b
+
+・マイナス値を使わず、インクリメントが1で、フォーマット変換を指定していない場合に限り、seq が70倍くらい速くなったよ。
+
+8.20 -> 8.21
+http://savannah.gnu.org/forum/forum.php?forum_id=7505
+・numfmt コマンドが増えたよ。数値をフォーマットしてくれる。便利だ。
+区切り文字を使って特定のフィールドを変換できたりもする。たとえばapache のログのマイクロ秒を変換したりとか…。
+              $ numfmt --to=si 1000
+              -> "1.0K"
+              $ numfmt --to=iec 2048
+              -> "2.0K"
+              $ numfmt --to=iec-i 4096
+              -> "4.0Ki"
+              $ echo 1K | numfmt --from=si
+              -> "1000"
+              $ echo 1K | numfmt --from=iec
+              -> "1024"
+              $ df | numfmt --header --field 2 --to=si
+              $ ls -l | numfmt --header --field 5 --to=iec
+              $ ls -lh | numfmt --header --field 5 --from=iec --padding=10
+              $ ls -lh | numfmt --header --field 5 --from=iec --format %10f
+・df で --output を指定することで、出力するカラムを指定できる。
+・du で --threshold、-t が指定できる。du を使う80%くらいは sort して head で絞るので便利。
+・timeout が 親プロセスの状態にかかわらず、ALRM シグナルをブロッキングするようになった。というか、よく考えたらtimeout コマンドってもともとALRMシグナル発行してても不思議はないなぁ。
+・nl が --page-increment オプションを無視するようになる。（-line-incrementを使おう）
+・readlink が複数の引数を取れるようになった。例によって -z とかで、改行区切りではなく nil 区切りで出力するよ。
+
+8.21 -> 8.22
+ついに RHL7/CentOS7 に追いついた!!!　ということでみんな気合い入れたのでしょうか、かつてない修正量となっております。
+http://savannah.gnu.org/forum/forum.php?forum_id=7815
+・df がマウントポイントが無効でもリストを表示できるようになった。以前は失敗していた。嬉しい。
+・df がbind mount の disk device を適切に扱えるようになった。嬉しい。
+・df がシンボリックリンク、相対パスでファイルシステムをマウントしてる特殊ファイルをちゃんと処理できるようになった。
+・install コマンドは何かの理由で strip が失敗したら、ターゲットファイルを消すようになった。
+・ln --relative　が既に存在するリンクを適切にアップデートできるようになった。（それまではできなかったのか…）
+・ls --recursive はもはや exit code 2 を返すことはない。
+・mkdir, mkfifo, and mknod がよりいい感じに umaskとかACLの設定に準拠して動作するようになった。
+・mv が空ディレクトリをちゃんとファイルシステム間でコピーするようになった。
+・rm -I は書き込み禁止ファイルを削除する前に確認プロンプトを出すようになった。大事。
+・tail -f --retry で、その時点で存在しないファイルを指定した時、ファイルが準備できるまで待つようになった（それまではすぐに終了していた。）嬉しい。
+・tail -F が シムリンクを指定された時の挙動が改善された。
+・cp, install, mkdir, mknod, mkfifo などが SELinux周りで強化されたよ。-Z で コンテキストを戻すオプションがサポートされたんだ（restorecon）。
+・du --inode が追加された。
+・id --zero が追加された（が、よくわからない）
+       -z, --zero
+              delimit entries with NUL characters, not whitespace;
+・join が --zero-terminated をサポートすることになった。他の -z 連中と同じく、結果を NUL 区切りで出力する。
+・uniq に --group オプションが追加された。空行で区切って表示するよ。
+・shuf が --repeat -r をサポートしたよ。ということで使ってみようとしたが、
+shuf -i1-10 -r 2
+Segmentation fault (コアダンプ)
+セグフォで落ちる。難しいものである。shuf は個人的になかなか使い道が難しい子だ。
+・csplit に --suppressed-matched がサポートされた!と思って試してみたら存在しない。なんだってー。
+[vagrant@localhost ~]$ csplit --suppressed-matched
+csplit: オプション '--suppressed-matched' を認識できません
+Try 'csplit --help' for more information.
+と思ったらドキュメントの方、--suppress-matched のtypoだったみたいである。
+  csplit accepts a new option: --suppressed-matched, to elide the lines
+  used to identify the split points.
+・ファイルを全消しする shred コマンドに、上書き処理した後削除する --remove が追加された。これは地味ながら素敵な改善。
+・バルクデータに対する base64 のスループットが60%改善したぜ!
+・shaXXXsum のスループットが40%改善したぜ!
+・split コマンドがメモリアロケートを必要になったらするように変更したよ!
+・cp, install, mkdir, mknod and mkfifo などで -Z オプションが使えなくなったよ。--context を使えばいいんじない。
+・df で --megabytes オプションが使えなくなったよ。
+・標準入出力のバッファリングモードを切り替えるコマンド stdbuf で、バッファリングモードのオプションが必須になったよ。
+・cp --link コマンドの動作が変更され、元のリンクをデリファレンスし、"-P・または "--no-deref・が指定されていない場合、コピー先にハードリンクを作成するようになった。（もともとはシンボリックリンクへのハードリンクを作成してた）
+
+8.23は今のところ導入してないのだけどとりあえず見てみる
+
+8.22 -> 8.23
+http://savannah.gnu.org/forum/forum.php?forum_id=8032
+・cp -a, mv, and install などで--preserve-context で SELinux周り、ファイルシステムのバグフィックスいろいろ。
+・dd の初期からあったバグ修正。
+・date　で date -d 'TZ="America/Los_Angeles・"00:00 + 1 hour"'　とかやると落ちるバグ修正。TZのパースの問題だった。
+・du がマウントを含む循環構成のディレクトリをしづかに無視するようになった。coreutils-8.1 からずっと警告出して落ちてた。
+・ln -sf で、リンク先が存在しない場合でも、作成先のリンクを置き換えるようになった。…というけど、これはバグの内容がよくわからなかった。普通に動くような気はするけど。
+・ln -sr '' F がコアダンプで落ちなくなった。
+・numfmt が locale にブランク文字を含む場合に処理がおかしかったのを修正。
+・ptx が複数ファイルを処理する時にホワイトスペースのトリムをうまいことやるように。
+・seq が -0 をちゃんと 0として処理できるように修正（CentOS7の8.22版seqではこのバグがあるので注意必要と思った）
+・shuf --repeat が入力空の場合に刺さってたということで試してみたら確かに刺さった。（echo | shuf --repeat）
+・tail -f が VXFS の場合にポーリングモードで動作するようになった。
+・od が--endian オプションをサポートした。これは嬉しい人もいるのでは。
+・configure に --enable-single-binary が追加され、coreutils の全てのコードを一つのバイナリに突っ込むような動きをする。これで結果的にバイナリのサイズが小さくなるだろう。（http://comments.gmane.org/gmane.comp.gnu.coreutils.general/5394)
+・chroot chroot "/・した場合、暗黙のカレントディレクトリの変更をしなくなった。(この件か http://lists.gnu.org/archive/html/bug-coreutils/2014-07/msg00102.html )
+手元に動作環境がないので、変更点についてはあんまり確認してません。興味のある方は覗いてみるとよいでしょう。
+
+Tipsというか参考資料
+coreutils本
+これは同人誌として販売したのか。とても大変だったろうなあと感じる力作。
+https://github.com/nanaka-inside/kaisetsu-CoreUtils/blob/master/all.rst
+もう凄いとしか。
+コードを読む
+cd /tmp
+curl -O http://ftp.gnu.org/gnu/coreutils/coreutils-8.22.tar.xz
+tar xvf coreutils-8.22.tar.xz
+読みましょう。
+
+valgrind
+これはcoreutils ではないが、よくメモリリーク修正などのバグフィックスが入ってたので知りました。
+
+Memcheckが検出や警告可能な問題には下記のものがある。
+ - 初期化されていないメモリの使用
+ - freeされたメモリの読み書き
+ - mallocされたブロックの終端以降への読み書き
+ - メモリリーク
+
+まとめ
+枯れたツール類かと思ったらどっこい、ガンガン開発の手が入っていて coreutils とても面白いです。
+この時代になっても、「sortコマンドのメモリ確保タイミングを改善してパイプ処理がいい感じに!」とか「rmで大量ファイル削除したときのパフォーマンス爆上げだぜ!」とか改善続いているのを知って、地味に感動しました。dateで変なタイムゾーン文字列受け取るとコアダンプ吐いて落ちるのを直しましたとか、「21世紀も15年経つのにまだそんなバグが…!」とビビったりとか。むしろptxとかnlとかが変更入ってることに衝撃を受けたり。そうだよなぁまだまだ現役だよなぁ。ドラマを感じます。
+「枯れているから大丈夫」は禁物です。気をつけましょう!!!
+

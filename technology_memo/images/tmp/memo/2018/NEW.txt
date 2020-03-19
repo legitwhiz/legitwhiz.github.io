@@ -1,0 +1,9 @@
+NEW
+
+PaaS
+
+Heroku
+https://www.sejuku.net/blog/7858
+
+kubernetes(k8s)
+https://qiita.com/mihirat/items/ebb0833d50c882398b0f

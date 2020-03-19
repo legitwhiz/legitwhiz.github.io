@@ -1,0 +1,65 @@
+WebからLinuxサーバのネットワークトラフィックをモニタ出来る[ntopng]
+
+以前から、WebからLinuxサーバのモニタリングを行える『linux-dash』、『Monitorix』を紹介していたが、今回の『ntopng』はネットワークトラフィックに特化したWebモニタリングツールだ。
+プロジェクトページを見てみると、結構いろんな情報を見ることが出来るようだ。早速インストールして試してみよう。
+
+1.インストール
+
+以下のコマンドを実行し、パッケージのインストールを行う。
+
+●Debian/Ubuntu
+$ sudo apt-get install libpcap-dev libglib2.0-dev libgeoip-dev redis-server wget libxml2-dev
+$ wget "http://downloads.sourceforge.net/project/ntop/ntopng/ntopng-1.1_6932.tgz"
+$ tar xzf ntopng-1.1_6932.tgz
+$ cd ~/ntopng-1.1_6932/
+$ ./configure
+$ make
+$ make install
+
+●RHEL系
+※Redhat、CentOSの場合、EPEL repositoryを有効にしている必要がある。
+$ sudo yum install libpcap-devel glib2-devel GeoIP-devel libxml2-devel libxml2-devel redis wget
+$ wget "http://downloads.sourceforge.net/project/ntop/ntopng/ntopng-1.1_6932.tgz"
+$ tar xzf ntopng-1.1_6932.tgz
+$ cd ~/ntopng-1.1_6932/
+$ ./configure
+$ make
+$ make install
+
+2.設定
+インストールが完了したら、次は設定ファイルを作成しネットワーク監視設定を行う。
+まずは「/etc/ntopng」フォルダを作成する。
+
+$ sudo mkdir /etc/ntopng -p
+
+作成した「/etc/ntopng」フォルダ配下に、以下の2つのファイルを作成する。
+
+●ntopng.start
+--local-networks "192.168.0.0/24"
+--interface 1
+
+●ntopng.conf
+-G=/var/run/ntopng.pid
+ファイル作成後、以下のコマンドを実行しntopngを実行させる。
+
+●Debian/Ubuntu
+$ sudo /etc/init.d/redis-server restart
+$ cd ~/ntopng-1.1_6932/
+$ sudo ./ntopng
+ 
+
+●RHEL系
+$ sudo service redis restart
+$ cd ~/ntopng-1.1_6932/
+$ sudo ./ntopng
+ 
+
+3.ntopngへアクセス
+さて、それでは実際にntopngへアクセスしてみよう。
+アクセスするURLは「http://サーバのホスト名orIPアドレス:3000」
+
+なお、ID/パスワードは「admin/admin」となっている。
+ログイン後の画面がこちら。
+Google Analyticsのようなフローが表示されている。
+その他、アクセスがどの地域から来ているかの確認も出来るようだ。
+

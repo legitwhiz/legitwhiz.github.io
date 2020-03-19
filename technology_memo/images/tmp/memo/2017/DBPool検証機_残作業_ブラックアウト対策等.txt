@@ -1,0 +1,50 @@
+#DBPool検証機　ブラックアウト対策
+
+#Default設定の[600]なっていることを確認。
+cat /sys/module/kernel/parameters/consoleblank
+
+#grub.confバックアップ
+cp -p /boot/efi/EFI/redhat/grub.conf /home/saka/grub.conf_`date +%Y%m%d`
+ls -l /boot/efi/EFI/redhat/grub.conf /home/saka/grub.conf_`date +%Y%m%d`
+
+#修正
+vi /boot/efi/EFI/redhat/grub.conf
+#kernel行の最後に[consoleblank=0]を追加
+
+#変更確認
+diff /boot/efi/EFI/redhat/grub.conf /home/saka/grub.conf_`date +%Y%m%d`
+
+#OS再起動(設定変更反映)
+shutdown -r now
+
+#設定変更確認
+cat /sys/module/kernel/parameters/consoleblank
+#0であることを確認
+#0 ではなく 600 (デフォルト値) が返る場合は、consoleblank=0 が正しく設定されていません
+
+
+サービス設定
+chkconfig portreserve off
+chkconfig ntpd on --level 2345
+chkconfig lvm2-monitor off 
+chkconfig iptables on --level 2345
+
+3.機能確認(mail)
+
+3.1 サービスの自動起動設定
+chkconfig --list sendmail
+
+#2,3,4,5がonであれば
+chkconfig sendmail off
+
+service sendmail status
+#起動していなければ
+service sendmail start
+
+3.2 テスト
+root宛のメールが転送されるかテスト。
+echo "send a test mail root" | mail root
+
+aliasesに届いたか確認
+tail /var/log/maillog
+

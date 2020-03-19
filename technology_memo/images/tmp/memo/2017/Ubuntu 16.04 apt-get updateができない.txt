@@ -1,0 +1,33 @@
+Ubuntu 16.04 apt-get updateができない
+
+調査したところ/bootが一杯でした。
+そのため/boot配下の古いkernelを削除し再度、
+updateを試みましたが同じ理由で失敗。
+
+古いファイルを削除したところでupdateを実行すると
+インストールされたパッケージからkernelが再生成
+されるようで、パッケージから削除が必要。
+
+dpkg -l | grep linux-image
+
+ii  linux-image-4.4.0-34-generic      
+ii  linux-image-4.4.0-83-generic      
+ii  linux-image-4.4.0-87-generic      
+ii  linux-image-extra-4.4.0-34-generic
+ii  linux-image-extra-4.4.0-83-generic
+ii  linux-image-extra-4.4.0-87-generic
+ii  linux-image-generic               
+
+2世代以前のkernelを削除
+sudo apt-get remove linux-image-4.4.0-34-generic
+
+listからも削除
+sudo apt-get remove --purge linux-image-4.4.0-34-generic
+
+df -h /boot
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1       236M  110M  114M  49% /boot
+
+2世代分のkernelだけなのに110MBも使うのかー
+ちゃんと容量設計も運用もしっかり考えないと
+だめなんですね。

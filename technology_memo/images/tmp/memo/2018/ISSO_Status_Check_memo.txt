@@ -1,0 +1,1471 @@
+curl -X GET --header 'Accept: application/json' --header 'vmware-api-session-id: null' 'https://isso-hcvc.issoldap.local/rest/vcenter/datastore'
+
+curl -X GET --header 'Accept: application/json' --header 'vmware-api-session-id: null' 'https://133.127.113.97/rest/vcenter/datastore'
+
+
+
+統合認証ステータス
+
+サーバ
+
+                 ホスト
+                 iw01      iw02    iw03    cert01    cert02    ldap01    ldap02    ldapre01    ldaprep02
+alive status     alive
+network I/F      
+
+
+                isso-zabbix    isso-manage    isso-manage-ilo
+                isso-hc-vip    isso-hc01    isso-hc02    isso-hc03    isso-esx01    isso-esx02    isso-esx03    isso-hcvc
+                isso-hc01-idrac    isso-hc02-idrac    isso-hc03-idrac
+                isso-bigip01    isso-bigip02    isso-sw48
+
+                iwdev    cerdev    ldapdev    ldapredev
+                isso-bigipdev    isso-swdev
+
+
+
+
+
+192.168.20.2
+curl -sk -u admin:admin -X GET https://bigip-ve/mgmt/tm/ltm/pool
+
+export BIG_VIP="192.168.20.1"
+export BIG_IP1="192.168.20.2"
+export BIG_IP2="192.168.20.3"
+
+
+curl -k -H "Authorization: Basic YWRtaW46SXNzbzF0bzM=" -H "Content-Type: application/json" -X GET https://${BIG_IP1}/mgmt/tm/ltm/node | python -mjson.tool
+
+
+curl -k -H "Authorization: Basic YWRtaW46SXNzbzF0bzM=" -H "Content-Type: application/json" -X GET https://${BIG_IP1}/mgmt/tm/net/self | python -mjson.tool
+
+
+curl -k -H "Authorization: Basic YWRtaW46SXNzbzF0bzM=" -H "Content-Type: application/json" -X GET https://${BIG_IP2}/mgmt/tm/net/self | python -mjson.tool
+
+
+curl -k -H "Authorization: Basic YWRtaW46SXNzbzF0bzM=" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/cm/device | python -mjson.tool
+
+
+
+curl -k -H "Authorization: Basic YWRtaW46SXNzbzF0bzM=" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/cm/sync-status | python -mjson.tool
+-o "StrictHostKeyChecking=no"
+
+BIGIP_Base64="YWRtaW46SXNzbzF0bzM="
+export BIG_VIP="192.168.20.1"
+export BIG_IP1="192.168.20.2"
+export BIG_IP2="192.168.20.3"
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/sys/crypto/cert | python -mjson.tool
+
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/sys/crypto/cert/~Common~isso_CA.cer.crt | python -mjson.tool
+
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/sys/crypto/cert/~Common~isso_cert.crt | python -mjson.tool
+
+https://localhost/mgmt/tm/sys/crypto/cert/~Common~isso_cert.crt?ver=12.1.2",
+
+~Common~isso_cert_dev.crt
+
+date -d "Nov 20 12:00:00 2019 GMT" +"%Y/%m/%d %H:%M:%S %Z"
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool/~Common~pool_ldap/members/stats | python -mjson.tool
+
+######
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool |python -mjson.tool | grep "link\"\:" | awk -F"/" '{ print $8 '} | while read LINE
+do
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool/$LINE/members/stats | python -mjson.tool | grep 
+done
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool/~Common~pool_ldap/members/stats | python -mjson.tool
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool/~Common~pool_iw/members/stats | python -mjson.tool | awk -e '/addr/ {f=NR} f && NR==f+1' -e '/monitorRule/ {f=NR} f && NR==f+1 ' -e '/monitorStatus/ {f=NR} f && NR==f+1 ' -e '/nodeName/ {f=NR} f && NR==f+1 ' -e '/poolName/ {f=NR} f && NR==f+1 ' -e '/port/ {f=NR} f && NR==f+1 ' -e '/status.statusReason/ {f=NR} f && NR==f+1 '
+
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool/~Common~pool_iw/members/stats | python -mjson.tool | awk '/addr/ {f=NR} f && NR==f+1' '/monitorRule/ {f=NR} f && NR==f+1 ' '/monitorStatus/ {f=NR} f && NR==f+1 ' '/nodeName/ {f=NR} f && NR==f+1 ' '/poolName/ {f=NR} f && NR==f+1 ' '/port/ {f=NR} f && NR==f+1 ' '/status.statusReason/ {f=NR} f && NR==f+1 '
+
+                    "addr": {
+                        "description": "192.168.20.51"
+                    "monitorRule": {
+                        "description": "/Common/iw_http (pool monitor)"
+                    "monitorStatus": {
+                        "description": "up"
+                    "nodeName": {
+                        "description": "/Common/iw01"
+                    },
+                    "poolName": {
+                        "description": "/Common/pool_iw"
+                    },
+                    "port": {
+                        "value": 80
+                    "status.statusReason": {
+                        "description": "Pool member is available"
+
+grep "term" -A1 | tail -n 1
+awk '/addr/ {f=NR} f && NR==f+1' a
+
+###
+COUNT=0
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool |python -mjson.tool | grep "link\"\:" | awk -F"/" '{ print $8 '} | while read LINE
+do
+    curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/ltm/pool/${LINE}/members/stats | python -mjson.tool | awk -e '/addr/ {a=NR} a && NR==a+1' -e '/monitorRule/ {b=NR} b && NR==b+1' -e '/monitorStatus/ {c=NR} c && NR==c+1' -e '/nodeName/ {d=NR} d && NR==d+1' -e '/poolName/ {e=NR} e && NR==e+1' -e '/port/ {f=NR} f && NR==f+1' -e '/status.statusReason/ {g=NR} g && NR==g+1' | while true
+    do
+        read line1 #addr
+        read line2 #monitorRule
+        read line3 #monitorStatus
+        read line4 #nodeName
+        read line5 #poolName
+        read line6 #port
+        read line7 #status.statusReason
+        if [ -z "$line1" ] ; then break ; fi
+
+        poolName=`echo $line5 | awk -F"/" '{print $3 }' | sed 's/\"//g'`
+        monitorRule=`echo $line2 | awk -F"/" '{print $3 }' | sed 's/\"//g'`
+        port=`echo $line6 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+        nodeName=`echo $line4 | awk -F"/" '{print $3 }'| sed 's/\"//g'`
+        addr=`echo $line1 | awk -F":" '{print $2 }' | sed 's/\"//g' | sed 's/^[ \t]*//g'`
+        monitorStatus=`echo $line3 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/\"//g'`
+        status_statusReason=`echo $line7 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/\"//g'`
+        COUNT=`expr $COUNT + 1`
+        if [ $COUNT -eq 1 ]; then
+            echo "     poolName            : ${poolName}"
+            echo "     monitorRule         : ${monitorRule}"
+            echo "     port                : ${port}"
+        fi
+        echo "     nodeName            : ${nodeName}"
+        echo "     addr                : ${addr}"
+        echo "     monitorStatus       : ${monitorStatus}"
+        echo "     status.statusReason : ${status_statusReason}"
+    done
+    echo ""
+done
+
+
+###
+echo "  # CPU Usage #"
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/sys/cpu | python -mjson.tool | awk -e '/cpuId/ {a=NR} a && NR==a+1' -e '/fiveMinAvgIdle/ {b=NR} b && NR==b+1' -e '/fiveMinAvgIdle/ {c=NR} c && NR==c+1' -e '/fiveMinAvgUser/ {d=NR} d && NR==d+1' -e '/fiveSecAvgIdle/ {e=NR} e && NR==e+1' -e '/fiveSecAvgSystem/ {f=NR} f && NR==f+1' -e '/fiveSecAvgUser/ {g=NR} g && NR==g+1' | while true
+do
+    read line1 #cpuId
+    read line2 #fiveMinAvgIdle
+    read line3 #fiveMinAvgSystem
+    read line4 #fiveMinAvgUser
+    read line5 #fiveSecAvgIdle
+    read line6 #fiveSecAvgSystem
+    read line7 #fiveSecAvgUser
+    if [ -z "$line1" ] ; then break ; fi
+    cpuId=`echo $line1 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    fiveMinAvgIdle=`echo $line2 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    fiveMinAvgSystem=`echo $line3 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    fiveMinAvgUser=`echo $line4 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    fiveSecAvgIdle=`echo $line5 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    fiveSecAvgSystem=`echo $line6 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    fiveSecAvgUser=`echo $line7 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+
+    echo "     cpuId            : ${cpuId}"
+    echo "     fiveMinAvgIdle   : ${fiveMinAvgIdle}"
+    echo "     fiveMinAvgSystem : ${fiveMinAvgSystem}"
+    echo "     fiveMinAvgUser   : ${fiveMinAvgUser}"
+    echo "     fiveSecAvgIdle   : ${fiveSecAvgIdle}"
+    echo "     fiveSecAvgSystem : ${fiveSecAvgSystem}"
+    echo "     fiveSecAvgUser   : ${fiveSecAvgUser}"
+    echo ""
+done
+###
+echo "  # Memory Usage #"
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}//mgmt/tm/sys/memory | python -mjson.tool | awk -e '/memoryFree/ {a=NR} a && NR==a+1' -e '/memoryTotal/ {b=NR} b && NR==b+1' -e '/memoryUsed/ {c=NR} c && NR==c+1' -e '/otherMemoryFree/ {d=NR} d && NR==d+1' -e '/otherMemoryTotal/ {e=NR} e && NR==e+1' -e '/otherMemoryUsed/ {f=NR} f && NR==f+1' -e '/swapFree/ {g=NR} g && NR==g+1' -e '/swapTotal/ {h=NR} h && NR==h+1' -e '/swapUsed/ {i=NR} i && NR==i+1' -e '/tmmMemoryFree/ {j=NR} j && NR==j+1' -e '/tmmMemoryTotal/ {k=NR} k && NR==k+1' -e '/tmmMemoryUsed/ {l=NR} l && NR==l+1' | while true
+do
+    read line1
+    read line2
+    read line3
+    read line4
+    read line5
+    read line6
+    read line7
+    read line8
+    read line9
+    read line10
+    read line11
+    read line12
+    read line13
+    read line14
+    if [ -z "$line1" ] ; then break ; fi
+    memoryFree=`echo $line1 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    memoryTotal=`echo $line2 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    memoryUsed=`echo $line3 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    otherMemoryFree=`echo $line4 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    otherMemoryTotal=`echo $line5 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    otherMemoryUsed=`echo $line6 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    swapFree=`echo $line7 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    swapTotal=`echo $line8 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    swapUsed=`echo $line9 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    tmmMemoryFree=`echo $line10 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    tmmMemoryTotal=`echo $line11 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+    tmmMemoryUsed=`echo $line12 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g'`
+
+    echo "     memoryFree                : $(expr ${memoryFree} / 1024 / 1024 / 1024)GB"
+    echo "     memoryTotal               : $(expr ${memoryTotal} / 1024 / 1024 / 1024)GB"
+    echo "     memoryUsed                : $(expr ${memoryUsed} / 1024 / 1024 / 1024)GB"
+    echo "     memory_Percent_Used       : $(expr 100 \* ${memoryUsed} / ${memoryTotal})"\%""
+    echo "     otherMemoryFree           : $(expr ${otherMemoryFree} / 1024 / 1024 / 1024)GB"
+    echo "     otherMemoryTotal          : $(expr ${otherMemoryTotal} / 1024 / 1024 / 1024)GB"
+    echo "     otherMemoryUsed           : $(expr ${otherMemoryUsed} / 1024 / 1024 / 1024)GB"
+    echo "     otherMemory_Percent_Used  : $(expr 100 \* ${otherMemoryUsed} / ${otherMemoryTotal})"\%""
+    echo "     swapFree                  : $(expr ${swapFree} / 1024 / 1024 / 1024)GB"
+    echo "     swapTotal                 : $(expr ${swapTotal} / 1024 / 1024 / 1024)GB"
+    echo "     swapUsed                  : $(expr ${swapUsed} / 1024 / 1024 / 1024)GB"
+    echo "     swap_Percent_Used         : $(expr 100 \* ${swapUsed} / ${swapTotal})"\%""
+    echo "     tmmMemoryFree             : $(expr ${tmmMemoryFree} / 1024 / 1024 / 1024)GB"
+    echo "     tmmMemoryTotal            : $(expr ${tmmMemoryTotal} / 1024 / 1024 / 1024)GB"
+    echo "     tmmMemoryUsed             : $(expr ${tmmMemoryUsed} / 1024 / 1024 / 1024)GB"
+    echo "     tmmMemory_Percent_Used    : $(expr 100 \* ${tmmMemoryUsed} / ${tmmMemoryTotal})"\%""
+echo ""
+done
+
+echo "  # InterFace Status #"
+curl -sk -H "Authorization: Basic ${BIGIP_Base64}" -H "Content-Type: application/json" -X GET https://${BIG_VIP}/mgmt/tm/net/interface/stats | python -mjson.tool | awk -e '/mediaActive/ {a=NR} a && NR==a+1' -e '/status/ {b=NR} b && NR==b+1' -e '/tmName/ {c=NR} c && NR==c+1' | while true
+do
+    read line1 #mediaActive
+    read line2 #status
+    read line3 #tmName
+    if [ -z "$line1" ] ; then break ; fi
+mediaActive=`echo $line1 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/\"//g'`
+status=`echo $line2 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/\"//g'`
+tmName=`echo $line3 | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/\"//g'`
+echo "      tmName      : ${tmName}"
+echo "      mediaActive : ${mediaActive}"
+echo "      status      : ${status}"
+echo ""
+
+done
+###############################################################################
+Prism_Base64="YWRtaW46QHV0aElzc28xdG8z"
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET 'https://192.168.20.90:9440/PrismGateway/services/rest/v2.0/ha/' | python -mjson.tool
+
+192.168.20.90
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET 'https://192.168.20.90:9440/PrismGateway/services/rest/v2.0/ha/' | python -mjson.tool
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET 'https://192.168.20.90:9440/api/nutanix/v2.0/vms/' | python -mjson.tool | grep -e "\"uuid\"" -e name
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET 'https://192.168.20.90:9440/api/nutanix/v2.0/vms/' | python -mjson.tool | grep -e "\"uuid\"" -e name| while read LINE
+do
+echo $LINE
+done
+
+Prism_URL=https://192.168.20.90:9440
+### Prism API
+echo "### Prism Virtual Machine Status"
+# Virtual Machine UUIDを全て出力
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET 'https://192.168.20.90:9440/api/nutanix/v2.0/vms/' | python -mjson.tool | grep -e "\"uuid\"" -e name| while true
+do
+    read line1
+    read line2
+    if [ -z "$line1" ] ; then break ; fi
+    #Virtual_Machine_Name抽出
+    Virtual_Machine_Name=`echo $line1 | awk -F":" '{ print $2 }'| sed 's/\"//g' | awk -F"," '{ print $1 }'`
+    #Virtual_Machine_UUID抽出
+    Virtual_Machine_UUID=`echo $line2 | awk -F":" '{ print $2 }'| sed 's/\"//g' | awk -F"," '{ print $1 }' | sed 's/ *//g'`
+#    echo ${Virtual_Machine_Name} ${Virtual_Machine_UUID}
+
+    # Virtual_Machine_UUIDから各仮想マシンの状態を出力
+    curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/vms/${Virtual_Machine_UUID}" | python -mjson.tool | while true
+    do
+        read line1
+        read line2
+        read line3
+        read line4
+        read line5
+        read line6
+        read line7
+        read line8
+        read line9
+        read line10
+        read line11
+        read line12
+        read line13
+        read line14
+    if [ -z "$line1" ] ; then break ; fi
+    if [ -z "$line6" ] ; then break ; fi
+#        echo $line6
+#        echo $line7
+#        echo $line8
+#        echo $line9
+#        echo $line10
+#        echo $line13
+
+        Virtual_Machine_Name=`echo $line7 | awk -F":" '{ print $2}' | awk -F"," '{ print $1 }' | sed 's/ *//g' | sed 's/\"//g'`
+        VCPU_num=`echo $line9 | awk -F":" '{ print $2}' | awk -F"," '{ print $1 }' | sed 's/ *//g' | sed 's/\"//g'`
+        Core_Per_VCPU_num=`echo $line8 | awk -F":" '{ print $2}' | awk -F"," '{ print $1 }' | sed 's/ *//g' | sed 's/\"//g'`
+        Memory_allocation=`echo $line6 | awk -F":" '{ print $2}' | awk -F"," '{ print $1 }' | sed 's/ *//g' | sed 's/\"//g'`
+        Power_State=`echo $line10 | awk -F":" '{ print $2}' | awk -F"," '{ print $1 }' | sed 's/ *//g' | sed 's/\"//g'`
+        UUID=`echo $line13 | awk -F":" '{ print $2}' | awk -F"," '{ print $1 }' | sed 's/ *//g' | sed 's/\"//g'`
+
+        echo " Virtual Machine Name : ${Virtual_Machine_Name}"
+        echo " VCPU num             : ${VCPU_num}"
+        echo " Core_Per_VCPU_num    : ${Core_Per_VCPU_num}"
+        echo " Memory allocation    : ${Memory_allocation}"
+        echo " Power State          : ${Power_State}"
+        echo " UUID                 : ${UUID}"
+        echo ""
+    done
+done
+
+
+
+
+################################################################################################################################################################Prism_Base64="YWRtaW46QHV0aElzc28xdG8z"
+Prism_URL=https://192.168.20.90:9440
+
+対象Virtual Machine UUIDを取得
+vm=certdev_firewalld_hpe_20180910
+#Status
+Prism_Power_Status=`curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/api/nutanix/v2.0/vms/" | python -mjson.tool | awk -e "/${vm}/ {a=NR} a && NR==a+3" | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/"//g' | sed 's/,//g'`
+
+#UUID
+Prism_VM_UUID=`curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/api/nutanix/v2.0/vms/" | python -mjson.tool | awk -e "/${vm}/ {a=NR} a && NR==a+6" | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/"//g' | sed 's/,//g'`
+
+P-ON
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -d '{"host_uuid": "string","transition": "ON","uuid": "string" }' -X POST "${Prism_URL}/api/nutanix/rest/v2.0/vms/${Prism_VM_UUID}/set_power_state/"
+
+
+
+
+##################################################################
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/" | python -mjson.tool
+
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/clusters/0005734b-b11b-f5d4-4688-246e96c1a478" | python -mjson.tool
+
+
+
+CLUSTER UUID
+0005734b-b11b-f5d4-4688-246e96c1a478
+CLUSTER ID
+0005734b-b11b-f5d4-4688-246e96c1a478::5082352236881880184
+CLUSTER INCARNATION ID
+1534143814694356
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/clusters/0005734b-b11b-f5d4-4688-246e96c1a478" | python -mjson.tool
+
+Prism_LeaderURL=localhost:2019
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_LeaderURL}/prism/leader" | python -mjson.tool
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/prism/leader" | python -mjson.tool
+
+curl -s -k -H 'Accept: application/json' -X GET "${Prism_LeaderURL}/prism/leader" | python -mjson.tool
+
+curl localhost:2019/prism/leader
+
+
+
+## Prism Leader
+
+if [ -n "$Nutanix_PASSWORD" ]; then
+  cat <<< "$Nutanix_PASSWORD"
+  exit 0
+fi
+
+export Nutanix_PASSWORD=$Nutanix_SSH_PASS
+export SSH_ASKPASS=$0
+export DISPLAY=dummy:0
+
+Prism_Leader_IPAddress=`exec setsid ssh -o "StrictHostKeyChecking=no" ${Nutanix_SSH_USER}@${Prism_VIP} "curl -s -k -H 'Accept: application/json' -X GET ${Prism_LeaderURL}/prism/leader | python -mjson.tool | grep leader | awk -F":" '{ print $2}' | sed 's/\"//g' | sed 's/ *//g'"`
+
+case ${Prism_Leader_IPAddress} in
+    ${CVM_IP_1})
+    echo "Prism Leader :CVM#1"
+    ;;
+    ${CVM_IP_2})
+    echo "Prism Leader :CVM#2"
+    ;;
+    ${CVM_IP_3})
+    echo "Prism Leader :CVM#3"
+    ;;
+    *)
+    echo "Prism Leader :none"
+    ;;
+esac
+
+###########################################################
+Prism_URL=https://192.168.20.90:9440
+Prism_Base64="YWRtaW46QHV0aElzc28xdG8z"
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/hosts/" | python -mjson.tool
+
+ncli cluster info
+
+
+SSH_USER=radmin
+SSH_PASS=Isso1to3
+host=iw01
+
+exec setsid ssh -o "StrictHostKeyChecking=no" ${SSH_USER}@${host} "uname -n"
+
+#CPU Mem
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/hosts/" | python -mjson.tool | grep -e hypervisor_cpu_usage_ppm -e "\"serial\":" -e hypervisor_memory_usage_ppm | awk -F":" '{ print $2}' | sed 's/\"//g' | sed 's/ *//g'
+
+
+
+CVM_Serial_1=FFV1BQ2
+CVM_Serial_2=FFV3BQ2
+CVM_Serial_3=FFV5BQ2
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v2.0/hosts/" | python -mjson.tool | grep -e hypervisor_cpu_usage_ppm -e "\"serial\":" -e hypervisor_memory_usage_ppm | awk -F":" '{ print $2}' | sed 's/\"//g' | sed 's/ *//g' | sed 's/\,//g' | while true
+do
+read line1
+read line2
+read line3
+if [ -z "$line1" ]; then break ; fi
+
+case `echo ${line2} | awk -F"-" '{print $2 }'` in
+    ${CVM_Serial_1})
+    echo "     CPU Usage:  ${CVM1_Mem_Usage}"\%""
+    ;;
+    ${CVM_Serial_2})
+echo "     CPU Usage:  ${CVM2_Mem_Usage}"\%""
+    ;;
+    ${CVM_Serial_3})
+echo "     CPU Usage:  ${CVM3_Mem_Usage}"\%""
+    ;;
+    *)
+echo "     Memory Usage : $((${line4}/10000))"\%""
+    ;;
+esac
+
+echo "CPU Usage: $((${line2}/10000))"\%""
+echo "Memory Usage : $((${line3}/10000))"\%""
+done
+
+
+
+
+
+###########################################################
+
+vCenter_UserName="administrator@vsphere.local"
+vCenter_Password = "@uthIsso1to3"
+vCenter_IP="192.168.20.97"
+vCenter_URL="https://${vCenter_IP}"
+vCenter_Base64="YWRtaW5pc3RyYXRvckB2c3BoZXJlLmxvY2FsOkB1dGhJc3NvMXRvMw=="
+
+
+
+#Session ID
+Session_ID=`curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H "vmware-api-session-id: null" -X POST "${vCenter_URL}/rest/com/vmware/cis/session" | python -mjson.tool | grep value | awk -F":" '{ print $2 }' | sed 's/\"//g' | sed 's/ *//g'`
+
+#ESXi info
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" "${vCenter_URL}/rest/vcenter/host" | python -mjson.tool
+
+#vm info
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" "${vCenter_URL}/rest/vcenter/vm" | python -mjson.tool
+
+"name": "oldrep01",
+"vm": "vm-119"
+
+"name": "oldrep02",
+"vm": "vm-120"
+
+"name": "oldrepdev",
+"vm": "vm-121"
+
+"name": "NTNX-FFV1BQ2-A-CVM",
+"vm": "vm-19"
+
+"name": "isso-hcvc",
+"vm": "vm-22"
+
+"name": "NTNX-FFV3BQ2-A-CVM",
+"vm": "vm-27"
+
+"name": "NTNX-FFV5BQ2-A-CVM",
+"vm": "vm-32"
+
+"name": "iw01",
+"vm": "vm-65"
+
+"name": "iw02",
+"vm": "vm-81"
+
+"name": "iw03",
+"vm": "vm-82"
+
+"name": "cert01",
+"vm": "vm-83"
+
+"name": "cert02",
+"vm": "vm-84"
+
+"name": "ldaprep01",
+"vm": "vm-87"
+
+"name": "ldaprep02",
+"vm": "vm-88"
+
+"name": "iwdev",
+"vm": "vm-89"
+
+"name": "ldaprepdev",
+"vm": "vm-92"
+
+"name": "ldap01",
+"vm": "vm-94"
+
+"name": "ldap02",
+"vm": "vm-95"
+
+"name": "ldapdev",
+"vm": "vm-96"
+
+"name": "isso-zabbix",
+"vm": "vm-97"
+
+"name": "certdev_firewalld_hpe_20180910",
+"vm": "vm-98"
+
+"name": "certdev",
+"vm": "vm-99"
+#####
+#virtual machine power on
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" -X POST "${vCenter_URL}/rest/vcenter/vm/vm-98/power/start" | python -mjson.tool
+
+#virtual machine power off
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" -X POST "${vCenter_URL}/rest/vcenter/vm/vm-98/power/stop"
+
+# Session ID Delete
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H "vmware-api-session-id: ${Session_ID}" -X DELETE "${vCenter_URL}/rest/com/vmware/cis/session"
+
+#Session ID
+$USER = "administrator@vsphere.local"
+$PASS = "@uthIsso1to3"
+$secpasswd = ConvertTo-SecureString $PASS -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential($USER, $secpasswd)
+
+$base64 = "YWRtaW5pc3RyYXRvckB2c3BoZXJlLmxvY2FsOkB1dGhJc3NvMXRvMw=="
+$basicAuthValue = "Basic $base64"
+$headers = @{ Authorization = $basicAuthValue }
+
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+Invoke-RestMethod -Uri "https://192.168.20.97/rest/com/vmware/cis/session" -Method POST -Headers $headers
+
+
+
+[System.Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Ssl3;
+
+# datastore utilization
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" "${vCenter_URL}/rest/vcenter/datacenter/isso_Datacenter" | python -mjson.tool
+
+
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" "${vCenter_URL}/rest/vcenter/vm/vm-99/hardware/cpu" | python -mjson.tool
+
+vm=certdev_firewalld_hpe_20180910
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" "${vCenter_URL}/rest/vcenter/vm" | python -mjson.tool | awk -e "/${vm}/ {a=NR} a && NR==a+2" | awk -F":" '{print $2 }'| sed 's/^[ \t]*//g' | sed 's/"//g'`
+
+
+#####################
+#VMHA Status
+curl -s -k -H "Authorization: Basic ${vCenter_Base64}" -H 'Accept: application/json' -H  "vmware-api-session-id: ${Session_ID}" "${vCenter_URL}/rest/vcenter/host?filter.datacenters=datacenter-2" | python -mjson.tool
+
+com.vmware.appliance.health.load.get
+CPU 負荷の健全性情報を取得します。
+
+com.vmware.appliance.health.mem.get
+
+メモリの健全性情報を取得します。
+com.vmware.appliance.health.swap.get
+
+スワップの健全性情報を取得します。
+com.vmware.appliance.health.system.get
+
+システムの健全性情報を取得します。
+
+want
+
+Virtual machine 搭載サーバ
+
+CPU
+memory
+
+
+
+memory_usage_ppm
+
+###########################################################
+Prism_URL=https://192.168.20.90:9440
+Prism_Base64="YWRtaW46QHV0aElzc28xdG8z"
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v1/vms" | python -mjson.tool | grep -e vmName -e hostName -e hypervisor_cpu_usage_ppm -e hypervisor_memory_usage_ppm -e hypervisor.cpu_ready_time_ppm | awk -F":" '{ print $2}' | sed 's/\"//g' | sed 's/ *//g' | sed 's/\,//g' | while true
+do
+    read line1
+    read line2
+    read line3
+    read line4
+    read line5
+    read line6 
+    if [ -z "$line1" ]; then break ; fi
+    echo "     Virtual Machine Name : ${line2}"
+    echo "     Placement of virtual machine : ${line1}"
+    echo "     CPU Usage: `calc "${line4} / 10000"`"\%""
+    echo "     CPU Ready Time : `calc${line3} / 10000"`"\%""
+    echo "     Memory Usage : `calc ${line5}/10000"`"\%""
+    echo ""
+done
+
+
+
+curl -s -k -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET "${Prism_URL}/PrismGateway/services/rest/v1/vms" | python -mjson.tool | grep -e vmName -e hostName -e hypervisor_cpu_usage_ppm -e hypervisor_memory_usage_ppm -e hypervisor_io_bandwidth_kBps -e hypervisor_num_read_iops -e hypervisor_num_write_iops | awk -F":" '{ print $2}' | sed 's/\"//g' | sed 's/ *//g' | sed 's/\,//g' | while true
+do
+    read line1  #hostName
+    read line2  #vmName
+    read line3  #hypervisor_cpu_usage_ppm
+    read line4  #hypervisor_io_bandwidth_kBps
+    read line5  #hypervisor_memory_usage_ppm
+    read line6  #hypervisor_num_read_iops
+    read line7  #hypervisor_num_write_iops
+    read line8  #vmName
+    if [ -z "$line1" ]; then break ; fi
+    echo "     Virtual Machine Name         : ${line2}"
+    echo "     Placement of virtual machine : ${line1}"
+    echo "     CPU Usage                    : $((${line3}/10000))"\%""
+    echo "     Memory Usage                 : $((${line5}/10000))"\%""
+    echo "     I/O Bandwidth                : ${line4}kBps"
+    echo "     Read IOPS                    : ${line6}"
+    echo "     Write IOPS                   : ${line7}"
+    echo ""
+done
+
+readonly CVM_IP_1=192.168.20.91
+readonly CVM_IP_2=192.168.20.92
+readonly CVM_IP_3=192.168.20.93
+readonly CVM_Serial_1=FFV1BQ2
+readonly CVM_Serial_2=FFV3BQ2
+readonly CVM_Serial_3=FFV5BQ2
+
+
+sshpass -p "@uthIsso1to3" ssh nutanix@192.168.20.91 cat /proc/meminfo | grep -i memavailable | tr -cd '0123456789' > /<任意のディレクトリ>/CVM01-mem.log
+
+sshpass -p "@uthIsso1to3" ssh nutanix@192.168.20.92 cat /proc/meminfo | grep -i memavailable | tr -cd '0123456789' > /<任意のディレクトリ>/CVM02-mem.log
+
+sshpass -p "@uthIsso1to3" ssh nutanix@192.168.20.93 cat /proc/meminfo | grep -i memavailable | tr -cd '0123456789' > /<任意のディレクトリ>/CVM03-mem.log
+
+export PASSWORD=$Nutanix_SSH_PASS
+export SSH_ASKPASS=$0
+export DISPLAY=dummy:0
+
+CVM1_Mem_Usage=`exec setsid ssh -o "StrictHostKeyChecking=no" ${Nutanix_SSH_USER}@${CVM_IP_1} "cat /proc/meminfo | grep -e MemAvailable -e MemTotal | tr -cd '0123456789'"`
+
+
+
+
+
+################################################################################Zabbix_URL=http://192.168.20.37
+
+
+curl -d '{"auth":null,"method":"user.authenticate","id":1,"params":{"issoadmin":"issozabbix","user":"apiuser"},"jsonrpc":"2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL}/zabbix/api_jsonrpc.php
+
+curl -s -d '{"auth": null,"method": "user.login","id": 1,"params": {"password": "issozabbix","user": "issoadmin"},"jsonrpc": "2.0"' -H "Content-Type: application/json-rpc" ${Zabbix_URL}/zabbix/api_jsonrpc.php
+
+curl -s -d '{"auth": null,"method": "user.login","id": 1,"params": {"password": "issozabbix","user": "issoadmin"},"jsonrpc": "2.0"}' -H "Accept: application/json" -H "Content-Type: application/json-rpc" ${Zabbix_URL}/zabbix/api_jsonrpc.php
+
+
+
+
+Zabbix_UserName="issoadmin"
+Zabbix_Password="issozabbix"
+Zabbix_Front_IP="192.168.20.37"
+Zabbix_URL="http://${Zabbix_Front_IP}/zabbix/api_jsonrpc.php"
+Zabbix_Base64="aXNzb2FkbWluOmlzc296YWJiaXg="
+
+
+
+#Session ID
+Session_ID=`curl -s -d '{"auth": null,"method": "user.login","id": 1,"params": {"password": "issozabbix","user": "issoadmin"},"jsonrpc": "2.0"}' -H "Accept: application/json" -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep result | awk -F":" '{ print $2 }' | sed 's/\"//g' | sed 's/ *//g'`
+
+Session_ID=`curl -s -d '{"auth": null,"method": "user.login","id": "null","params": {"password": "'${Zabbix_Password}'","user": "'${Zabbix_UserName}'"},"jsonrpc": "2.0"}' -H "Accept: application/json" -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep result | awk -F":" '{ print $2 }' | sed 's/\"//g' | sed 's/ *//g'`
+
+echo $Session_ID
+
+
+
+Message=`curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep message | awk -F""message":" '{ print $2 }' | sed 's/\"//g' | sed 's/\,//g'`
+
+Message=`curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep message | awk -F"\"message\":" '{ print $2 }' | sed 's/\"//g' | sed 's/\,//g'`
+
+echo -e $Message | grep -v -e '^\s*#' -e '^\s*$' 
+
+echo -e $Message | while true
+do
+
+read line1
+read line2
+read line3
+read line4
+read line5
+read line6
+read line7
+read line8
+read line9
+read line10
+read line11
+    if [ -z "$line4" ]; then break ; fi
+echo "    ${line4}"
+echo "    ${line5}"
+echo "    ${line7}"
+echo "    ${line9}"
+echo "    ${line11}"
+
+done 
+
+
+
+
+
+    "result": [
+        {
+            "actionid": "8",
+            "alertid": "1",
+            "alerttype": "0",
+            "clock": "1542871751",
+            "error": "",
+            "esc_step": "1",
+            "eventid": "166",
+            "mediatypeid": "1",
+            "message": "\u4ee5\u4e0b\u306e\u901a\u308a\u3001\u7d71\u5408\u8a8d\u8a3cZabbix\u30b5\u30fc\u30d0\u304c\r\ncert01(\u8a8d\u8a3c\u30b5\u30fc\u30d0\u672c\u756a1\u53f7\u6a5f)\u3067\u7570\u5e38\u5024\u3092\u78ba\u8a8d\u3057\u307e\u3057\u305f\u3002\r\n\r\n--------------------------------------\r\n\u691c\u77e5\u65e5\u6b21\uff1a16:29:11\r\n\r\n\u30db\u30b9\u30c8\u540d\uff1acert01(\u8a8d\u8a3c\u30b5\u30fc\u30d0\u672c\u756a1\u53f7\u6a5f)\r\n\r\n\u7570\u5e38\u691c\u77e5\u9805\u76ee\uff1aCPU\u30a2\u30a4\u30c9\u30eb\u7387(cert)\r\n\r\n\u7570\u5e38\u3068\u307f\u306a\u3057\u305f\u5024\uff1a98.91 %",
+            "retries": "0",
+            "sendto": "tsuzuki@sis1.nic.nhk.or.jp",
+            "status": "1",
+            "subject": "\u7d71\u5408\u8a8d\u8a3cZabbix \u8b66\u544a\u901a\u77e5\uff1aCPU\u30a2\u30a4\u30c9\u30eb\u7387(cert)",
+            "userid": "1"
+        },
+        
+
+
+###################
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`> /tmp/zabbix_message.log
+
+sed -i -e 's/\"\,/\"\n/g' /tmp/zabbix_message.log
+
+grep -v  -e '^ "retries"' -e '^ "sendto"' -e '^ "status"' -e '^ "userid"' -e '^ "alertid"' -e '^ "alerttype"' -e '^ "error"' -e '^ "esc_step"' -e '^ "eventid"' -e '^ "mediatypeid"' -e '^ "result"' -e '^{ "id"' -e '^ "subject"' /tmp/zabbix_message.log | while read LINE
+do
+    if [ `echo $LINE | grep clock | wc -l` -eq 1 ]; then
+        echo  $LINE | awk -F"clock: " '{ print $2 }' | awk '{print strftime("%c",$1)}'
+    fi
+
+    if [ `echo  $LINE | grep message | wc -l` -ne 1 ]; then
+        echo $LINE
+    else
+        echo $LINE | awk -F"\"message\":" '{ print $2 }' | sed 's/\"//g'
+    fi
+done
+####################
+
+
+grep -v -e '^ "retries"' -e '^ "sendto"' -e '^ "status"' -e '^ "userid"' -e '^ "alertid"' -e '^ "alerttype"' -e '^ "error"' -e '^ "esc_step"' -e '^ "eventid"' -e '^ "mediatypeid"' -e '^ "result"' -e '^{ "id"' -e '^ "subject"' /tmp/zabbix_message.log > /tmp/zabbix_message_grep.log
+
+
+
+grep -v -e '^ "retries"' -e '^ "sendto"' -e '^ "status"' -e '^ "userid"' -e '^ "alertid"' -e '^ "alerttype"' -e '^ "error"' -e '^ "esc_step"' -e '^ "eventid"' -e '^ "mediatypeid"' -e '^ "result"' -e '^{ "id"' -e '^ "subject"' /tmp/zabbix_message.log | while true
+do
+    read line1
+    if [ -z "$line1" ]; then break ; fi
+    CLOCK=`echo $line1 | grep "\"clock\"\:" | wc -l`
+    if [ "${CLOCK}" -eq 1]; then
+        echo ${line1} | awk -F"\"clock\"\:" '{ print $2 }' | sed 's/\"//g' | awk '{pint strftime("%c",$1)}'
+    fi
+    Massage=`echo $line1 | grep "\"message\"\:" | wc -l`
+    if [ "${Massage}" -eq 1]; then
+        Message_cut=`echo ${line1} | awk -F"\"message\"\:" '{ print $2 }' | sed 's/\"//g'`
+        echo -e "${Message_cut}"
+    else
+        echo -e "${Message_cut}"
+    fi
+
+done
+
+
+while read LINE
+do
+    if [ `echo $LINE | grep clock | wc -l` -eq 1 ]; then
+        echo  $LINE | awk -F"clock: " '{ print $2 }' | awk '{print strftime("%c",$1)}'
+    fi
+
+    if [ `echo  $LINE | grep message | wc -l` -ne 1 ]; then
+        echo $LINE
+    else
+        echo $LINE | awk -F"\"message\":" '{ print $2 }' | sed 's/\"//g'
+    fi
+done < /tmp/zabbix_message_tmp.log
+
+
+
+###################
+Zabbix_UserName="issoadmin"
+Zabbix_Password="issozabbix"
+Zabbix_Front_IP="192.168.20.37"
+Zabbix_URL="http://${Zabbix_Front_IP}/zabbix/api_jsonrpc.php"
+
+#Session ID
+Session_ID=`curl -s -d '{"auth": null,"method": "user.login","id": 1,"params": {"password": "issozabbix","user": "issoadmin"},"jsonrpc": "2.0"}' -H "Accept: application/json" -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep result | awk -F":" '{ print $2 }' | sed 's/\"//g' | sed 's/ *//g'`
+
+#GET
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool` > ${Zabbix_TMP_File}
+
+#改行コード修正
+sed -i -e 's/\"\,/\"\n/g' -i -e 's/\r//g' ${Zabbix_TMP_File}
+sed -i -e 's/^[ ]//g' -i -e 's/"//g' ${Zabbix_TMP_File}
+
+#余計な行削除
+grep -v -e '^retries:' -e '^sendto:' -e '^status:' -e '^userid:' -e '^alertid:' -e '^alerttype:' -e '^error:' -e '^esc_step:' -e '^eventid:' -e '^mediatypeid:' -e '^result:' -e '^{ id' -e '^subject:' -e '^\s*$' /tmp/zabbix_message.log
+
+
+grep -v -e "^retries:" -e "^sendto:" -e "^status:" -e "^userid:" -e "^alertid:" -e "^alerttype:" -e "^error:" -e "^esc_step:" -e "^eventid:" -e "^mediatypeid:" -e "^result:" -e "^{ id" -e "^subject:" -e "^\s*$" ${Zabbix_TMP_File} | while true
+do
+    read line1
+    if [ -z "$line1" ]; then break ; fi
+    if [ `echo $line1 | grep clock | wc -l` -eq 1 ]; then
+        echo "--------------------------------------"
+        echo  $line1 | awk -F"clock: " '{ print $2 }' | awk '{print strftime("%c",$1)}'
+    else
+        if [ `echo  $line1 | grep message | wc -l` -ne 1 ]; then
+            echo $line1 | grep -v ^-
+            #echo $line1
+        else
+            echo $line1 | awk -F"message:" '{ print $2 }' | sed 's/^ //g'
+        fi
+    fi
+
+done
+#
+
+
+### Prism alert
+Prism_URL=https://192.168.20.90:9440
+Prism_Base64="YWRtaW46QHV0aElzc28xdG8z"
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/?severity=CRITICAL | python -mjson.tool
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/?severity=WARNING | python -mjson.tool
+
+
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/?severity=WARNING,CRITICAL | python -mjson.tool
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/resolve/?severity=WARNING,CRITICAL | python -mjson.tool
+
+
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X POST ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/resolve/?severity=WARNING,CRITICAL | python -mjson.tool
+
+{
+    "alert_status_list": [
+        {
+            "id": "0:0",
+            "message": null,
+            "successful": true
+        }
+    ],
+    "num_failed_updates": 0,
+    "num_successful_updates": 1
+}
+[radmin@ldap01 ~]$
+[radmin@ldap01 ~]$
+[radmin@ldap01 ~]$
+[radmin@ldap01 ~]$ curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X POST ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/resolve/ | python -mjson.tool
+{
+    "alert_status_list": [],
+    "num_failed_updates": 0,
+    "num_successful_updates": 0
+}
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/?severity=WARNING,CRITICAL?resolved=false | python -mjson.tool
+            "resolved": false,
+
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/?severity=WARNING,CRITICAL\&resolved=false | python -mjson.tool
+{
+    "entities": [],
+    "metadata": {
+        "count": 0,
+        "end_index": 0,
+        "grand_total_entities": 0,
+        "page": 1,
+        "start_index": 0,
+        "total_entities": 0
+    }
+}
+
+
+
+curl -sk -H "Authorization: Basic ${Prism_Base64}" -H 'Accept: application/json' -X GET ${Prism_URL}/PrismGateway/services/rest/v2.0/alerts/?severity=WARNING,CRITICAL\&resolved=true | python -mjson.tool | grep -e acknowledged_time_stamp_in_usecs -e "\"entity_type\"" -e alert_title -e "\"message\"" -e severity | while true
+do
+    read line1 #acknowledged_time_stamp_in_usec
+    read line2 #entity_type
+    read line3 #alert_title
+    read line4 #message
+    read line5 #severity
+    if [ -z "$line1" ] ; then break ; fi
+    acknowledged_time_stamp_in_usec=`echo $line1 | awk -F":" '{ print$2 }' | cut -c 1-11 | awk '{print strftime("%c",$1)}'`
+    entity_type=`echo $line2 | awk -F":" '{ print$2 }' | sed 's/^ //g' | sed 's/"//g' | sed 's/,$//g'`
+    alert_title=`echo $line3 | awk -F":" '{ print$2 }' | sed 's/^ //g' | sed 's/"//g' | sed 's/,$//g'`
+    message=`echo $line4 | awk -F":" '{ print$2 }' | sed 's/^ //g' | sed 's/"//g'`
+    severity=`echo $line5 | awk -F":" '{ print$2 }' | sed 's/^ //g' | sed 's/"//g' | sed 's/^k//g' | sed 's/,$//g'`
+
+    echo "     Time Stamp   : ${acknowledged_time_stamp_in_usec}"
+    echo "     Entity Type  : ${entity_type}"
+    echo "     Alert Title  : ${alert_title}"
+    echo "     Alert Mesage : ${message}"
+    echo "     Severity     : ${severity}"
+    echo ""
+done
+
+
+
+awk '{print strftime("%c",$1)}'
+
+            "acknowledged_time_stamp_in_usecs": 1543209368526406,
+            "entity_type": "node",
+            "alert_title": "Nutanix Guest Tools Not Installed",
+            "message": "Vss is enabled but Nutanix Guest Tools are not installed on the guest VM(s) {vm_names} protected by {protection_domain_name}.",
+            "severity": "kWarning",
+
+
+
+
+
+
+
+
+
+#############################################################################
+
+
+iDrac1_URL=https://192.168.20.98
+iDrac_Base64=cm9vdDpAdXRoSXNzbzF0bzM=
+
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1 | python -mjson.tool
+
+
+
+{
+    "@odata.context": "/redfish/v1/$metadata#ComputerSystem.ComputerSystem",
+    "@odata.id": "/redfish/v1/Systems/System.Embedded.1",
+    "@odata.type": "#ComputerSystem.v1_4_0.ComputerSystem",
+    "Actions": {
+        "#ComputerSystem.Reset": {
+            "ResetType@Redfish.AllowableValues": [
+                "On",
+                "ForceOff",
+                "GracefulRestart",
+                "GracefulShutdown",
+                "PushPowerButton",
+                "Nmi"
+            ],
+            "target": "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+        }
+    },
+    "AssetTag": "",
+    "Bios": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/Bios"
+    },
+    "BiosVersion": "1.4.8",
+    "Boot": {
+        "BootSourceOverrideEnabled": "Once",
+        "BootSourceOverrideMode": "Legacy",
+        "BootSourceOverrideTarget": "None",
+        "BootSourceOverrideTarget@Redfish.AllowableValues": [
+            "None",
+            "Pxe",
+            "Floppy",
+            "Cd",
+            "Hdd",
+            "BiosSetup",
+            "Utilities",
+            "UefiTarget",
+            "SDCard",
+            "UefiHttp"
+        ],
+        "UefiTargetBootSourceOverride": ""
+    },
+    "Description": "Computer System which represents a machine (physical or virtual) and the local resources such as memory, cpu and other devices that can be accessed from that machine.",
+    "EthernetInterfaces": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces"
+    },
+    "HostName": "isso-esx01.issoldap.local",
+    "HostingRoles": [],
+    "HostingRoles@odata.count": 0,
+    "Id": "System.Embedded.1",
+    "IndicatorLED": "Off",
+    "Links": {
+        "Chassis": [
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1"
+            }
+        ],
+        "Chassis@odata.count": 1,
+        "CooledBy": [
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.1A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.1B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.2A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.2B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.3A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.3B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.4A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.4B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.5A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.5B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.6A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.6B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.7A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.7B"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.8A"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Sensors/Fans/0x17||Fan.Embedded.8B"
+            }
+        ],
+        "CooledBy@odata.count": 16,
+        "ManagedBy": [
+            {
+                "@odata.id": "/redfish/v1/Managers/iDRAC.Embedded.1"
+            }
+        ],
+        "ManagedBy@odata.count": 1,
+        "Oem": {
+            "DELL": {
+                "@odata.type": "#DellComputerSystem.v1_0_0.DellComputerSystem",
+                "BootOrder": {
+                    "@odata.id": "/redfish/v1/Systems/System.Embedded.1/BootSources"
+                }
+            }
+        },
+        "PoweredBy": [
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Power/PowerSupplies/PSU.Slot.1"
+            },
+            {
+                "@odata.id": "/redfish/v1/Chassis/System.Embedded.1/Power/PowerSupplies/PSU.Slot.2"
+            }
+        ],
+        "PoweredBy@odata.count": 2
+    },
+    "Manufacturer": "Dell Inc.",
+    "Memory": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/Memory"
+    },
+    "MemorySummary": {
+        "MemoryMirroring": "System",
+        "Status": {
+            "Health": "OK",
+            "HealthRollup": "OK",
+            "State": "Enabled"
+        },
+        "TotalSystemMemoryGiB": 238.418688
+    },
+    "Model": "XC640-4",
+    "Name": "System",
+    "NetworkInterfaces": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/NetworkInterfaces"
+    },
+    "PartNumber": "0W23H8A02",
+    "PowerState": "On",
+    "ProcessorSummary": {
+        "Count": 2,
+        "Model": "Intel(R) Xeon(R) Gold 6152 CPU @ 2.10GHz",
+        "Status": {
+            "Health": "OK",
+            "HealthRollup": "OK",
+            "State": "Enabled"
+        }
+    },
+    "Processors": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/Processors"
+    },
+    "SKU": "FFV1BQ2",
+    "SecureBoot": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/SecureBoot"
+    },
+    "SerialNumber": "CNIVC008611269",
+    "SimpleStorage": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/SimpleStorage/Controllers"
+    },
+    "Status": {
+        "Health": "OK",
+        "HealthRollup": "OK",
+        "State": "Enabled"
+    },
+    "Storage": {
+        "@odata.id": "/redfish/v1/Systems/System.Embedded.1/Storage"
+    },
+    "SystemType": "Physical",
+    "TrustedModules": [
+        {
+            "InterfaceType": "TPM2_0",
+            "Status": {
+                "State": "Disabled"
+            }
+        }
+    ],
+    "UUID": "4c4c4544-0046-5610-8031-c6c04f425132"
+}
+
+
+iDrac1_URL=https://192.168.20.98
+iDrac_Base64=cm9vdDpAdXRoSXNzbzF0bzM=
+PS
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Chassis/System.Embedded.1/Power/PowerSupplies/PSU.Slot.1 | python -mjson.tool
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Chassis/System.Embedded.1/Power/PowerSupplies/PSU.Slot.2 | python -mjson.tool
+CPU
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Processors/CPU.Socket.1 | python -mjson.tool
+MEM
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA1 | python -mjson.tool
+
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA1
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA2
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA4
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA5
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA7
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA8
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA10
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTA11
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB1
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB2
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB4
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB5
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB7
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB8
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB10
+/redfish/v1/Systems/System.Embedded.1/Memory/iDRAC.Embedded.1%23DIMMSLOTB11
+
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Memory | python -mjson.tool
+
+HDD HBA
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/NonRAID.Integrated.1-1 | python -mjson.tool
+SSD HBA
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/AHCI.Slot.1-1 | python -mjson.tool
+
+SSD
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/Drives/Disk.Direct.0-0:AHCI.Slot.1-1 | python -mjson.tool
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/Drives/Disk.Direct.1-1:AHCI.Slot.1-1 | python -mjson.tool
+
+Disk
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/Drives/Disk.Bay.0:Enclosure.Internal.0-1:NonRAID.Integrated.1-1 | python -mjson.tool
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/Drives/Disk.Bay.1:Enclosure.Internal.0-1:NonRAID.Integrated.1-1 | python -mjson.tool
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/Drives/Disk.Bay.2:Enclosure.Internal.0-1:NonRAID.Integrated.1-1 | python -mjson.tool
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1/Storage/Drives/Disk.Bay.3:Enclosure.Internal.0-1:NonRAID.Integrated.1-1 | python -mjson.tool
+
+thormal voltage
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Chassis/System.Embedded.1/Thermal | python -mjson.tool
+
+curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac1_URL}/redfish/v1/Systems/System.Embedded.1 | python -mjson.tool
+futa
+    "PhysicalSecurity": {
+        "IntrusionSensor": "Normal",
+        "IntrusionSensorNumber": 115,
+        "IntrusionSensorReArm": "Manual"
+
+
+
+
+##########################################################################
+
+
+##########################################################################
+iDrac1_IP=192.168.20.98
+iDrac2_IP=192.168.20.99
+iDrac3_IP=192.168.20.100
+iDrac_Base64=cm9vdDpAdXRoSXNzbzF0bzM=
+iDrac_TMP_Status_File=/tmp/iDrac_TMP_Status.log
+
+
+
+export PASSWORD=$iDrac_SSH_PASS
+export SSH_ASKPASS=$0
+export DISPLAY=dummy:0
+
+if [ -f ${iDrac_TMP_Status_File} ]; then
+    rm -f $iDrac_TMP_Status_File}
+fi
+ARRAY=(${iDrac1_IP} ${iDrac2_IP} ${iDrac3_IP})
+for iDrac_IP in ${ARRAY[@]}; do
+
+    iDrac_URL="htts://${iDrac_IP}"
+    case ${iDrac_IP} in
+        ${iDrac1_IP})
+        echo "### iDrac#1 Status ###"
+        ;;
+        ${iDrac2_IP})
+        echo "### iDrac#2 Status ###"
+        ;;
+        ${iDrac3_IP})
+        echo "### iDrac#3 Status ###"
+        ;;
+        *)
+        echo "     Target iDrac is none."
+        ;;
+    esac
+
+    #System Summary Status
+    curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac_URL}/redfish/v1/Systems/System.Embedded.1 | python -mjson.tool > ${iDrac_TMP_Status_File}
+
+    #CPU Summary Status
+    CPU_Status=`cat ${iDrac_TMP_Status_File} | awk -e '/ProcessorSummary/ {a=NR} a && NR==a+4' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+    echo "     CPU Status : ${CPU_Status}"
+
+    #MEM Summary Status
+    Memory_Status=`cat ${iDrac_TMP_Status_File} | awk -e '/MemorySummary/ {a=NR} a && NR==a+3' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+    echo "     Memory Status : ${Memory_Status}"
+
+    #Disk Summary Status
+    Disk_Status=`cat ${iDrac_TMP_Status_File} | awk -e '/SimpleStorage/ {a=NR} a && NR==a+4' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+    echo "     Disk Status : ${Disk_Status}"
+
+    #PowerSupply
+    PS1_Status=`curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac_URL}/redfish/v1/Chassis/System.Embedded.1/Power/PowerSupplies/PSU.Slot.1 | python -mjson.tool | awk -e '/SparePartNumber/ {a=NR} a && NR==a+2' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+    PS2_Status=`curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac_URL}/redfish/v1/Chassis/System.Embedded.1/Power/PowerSupplies/PSU.Slot.2 | python -mjson.tool | awk -e '/SparePartNumber/ {a=NR} a && NR==a+2' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+    echo "     PS1 Status : ${PS1_Status}"
+    echo "     PS2 Status : ${PS2_Status}"
+
+    #fan and voltage
+    curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac_URL}/redfish/v1/Chassis/System.Embedded.1/Thermal | python -mjson.tool | grep -e Health -e "\"Name\"" | grep -v Thermal | while true
+    do
+        read line1
+        read line2
+        if [ -z "$line1" ] ; then break ; fi
+        Target_Name=`echo $line1 | awk -F":" '{ print$2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,$//g'`
+        Target_Status=`echo $line2 | awk -F":" '{ print$2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,$//g'`
+        echo "     ${Target_Name} Status : ${Target_Status}"
+    done
+
+    #System Board Intrusion
+    System_Board_Intrusion=`curl -sk -H "Authorization: Basic ${iDrac_Base64}" -H 'Accept: application/json' -X GET ${iDrac_URL}/redfish/v1/Chassis/System.Embedded.1 | python -mjson.tool | awk -e '/PhysicalSecurity/ {a=NR} a && NR==a+1' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+    echo "     System Board Intrusion : ${System_Board_Intrusion}"
+
+    if [ -f ${iDrac_TMP_Status_File} ]; then
+        rm -f $iDrac_TMP_Status_File}
+    fi
+
+    CMOS_Battery_Status=`exec setsid ssh -o "StrictHostKeyChecking=no" ${iDrac_SSH_USER}@${iDrac_IP} "racadm getsensorinfo" | grep "System Board CMOS Battery" | awk '{ print $5 }' 2>/dev/null`
+    "echo CMOS Battery Status : ${CMOS_Battery_Status}"
+
+done
+
+
+
+
+rd Fan Redundancy Status
+                        
+                        
+                        
+                        
+                        
+
+
+
+###############################################################################
+iLO
+iLO_Username=Administrator
+iLO_Password=PJTYTDX8
+
+
+
+
+iLO_Address=192.168.20.79
+iLO_Base64=QWRtaW5pc3RyYXRvcjpQSlRZVERYOA==
+
+
+### kore
+
+curl -sk -H "Authorization: Basic ${iLO_Base64}" -H 'Accept: application/json' -X GET https://${iLO_Address}/rest/v1/systems/1 --insecure -L | python -mjson.tool
+
+    "MemorySummary": {
+        "Status": {
+            "HealthRollup": "OK"
+        },
+        "TotalSystemMemoryGiB": 16
+    },
+    "Model": "ProLiant DL360 Gen10",
+                "BiosOrHardwareHealth": {
+                    "Status": {
+                        "Health": "OK"
+                "FanRedundancy": "Redundant",
+                "Fans": {
+                    "Status": {
+                        "Health": "OK"
+                "Memory": {
+                    "Status": {
+                        "Health": "OK"
+                "Network": {
+                    "Status": {
+                        "Health": "Warning"
+                "PowerSupplies": {
+                    "PowerSuppliesMismatch": false,
+                    "Status": {
+                        "Health": "OK"
+                "PowerSupplyRedundancy": "Redundant",
+                "Processors": {
+                    "Status": {
+                        "Health": "OK"
+             "Storage": {
+                    "Status": {
+                        "Health": "OK"
+                    }
+                },
+                "Temperatures": {
+                    "Status": {
+                        "Health": "OK"
+    "PowerState": "On",
+    "ProcessorSummary": {
+        "Count": 2,
+        "Model": "Intel(R) Xeon(R) Silver 4108 CPU @ 1.80GHz",
+        "Status": {
+            "HealthRollup": "OK"
+    "SerialNumber": "JPN8370012",
+    "Status": {
+        "Health": "OK",
+
+
+
+
+
+
+
+iLO_Address=192.168.20.79
+iLO_Base64=QWRtaW5pc3RyYXRvcjpQSlRZVERYOA==
+iLO_Summary_Status_File=/tmp/iLO_Summary_Status_File.log
+
+
+if [ -f ${iLO_Summary_Status_File} ]; then
+    rm -f ${iLO_Summary_Status_File}
+fi
+
+curl -sk -H "Authorization: Basic ${iLO_Base64}" -H 'Accept: application/json' -X GET https://${iLO_Address}/rest/v1/systems/1 --insecure -L | python -mjson.tool > ${iLO_Summary_Status_File}
+
+
+BIOS_HW_Status=`cat ${iLO_Summary_Status_File} | awk -e '/BiosOrHardwareHealth/ {a=NR} a && NR==a+2' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Fan_Redundancy_Status=`cat ${iLO_Summary_Status_File} | grep FanRedundancy | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Fans_Status=`cat ${iLO_Summary_Status_File} | awk -e '/\"Fans\"/ {a=NR} a && NR==a+2' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Memory_Status=`cat ${iLO_Summary_Status_File} | awk -e '/\"Memory\"/ {a=NR} a && NR==a+2' | tail -n 1 | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Network_Interface1=`curl -sk -H "Authorization: Basic ${iLO_Base64}" -H 'Accept: application/json' -X GET https://${iLO_Address}/rest/v1/Systems/1/EthernetInterfaces/1 --insecure -L | python -mjson.tool | grep Health | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Network_Interface2=`curl -sk -H "Authorization: Basic ${iLO_Base64}" -H 'Accept: application/json' -X GET https://${iLO_Address}/rest/v1/Systems/1/EthernetInterfaces/2 --insecure -L | python -mjson.tool | grep Health | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Network_Interface5=`curl -sk -H "Authorization: Basic ${iLO_Base64}" -H 'Accept: application/json' -X GET https://${iLO_Address}/rest/v1/Systems/1/EthernetInterfaces/5 --insecure -L | python -mjson.tool | grep Health | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Network_Interface6=`curl -sk -H "Authorization: Basic ${iLO_Base64}" -H 'Accept: application/json' -X GET https://${iLO_Address}/rest/v1/Systems/1/EthernetInterfaces/6 --insecure -L | python -mjson.tool | grep Health | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Power_Supply_Redundancy_Status=`cat ${iLO_Summary_Status_File} | grep PowerSupplyRedundancy | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Power_Supplies_Status=`cat ${iLO_Summary_Status_File} | awk -e '/PowerSupplies/ {a=NR} a && NR==a+3' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Processor_Status=`cat ${iLO_Summary_Status_File} | awk -e '/ProcessorSummary/ {a=NR} a && NR==a+4' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Storage_Status=`cat ${iLO_Summary_Status_File} | awk -e '/Storage/ {a=NR} a && NR==a+2' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+Temperature_Status=`cat ${iLO_Summary_Status_File} | awk -e '/Temperatures/ {a=NR} a && NR==a+2' | awk -F":" '{ print $2 }' | sed 's/^[ \t]*//g' | sed 's/\"//g' | sed 's/,//g'`
+
+
+
+
+if [ -f ${iLO_Summary_Status_File} ]; then
+    rm -f ${iLO_Summary_Status_File}
+fi
+
+##########################################################################
+    echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool` > ${Zabbix_TMP_File}
+
+
+
+Zabbix_UserName="issoadmin"
+Zabbix_Password="issozabbix"
+Zabbix_Front_IP="192.168.20.37"
+Zabbix_URL="http://${Zabbix_Front_IP}/zabbix/api_jsonrpc.php"
+Zabbix_Base64="aXNzb2FkbWluOmlzc296YWJiaXg="
+
+
+
+#Session ID
+Session_ID=`curl -s -d '{"auth": null,"method": "user.login","id": 1,"params": {"password": "issozabbix","user": "issoadmin"},"jsonrpc": "2.0"}' -H "Accept: application/json" -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep result | awk -F":" '{ print $2 }' | sed 's/\"//g' | sed 's/ *//g'`
+
+Session_ID=`curl -s -d '{"auth": null,"method": "user.login","id": "null","params": {"password": "'${Zabbix_Password}'","user": "'${Zabbix_UserName}'"},"jsonrpc": "2.0"}' -H "Accept: application/json" -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep result | awk -F":" '{ print $2 }' | sed 's/\"//g' | sed 's/ *//g'`
+
+echo $Session_ID
+
+from_time=`date +"%Y%m%d" --date "7 days ago"`
+to_time=`date +"%Y%m%d"`
+
+echo $from_time
+echo $to_time
+
+Message=`
+curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0","time_from": "'${from_time}'"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep message | awk -F""message":" '{ print $2 }' | sed 's/\"//g' | sed 's/\,//g'`
+
+Message=`curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool | grep message | awk -F"\"message\":" '{ print $2 }' | sed 's/\"//g' | sed 's/\,//g'`
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0","time_from": "'${from_time}'"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"time_from": "now - 604800","time_till": "now","params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend","time_from": "now - 604800","time_till": "now"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend","time_from": "now - 604800"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend","time_from": "1542876585"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend","time_from": "1542876585"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+
+from_time=`date +"%s" --date "7 days ago"`
+from_time=`date +"%s" --date "14 days ago"`
+from_time=`date +"%s" --date "28 days ago"`
+echo $from_time
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend","time_from": "'"${from_time}"'"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+
+
+
+
+
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"time_till": "now - 604800","params": {"output": "extend"},"jsonrpc": "2.0"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+
+echo -e `curl -s -d '{"auth": "'${Session_ID}'","method": "alert.get","id": 1,"params": {"output": "extend"},"jsonrpc": "2.0","time_from": "1543644987"}' -H "Content-Type: application/json-rpc" ${Zabbix_URL} | python -mjson.tool`
+

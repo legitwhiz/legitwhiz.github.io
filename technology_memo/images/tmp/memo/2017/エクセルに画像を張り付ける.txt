@@ -1,0 +1,19 @@
+エクセルに画像を張り付ける
+
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+Dim myPic As Picture
+Dim sFile As String
+
+sFile = Application.GetOpenFilename(FileFilter:="JPG,*.jpg")
+If sFile = "False" Then Exit Sub
+
+Set myPic = ActiveSheet.Pictures.Insert(sFile)
+With myPic.ShapeRange
+.Left = ActiveCell.Left
+.Top = ActiveCell.Top
+.LockAspectRatio = msoTrue
+' ↓サイズを指定
+.Height = 150
+End With
+Cancel = True
+End Sub

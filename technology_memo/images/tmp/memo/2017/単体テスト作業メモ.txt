@@ -1,0 +1,418 @@
+
+
+############################################
+単体テスト
+
+############################################
+#● 2.基本情報の確認
+#1搭載CPUの確認
+cat /proc/cpuinfo
+
+#2搭載メモリの確認
+cat /proc/meminfo
+
+#3搭載ディスク本数の確認
+#目視にて確認
+#ベイ1：300GB、 ベイ2：300GB"
+
+#4ホスト名の確認
+hostname
+
+#5RHELバージョンの確認
+cat /etc/redhat-release
+
+#6"アーキテクチャカーネルバージョンの確認"
+uname -a
+############################################
+
+#● 3.インストール設定情報
+#1言語の確認
+cat /etc/sysconfig/i18n
+
+#2キーボード設定の確認
+cat /etc/sysconfig/keyboard
+
+#5タイムゾーンの確認
+cat /etc/sysconfig/clock
+
+#6rootパスワードの確認
+#設定したパスワードでログイン
+
+#7ディスクパーティションの確認
+df -hT
+
+#8swapパーティションの確認
+swapon -s
+
+#9GRUBブートローダの確認
+ls /boot/efi/EFI/redhat/grub.efi
+
+#10パッケージの確認
+yum list installed
+############################################
+
+#● 4.初回起動時の設定情報
+#3ユーザ設定の確認
+cat /etc/passwd
+
+#4ユーザ設定の確認
+id
+echo $HOME
+echo $SHELL
+
+#5NTP設定の確認
+cat /etc/ntp.conf
+
+#6kdump 設定の確認
+service kdump status
+
+#7"ネットワーク (IPv4)<eth0>の設定確認"
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+
+#8"ネットワーク (IPv4)<eth1>の設定確認"
+cat /etc/sysconfig/network-scripts/ifcfg-eth1
+
+#9"ネットワーク (IPv4)<eth2>の設定確認"
+cat /etc/sysconfig/network-scripts/ifcfg-eth2
+
+#10"ネットワーク (IPv4)<eth4>の設定確認"
+cat /etc/sysconfig/network-scripts/ifcfg-eth4
+
+#11"ネットワーク (IPv4)<eth5>の設定確認"
+cat /etc/sysconfig/network-scripts/ifcfg-eth5
+
+#12"ネットワーク (IPv4)<eth6>の設定確認"
+cat /etc/sysconfig/network-scripts/ifcfg-eth6
+
+#13"bonding設定<bond0>の設定確認"
+cat /proc/net/bonding/bond0
+
+#14"bonding設定<bond0>の設定確認"
+ifconfig
+
+#15"<bond0>Standbyインターフェースの障害時の動作確認"
+#① スタンバイNICに接続されているネットワークケーブルを抜線(eth4)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond0
+
+#16"<bond0>スタンバイNIC復旧の動作確認
+#① スタンバイNICのネットワークケーブルを結線(eth4)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond0
+
+#17"<bond0>Activeインターフェースの障害時の動作確認"
+#① アクティブNICに接続されているネットワークケーブルを抜線(eth0)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond0
+
+#18"<bond0>Standbyインターフェースの(元Activeインターフェース)復旧の動作確認"
+#① スタンバイNIC(元アクティブNIC)のネットワークケーブルを結線(eth0)
+
+#② 下記のコマンドを実行
+cat /proc/net/bonding/bond0
+
+#19"bonding設定<bond1>の設定確認"
+cat /proc/net/bonding/bond1
+
+#20"bonding設定<bond1>の設定確認"
+ifconfig
+
+#21"<bond1>Standbyインターフェースの障害時の動作確認"
+#① スタンバイNICに接続されているネットワークケーブルを抜線(eth5)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond1
+
+#22"<bond1>スタンバイNIC復旧の動作確認"
+#① スタンバイNICのネットワークケーブルを結線(eth5)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond1
+
+#23"<bond1>Activeインターフェースの障害時の動作確認"
+#① アクティブNICに接続されているネットワークケーブルを抜線(eth1)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond1
+
+#24"<bond1>Standbyインターフェースの(元Activeインターフェース)復旧の動作確認"
+#① スタンバイNIC(元アクティブNIC)のネットワークケーブルを結線(eth1)
+
+#② 下記のコマンドを実行
+cat /proc/net/bonding/bond1
+
+#25"bonding設定<bond2>の設定確認"
+cat /proc/net/bonding/bond2
+
+#26"bonding設定<bond2>の設定確認"
+ifconfig
+
+#27"<bond2>Standbyインターフェースの障害時の動作確認"
+#① スタンバイNICに接続されているネットワークケーブルを抜線(eth6)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond2
+
+#28"<bond2>スタンバイNIC復旧の動作確認"
+#① スタンバイNICのネットワークケーブルを結線(eth6)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond2
+
+#29"<bond2>Activeインターフェースの障害時の動作確認"
+#① アクティブNICに接続されているネットワークケーブルを抜線(eth2)
+
+#② 以下のコマンドを実行
+cat /proc/net/bonding/bond2
+
+#30"<bond2>Standbyインターフェースの(元Activeインターフェース)復旧の動作確認"
+#① スタンバイNIC(元アクティブNIC)のネットワークケーブルを結線(eth2)
+
+#② 下記のコマンドを実行
+cat /proc/net/bonding/bond2
+
+#31IPアドレスの疎通確認
+ping <IPアドレス>
+
+#32デフォルトゲートウェイの確認
+netstat -nr
+
+#33DNSの設定確認
+cat /etc/sysconfig/network-scripts/ifcfg-bond0
+###DNSは現地にて設定
+
+
+############################################
+###オプション設定
+############################################
+#1通信速度の確認
+
+ethtool eth0
+ethtool eth1
+ethtool eth2
+ethtool eth3
+ethtool eth4
+ethtool eth5
+ethtool eth6
+ethtool eth7
+
+#2静的ルート設定の確認１
+netstat -r
+
+#3静的ルート設定の確認２
+ls -l /etc/sysconfig/network-scripts/route-bond*
+cat /etc/sysconfig/network
+
+#4"IPフォワーディング設定IPv4の確認"
+#初期設定0であることの確認
+cat /proc/sys/net/ipv4/ip_forward
+
+sysctl -a | grep ip_forward
+
+#FORWARD_IPV4=yesの記載がないことの確認
+cat /etc/sysconfig/network 
+
+#5"IPフォワーディング設定IPv6の確認"
+cat /proc/sys/net/ipv6/conf/all/forwarding
+
+#6追加エントリの確認
+cat /etc/hosts
+
+#########################################
+#● 2.SNMPv1,v2c監視設定
+#1アクセス設定の確認
+cat /etc/snmp/snmpd.conf
+
+#########################################
+#● 3.Linux詳細設定
+#1ファイアウォール設定の確認
+ls -l /etc/sysconfig/iptables
+chkconfig --list | grep iptables
+iptables -L
+
+#4cron設定の確認
+crontab -l
+
+#5SE Linux 設定の確認
+/usr/sbin/getenforce
+
+#Ctrl + Alt + Del キー
+cat /etc/init/control-alt-delete.conf
+
+#7"シングルユーザモード設定の確認"
+cat /etc/sysconfig/init
+
+#8kdump出力先の設定の確認
+cat /etc/kdump.conf
+
+#9ブラックアウト防止設定の確認
+cat /boot/efi/EFI/redhat/grub.conf
+
+#11起動ランレベルの確認
+cat /etc/inittab
+
+#########################################
+#● 4.接続確認テスト（オプション）
+
+tail /etc/passwd
+useradd -u 3333 -g root -b /home ctc
+passwd ctc
+service vsftpd status
+service vsftpd start
+
+#4ｆtp接続確認１(root)
+cat /etc/vsftpd/ftpusers
+ftp localhost
+#5ｆtp接続確認２(ctc)
+cat /etc/vsftpd/ftpusers
+ftp localhost
+#7ssh接続確認１(root)
+cat /etc/ssh/sshd_config
+ssh -l root localhost
+#8ssh接続確認２(ctc)
+ssh -l ctc localhost
+
+userdel ctc
+
+############################################
+###オプション設定2
+############################################
+#########################################
+#● 1.カーネルパラメータ設定の確認 
+#1カーネルパラメータ設定の確認
+cat /etc/sysctl.conf
+sysctl -a
+
+#● 2.vsftpd設定の確認
+#1vsftpd設定の確認
+cat /etc/vsftpd/vsftpd.conf
+
+#2ftpusers設定の確認
+cat /etc/vsftpd/ftpusers
+
+#3user_list設定の確認
+cat /etc/vsftpd/user_list
+
+#● 3.sshd設定の確認
+#1sshd設定の確認
+cat /etc/ssh/sshd_config
+
+#● 4.rsyslog全体設定の確認
+#1rsyslog全体設定の確認
+cat /etc/rsyslog.conf
+
+#● 5.OS標準ログローテーション設定の確認
+#1OS標準ログローテーション設定の確認
+cat /etc/logrotate.conf
+
+#2OS標準ログローテーション設定の確認
+logrotate -fv /etc/logrotate.conf
+ls -l /var/log
+
+#● 6.syslogログローテーション設定の確認
+#1syslogログローテーション設定の確認
+cat /etc/logrotate.d/syslog
+
+#● 7.アップデートパッケージの確認
+#1アップデートパッケージの確認
+rpm -qa | grep bash-4.1.2-33.el6_7.1.x86_64
+rpm -qa | grep kernel-2.6.32-573.12.1.el6.x86_64
+rpm -qa | grep kernel-firmware-2.6.32-573.12.1.el6.noarch
+rpm -qa | grep kernel-headers-2.6.32-573.12.1.el6.x86_64
+rpm -qa | grep ntp-4.2.6p5-5.el6_7.2.x86_64
+rpm -qa | grep ntpdate-4.2.6p5-5.el6_7.2.x86_64
+rpm -qa | grep perf-2.6.32-573.12.1.el6.x86_64
+
+#● 8.SELinux設定の確認
+#1SELinux設定の確認
+cat /etc/sysconfig/selinux
+
+#● 9.hosts設定の確認
+#1hosts設定の確認
+cat /etc/hosts
+#2hosts設定の確認
+ping 
+
+#● 10.名前解決の参照順序設定の確認
+#1名前解決の参照順序設定の確認
+cat /etc/nsswitch.conf
+
+#● 11.NTP設定の確認
+#1NTP設定の確認
+cat /etc/ntp.conf
+#2NTP起動設定の確認
+cat /etc/sysconfig/ntpd
+
+#● 12.TCPWrappers設定の確認
+#1TCPWrappers(許可)設定の確認
+cat /etc/hosts.allow
+#2TCPWrappers(拒否)設定の確認
+cat /etc/hosts.deny
+
+#● 13.マウント設定の確認
+#1マウント設定の確認
+cat /etc/fstab
+
+#● 14.sendmail設定の確認
+#1sendmail設定の確認
+cat /etc/mail/sendmail.mc
+
+#● 15.SMTP AUTH設定の確認
+#1SMTP AUTH設定の確認
+cat /etc/mail/auth/client-info
+
+#● 16.メール転送エージェント (MTA)設定の確認
+#1メール転送エージェント (MTA)設定の確認
+alternatives --config mta
+
+#● 17.メール起動設定の確認
+#1メール起動設定の確認
+cat /etc/sysconfig/snmpd
+
+#● 18.aliases設定の確認
+#1aliases設定の確認
+cat /etc/aliases
+
+#● 19.OSサービス起動設定の確認
+#● 20.xinetd設定の確認
+#1OSサービス起動設定の確認
+#1xinetd設定の確認
+chkconfig --list
+cat /etc/xinetd.d/tftp
+
+#● 21.マルチパスI/O設定の確認
+#1マルチパスI/O設定の確認
+cat /etc/multipath.conf
+
+#● 22.IPv6無効設定設定の確認
+#1マルチパスI/O設定の確認
+
+
+############################################
+###  HP専用設定
+############################################
+#● 1. Support Pack for ProLiant (SPP)設定（オプション）
+#1HP System Health Application and Command Line Utilities
+yum search hp-health
+#2HP SNMP Agents
+yum search hp-snmp-agents
+#3HP Smart Storage Administrator CLI
+yum search hpssacli
+#4HP Smart Storage Administrator
+yum search hpssa
+#5HP System Management Homepage
+yum search hpsmh
+#6HP System Management Homepage Templates
+yum search hp-smh-templates
+#7HP Insight Diagnostics Online Edition
+yum search hpdiags
+#8HP Lights-Out Online Configuration Utility
+yum search hponcfg
+
+
+
+
+

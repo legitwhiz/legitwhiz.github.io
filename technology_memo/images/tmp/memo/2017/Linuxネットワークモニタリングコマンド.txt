@@ -1,0 +1,287 @@
+Linuxネットワークモニタリングコマンド
+
+Linux上でネットワークトラフィックの監視を行えるモニタリングコマンドは、OSSでも色々あるので要件よって使い分ける必要があるので、特徴と使い方、実行例をまとめてみました。
+
+● 1.iftop
+
+個別のソケットで受信・送信パケットをひと目で見る事が出来るコマンド。
+通信ごとに個別のプロセスを表示させることは出来ないが、どのホストとの接続がどの程度の帯域を使用しているのかはひと目で分かるだろう。
+
+iftopの実行
+通常、オプションなしでも事足りるが複数NICを搭載し、指定のNICを見たいのであれば"-i <I/F名>"をオプションを使い、バイト単位で表示したいなら"-B"オプションを使用。
+実行は、rootが必要だが一般ユーザならsudoで実行する。
+
+<使用方法>
+iftop -h | [-npblNBP] [-i interface] [-f filter code] [-F net/mask] [-G net6/mask6]
+
+<実行例>
+iftopコマンドを実行する。ポート番号またはサービス名が表示されていることが確認できます。 ただし、/etc/servicesに登録されているサービス(httpやssh等)は、ポート番号ではなくサービス名で表示されています。 
+[root@server ~]# iftop -i eth0 -t -n -P  --------------------------------------------------------
+198.145.21.9:http <= 3.28Mb 3.46Mb 3.46Mb 2.60MB
+192.168.0.100:ssh => 7.25Kb 7.55Kb 7.55Kb 5.66KB
+ ------------------------------------------------------ 
+Total send rate: 69.0Kb 66.5Kb 66.5Kb Total receive rate: 3.28Mb 3.46Mb 3.46Mb Total send and receive rate: 3.35Mb 3.53Mb 3.53Mb
+ ------------------------------------------------------ 
+Peak rate (sent/received/total): 82.0Kb 4.40Mb 4.48Mb
+Cumulative (sent/received/total): 49.9KB 2.60MB 2.64MB =========================== 
+
+<利点>
+・個別のプロセス毎にトラフィック量が分かる。
+
+● 2.bmon
+
+概要:ネットワークのバンド幅モニタ、レート見積り
+
+『bmon』は、グラフでトラフィックの負荷を表示してくれるモニタリングコマンドだ。
+どのNICのトラフィックを表示させるかを上下キー、モニタリングを行うパケットの種類を左右キーで選択する。
+このコマンドも、以前こちらで紹介している。
+
+<使用方法>
+bmon [ -awSchV ] [ -i <mod> ] [ -o <mod> ] [ -I<mod> ] [ -O <mod> ] [ -f <path> ] [ -p <policy> ] [ -r <float> ] [ -s<float> ][ -A <attrs> ] [ -N <ngraphs> ] [ -u <uid> ] [ -g <gid> ][ -R <float> ] [ -H <float> ] [ -L <lifetime> ] [ -t <path> ]
+
+<利点>
+rtnetlinkを使って得られるインタフェースの統計情報をprocまたはsysファイルシステムに提供できることだ。
+
+<実行例>
+[root@server ~]# bmon
+interface: lo at me.arun.host
+#Interface  RX Rate RX #  TX Rate TX #
+─────────────
+me.arun.host (source: local)
+0   lo           0.00B      0     0.00B      0
+1   eth0      0.00B      0     0.00B       0
+
+
+● 3.iptraf
+
+iptrafは、多機能型のネットワーク監視ツールも、グラフィカルおよびコマンドライン双方の操作方式を含めて多数存在している。そうした中でも、簡単な操作にてネットワークインタフェース別の帯域幅使用率に対する統計情報を取得可能なツールが欲しいのであれば、IPTrafの使用を検討すべきだろう。
+
+画面下部にログを表示し、上部にそれぞれのホストとのトラフィック量が表示されている。
+
+<使用方法>
+iptraf { [ -f ] [ -q ] [ { -i iface | -g | -d iface | -siface | -z iface | -l iface } [ -t timeout ] [ -B [ -Llogfile ] ] ] | [ -h ] }
+
+<実行例>
+[root@server ~]# iptraf
+IPTraf ┌ TCP Connections (Source Host:Port) ─ Packets ─ Bytes Flags ─ Iface ─┐ 
+┌192.168.1.222:22 > 230 46152 -PA- eth0
+└192.168.1.11:61380 > 116 5474 --A- eth0  └ TCP: 1 entries ──
+─ Active ─┘  
+
+<利点>
+バックグラウンドで実行出来る
+ログ出力が(簡単に)出来る
+
+
+● 4.Nload
+
+Nloadは、bmonのようにNICごとのトラフィック量をグラフ化して表示してくれるモニタリングツールである。
+グラフ化するには、「-i」および「-o」オプションを用いてメモリの値を指定する必要がある。
+
+<使用方法>
+nload [-a period] [-i max_scaling] [-m] [-omax_scaling] [-t interval] [-u h|H|b|B|k|K|m|M|g|G] [-U h|H|b|B|k|K|m|M|g|G] [devices]
+
+if you want to quit, do so by pressing 'q' or 'Ctrl+C'
+
+<利点>
+・リアルタイムにグラフ化され見やすい。
+
+● 5.nethogs
+
+nethogsは、帯域幅のアプリケーション別使用率が示されるようになっている。つまりこのツールを使えば、RSSアグリゲータ、Webブラウザ、ソフトウェアアップデータはもとより、IRCやIMクライアントなどが消費する帯域幅すらも個別に把握できるのだ。
+
+トラフィックを占めているPIDと実行ユーザ、そしてプログラムパスとNICを表示してくれる。
+
+<使用方法>
+nethogs [-d] [-h] [-p] [-t] [-V] [device(s)]
+
+<実行例>
+[root@server ~]# nethogs
+PID USER PROGRAM DEV SENT RECEIVED
+10749 labunix sshd: labunix@pts/1 eth0 0.404 0.047 KB/sec 0 root unknown TCP 0.000 0.000 KB/sec 
+
+<利点>
+アプリケーション毎にトラフィック量が把握出来る。
+
+
+● 6.tcptrack
+
+Tcptrackはiftopに似たツールで、パケットをキャプチャし各接続に使用される帯域幅など、さまざまな統計情報を計算するためのpcapライブラリを使用しているコマンドだ。
+また、特定の接続を監視するために使用できる標準のpcapフィルタをサポートしている。見た目はシンプルなリストとなっている。
+
+<使用方法>
+tcptrack [ -dfhvp ] [ -r seconds ] -i interface [
+filter expression ]
+
+<実行例>
+[root@server ~]# tcptrack -i eth0
+Client Server State Idle A Speed 192.168.1.80:3825 207.46.4.28:1863 ESTABLISHED 20s 0 B/s 192.168.1.80:1267 xx.xx.xx.xx:22 ESTABLISHED 1m 0 B/s
+
+● 7.Vnstat
+
+Vnstatは、デーモンとして起動しトラフィック量を記録。
+そして履歴レポートを出力するというコマンドだ。履歴レポートは、「vnstat」コマンドを実行することで行う。
+vmstatじゃないよ！
+
+RXは受信パケット数、TXは送信パケット数によってトラフィック量を確認し、帯域が不足していないかなどをリアルタイムに見ることも可能です。
+
+<使用方法> 
+-q, --query query database 
+-h, --hours show hours 
+-d, --days show days 
+-m, --months show months 
+-w, --weeks show weeks 
+-t, --top10 show top10 
+-s, --short use short output 
+-u, --update update database 
+-i, --iface select interface (default: eth0) 
+-tr, --traffic calculate traffic 
+-ru, --rateunit swap configured rate unit 
+-l, --live show transfer rate in real time 
+
+<実行例>
+monthly rx | tx | total | avg. rate 
+-----------------+-------------+-------------+---------------
+Jul '15 25 KiB | 13 KiB | 38 KiB | 0.00 kbit/s 
+-----------------+-------------+-------------+--------------- estimated -- | -- | -- | daily rx | tx | total | avg. rate 
+-----------------+-------------+-------------+--------------- today 25 KiB | 13 KiB | 38 KiB | 0.01 kbit/s 
+-----------------+-------------+-------------+--------------- estimated -- | -- | -- |
+
+<利点>
+デーモンとして起動されるため、継続的にDBにトラフィック状況を貯めることが出来る。
+
+● 8.bwm-ng
+
+bwm-ngは、各NICの送受信パケットを一覧で見ることが出来るコマンドだ。
+
+<使用方法>
+bwm-ng [options] ... [configfile]
+
+<実行例>
+[root@server ~]# bwm-ng
+lo: 0.00 KB/s 0.00 KB/s 0.00 KB/s 
+eth0: 2275.89 KB/s 57.56 KB/s 2333.45 KB/s
+------------------------------------------------------------- total: 2275.89 KB/s 57.56 KB/s 2333.45 KB/s 
+
+
+● 9.Pktstat
+
+Pktstatは、現在アクティブな接続かどうか、プロセスのトラフィック中での割合とその接続先、そしてHTTPであればその内容を見ることが出来るコマンドだ。
+
+<使用方法>
+pktstat [-1BcFlnpPtT] [-a abbrev] [-A file] [-iinterface] [-k keeptime] [-m maxbps] [-wwaittime] [filter-expr]
+
+<実行例>
+[root@server ~]# pktstat -i eth0 -n -t "port 80"
+interface: eth0 bps  % desc 
+695.0k 22% tcp 207.46.13.28:80 <-> 192.168.78.242:1917
+ └ GET /msdownload/update/v3 
+531.0k 17% tcp 207.46.13.28:80 <-> 192.168.78.242:1918
+ └ GET /msdownload/update/v3
+181.2k 5% tcp 192.168.78.242:49175 <-> 78.117.211.178:7480 
+86.6k 2% tcp 192.168.78.242:58282 <-> 79.85.212.131:22 
+41.0k 1% tcp 192.168.78.242:2951 <-> 89.88.152.10:80 
+32.7k 1% tcp 192.168.78.242:3143 <-> 89.88.152.10:80
+
+
+● 10.ifstat
+
+ifstatは、テキストとして利用帯域を出力してくれるログ化が容易なモニタリングコマンドだ。
+
+<使用方法>
+ifstat [-a] [-l] [-z] [-n] [-v] [-h] [-t] [-i if0,if1,...] [-ddrv[:opt]] [-s [comm@][#]host[/nn]] [-T] [-A] [-w] [-W] [-S] [-b] [-q] [delay[/delay] [count]]
+
+<実行例>
+[root@server ~]# ifstat -b -t -i bond0,eth0,eth1 1 5 
+
+Time bond0 eth0 eth1 
+HH:MM:SS Kbps in Kbps out Kbps in Kbps out Kbps in Kbps out
+18:46:33 11248.00 19186.19 11166.92 19186.19 81.08 0.00
+18:46:34 10672.05 17935.01 10589.01 17935.01 83.04 0.00
+18:46:35 10908.38 21413.09 10837.35 21413.09 71.03 0.00
+18:46:36 10786.80 18413.89 10739.27 18413.89 47.53 0.00
+
+
+● 11.dstat
+
+dstatは、以前こちらの記事でも記述したvmstatに似たモニタリングコマンドだ。
+CPU、メモリやディスクへの書き込みと同時にネットワークの帯域についても確認出来る。
+
+<使用方法>
+dstat [-afv] [options..] [delay [count]]
+
+<実行例>
+[root@server ~]# dstat
+—-total-cpu-usage—- -dsk/total- -net/total- —paging– —system–
+usr sys idl wai hiq siq| read  writ| recv  send|  in   out | int   csw
+7   4  85   4   0   0| 281k  110k|   0     0 |   0     0 | 865  3013
+8   4  88   0   0   0|   0     0 |7027B 1261B|   0     0 | 956  4505
+
+近年のディストリビューションであれば、標準でインストールされている。
+
+
+● 12.Speedtest-cli
+
+ブラウザ上で回線速度の試験が行えます。
+speedtestではcliも提供されています。
+このツールを環境に導入する事で、Linux環境でも回線速度の計測が行えるようになります。
+
+<使用方法>
+usage: speedtest [-h] [--bytes] [--share] [--simple] [--list] [--server SERVER] [--mini MINI] [--source SOURCE] [--timeout TIMEOUT] [--version]
+
+speedtest --listで計測を行うサーバの一覧を表示させる事が出来ます。
+
+計測実行。サーバー指定の際は
+speedtest --server <sever id>
+の様にサーバを示すID値を引数として渡します。以下の様な形で上がり／下り双方の数値が計測出来ました。
+
+<実行例>
+[root@server ~]# speedtest --server <sever id>
+Retrieving speedtest.net configuration...
+Retrieving speedtest.net server list...
+Testing from Amazon Technologies (52.2.83.155)...
+Hosted by Cordeos Corp. (Tokyo) [10868.32 km]: 196.001 ms
+
+Testing download speed...Download: 20.25 Mbit/s
+Testing upload speed...Upload: 14.54 Mbit/s
+
+● 13.iperf
+
+2台の環境間でのネットワークスループットを計測したい場合は『iperf』というツールが利用出来ます。
+
+<使用方法>
+iperf [-s|-c host] [options]
+
+<実行例>
+[root@server ~]# iperf -s
+——————————————
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+——————————————
+[  4] local 192.168.0.1 port 5001 connected with 192.168.0.2 port 56171
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-10.0 sec  9.11 GBytes  7.82 Gbits/sec
+
+
+● 14.speedmeter
+speedmeter は、少し毛色の違ったツールだ。ネットワークトラフィックだけでなく、特定のファイル転送の速度と進行状況を測定してくれる。
+たとえば、自分の管理しているサーバからファイルがダウンロードされる速度とリアルタイムでのダウンロード状況を確認したいする。
+そんなときは「speedmeter <ファイル名>」とすれば、転送速度を示すプログレスバーが表示される。RX（受信）とTX（送信）の各速度をインタフェースごとに表示することもできる（それぞれ「-rx <インタフェース>」、「-tx <インタフェース>」を使用）。また、ADSL回線の上り速度、LANの転送速度、サーバへのファイル送信の所要時間の確認にも使える。
+
+<使用方法>
+speedometer.py [options] tap [[-c] tap] ...
+
+ネットワークインタフェースでの全トラフィック監視には、-txと-rxコマンドラインオプションを使う。-txが送信の監視、-rxが受信の監視である。
+speedometer.py -tx eth1 -rx eth1
+
+下に示す縦並びのスクリーンショットは、次のコマンドとなる。
+
+speedometer.py -tx eth1 \ -c -f 'lca08-fixing-xfs-filesystems-faster-mel8-135.ogg' \ -c -f foo
+
+speedometerは、gnome端末でローカルに使うときも、SSH接続で使うときも、端末ウィンドウのサイズが変わるごとにグラフのサイズを変えて、再描画してくれる。
+
+ファイル転送の監視には、-fオプションを使う。このオプションで筆者が1つ不満に思うのは、ファイルが作成されるまでspeedometerが動作開始を待つことである。つまり、待っている間、他のネットワークトラフィックに対して監視の目が働かない。背景でファイルが作成されている間もspeedometerが動作をつづけ、監視したいほかの事柄を見逃さずにすむようにしてもらえれば、非常にありがたい。
+
+<利点>
+・特定ダウンロードのみを監視できる。
+・リアルタイムにグラフ表示出来る。

@@ -1,0 +1,6 @@
+AIX Hardware階層
+
+lscfg
+lscfg -v
+
+lsdev -Cc <devicename> -F 'name class location physloc'

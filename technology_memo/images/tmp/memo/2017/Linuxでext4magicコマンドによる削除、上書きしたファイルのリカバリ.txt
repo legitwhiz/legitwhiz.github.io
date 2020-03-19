@@ -1,0 +1,135 @@
+Linuxでext4magicコマンドによる削除、上書きしたファイルのリカバリ
+
+ファイルを間違えて消してしまったり、上書きしてしまったりして、バックアップを取っていない。さてどうしよう…。
+そんなよくある困ったときに使えるのが、今回紹介するリカバリコマンド『ext4magic』コマンドだ。
+
+『ext4magic』コマンドは、ext3/4のファイルシステムで利用出来るファイルのリカバリコマンド。特定の時間を指定したり、ファイルを指定できるなど、かなり使いやすいコマンドのようだ。
+ 早速利用してみよう。
+
+1.インストール
+当然、まずはインストールから。各ディストリビューションに応じて、インストールを行う
+
+●Debian/Ubuntuの場合
+apt-getでインストールできる。以下のコマンドを実行する。
+apt-get install ext4magic
+
+●RHEL系の場合
+ソースコードからコンパイルする必要がある。
+まず、前提となるパッケージ類のインストールを行う。
+yum install e2fsprogs-devel uuid-devel libblkid-devel file-devel
+
+次に、ext4magicのソースコードをダウンロードし、コンパイル、インストールを行う。
+
+wget http://downloads.sourceforge.net/project/ext4magic/ext4magic-0.3.2.tar.gz
+tar xzvf ext4magic-0.3.2.tar.gz
+cd ext4magic-0.3.2
+./configure
+make
+make install
+これでインストールが出来た。
+
+2.ファイルのリカバリ
+それでは、実際にリカバリできるかどうかを確認してみよう。
+まず前提として、リカバリ対象となるファイルシステムとリカバリファイルを出力するファイルシステムが別である必要がある(同一のファイルシステム上ではリカバリ出来ない)ので注意。
+2-1.削除してしまったファイルのリカバリ
+それでは、リカバリを行ってみよう。まずは削除してしまったファイルをリカバリできるか試してみる。
+
+まず、対象のファイルをリカバリできるかどうか、-lオプション、-Lオプションで確認する。
+
+ext4magic リカバリ対象のデバイスファイル -l | grep リカバリ対象のファイル
+ext4magic リカバリ対象のデバイスファイル -L | grep リカバリ対象のファイル
+
+リスト上に出力されれば、リカバリ可能であると判断できる。
+ 次に、-rオプションでリカバリを実行する。-fでは、リカバリ対象のファイルを指定している。
+
+ext4magic リカバリ対象のデバイスファイル -r -f リカバリ対象のファイル
+
+無事、カレントディレクトリ配下にある「RECOVERDIR」フォルダ配下にリカバリしたファイルが出力された。
+
+2-2.上書きしてしまったファイルのリカバリ
+次に、上書きしてしまったファイルをリカバリできるか試してみよう。以下のようなファイルを上書きしているとする。
+
+●recovery_test.txt(Before)
+test
+test
+test
+test
+test
+test
+test
+
+●recovery_test.txt(After)
+test
+test
+test
+test
+test
+test
+test
+ 
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+
+上書き前のファイルが”いつからいつまでの間は存在していた”という事がわかるのであれば、以下のようにコマンドを実行してリカバリを行える。
+
+sudo ext4magic リカバリ対象のデバイスファイル -a "いつから" -b "いつまで" -r -f リカバリ対象のファイル
+
+実際に実行した結果がこちら。
+test@test-vm-ubuntu:~$ cat /work/recovery_test.txt
+test
+test
+test
+test
+test
+test
+test
+
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test1234
+test@test-vm-ubuntu:~$ sudo ext4magic /dev/sdb -a $(date -d "-30minutes" +%s) -b $(date -d "-10minutes" +%s) -r -f recovery_test.txt
+"RECOVERDIR"  accept for recoverdir
+Filesystem in use: /dev/sdb
+
+Using  internal Journal at Inode 8
+Activ Time after  : Sun May  3 23:06:56 2015
+Activ Time before : Sun May  3 23:26:56 2015
+Inode found "recovery_test.txt"   12
+Inode 12 is allocated
+--------        RECOVERDIR/recovery_test.txt
+ext4magic : EXIT_SUCCESS
+test@test-vm-ubuntu:~$ cat RECOVERDIR/recovery_test.txt
+test
+test
+test
+test
+test
+test
+test
+test@test-vm-ubuntu:~$
+
+うーん、すごく扱い易い。
+ 他にも色々なオプションが用意されている。以下、使いそうなオプションだけ抜粋して紹介する。
+" -M … 全てのファイルをリカバリする。
+" -m … 全ての削除したファイルをリカバリする。
+" -f … ファイルを指定する。「””」もしくは「/」で全てのファイルを指定する事になる。
+" -d … リカバリするファイルの出力先を指定する。
+" -L … ファイルシステムが持つ全てのファイル名とiノード番号のリストを出力する。
+" -l … データブロックを割り当てていない全てのファイルのリストを出力する。
+" -r … ディレクトリ・ファイルのリカバリを行う
+" -R … ディレクトリツリーのリカバリを行う
+
+-rと-Rの違いが今ひとつよくわからないが…

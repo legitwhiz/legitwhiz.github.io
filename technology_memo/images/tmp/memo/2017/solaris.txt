@@ -1,0 +1,492 @@
+●Sun Integrated Lights Out Manager (ILOM) の使い方
+
+ログイン方法
+
+シリアルケーブルを接続し、ユーザ名とパスワードを入力する
+user: root
+pass: changeme
+(デフォルトパスワード)
+サーバーのマザーボードに関するステータス情報を侮ヲ
+
+-> show /SYS/MB
+ホストサーバの起動
+
+-> start /SYS
+ホストサーバのシャットダウン
+
+-> stop /SYS
+ホストサーバのリセット
+
+-> reset /SYS
+ILOMのリセット
+
+-> reset /SP
+Solaris OSのプロンプトへ切り替える
+
+-> start /SP/console
+Solaris OSのプロンプトを終了する
+
+#.
+ユーザを作成
+
+-> create /SP/users/<ユーザ名> role=<役割> cli_mode=<モード>
+(例)ALOM用のユーザを作成
+
+-> create /SP/users/<ユーザ名> role=Administrator cli_mode=alom
+IPアドレスの設定
+
+-> cd /SP/network
+-> set pendingipaddress=192.0.2.100
+-> set pendingipnetmask=255.255.255.0
+-> set pendingipgateway=192.0.2.1
+-> set pendingipdiscovery=static
+-> set commitpending=true
+NW設定の侮ヲ
+
+-> show /SP/network
+サービス状態の確認
+
+-> show /SP/services/http
+-> show /SP/services/https
+-> show /SP/services/ssh
+アラーム情報の侮ヲ
+
+-> show /SP/alert/rules
+クロックの侮ヲ
+
+-> show /SP/clock
+クロックを設定してNTPサーバと同期
+
+-> set /SP/clients/ntp/server1 address=<IPアドレス>
+NTPサービスを有効にする
+
+-> set /SP/clock/usentpserver=enabled
+HTTPからHTTPS へリダイレクト
+
+-> set /SP/services/http secureredirect=true
+HTTPS ポートを 445 に変更する
+
+-> set /SP/services/https port=445
+ILOMのバージョン侮ヲ
+
+-> version
+CLI コマンドすべてを侮ヲ
+
+-> show /SP/cli/commands
+ILOMファームウェアのアップデート
+
+-> load -source tftp://<IPアドレス>/<ファイル名>
+パスワードの変更
+
+-> set /SP/users/<ユーザ名> password
+役割の変更
+
+-> set /SP/users/<ユーザ名> role=<役割>
+##### 参考 #####
+
+Solaris OSプロンプトから制御するコマンドは以下の通り
+scadm
+
+●ilom ログインできなくなったら(ユーザー超過) sun T5120
+
+
+セッション超過でilomにログインできなくなったらilomを再起動する。solarisはシャットダウンしないのでサービス中でも可
+
+
+#Ipmitool -U [ ilom user name] -H [ ilom ip address ] mc reset cold
+
+●Solaris で ISO ファイル(CDイメージ)をマウントする方法
+
+1. マウント場所を作成する
+# mkdir /mnt/vcd
+2. ISOファイルをデバイスに割り当てる
+
+# lofiadm -a <ファイル名>
+
+(例)
+# lofiadm -a /export/home/hoge/sample.iso /dev/lofi/1
+
+3. 割り当てられたデバイスをマウントする
+# mount -F hsfs -r /dev/lofi/1 /mnt/vcd
+
+##### 参考 #####
+アンマウントする方法は以下の通り
+
+1. 割り当てられたデバイスをアンマウントする
+# umount /mnt/vcd
+
+2. 割り当てられたデバイスを削除する
+# lofiadm -d /dev/lofi/1
+
+●Solaris でデバイスを再告ャするコマンド
+
+# devfsadm
+
+他にも以下の方法がある。
+# touch /reconfigure
+# shutdown -y -g0 -i6ok boot -r
+(ok プロンプトから実行する)
+
+
+●Solaris 10 で ipfilter を使用する方法
+
+1. ipf.confにフィルターを記述
+# vi /etc/ipf/ipf.conf
+
+2. ipfilterの有効化
+# svcadm enable ipfilter
+
+### 参考 ###
+
+フィルターの有効化
+# ipf -E
+
+フィルターの無効化
+# ipf -D
+
+フィルターの初期化(IN/OUT)
+# ipf -Fa
+
+フィルターの初期化(INのみ)
+# ipf -Fi
+
+フィルターの初期化(OUTのみ)
+# ipf -Fo
+
+フィルターの読み込み
+# ipf -f /etc/ipf/ipf.conf
+
+フィルターの確認
+# ipstat -io
+
+フィルターログの確認
+# ipmon
+
+### サンプルフィルター ###
+
+loすべて許可
+pass in quick on lo0 all
+pass out quick on lo0 all
+
+hme0上でICMP許可
+pass in quick on hme0 proto icmp all keep state
+pass out quick on hme0 proto icmp all keep state
+
+hme0上でTCP許可
+pass in quick on hme0 proto tcp from any to any keep state
+pass out quick on hme0 proto tcp from any to any keep state
+
+hme0上でUDP許可
+pass in quick on hme0 proto udp from any to any keep state
+pass out quick on hme0 proto udp from any to any keep state
+
+hme0上でその他の通信をすべて遮断
+block in log on hme0 all
+block out log on hme0 all
+
+●Solaris 10 で推奨パッチをあてる方法
+
+1. 推奨パッチをダウンロード
+ファイル名：
+10_Recommended.zip (sparc)
+10_x86_Recommended.zip (x86)
+
+2. 推奨パッチをインストール
+# unzip -q 10_Recommended.zip
+# init S
+# cd 10_Recommended
+# ./installcluster --<PASSCODE>
+
+PASSCODEは次のファイルの中に書いてある
+10_Recommended.README
+10_Recommended.html
+10_x86_Recommended.README
+10_x86_Recommended.html3. 再起動
+
+# sync;sync;sync
+# shutdown -y -g0 -i6
+
+●UNIX 時間を侮ヲする方法
+
+現時の時間をUNIX時間で侮ヲする。
+# date +%s
+
+1分後の時間をUNIX時間で侮ヲする。
+# date --date '1minute' +%s
+
+1時間後の時間をUNIX時間で侮ヲする。
+# date --date '1hour' +%s
+
+1日後の時間をUNIX時間で侮ヲする。
+# date --date '1day' +%s
+
+1ヶ月後の時間をUNIX時間で侮ヲする。
+# date --date '1month' +%s
+
+1年後の時間をUNIX時間で侮ヲする。
+# date --date '1year' +%s
+
+3年前の時間をUNIX時間で侮ヲする。
+# date --date '3years ago' +%s
+
+指定したUNIX時間を侮ヲする。
+# date --date @1317126648
+
+●Xming を使用して Solaris 10 に GUI で接続する方法
+(前提条件： Windowsファイアウォールが適切に設定されていること)
+
+Solaris 10では、デフォルト状態で接続できる。
+ただし、フォントが正常に侮ヲされなかった。
+
+1. /usr/openwin/lib/X11/fontserver.cfg を変更する
+
+catalogue= へ以下のパスを追加する(改行しないこと)
+
+/usr/openwin/lib/locale/ja/X11/fonts/75dpi
+/usr/openwin/lib/locale/ja/X11/fonts/TT
+/usr/openwin/lib/locale/ja/X11/fonts/TTbitmaps
+/usr/openwin/lib/locale/ja/X11/fonts/UTF8
+
+2. fontserverを再起動する
+# svcadm restart xfs
+
+3. WindowsでXmingを起動して接続する
+
+
+●Solaris 10 の ZFS で NFS 共有を告ャする方法
+
+1. ZFSボリュームを作成する
+# zfs set sharenfs=off rpool/export/share
+
+2. NFS共有を有効にする
+# zfs set sharenfs=on rpool/export/share
+
+3. NFS告ャの確認
+# share
+# zfs get sharenfs rpool/export/share
+
+
+●Solaris 10 の ZFS で iSCSI ターゲットを告ャする方法
+1. ZFSボリュームを作成する
+# zfs create -V 100g rpool/iscsi01
+
+2. iSCSIターゲットとして告ャする
+# zfs set shareiscsi=on rpool/iscsi01
+
+3. iSCSI告ャの確認
+# iscsitadm list target
+# zfs get shareiscsi rpool/iscsi01
+
+●Solaris ネットワークマルチパスの管理(検査信号ベース IP network multipathing (IPMP))
+ネットワークアダプタに固有の MAC アドレスが必要。
+
+1.openboot PROM で以下の設定を確認。
+ok> local-mac-address true
+
+
+2.インターフェイスのグループ化
+ 今回の場合, hme0 と hme1 を同じグループに登録する。 
+# ifconfig hme0 group testgrp
+# ifconfig hme1 group testgrp
+
+
+3.検査用アドレスの設定 (障害・回復を検査するためのＩＰアドレス）
+# ifconfig hme0 addif 192.168.0.11 netmask + broadcast + -failover deprecated up
+# ifconfig hme1 addif 192.168.0.12 netmask + broadcast + -failover deprecated up
+
+■ * hme1 を待機インターフェイスとして告ャする場合は検査用ＩＰのみ設定する。 
+# ifconfig hme1 plumb 192.168.0.12 netmask + broadcast + deprecated -failover standby up	
+
+
+■再起動後にも告ャを有効にしたい場合は、ファイルに以下の記述をする。
+
+
+# vi /etc/hostname.hme0
+
+192.168.0.1 netmask + broadcast + group test up addif 192.168.0.11
+deprecated -failover netmask + broadcast + up
+※ １行で記述する
+
+# vi /etc/hostname.hme1
+
+192.168.0.2 netmask + broadcast + group test up addif 192.168.0.12
+deprecated -failover netmask + broadcast + up
+※ １行で記述する
+
+
+■hme1 を待機インターフェイスとして告ャする場合の記述
+
+# vi /etc/hostname.hme1 
+192.168.0.2 netmask + broadcast + deprecated + group test -failover standby up 
+
+●Solaris ネットワークマルチパスの管理(リンクベース IP network multipathing (IPMP))
+[ IPMP Active-Active 告ャ設定方法]
+ 
+今回は、e1000g の 0 と 1 のインターフェースを使用し、 サービスする IP アドレスは 192.168.0.1、 group 名を ipmp-g としました。
+ 編集するファイルは、 /etc/hostname.e1000g0 と /etc/hostname.e1000g1 になります。
+
+/etc/hostname.e1000g0 の設定内容
+# cat hostname.e1000g0
+192.168.0.1 netmask + broadcast + group ipmp-g up
+
+/etc/hostname.e1000g1 の設定内容
+# cat hostname.e1000g1
+group ipmp-g up
+
+[ IPMP Active-Standby 告ャ設定方法]
+
+Active-Standby 告ャも、/etc/hostname.e1000g0、/etc/hostname.e1000g1 ファイルを 編集するだけで終了です。
+Active-Active 告ャと比較して、hostname.e1000g1 ファイルに standby のキーワードが 入ります。
+
+/etc/hostname.e1000g0 の設定内容 # cat hostname.e1000g0
+192.168.0.1 netmask + broadcast + group ipmp-g up
+
+/etc/hostname.e1000g1 の設定内容 # cat hostname.e1000g1
+group ipmp-g standby up
+
+
+
+
+
+●Solaris システム管理コマンド一覧
+■prtdiag　システム診断情報の出力
+
+出力結果でわかること
+・ハードウェア名
+・CPU数、クロック周波数、コア数、スレッド数
+・メモリサイズ
+・IOカード(Network,SCSI,SAN-IF)
+  詳細モード(デバイス名、モデル名)
+・PROMのバージョン(Sparc)
+
+* Option
+ -v  * 詳細
+
+■prtconf　システム告ャ情報の出力
+
+出力結果でわかること
+・メモリサイズ
+・デバイス名
+
+* Option
+ -v  * 詳細モード
+ -b  * ファームウェアのデバイスツリーのルート設定を侮ヲ
+ -D  * デバイスツリー内のシステム周辺機器ごとに、
+       周辺機器を管理するために使用されているデバイスドライバ名を侮ヲ
+ -p  * ブートシステムが提供するデバイスツリーから取得した情報を侮ヲ
+ -V  * ブートシステムのバージョンを侮ヲ
+ -P  * 擬似デバイスも侮ヲ
+
+■psrinfo　プロセッサ情報の侮ヲ
+
+出力結果でわかること
+・プロセッサ数(物理数、コア数、スレッド数)
+・クロック周波数
+
+* Option
+ -v  * 詳細モード
+ -p  * 物理CPU数の侮ヲ
+
+■デバイス関連
+cfgadm   告ャの管理
+sysdef   デバイス告ャ情報の侮ヲ
+dmesg    システムに接続されたデバイスリスト及びシステム診断情報の侮ヲ
+prtvtoc  パーティションマップの侮ヲ
+
+■パフォーマンス
+vmstat
+iostat
+mpstat
+sar
+
+■プロセス
+pldd
+pmap
+pstack
+truss
+
+●Solaris静的ルーティング(Static routing) の設定
+デフォルトの設定内容を確認する。ローカルホストの設定のみ
+# netstat -rn
+
+Routing Table: IPv4
+  Destination           Gateway           Flags  Ref     Use     Interface
+-------------------- -------------------- ----- ----- ---------- ---------
+192.168.0.0          192.168.0.101        U         1          2 e1000g0
+224.0.0.0            192.168.0.101        U         1          0 e1000g0
+127.0.0.1            127.0.0.1            UH        1         28 lo0
+#
+
+新たな経路 192.168.10.0/24 をルーティングテーブルおよび設定ファイルに作成する。
+-p オプションを使う。
+
+# route -p add 192.168.10.0/24 192.168.0.101
+add net 192.168.10.0/24: gateway 192.168.0.101
+add persistent net 192.168.10.0/24: gateway 192.168.0.101
+#
+# netstat -rn
+
+Routing Table: IPv4
+  Destination           Gateway           Flags  Ref     Use     Interface
+-------------------- -------------------- ----- ----- ---------- ---------
+192.168.0.0          192.168.0.101        U         1          2 e1000g0
+192.168.10.0         192.168.0.101        UG        1          0
+224.0.0.0            192.168.0.101        U         1          0 e1000g0
+127.0.0.1            127.0.0.1            UH        1         28 lo0
+#
+
+コマンドにより追加された静的ルーティング設定ファイルを確認する。
+# ls -l /etc/inet/static_routes
+-rw-r--r--   1 root     root          75  7月 10日  21:57 /etc/inet/static_routes
+# cat /etc/inet/static_routes
+# File generated by route(1M) - do not edit.
+192.168.10.0/24 192.168.0.101
+#
+
+
+do not edit 直接編集してはいけないと記述されているが
+/lib/svc/method/net-routing-setup スクリプト内で
+有効行に対して route add 設定値 コマンドを実行しているだけなので、
+記述に誤りがなければ編集しても問題ない。
+
+
+削除する場合
+
+
+ 192.168.10.0 を削除する
+# netstat -rn
+
+Routing Table: IPv4
+  Destination           Gateway           Flags  Ref     Use     Interface
+-------------------- -------------------- ----- ----- ---------- ---------
+192.168.0.0          192.168.0.101        U         1          2 e1000g0
+192.168.10.0         192.168.0.101        UG        1          0
+224.0.0.0            192.168.0.101        U         1          0 e1000g0
+127.0.0.1            127.0.0.1            UH        1         28 lo0
+#
+
+削除コマンドを実行。同時にstatic_routesファイルからも削除する
+# route -p delete 192.168.10.0/24 192.168.0.101
+delete net 192.168.10.0/24: gateway 192.168.0.101
+delete persistent net 192.168.10.0/24: gateway 192.168.0.101
+#
+
+削除されたことを確認
+# netstat -rn
+
+Routing Table: IPv4
+  Destination           Gateway           Flags  Ref     Use     Interface
+-------------------- -------------------- ----- ----- ---------- ---------
+192.168.0.0          192.168.0.101        U         1          2 e1000g0
+224.0.0.0            192.168.0.101        U         1          0 e1000g0
+127.0.0.1            127.0.0.1            UH        1         28 lo0
+#
+
+ファイルが空になった
+# cat /etc/inet/static_routes
+# File generated by route(1M) - do not edit.
+#
+
+
+●
+

@@ -1,0 +1,77 @@
+
+Zabbix repository Add
+
+yum install http://repo.zabbix.com/zabbix/3.5/rhel/7/x86_64/zabbix-release-3.5-1.el7.noarch.rpm 
+
+
+Zabbix関連のパッケージインストール
+
+yum install zabbix-server-mysql zabbix-web-mysql zabbix-web-japanese zabbix-agent
+
+MariaDBのインストール
+yum install mariadb-server
+
+MariaDB用の設定を行っておきます。
+# vi /etc/my.cnf.d/server.cnf
+変更内容は以下の通りです。
+[mysqld]
+character-set-server = utf8
+collation-server     = utf8_bin
+skip-character-set-client-handshake
+innodb_file_per_table
+
+
+# systemctl start mariadb
+# systemctl enable mariadb
+
+初期データベースの作成
+
+DBMS上にデータベースとそれにアクセスするためのユーザを作成します。
+ここでは、DBMS上のrootにパスワードつけないままで説明してしまっていますが、必ずrootのパスワードを付けて運用するようにしてください。
+zabbixユーザーのパスワードも以下の例とは別の物にしてください。
+# mysql -uroot
+MariaDB [(none)]> create database zabbix;
+MariaDB [(none)]> grant all privileges on zabbix.* to zabbix@localhost identified by 'password' ;
+MariaDB [(none)]> exit
+#
+テーブルを作成して、初期データも投入します。
+# zcat /usr/share/doc/zabbix-server-mysql-3.0.0/create.sql.gz | mysql -uroot zabbix
+今回のパッケージから、SQLファイルがまとめて圧縮されて提供されています。
+ソースのtarball(zabbix-3.0.0.tar.gz)の方には、schema.sql、images.sql、data.sqlがありますので、それぞれのファイルを確認されたい場合は、tarballを展開してご確認ください。
+tarballのダウンロードはここからできます。
+パス名は、バージョンごとにバージョン番号をパスに含んでいますので、インストールしたバージョンに合わせてパスを変更してください。
+
+７．Zabbixの設定ファイルの更新
+ここまでの設定のままであれば、最低限の設定としては、DBPasswordを設定するだけです。
+DB作成時のパスワードをDBPasswordに設定してください。
+# vi /etc/zabbix/zabbix_server.conf
+設定内容は以下の通りです。
+DBPassword=password
+
+８．ZabbixのWebインターフェース用設定修正
+Zabbixのパッケージのデフォルトでは、PHPのtimezoneの設定がコメントアウトされているので、設定を有効にしてタイムゾーンが日本ならば、Asia/Tokyoに設定します。
+# vi /etc/httpd/conf.d/zabbix.conf
+設定箇所は以下の部分です。
+php_value date.timezone Asia/Tokyo
+
+９．各種デーモン起動
+以下のコマンドで、各サービスを起動して自動起動も設定します。
+# systemctl start zabbix-server
+# systemctl start zabbix-agent
+# systemctl start httpd
+# systemctl enable zabbix-server
+# systemctl enable zabbix-agent
+# systemctl enable httpd
+
+１０．Webインターフェースにアクセス
+ブラウザを利用して、
+http://ZabbixサーバーのIPアドレス/zabbix/
+にアクセスします。
+最初のアクセス時は、Zabbix設定のウィザードが実行されるので、DBへのアクセス情報などを入力して次へ次へと進めてください。
+「Configure DB connection」では、データベース作成時に指定したUserとPasswordを必ず入力してください。
+設定が終わるとログイン画面になります。アカウント「Admin」、パスワード「zabbix」でログインしてください。
+
+１１．Zabbix serverの監視を有効に設定
+ログイン後、まずは日本語画面に切り替えます。
+右上の人型のアイコンをクリックしてUser Profileを開き、LanguageとしてJapaneseを選択してSaveボタンを押してください。
+

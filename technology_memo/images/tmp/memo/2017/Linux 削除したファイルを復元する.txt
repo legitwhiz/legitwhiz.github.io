@@ -1,0 +1,163 @@
+■Linux 削除したファイルを復元する
+
+●Linux 削除したファイルを復元する(ext2-debugfs編)
+Ext2 ファイルシステムでは、ファイルを削除したときに、 使用していたデータブロックの情報まで消し去ることをしません。
+ですので、使用していたデータブロックの情報が残っていて、なおかつ、 データブロックが再利用されていなければ、それらをつなぎ合わせることで、 削除してしまったファイルを復元することができます。 
+
+ちなみに、ext3 ファイルシステムの場合は、ファイルを削除しますと、 使用していたデータブロックの情報を消し去ってしまいます。ですので、復元は一筋縄ではいきません。(今回は対象外とします。) 
+
+・復元方法
+削除したファイルの復元には、debugfs コマンドを使用します。 
+アンマウントして、debugfs コマンドを実行します。 
+  # umount /mnt/tmp
+  # debugfs tameshi.img
+  ...
+  debugfs:  
+
+すると、debugfs: というプロンプトが出力されます。
+ここで、lsdel というコマンドを入力しますと、 最近削除されたファイルの iノードなどの情報を、ずらっと出力してくれます。 
+  debugfs:  lsdel
+   Inode  Owner  Mode    Size    Blocks   Time deleted
+      12      0 100644   6446    7/   7 Sun Aug  3 14:57:49 2008
+  1 deleted inodes found.
+
+今回は、削除したファイルが1つだけですので、一目瞭然的にわかりますが、 実際にはずらずらっと出力されて、どれがそうなのかよくわからん、 ということも、しばしばありえます。 
+
+そんなときには、stat コマンドで、詳細情報を確認します。
+iノード番号を <> で囲んだものを引数に指定して、stat を実行します。 
+  debugfs:  stat <12>
+  Inode: 12   Type: regular    Mode:  0644   Flags: 0x0   ...
+  User:     0   Group:     0   Size: 6446
+  File ACL: 0    Directory ACL: 0
+  Links: 0   Blockcount: 14
+  Fragment:  Address: 0    Number: 0    Size: 0
+  ctime: 0x489548dd -- Sun Aug  3 14:57:49 2008
+  atime: 0x48954816 -- Sun Aug  3 14:54:30 2008
+  mtime: 0x4874e2e4 -- Thu Jul 10 01:10:12 2008
+  dtime: 0x489548dd -- Sun Aug  3 14:57:49 2008
+  BLOCKS:
+  (0-6):38-44
+  TOTAL: 7
+
+モードやファイルサイズ、更新時刻などの情報がわかります。
+これらをたよりに、該当する iノードを特定してください。 
+
+さて、上記の場合、データブロックは、38～44 の7個を使用しています。
+これらをつなぎ合わせることで、復元を試みられますが、dump コマンドが、 それらを一括して行ってくださいます。ありがたいですね。
+ 引数には、<> つきの iノード番号と、出力ファイル名を指定します。 以下では、/tmp/hosts というファイルに復元しようとしています。 
+  debugfs:  dump <12> /tmp/hosts
+
+復元できた(かもしれない)ようですので、quit と入力して、 debugfs を終了させます。そして、ファイルが同じかどうか確認します。 
+  debugfs:  quit
+  % diff /etc/hosts /tmp/hosts
+  % 
+
+同じようです。データブロックの中身は無事でしたー。ふぅ。
+めでたし、めでたしです。 
+
+ちなみに、lsdel コマンドで、該当すると思われる iノードが出てこない場合でも、 復元したいファイルのiノード番号があらかじめわかっているなら、 dump コマンドによる復元(の試み)は可能です。
+iノード番号を知るには、ls コマンドの -i オプションなどを用います。 
+  # ls -li /mnt/tmp
+  12 -rw-r--r-- 1 root root  6446  7月10日 01:10 hosts
+  11 drwx------ 2 root root 12288  8月 3日 14:56 lost+found/
+
+hosts ファイルのiノード番号は 12番だ、ということがわかります。
+とはいえ、削除前にそんな機転がきくかよ、という疑問は残りますが…。 
+
+●Linux 削除したファイルを復元する(ext2-編)
+###############################################################################
+●Linux 削除したファイルを復元する(ext3/ext4-extundelete編)[マウントポイント/homeのファイルを削除してしまった場合]
+## こーいうときはまず、現場保存！
+## まずはパーティションを確認
+# df -hT
+Filesystem    Type  サイズ  使用  残り 使用% マウント位置
+/dev/sdb2     ext4    193G  6.9G  176G   4% /
+/dev/sdb1     ext3    194M   22M  163M  12% /boot
+/dev/sdb5     ext4    1.2T  752G  371G  67% /home
+tmpfs        tmpfs    999M     0  999M   0% /dev/shm
+
+## あと何だ？とりあえず時間メモ
+# date
+2011年  1月 23日 日曜日 18:15:22 JST
+
+## リードオンリーでマウント
+# cd /
+# sudo unmount /home
+# sudo mount -o remount,ro /home
+# mount
+/dev/sdc2 on /home type ext4 (ro,errors=remount-ro)
+
+## restoreですべてを指定すると今までの削除を大量にrestoreすることとなる可能性があるため、
+消してしまったファイルの時間を指定し、それ以降のものを復元させる。
+そのために、一度消した時間を取得する。
+
+HISTTIMEFORMAT="%F %T " history
+
+## 例えば
+  417  2014-12-01 07:48:39 cd /tmp/
+  418  2014-12-01 07:48:39 ls
+  419  2014-12-01 07:48:40 touch /tmp/test.txt
+  419  2014-12-01 07:48:41 rm -rf /tmp/test.txt ←ここで消している
+
+## extundeleteをインストールする
+# gcc-c++、e2fsprogs-develがインストールされているのが前提条件
+# 導入されていなければyumでインストール
+# sudo yum install gcc-c++
+# sudo yum -y install e2fsprogs-devel
+
+# cd /tmp
+# mkdir extundelete
+# curl -L http://sourceforge.net/projects/extundelete/files/extundelete/0.2.4/extundelete-0.2.4.tar.bz2/download | tar xj
+# cd extundelete-0.2.4
+# ./configure --prefix=/usr/local/
+# sudo make
+# sudo make install
+
+
+## restore
+# リストアにはエポック秒を指定すれ必要があるので--afterには[$(date +%s -d '2014-12-01 07:48:41')]を指定する。
+
+# /usr/local/bin/extundelete --restore-all --after $(date +%s -d '2014-12-01 07:48:41') <device name>
+
+# 1時間前までに削除してしまったファイルを全て復元する場合は
+# /usr/local/bin/extundelete --restore-all --after $(date +%s -d '1 hour ago') <device name>
+
+そうすると
+WARNING: Extended attributes are not restored.
+WARNING: EXT3_FEATURE_INCOMPAT_RECOVER is set.
+The partition should be unmounted to undelete any files without further data loss.
+If the partition is not currently mounted, this message indicates
+it was improperly unmounted, and you should run fsck before continuing.
+If you decide to continue, extundelete may overwrite some of the deleted
+files and make recovering those files impossible. You should unmount the
+file system and check it with fsck before using extundelete.
+Would you like to continue? (y/n)
+
+指定した時間 のデータが、コマンド実行したカレントディレクトリに RECOVERED_FILES/ ってディレクトリが出来てその中に、ファイル名やディレクトリ構造までそのままに復元できます。
+
+###############################################################################
+参考： 少しひねったアプローチ
+
+簡単に説明すると、Linuxファイルシステム上にあるように見えるファイルは、実際はinodeへのリンクにすぎない。inodeには、ファイルのあらゆるプロパティ（アクセス権や所有権など）のほか、ファイルの中味が実際に存在するディスク上のデータブロックのアドレスも記録される。rmコマンドでファイルを削除すると、ファイルのinodeを指すリンクは削除されるが、inodeそのものは削除されない。削除した時点で、ほかのプロセス（オーディオプレーヤーなど）でファイルがまだ開かれている場合もある。このようなプロセスがすべて終了し、すべてのリンクが削除されるまで、inodeとそれに関連づけられたデータブロックが書き込みの対象となることはない。
+
+　このように実際のファイルが削除されるまでタイムラグがあることは、素早い復元の成功にとって重要なポイントだ。ファイルを開いているプロセスがあれば、データはまだ存在する。例えディレクトリリストからファイルが消えてしまっていても。
+
+　ここで、Linuxプロセス擬似ファイルシステム、つまり/procディレクトリの出番となる。システムに存在するプロセスは、自分と同じ名前のディレクトリをこの/procディレクトリ下に持つ。そのディレクトリにはさまざまなものが入っているが、その1つであるfd（"file descriptor"）サブディレクトリにはプロセスで開かれているすべてのファイルへのリンクが含まれる。ファイルをファイルシステムから削除した後も、データのコピーは以下の場所にある。
+
+/proc/process id/fd/file descriptor
+
+どこに行けばよいかは、ファイルを開いているプロセスのIDとファイル記述子を取得すると分かる。これらの情報は、lsofで取得が可能だ。lsofという名は"list open files"（開いているファイルをリストする）に由来する（実際にはそれ以上の機能があり、便利なツールなのでほとんどのシステムに標準でインストールされる。インストールされていない場合は、最新のバージョンを作者から直接入手できる）。
+
+
+特殊な例になりますが，削除したファイルを開いているアプリケーションが残っている場合，そのアプリケーションがつかんでるファイルをコピーすることでファイルを救出する方法もあります． 例えば，動画が収録されているf.isoというファイルを再生中に，f.isoをrmした場合，下記のようにlsof（list open files）で開いているファイルの情報を得て，コピーすることができます． この例では，gvfsd-arcというプログラムが開いている/home/unsync/f.isoをコピーしています．プロセス番号が10764，ファイル ディスクリプターが9なので，/proc/10764/fd/9が目的のファイルになっています． 
+# lsof |grep iso
+gvfsd-arc 10764      hatai    9u      REG               8,34 2340454400       13 /home/unsync/f.iso (deleted)
+
+1列目はプロセスに関連付けられたコマンドの名前、2列目はプロセスID、4列目の数字はファイル記述子である（"4r"の"r"は"regular file"、つまり通常のファイルを意味する）。この出力から分かるのは、プロセス4158がまだファイルを開いていること、ファイル記述子が4であることだ。後は、この情報を/procからコピーする方法さえ分かればよい。
+
+ファイルを復元するのだから、cpで-aフラグを使えばいいと思うかもしれない。だが、実際にはそれをしないことが重要なのである。もしこのコマンドを実行すると、ファイル内のリテラルデータをコピーするのではなく、元のディレクトリにリストされていた、今は壊れてしまったファイルへのシンボリックリンクをコピーすることになる。
+なので、単純にcp(オプションなし)でコピーする。
+
+# cp /proc/10764/fd/9 x.iso
+
+

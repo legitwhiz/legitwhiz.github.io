@@ -1,0 +1,14 @@
+[NTP]CentOS7でntpdが自動起動しない時の対処
+
+手動で systemctl start ntpd.service するとntpdが上がってくるのでなんでだろー？と思ってたら、chronyが自動起動する設定になっていたのですね。。。qiitaによると
+
+なお、chronydとntpdの両方がenabledになっている場合、システム起動後はchronydだけが起動した状態になる。手動で両方を起動した場合は後から起動した方が起動状態になり、先に起動した方は停止させられる。
+ntpdを使いたい場合は忘れずにchronyをアンインストールするなりsystemctl disable chronydでchronydがシステム起動時に自動起動しないようにする。
+
+とのこと。んー、紛らわしい。。。というわけで
+
+sudo systemctl disable chronyd.service
+
+rm '/etc/systemd/system/multi-user.target.wants/chronyd.service'
+
+

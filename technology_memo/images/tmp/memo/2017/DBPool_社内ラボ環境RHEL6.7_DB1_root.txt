@@ -1,0 +1,105 @@
+;; ########################################
+LOG_PATH='G:log'
+getdir INI_PATH
+INI_FILE='RHEL.INI'
+HOSTADDRESS='10.222.162.81'
+HOST='DBPool_社内ラボ環境RHEL6.7_DB#1'
+Login_User='root'
+Login_Password='P@ssw0rd'
+;; ########################################
+
+
+inputbox 'ログイン者氏名' '利用者確認'
+strlen inputstr
+if result=0 goto lbl_error4
+UsernameJ = inputstr
+if result=0 goto lbl_nextstep
+
+
+:lbl_nextstep
+
+
+
+;;SSH接続
+COMMAND=HOSTADDRESS
+strconcat COMMAND ':22 /ssh /2 /auth=password /user='
+strconcat COMMAND Login_User
+strconcat COMMAND ' /passwd='
+strconcat COMMAND Login_Password
+strconcat COMMAND ' /nosecuritywarning'
+
+connect COMMAND
+
+
+
+; ログディレクトリがなければ作成
+foldersearch LOG_PATH
+	if result=0 then
+	foldercreate LOG_PATH
+	endif
+
+getdate datestr
+strcopy datestr 1 4 yearstr
+strcopy datestr 6 2 monthstr
+strcopy datestr 9 2 daystr
+strconcat LOG_PATH2 LOG_PATH
+strconcat LOG_PATH2 yearstr
+strconcat LOG_PATH2 monthstr
+strconcat LOG_PATH2 daystr
+
+foldersearch LOG_PATH2
+	if result=0 then
+	foldercreate LOG_PATH2
+	endif
+
+;; ####TERATERM INIファイル
+RESTORE=INI_PATH
+strconcat RESTORE ''
+strconcat RESTORE INI_FILE
+
+restoresetup RESTORE
+
+settitle HOST
+
+getdate datestr
+strcopy datestr 1 4 yearstr
+strcopy datestr 6 2 monthstr
+strcopy datestr 9 2 daystr
+gettime timestr
+strcopy timestr 1 2 hourstr
+strcopy timestr 4 2 minutestr
+strcopy timestr 7 2 secondstr
+
+filename = LOG_PATH2
+strconcat filename ''
+strconcat filename HOST
+strconcat filename '_'
+strconcat filename UsernameJ
+strconcat filename '_'
+strconcat filename yearstr
+strconcat filename monthstr
+strconcat filename daystr
+strconcat filename '_'
+strconcat filename hourstr
+strconcat filename minutestr
+strconcat filename secondstr
+strconcat filename '.log'
+
+logopen filename 0 0 0 0 1
+
+;端末情報確認
+wait '#'
+sendln 'date'
+wait '#'
+sendln 'hostname'
+wait '#'
+sendln 'id'
+wait '#'
+sendln 'cat /etc/redhat-release'
+wait '#'
+
+end
+
+;何も入力されない場合の終了
+:lbl_error4
+messagebox 'TeratermMacro END' ' Information'

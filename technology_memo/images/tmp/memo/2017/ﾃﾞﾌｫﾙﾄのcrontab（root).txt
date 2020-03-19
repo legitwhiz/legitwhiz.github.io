@@ -1,0 +1,41 @@
+ﾃﾞﾌｫﾙﾄのcrontab（root)
+
+oslevel 5.3.0.0
+
+#0 3 * * * /usr/sbin/skulker
+
+■/tmpから古くなったﾌｧｲﾙまたは不要なﾌｧｲﾙを定期的に削除する
+#45 2 * * 0 /usr/lib/spell/compress
+
+■spellｺﾏﾝﾄﾞのﾛｸﾞを回す
+#45 23 * * * ulimit 5000; /usr/lib/smdemon. clean > /dev/null
+
+■sendmailｺﾏﾝﾄﾞのｷｭｰをｸﾘｱする｡/var/spool/mqueue/logﾌｧｲﾙがﾒﾝﾃされる｡
+0 11 * * * /usr/bin/errclear -d S,O 30
+
+■errptの30日以前のSoftｴﾗｰとOtherｴﾗｰを消す｡
+0 12 * * * /usr/bin/errclear -d H 90
+
+■errptの90日以前のHardｴﾗｰを消す｡
+※Unknownのｴﾗｰはずっと残る
+0 15 * * * /usr/bin/ras/dumpcheck > /dev/null 2>&1
+
+ｼｽﾃﾑﾀﾞﾝﾌﾟが容量的にﾀﾞﾝﾌﾟﾃﾞﾊﾞｲｽとｺﾋﾟｰﾃﾞｨﾚｸﾄﾘｰに書けるかを確認する｡容量が足りない場合はｴﾗｰがﾛｸﾞに記録される｡
+
+■すべての cron ｼﾞｮﾌﾞをﾓﾆﾀｰする
+# cronadm cron -l
+
+■skulker
+
+参考：AIX ｾｷｭﾘﾃｨｰ･ﾂｰﾙ
+http://www-06.ibm.com/jp/support/redbooks/AIX_pSeries/sg88670400.pdf
+
+• /tmp ﾃﾞｨﾚｸﾄﾘｰにあるﾌｧｲﾙ
+• 指定した年限より古いﾌｧｲﾙ
+• a.out ﾌｧｲﾙ
+• core ﾌｧｲﾙ
+• ed.hup ﾌｧｲﾙ
+
+※oslevel 5.3.0.0 のrootのcrontabの初期設定
+#0 3 * * * /usr/sbin/skulker
+

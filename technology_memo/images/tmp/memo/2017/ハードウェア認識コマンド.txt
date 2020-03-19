@@ -1,0 +1,12 @@
+ハードウェア認識コマンド
+・AIX
+cfgmgr
+
+・HP-UX
+insf -e
+
+・Solaris
+rvconfig
+
+・RHEL
+/dev/MAKEDEV

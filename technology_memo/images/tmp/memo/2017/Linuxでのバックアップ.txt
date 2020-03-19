@@ -1,0 +1,344 @@
+Linuxでのバックアップ
+
+Linux LPIC編。（第6章 システムメンテナンス）
+Linuxでの各種バックアップ。
+まずローカルで実行するバックアップ用コマンド、tar、cpio、 dd、dumpについて。
+
+tarコマンドのオプションで覚えておきたいのが、-zオプションでgzip形式の圧縮／展開
+をサポートすること（bzip形式なら-j ）。
+
+ 以下、オプションで気になるところだけメモ。
+-c 　アーカイブ作成で、-xがファイルの抽出 （ド基本だけど、、、）
+-C 　処理を開始する前に指定したディレクトリに移動。
+-p　パーミッション保持
+-P　パス名の” / “を削除しない（アーカイブ内のパスを絶対パスにしたい時）
+-t　アーカイブの内容を表示
+-r　アーカイブにファイルを追加 
+
+以下例では/varのアーカイブをSCSIテープドライブに作成。
+# tar cvf /dev/st0 /var
+
+SCSIテープドライブ内のtarアーカイブの内容を確認するには、以下のように。
+# tar tf /dev/st0
+
+以下ではバックアップされた/varディレクトリから/var/log/secureファイルを抽出。
+/varディレクトリの最初の” / “がないことに注意。
+# tar xvf /dev/st0 var/log/secure
+
+cpioコマンドはファイルをアーカイブにコピーまたは、アーカイブからファイルをコピー。
+ 以下の例は、カレントディレクトリ以下を/tmp/backupファイルとしてバックアップしている。
+# ls | cpio -o > /tmp/backup
+
+作成したバックアップファイルの内容を見るには以下のように。
+# cpio -it < /tmp/backup
+
+-oはコピーアウトモード（アーカイブを作成）、-iはコピーインモード（アーカイブから
+ ファイルを抽出）ってことだけでも頭に入れておきたい。
+あと、-dは必要ならディレクトリを作成する。
+
+ 以下サイトなども参考に。
+↓ ↓ ↓
+http://www.atmarkit.co.jp/flinux/rensai/linuxtips/434usecpio.html
+
+ cpioオプションいろいろ（試験には関係ないと思うけど…）
+↓ ↓ ↓
+http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230735/
+
+ddコマンドは入力側に指定したファイルの内容を、ファイルや標準出力におくる。
+
+if=入力側ファイルで、of=出力側ファイル、bs=nで入出力のブロックサイズを指定、
+count=nで指定した回数分の入力ブロックをコピー。
+ 以下例では/dev/sdaを/dev/sdbへ丸ごとコピーしている。
+
+# dd if=/dev/sda of=/dev/sdb
+
+dumpコマンドはファイルシステム単位でバックアップを作成する。(ext2/ext3)
+バックアップからファイルを取り出すにはrestoreコマンドを利用する。
+dumpコマンドはdumpレベルを指定することにより増分バックアップに対応可能。
+レベル1のdump実行後にレベル2でdumpを行うと、その間の更新分のみがバックアップ
+ される。なお、dumpレベル0はファイルシステム内すべてのファイルが対象となる。
+
+オプション
+0-9　dumpレベルを指定
+u　/etc/dumpdatesにバックアップファイルを記録する
+f　バックアップ装置のデバイス名を指定
+
+以下例は、dumpレベル0で/dev/sda3をSCSIテープドライブにバックアップしている。
+# dump 0uf /dev/st0 /dev/sda3
+
+以下は、restoreコマンドでバックアップされたデータをすべて取り出している。
+ （rオプションですべてを指定）
+# restore rf /dev/st0
+
+ここまで書いておいてアレだけど、dump、restoreコマンドは範囲外だそうだ。
+
+メモ
+ テープデバイスの、デバイスファイル名による違い。
+/dev/st0はフルバックアップを1本で取るような場合に適している。
+ 同じテープに続けてバックアップをする場合は、/dev/nst0を使う。
+/dev/st0　→自動巻き戻しをする
+/dev/nst0　→自動巻き戻しをしない
+
+ネットワーク経由でのバックアップについて。
+rsyncは、ネットワーク経由で他のホストにバックアップしたい場合に利用される。
+ （ローカルホスト内でも利用できる）差分のみのコピーなど、細かい設定ができる。
+ 例えばオプションの指定により、コピー元で削除したファイルはバックアップ先でも
+削除されるため、バックアップ元とバックアップ先の内容を常に同期させることも可能。
+
+書式
+rsync [オプション] B/U元ディレクトリ [ホスト名:] B/U先ディレクトリ
+
+コマンド実行時において、コピー元ディレクトリの末尾に「 / 」（スラッシュ）があるかないかで動作が変わるので注意！以下の例では、スラッシュありの場合/test内のファイルが、スラッシュなしの場合、/testディレクトリそのものが対象となる。
+
+# rsync -av test/ /backup　←testディレクトリ内のファイルを/backupにコピー
+# rsync -av test /backup　←testディレクトリ自体を/backupディレクトリにコピー
+
+オプション
+-v　コピー中のファイルを表示
+-a　アーカイブモード（ファイルやディレクトリの属性をそのままコピー）
+ 　　※つまり-aオプションをつければ以下rlptgoDオプションは必要なし
+-r　ディレクトリ内を再帰的にコピー
+-l　シンボリックリンクをそのままコピー
+-H　ハードリンクをそのままコピー
+-D　デバイスファイルを保ったままコピー
+-p　パーミッションを保ったままコピー
+-t　タイムスタンプを維持
+-o　オーナーをそのまま維持
+ 　　※指定しないとオーナー属性はコピーしたユーザーとなる
+-g　グループをそのまま維持
+ 　　※指定しないとグループ属性はコピーしたユーザーのグループとなる
+-n　テストのみ行い、実行結果を表示
+-e　実行するコマンドを指定（デフォルトはrsh）
+ 　　※ネットワーク越しに別のホストにコピーする時に、-e sshなど。
+-z　ファイルを圧縮
+-u　変更・追加されたファイルのみコピー
+--existing　更新されたファイルのみコピー、追加されたファイルは無視
+--delete　コピー元ファイルが削除されたらコピー先でも削除
+--exclude　指定したディレクトリを除外する
+--exclude-from File　指定したファイルに記載のディレクトリを除外する
+
+ずらずらと書き連ねたけど、まずは-aオプション！って気がする。
+
+ネットワーク経由でリモートホストにコピーする際は、コピー先ホストを指定する。
+ 以下の例はtestディレクトリを圧縮し、host77の/backupディレクトリ内に差分コピー
+ している。
+# rsync -auvz --delete -e ssh test host77:/backup
+
+単純なコピーであればtarとsshの組み合わせだけでも可能。
+# tar capf   test | ssh host77 tar -xzpf   -C /backup
+
+しかしrsync コマンドは毎回ファイルを丸ごとコピーするのではなく、オプションによって
+新旧ファイル間の差分のみをコピーすることができる。なので初回以降は高速にデータ
+ の同期を取ることができる、ってことが大きなメリットかな。
+
+補足（試験範囲外）
+ 上記以外にも沢山オプションがあり、なかなか深いrsync。
+ついでに参考サイトをここに貼っておこう。
+
+http://x68000.q-e-d.net/~68user/unix/pickup?rsync
+
+http://itpro.nikkeibp.co.jp/article/COLUMN/20070822/280169/?ST=neteng
+
+リモートでrsyncコマンドを実行するとパスワードを聞かれる。
+cronで定期的にバックアップを取りたい場合に、パスワードを聞かれずに済むには。
+いろんなやり方があるんだろうけど、こんなのありました。
+↓ ↓ ↓
+###############################################################################
+Red Hat Linux でリモートマシンへバックアップ(rsync & cron)
+
+Red Hat Linux で rsync コマンドと cron を使ってリモートマシンへ
+定期的に自動でバックアップを取得する。
+
+rsync コマンドの使用方法はこちらを参照。
+Red Hat Linux でリモートマシンへバックアップ（rsync）
+
+ここでのポイントは、パスワードを聞かれずに rsync でリモートマシンに接続すること。
+
+ 今回は、ssh の認証に鍵による認証を利用することによって実現する。
+ 設定は次の通り。
+バックアップ元ホスト(rsync を実行する方)にて、rootのキーペアを作成
+
+# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):何も入力せずに Enter
+Enter same passphrase again:何も入力せずに Enter
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx root@[host name]
+
+上記コマンド実行後に作成された /root/.ssh/id_rsa.pub を
+ リモートホスト(バックアップ先)に設置する。
+FTP や SSH やフロッピーディスクを使用してコピーする。
+
+id_rsa.pub を /root/.ssh に置いたとして、
+ 次にこれを鍵束に追加する。
+
+# cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys  
+
+さらに、/etc/ssh/sshd_config を編集して SSH の認証方法を
+ パスワード認証から鍵による認証に変更する。
+
+また、rsync でバックアップする際に root でログインする必要がある場合、
+SSH を root でログインできるようにしておく必要があります。
+
+root によるログインを許可
+PermitRootLogin yes  
+
+パスワード認証を使わずに鍵による認証を使う
+PasswordAuthentication no  
+
+ sshd を再起動して設定を反映
+/etc/init.d/sshd restart  
+
+ rsync を実行する前に、まずは SSH で普通にログインしてみる。
+
+# ssh root@1.1.1.2
+ Last login: Tue May 29 18:47:40 2007 from 1.1.1.1
+ [root@test2.rhel ~]#
+
+鍵による認証が行われたため、何も聞かれずにログインできた。
+ 続いて、rsync による接続を試してみる。
+
+# rsync -avz --delete -e ssh /var/log/audit/ 1.1.1.2:/tmp/test
+ building file list ... done
+
+ sent 71 bytes recieved 20 bytes 16.55 bytes/sec
+ total size is 164700 speedup is 1809.89
+
+今回は、差分がなかったためファイル転送は行われなかったが、
+パスワード等を聞かれずに接続することができた。
+
+これで、cron を使って rsync によるバックアップを自動実行することができる。
+
+###############################################################################
+Red Hat Linux で rsync コマンドを使ってリモートマシンへバックアップを取得する。
+
+ 今回はSSHを利用して rsync の通信を行います。
+
+この場合の書式は次の通り。
+
+rsync -avz --delete -e ssh [バックアップ対象] [リモートマシン]:[バックアップ保存先]  
+
+オプションの説明
+-a : アーカイブモード( -rlptgoD と同じ意味)。
+-v : 情報を詳細に表示する。
+-z : 転送中圧縮する。
+--delete : 送信元に存在しないファイルはリモートマシン側で削除して同期する。
+-e ssh : rsh の代わりに ssh を使用する。
+-r : ディレクトリ内を再帰的にコピーする。
+-l : シンボリックリンクの先をコピーする。
+-p : ローカルのファイル権限をリモートにコピーする。
+-o : リモートのファイルの所有者をローカルと同じにする。
+-g : リモートのファイルのグループをローカルと同じにする。
+-D : デバイスファイルもコピーする。ただし、スーパーユーザの時のみ有効。
+
+実際に試してみます。
+ 大前提として、リモートマシンで sshd が起動している必要があります。
+
+ 試しに、ローカルマシン(1.1.1.1)の /var/log/audit/ 以下を
+ リモートマシン(1.1.1.100)の /tmp/test/ にバックアップしてみます。
+
+# rsync -avz --delete -e ssh /var/log/audit/ 1.1.1.100:/tmp/test
+The authenticity of host '1.1.1.100 (1.1.1.100)' can't be established.
+RSA key fingerprint is cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc:cc.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanantly added '1.1.1.100' (RSA) to the list of known hosts.
+root@1.1.1.100's password:xxxxxxxxxx
+Connection closed by 1.1.1.100
+rsync: connection unexpectedly closed (0 bytes received so far) [sender]
+rsync error: unexplained error (code 255) at io.c(463) [sender=2.6.8]
+
+リモートマシン(1.1.1.100)へは ssh で初めてアクセスしたので接続の確認がされました。
+その後、パスワードが聞かれたので入力したが、ssh のセッションが切れてしまった。
+
+ちなみに、ローカルマシン(1.1.1.1)上で root で実行したため、
+リモートマシンへも root でログインしようとした。
+セッションが切られたのは、
+リモートマシン(1.1.1.100)側でrootでのSSHによるログインを許可していないため。
+
+ 仕方ないので、ユーザ指定して再度実行する。
+
+# rsync -avz --delete -e ssh /var/log/audit/ test@1.1.1.100:/tmp/test
+test@1.1.1.100's password:xxxxxxxxxx
+building file list ... done
+./
+audit.log
+
+sent 11864 bytes recieved 48 bytes 2165.82 bytes/sec
+total size is 164700 speedup is 13.83
+
+リモートへの /var/log/audit/audit.log のバックアップ成功。
+
+ 差分バックアップなので連続して実行しても変更が無いためバックアップを実施しないはず。
+
+# rsync -avz --delete -e ssh /var/log/audit/ test@1.1.1.100:/tmp/test
+test@1.1.1.100's password:xxxxxxxxxx
+building file list ... done
+
+sent 71 bytes recieved 20 bytes 16.55 bytes/sec
+total size is 164700 speedup is 1809.89
+
+確かに何もバックアップされない。
+ 差分バックアップが実現されていることが確認できた。
+
+ 次に、rsync を利用して自動バックアップをしようと考えた場合、
+ 上記の方法ではパスワードが聞かれてしまうため、
+うまくいかない。
+
+###############################################################################
+tarの基本とsshでの転送
+
+tarの基本復習と、sshでの転送についてメモ。
+
+ 基本操作から。すぐ忘れてしまうので、、、
+tarを操作する際のファイルやディレクトリは、絶対パスではなく相対パスで指定する。
+
+dataディレクトリ以下をbackup.tar.gzファイルに圧縮格納。
+$ tar czvf backup.tar.gz data
+
+
+カレントディレクトリ以下のファイルを、backup.tar.gzファイルに、old.logファイルを除いて圧縮格納
+$ tar czvf backup.tar.gz .   -exclude old.log
+
+
+このオプションは注意が必要のようだ。ファイルとディレクトリで挙動が変わるようだし、
+うまく指定しないと期待通りに動作しない。
+ 複数のファイルを除外するには、都度”- -exclude file”としなければならない。
+$ tar czvf backup.tar.gz .   -exclude old.log  exclude old2.log
+
+除外の対象が多い場合はリストに書き出し、”- -exclude-from listfile”とする。
+$ tar czvf backup.tar.gz .   -exclude-from listfile
+
+  -excludeはXでも可。
+$ tar zcvfX dir.tar.gz listfile data
+
+
+ところで格納時にファイルを除外するのではなく、全て格納してから指定のファイルを
+  -deleteオプションで消去する、という発想も「あり」かな。。
+
+ 格納したファイルの一覧を表示する
+$ tar tzvf backup.tar.gz
+
+
+展開する時。以下はカレントディレクトリに展開される。
+$ tar xzvf backup.tar.gz
+
+指定のディレクトリ内に展開させる
+ tar xzvf backup.tar.gz -C backup_dir
+
+tarをsshでリモートホストへ転送
+ファイル名に「-」を指定すると出力先のファイルが標準出力になるため、
+パイプラインを利用して他のコマンドへ引き渡すことができる。
+ 以下はローカルホストからリモートホストexample.netへuser001ユーザが転送する例。
+
+ファイルの例
+$ tar czvf   filename | ssh user001@example.net ‘cat > /tmp/filename.tar.gz’ 
+
+ディレクトリの例
+$ tar czvf   data |ssh user@example.net ‘tar zxvf  C /tmp/backup’
+
+しかしこのやり方はリソースを消費するらしく、定常的なバックアップにはあまり
+向かない様子。
+

@@ -1,0 +1,763 @@
+Linuxシステムバックアップの基本
+###############################################################################
+dump と restore コマンドによるシステムリカバリの方法を今更ながら解説(Linux)
+###############################################################################
+はじめに
+バックアップ＆リカバリの基本とも言えるdump/restoreコマンドを用いたシステムリカバリの方法について解説します。 
+
+■前提条件
+構築に必要なサーバー要件および、導入パッケージは下記のとおりです。 
+1.サーバー要件 
+サーバー要件は、次のとおりです。 
+┌─────────┬─────────────┬───────────┬─────────┐
+│サーバー          │バックアップ対象サーバー  │リストア対象サーバー  │NFSサーバー       │
+├─────────┼─────────────┼───────────┼─────────┤
+│ホスト名          │ dump-backup              │ n/a                  │nfs-server        │
+├─────────┼─────────────┼───────────┼─────────┤
+│IPアドレス        │ 192.168.0.10(eth1)       │ n/a                  │192.168.0.90(eth1)│
+├─────────┼─────────────┼───────────┼─────────┤
+│OS                │ CentOS 5.5 i386          │ n/a                  │ubuntu 13.10 i386 │
+├─────────┼─────────────┼───────────┼─────────┤
+│インストールタイプ│ minimal                  │ n/a                  │server            │
+├─────────┼─────────────┼───────────┼─────────┤
+│HDD               │8GB(SCSI)                 │                      │                  │
+├─────────┼─────────────┼───────────┼─────────┤
+│RAM               │512MB                     │                      │                  │
+└─────────┴─────────────┴───────────┴─────────┘
+NFSサーバーは、/backupをエクスポートフォルダとして設定しています。
+
+2.導入するパッケージ 
+導入するパッケージは、次のとおりです。 
+┌──────┬──────┐
+│パッケージ  │ バージョン │
+├──────┼──────┤
+│dump        │0.4         │
+├──────┼──────┤
+│rmt         │0.4         │
+└──────┴──────┘
+
+■サーバーのバックアップ
+1.パッケージのインストール 
+CentOSの場合、dumpコマンドが標準インストールされていませんので、パッケージをインストールします。 
+$ sudo yum -y install dump
+
+2.ディスク情報の出力 
+バックアップ対象サーバーのディスク情報を、ファイルに出力します。 
+$ LANG=C sudo fdisk -l > /tmp/`hostname`_fdisk.txt
+$ LANG=C sudo df -k > /tmp/`hostname`_df.txt
+$ LANG=C sudo pvdisplay > /tmp/`hostname`_pv.txt
+$ LANG=C sudo vgdisplay > /tmp/`hostname`_vg.txt
+$ LANG=C sudo lvdisplay > /tmp/`hostname`_lv.txt
+
+3.シングルユーザーモードへの移行 
+データベースアクセスが無いサーバーの場合、オンラインバックアップでも構いませんが、念の為シングルユーザーモードに移行してバックアップを実行します。 
+$ sudo init 1
+
+4.ネットワーク設定とNFSマウント 
+ネットワーク設定を行った後、dumpコマンドで出力するダンプファイルを保存するフォルダをNFSでマウントします。 
+# ifconfig eth1 192.168.0.10
+# mount -o rw 192.168.0.90:/backup /mnt
+# df
+
+5.バックアップの実行 
+バックアップ対象サーバーのマウントポイントごとに、ダンプします。 
+ 今回は、/および、/bootをバックアップ対象とし、tmpfsは、バックアップ対象外とします。 
+# dump -b 32 -0f /mnt/`hostname`_lv_root.dump /dev/mapper/VolGroup-lv_root
+# dump -b 32 -0f /mnt/`hostname`_boot.dump /dev/sda1
+
+ダンプが終了すると、NFSマウントしたマウント先にダンプファイルが出力されますので、NFSマウントを解除します。 
+
+
+■サーバのリストア
+●レスキューモードの起動
+ダンプが終了しましたので、リストア対象サーバーにリストアを行います。 
+なお、リストア対象サーバーは、OSがインストールされていない新規サーバーとしています。 
+
+1.レスキューモードの起動
+CentOSのインストールCDを用いて、リストア対象サーバーを起動します。 
+ブートメニューが表示されたら、[Rescue Installed System]を選択します。 
+
+2.言語とキーボードの指定 
+Rescueモードを選択すると、言語とキーボードレイアウトを選択します。 
+なお、言語選択では、日本語も選択できますが、Warningが表示されるため、英語を選択して下さい。 
+
+3.ネットワーク指定 
+ネットワークを開始するか確認されますので、[No]を選択します。
+
+4.レスキュー処理の選択 
+既存のLinuxシステムがある場合、[Continue]を選択しますが、今回は新規サーバーのレスキューとなりますので、[Skip]を選択します
+
+5.レスキューシェルの起動 
+を選択して、レスキュー用シェルを起動します。 
+
+
+●パーティションの準備
+レスキューシェルが起動しましたので、新規ディスクのパーティションを作成し、フォーマットを行います。
+
+1.パーティション作成 
+新規のSCSIハードディスクに、パーティションを作成します。 
+ここでは、sda1および、sda2(LVM)を作成し、sda1にブートフラグを設定しています。 
+
+2.LVM作成 
+バックアップ対象サーバーのディスク情報を元に、LVMを作成します。 
+# lvm pvcreate /dev/sda2
+# lvm vgcreate VolGroup /dev/sda2
+# lvm lvcreate --size 512M --name lv_swap VolGroup
+# lvm lvcreate --size 7G --name lv_root VolGroup
+
+作成した論理ボリューム(LV)を表示します。 
+# lvdisplay
+
+3.ディスクフォーマットとスワップ領域の作成 
+作成したパーティションのフォーマットとスワップ領域を作成します。 
+# mke2fs -j /dev/sda1
+# mke2fs -j /dev/VolGroup/lv_root
+# mkswap -f /dev/VolGroup/lv_swap
+
+●ダンプデータのリストア
+パーティションが準備できましたので、NFSサーバーに保存したダンプデータをリストアします。 
+
+1.ダンプデータのマウント 
+ネットワークを設定し、NFSサーバーのダンプデータの保存フォルダをマウントします。 
+# ifconfig eth0 192.168.0.10
+# mkdir /dump
+# mount -o rw 192.168.0.90:/backup /dump
+# mkdir /dump/tmp
+
+2.ダンプデータのリストア 
+作成したパーティションをマウントして、対応するダンプデータをリストアします。 
+rootファイルシステムのリストア # mkdir /restore
+# mount -t ext4 /dev/VolGroup/lv_root /restore
+# cd /restore
+# restore -r -T /dump/tmp -f /dump/dump-backup_lv_root.dump
+
+bootファイルシステムのリストア # mount -t ext4 /dev/sda1 /restore/boot
+# cd boot
+# restore -r -T /dump/tmp -f /dump/dump-backup_boot.dump
+
+●ブートローダー(GRUB)のセットアップ
+これまでの手順で、リストアが完了しましたので、ブートローダーをセットアップします。 
+
+1.chroot環境への移行 
+リストアのマウントポイントを仮想ルートディレクトリに設定します。 
+# chroot /restore
+
+2.デバイスの作成 
+リストア直後は、デバイスが作成されていませんので、MAKEDEVコマンドで作成します。 
+$ MAKEDEV sda
+
+3.GRUBのセットアップ 
+grubコマンドを起動し、下記のとおり設定します。 
+# grub
+
+root (hd0,0)
+setup (hd0)
+quit
+
+4.fstabの修正 
+/etc/fstabの/bootデバイスを修正します。 
+# vi /etc/fstab
+
+ここでは、/dev/sda1をデバイス名として設定しています。 
+
+5.サーバーの再起動 
+chroot環境および、レスキュー用シェルをexitで終了すると、GUI画面に戻りますので、CentOSのインストールCDを取り出した後、[reboot Reboot]を選択してサーバーを再起動します。 
+
+まとめ
+ここまで、dump/restoreコマンドを用いたシステムリカバリの方法について解説しました。今回解説した方法は、CentOSだけで無く、他のLinux系OSにも有効なリカバリ方法となりますので、リカバリツールに頼らないシステムのリカバリを実現できます。
+
+
+###############################################################################
+Mondo rescueを用いたシステムリカバリの方法
+###############################################################################
+Mondo Rescueを用いたサーバーのリカバリ方法について解説します。
+
+Mondo Rescueはオープンソースのディザスターリカバリーツールです。OS含めた全てのデータをイメージとしてバックアップすることが可能です。これは、ハード障害などの緊急時に利用するブート可能なDVDを作成したり、OS丸ごとISOイメージファイルからの復元に利用することが出来ます。 
+
+■前提条件
+構築に必要なサーバー要件および、導入パッケージは下記のとおりです。 
+1.サーバー要件 
+サーバー要件は、次のとおりです。 
+┌─────────┬─────────────┐
+│ホスト名          │ mondo-rescue             │
+├─────────┼─────────────┤
+│IPアドレス        │ 192.168.0.178(DHCP)      │
+├─────────┼─────────────┤
+│OS                │ CentOS 5.5 i386          │
+├─────────┼─────────────┤
+│SELinux           │Disabled                  │
+├─────────┼─────────────┤
+│HDD               │8GB(SCSI)                 │
+├─────────┼─────────────┤
+│RAM               │512MB                     │
+└─────────┴─────────────┘
+
+2.導入するパッケージ 
+導入するパッケージは、次のとおりです。 
+┌───────────┬──────┐
+│パッケージ            │ バージョン │
+├───────────┼──────┤
+│mondorescueリポジトリ │ なし       │
+├───────────┼──────┤
+│dvd+rw-tools          │ 7.0        │
+├───────────┼──────┤
+│mkisofs               │2.01        │
+├───────────┼──────┤
+│afio                  │2.5         │
+├───────────┼──────┤
+│buffer                │1.19        │
+├───────────┼──────┤
+│cdrecord              │2.01        │
+├───────────┼──────┤
+│mindi                 │2.1.7       │
+├───────────┼──────┤
+│mindi-busybox         │1.18.5      │
+├───────────┼──────┤
+│mondo                 │3.0.4       │
+└───────────┴──────┘
+
+●リカバリディスクの作成
+
+1.Mondo Rescureリポジトリのインストール 
+公式サイトから、リポジトリ情報をインストールします。 
+$ wget -q ftp://ftp.mondorescue.org//rhel/5/i386/mondorescue.pubkey
+$ sudo rpm --import mondorescue.pubkey
+$ sudo curl -sLo /etc/yum.repos.d/mondorescue.repo ftp://ftp.mondorescue.org/rhel/5/i386/mondorescue.repo
+$ sudo sed -i -e "s|^enabled=1|enabled=0|" /etc/yum.repos.d/mondorescue.repo
+$ rm -f mondorescue.pubkey
+
+2.関連パッケージのインストール 
+Mondo Resucueのインストール時に、自動でインストールされないパッケージをインストールします。 
+$ sudo yum -y install dvd+rw-tools
+
+3.Mondo Rescueのインストール 
+mondorescueリポジトリから、Mondo Rescueをインストールします。 
+$ sudo yum --enablerepo=mondorescue -y install mondo
+
+4.リカバリディスクの作成 
+Mondo Rescueでは、システムのリカバリディスクをDVDドライブに直接書き込んだり、NFSマウントされた任意のフォルダにISOファイルを作成することができます。 
+
+なお、Mondo Rescueの主なオプションは、下記のとおりです。 
+
+┌───────┬──────────────────────────────┐
+│オプション    │ 概要                                                       │
+│              │                                                            │
+├───────┼──────────────────────────────┤
+│-O            │ ISOファイルを出力(Output)する際に指定します。              │
+├───────┼──────────────────────────────┤
+│-V            │ 出力したISOファイルをベリファイ(Verify)する際に指定します。│
+├───────┼──────────────────────────────┤
+│-S            │ 作業(Scratch)フォルダを指定します。                        │
+├───────┼──────────────────────────────┤
+│-E            │ 除外(Exculude)フォルダを指定します。                       │
+│              │ デフォルトで、下記のフォルダは除外されます。               │
+│              │ /mnt/floppy, /mnt/cdrom, /proc, /sys, /run, /tmp           │
+├───────┼──────────────────────────────┤
+│-T            │ 一時(Temporary)フォルダを指定します。                      │
+├───────┼──────────────────────────────┤
+│-i            │ ISOファイルをバックアップメディアとして使用する際に指定    │
+│              │ します。                                                   │
+├───────┼──────────────────────────────┤
+│-d            │ ISOファイルの出力先のフォルダを指定します。                │
+├───────┼──────────────────────────────┤
+│-s            │ 出力するISOファイルのサイズ(size)を指定します。            │
+│              │ 作成するISOファイルのサイズが、指定したサイズよりも大きく  │
+│              │ なる場合、自動的に複数のISOファイルに分割されます。        │
+├───────┼──────────────────────────────┤
+│-p            │ 出力するISOファイルのファイル名を指定します。              │
+│              │ 本オプションを指定しない場合、mondorescueがデフォルトの    │
+│              │ ファイル名として使用されます。                             │
+└───────┴──────────────────────────────┘
+
+ここでは、システム上の/mntフォルダにISOイメージファイルを作成します。 
+$ sudo mondoarchive -Oi -s 4480m -d /mnt -E /mnt
+
+処理が終了すると、ISOファイルが指定した出力先の/mntフォルダに作成されます。 
+
+また、出力されたログファイルには、処理の開始時刻および、終了時刻が出力されますので、処理時間を算出することもできます。 
+$ grep ^'Time started' /var/log/mondoarchive.log
+$ grep ^'Time finished' /var/log/mondoarchive.log
+
+最後に、出力されたISOファイルを確認します。 
+$ ls /mnt
+
+以上で、リカバリディスクの作成は終了です。 
+
+作成したISOファイルは、DVDなどのリムーバブルメディアに書き込んだ後、保管する必要があります。
+
+■システムリカバリの実行
+作成したリカバリディスクを使って、システムリカバリを実行します。 
+
+ここでは、VirtualBox上に作成した仮想マシンにリカバリを行います。 
+なお、リカバリするマシンのハードウエアスペックは、サーバー要件と同一としています。 
+
+1.リカバリディスクからの起動 
+作成したリカバリディスクをセットし、マシンを起動するとMondo Rescueのブート画面が表示されます。 
+
+boot:プロンプトが表示されたら、リターンキーを入力してレスキュー用のOSを起動します。 
+
+2.リストア方法の選択 
+レスキュー用OSが起動すると、リストアメニューが表示されますので、Automaticallyを選択します。
+
+なお、画面表示が崩れていますが、機能的には支障ありません。 
+ 選択された項目は、グレーになっていますので、間違って赤い表示をのまま、リターンキーを入力すると間違った選択となりますので、注意して下さい。 
+
+3.リストアの自動実行 
+Automaticallyを選択すると、リカバリディスクに保存されたマシンのディスク構成をも音にパーティションの作成からフォーマットを行った後、自動的にディスクをマウントして、リストアを行います。 
+
+4.devicemapの確認 
+リストアが終了すると、システムブート時のデバイスの指定を行う画面が表示されますので、デフォルトのままCTRL-Xを入力して、エディタを終了します。 
+
+5.initrdの再作成確認 
+initrdファイルの再作成をするか確認されますので、Noを選択します。 
+
+6.リカバリの終了 
+Mondo Rescueによって、システムがリカバリされた旨のメッセージが表示されますので、OKを選択します。 
+選択すると、GUI画面が終了しシェルプロンプトが表示されます。 
+
+7.システム再起動 
+セットしたリカバリディスクを取り出し、シェルプロンプトから、rebootコマンドを実行して、システムを再起動します。 
+
+8.fsckの実行と再起動 
+システムをリブートすると、fsckコマンドが実行された後、システムが自動的に再起動します。 
+
+9.リカバリ完了 
+再起動すると、リカバリされたマシンの起動が終了します。 
+
+
+以上で、システムリカバリは終了です。 
+
+まとめ
+ここまで、Mondo Rescueを用いたシステムリカバリの方法について解説しました。Mondo Rescueは、Linux系OSに幅広く対応しており、ほぼ全てのLinuxマシンのリカバリを行うことも可能です。本記事を参考にして、サーバーのリカバリ方法について、検討しては如何でしょうか。 
+
+###############################################################################
+Baculaによる、無料のエンタープライズ向けバックアップシステムを構築する
+###############################################################################
+はじめに
+
+Baculaは、GPLv2で公開されているネットワークバックアップシステムです。ネットワーク対応のバックアップシステムとしては、Symantec BackupExec(tm)や、CA ARCserve(tm)などの商用システムを企業では利用することが多いですが、Baculaはこれらのシステムにも引けを取らないバックアップソリューションを提供しています。エンタープライズ向けのネットワークバックアップソリューションとして環境構築をご紹介します。
+
+■前提条件
+構築に必要なサーバー要件および、導入パッケージは下記のとおりです。
+
+1.サーバー要件サーバー要件は、次のとおりです。
+
+Baculaサーバー
+┌────────────┬─────────────┐
+│ホスト名                │ bacula-server            │
+├────────────┼─────────────┤
+│IPアドレス              │  192.168.0.50            │
+├────────────┼─────────────┤
+│OS                      │ CentOS 6.5 i386          │
+├────────────┼─────────────┤
+│MySQL                   │ 5.5.35                   │
+├────────────┼─────────────┤
+│サードパーティリポジトリ│EPEL                      │
+└────────────┴─────────────┘
+
+Baculaクライアント
+┌────────────┬─────────────┐
+│ホスト名                │ bacula-client            │
+├────────────┼─────────────┤
+│IPアドレス              │ 192.168.0.20             │
+├────────────┼─────────────┤
+│OS                      │ CentOS 6.5 i386          │
+├────────────┼─────────────┤
+│サードパーティリポジトリ│EPEL                      │
+└────────────┴─────────────┘
+
+2.導入するパッケージ 
+導入するパッケージは、次のとおりです。 
+┌───────────┬───────────┬──────┐
+│サーバー              │パッケージ            │ バージョン │
+├───────────┼───────────┼──────┤
+│Baculaサーバー        │bacula-storage-mysql  │ 5.0.0      │
+│                      ├───────────┤            │
+│                      │bacula-director-mysql │            │
+│                      ├───────────┤            │
+│                      │bacula-client         │            │
+│                      ├───────────┤            │
+│                      │bacula-console        │            │
+├───────────┼───────────┼──────┤
+│Baculaクライアント    │bacula-client         │ 5.0.0      │
+│                      ├───────────┤            │
+│                      │bacula-console        │            │
+└───────────┴───────────┴──────┘
+
+■Baculaサーバーの構築
+
+1.パッケージのインストール
+$ sudo yum --enablerepo=epel install -y bacula-storage-mysql bacula-director-mysql bacula-client bacula-console
+
+2.実行ファイルの修正環境構築に使用するmake_mysql_tablesコマンド内に記述されているSQL文の一部のフィールド名が、MySQL 5.5系の予約語になっているため、該当箇所を下記のとおり修正します。 なお、この問題はバージョン5.0.4では修正されています。
+
+$ sudo vi /usr/libexec/bacula/make_mysql_tables
+
+326行目～330行目を修正する。 (修正前)
+   Counter TINYBLOB NOT NULL,
+   MinValue INTEGER DEFAULT 0,
+   MaxValue INTEGER DEFAULT 0,
+   CurrentValue INTEGER DEFAULT 0,
+   WrapCounter TINYBLOB NOT NULL,
+(修正後)
+ `Counter` TINYBLOB NOT NULL,
+ `MinValue` INTEGER DEFAULT 0,
+ `MaxValue` INTEGER DEFAULT 0,
+ `CurrentValue` INTEGER DEFAULT 0,
+ `WrapCounter` TINYBLOB NOT NULL,
+
+3.Baculaデータベース環境の作成Baculaが使用するデータベースなどの環境を作成します。 実行の際には、MySQLのrootユーザーでログインできる必要があります。
+
+$ sudo /usr/libexec/bacula/grant_mysql_privileges -u root -p
+$ sudo /usr/libexec/bacula/create_mysql_database -u root -p
+$ sudo /usr/libexec/bacula/make_mysql_tables -u root -p
+$ sudo /usr/libexec/bacula/grant_bacula_privileges -u root -p
+
+
+4.ユーザーパスワードの変更作成されたMySQL上のbaculaユーザーのパスワードを変更します。 下記のSQLファイルを作成して、実行します。
+
+$ vi bacula-password.sql
+
+UPDATE mysql.user SET password=PASSWORD("admin") WHERE user='bacula';
+FLUSH PRIVILEGES;
+
+作成したSQL文を実行し、baculaユーザーでログインできるか確認します。
+$ mysql -u root -p < bacula-password.sql
+$ mysql -u bacula -p -e 'status'
+
+5.Bacula Directorの設定変更Directorは、バックアップ・リストアのコントロールおよび、Storage/Fileデーモンとの通信を行う中心的な役割を担っています。 Director設定ファイルを、下記のとおり変更します。
+$ sudo vi /etc/bacula/bacula-dir.conf
+
+┌─────────┬────────┬─────────┐
+│ディレクティブ    │ 設定項目       │ 設定値           │
+├─────────┼────────┼─────────┤
+│Director          │  Password      │ “admin”        │
+├─────────┼────────┼─────────┤
+│Storage           │ Address        │ 192.168.0.50     │
+│                  ├────────┼─────────┤
+│                  │ Password       │ “admin”        │
+├─────────┼────────┼─────────┤
+│Catalog           │ dbpassword     │ “admin”        │
+├─────────┼────────┼─────────┤
+│Console           │ Password       │ “admin”        │
+├─────────┼────────┼─────────┤
+│Client            │ Address        │ 192.168.0.20     │
+│                  ├────────┼─────────┤
+│                  │ Password       │ “admin”        │
+└─────────┴────────┴─────────┘
+
+6.Bacula Consoleの設定変更Directorと同様の手順で変更します。
+$ sudo vi /etc/bacula/bconsole.conf
+
+┌─────────┬────────┬─────────┐
+│ディレクティブ    │ 設定項目       │ 設定値           │
+├─────────┼────────┼─────────┤
+│Director          │  Password      │ “admin”        │
+└─────────┴────────┴─────────┘
+
+7.Storage Daemonの設定変更Directorディレクティブの変更は３箇所です。
+$ sudo vi /etc/bacula/bacula-sd.conf
+
+┌─────────┬────────┬─────────┐
+│ディレクティブ    │ 設定項目       │ 設定値           │
+├─────────┼────────┼─────────┤
+│Director          │ Password       │ “admin”        │
+│                  ├────────┼─────────┤
+│                  │ Password       │ “admin”        │
+│                  ├────────┼─────────┤
+│                  │ Archive Device │  /mybackup       │
+└─────────┴────────┴─────────┘
+
+8.File Daemonの設定変更Directorディレクティブの変更は２箇所です。
+$ sudo vi /etc/bacula/bacula-fd.conf
+
+┌─────────┬────────┬─────────┐
+│ディレクティブ    │ 設定項目       │ 設定値           │
+├─────────┼────────┼─────────┤
+│Director          │ Password       │ “admin”        │
+│                  ├────────┼─────────┤
+│                  │ Password       │ “admin”        │
+└─────────┴────────┴─────────┘
+
+9.バックアップフォルダの作成構築するバックアップサーバーでは、任意のフォルダ上にバックアップデータを保存するため、バックアップフォルダを作成し、フォルダ所有者をbaculaに設定します。 バックアップフォルダの容量に問題がある場合、NFSやCIFSなどを用いてリモートサーバーの共有ディスクをマウントすると良いでしょう。
+$ sudo mkdir -p /mybackup
+$ sudo chown bacula:bacula /mybackup
+
+10.サービス起動Baculaの全ての設定ファイルが準備できましたので、サービスを起動します。
+$ sudo service bacula-dir start
+$ sudo service bacula-fd start
+$ sudo service bacula-sd start
+
+11.自動起動設定
+$ sudo chkconfig bacula-dir on
+$ sudo chkconfig bacula-fd on
+$ sudo chkconfig bacula-sd on
+
+12.サービスの動作確認Baculaのサービスが起動したら、Bacula Consoleを用いて接続確認を行います。
+$ sudo bconsole
+*(アスタリスク)は、コマンドプロンプトです。 status 1を入力すると、Baculaサーバーの状態が確認できます。 exitを入力すると、終了します。 
+
+以上で、Baculaサーバーの基本設定は終了です。
+
+■Baculaクライアントの構築
+Baculaクライアントでは、File Daemonおよび、Bacula Consoleのみインストールし、設定ファイルを変更します。
+・パッケージのインストール
+$ sudo yum --enablerepo=epel install -y bacula-client bacula-console
+
+設定ファイルの変更Baculaサーバーの構築と同様に、File Daemonおよび、Bacula Consoleの設定を変更します。 
+
+サービス起動と自動起動設定
+$ sudo service bacula-fd start
+$ sudo chkconfig bacula-fd on
+
+サービスの動作確認Baculaのサービスが起動したら、Bacula Consoleを用いて接続確認を行います。
+$ sudo bconsole
+確認方法は、Baculaサーバーの構築と同様の手順です。 
+
+以上で、Baculaクライアントの基本設定は終了です。
+
+■メディアセットアップ
+バックアップを実行するためには、バックアップメディアが必要です。今回は、ファイルシステムをバックアップアップメディアとしてセットアップします。 
+
+1.Bacula Consoleの起動 
+Consoleを起動すると、Directorに接続した後、*(アスタリスク)のコマンドプロンプトが表示されます。 
+$ sudo bconsole
+
+2.labelコマンドの実行 
+labelコマンドを実行すると、Catalogに指定されたStorageが自動検出され、FileStorageが選択された後、ボリューム名の入力待ちになりますので、任意のボリューム名を入力します。 
+ここでは、file1としています。 
+*label
+
+
+3.Pool指定 
+ボリューム名を入力すると、定義済みのPool名が表示されますので、Fileを選択します。 
+ 選択すると、指定したボリューム名のメディアが作成されます。 
+
+[vagrant@bacula-server ~]$ sudo bconsole
+Connecting to Director localhost:9101
+1000 OK: bacula-dir Version: 5.0.0 (26 January 2010)
+Enter a period to cancel a command.
+*label
+Automatically selected Catalog: MyCatalog
+Using Catalog "MyCatalog"
+Automatically selected Storage: File
+Enter new Volume name: file1
+Defined Pools:
+     1: Default
+     2: File
+     3: Scratch
+Select the Pool (1-3): 2
+Connecting to Storage daemon File at 192.168.0.50:9103 ...
+Sending label command for Volume "file1" Slot 0 ...
+3000 OK label. VolBytes=209 DVD=0 Volume="file1" Device="FileStorage" (/mybackup)
+Catalog record for Volume "file1", Slot 0  successfully created.
+Requesting to mount FileStorage ...
+3906 File device "FileStorage" (/mybackup) is always mounted.
+
+Consoleを終了し、バックアップフォルダを確認すると、指定したメディアが作成されています。
+
+以上で、メディアセットアップは終了です。 
+
+■バックアップジョブの定義
+インストールされたデフォルトのバックアップジョブが既に定義されていますが、ここではバックアップジョブの定義を行い、設定のポイントについて解説します。 
+なお、後編で行う作業は、全てDirector設定ファイルに対して行います。 
+
+1.FileSetの定義 
+FileSetは、バックアップ対象ファイルおよび、除外ファイルを指定します。 Includedで、対象ファイルを、Excludeで、除外ファイルを指定できます。 
+
+2.JobDefsの定義 
+JobDefsは、バックアップ対象サーバーに共通するバックアップジョブを指定します。 
+Jobの定義では、Level/FileSet/Storage/Poolの指定がポイントとなります。 
+
+3.Jobの定義 
+Jobは、バックアップ対象サーバーの情報を定義します。 
+ここでは、ジョブ名、共通ジョブ名、クライアント名を定義します。
+
+4.Clientの定義 
+Jobで定義したクライアントに関する情報を定義します。 
+クライアント名、IPアドレスの指定が必要です。 
+
+5.Directorの再起動 
+Director設定ファイルの編集が終了したら、Directorを再起動します。 
+$ sudo service bacula-dir restart
+
+
+■バックアップジョブの実行
+バックアップジョブを定義しましたので、ジョブを実行します。 
+
+1.Bacula Consoleの起動
+$ sudo bconsole
+
+2.runコマンドの実行 
+Consoleのコマンドプロンプトから、runコマンドを実行します。 
+*run
+
+3.定義済みジョブの実行 
+runコマンドを実行すると、Directorに登録されたジョブが表示されますので、実行したいジョブを選択します。 
+ 選択すると、ジョブがキューイングされ、しばらくするとバックアップジョブが実行されます。 
+
+[vagrant@bacula-server ~]$ sudo bconsole
+Connecting to Director localhost:9101
+1000 OK: bacula-dir Version: 5.0.0 (26 January 2010)
+Enter a period to cancel a command.
+*run
+Automatically selected Catalog: MyCatalog
+Using Catalog "MyCatalog"
+A job name must be specified.
+The defined Job resources are:
+     1: BackupClient1
+     2: BackupCatalog
+     3: RestoreFiles
+     4: FULL_BACKUP_SERVER
+Select Job resource (1-4): 4
+Run Backup job
+JobName:  FULL_BACKUP_SERVER
+Level:    Full
+Client:   bacula-server
+FileSet:  Test Set
+Pool:     File (From Job resource)
+Storage:  File (From Job resource)
+When:     2014-02-08 16:17:26
+Priority: 11
+OK to run? (yes/mod/no): yes
+Job queued. JobId=3
+
+Consoleに表示されたログ上で、実行したCatalog/Storage/Pool/FileSetなどが確認できます。
+
+4.リモートバックアップの実行 
+これまでの手順で、Baculaクライアントのリモートバックアップを行います。 
+Jobの定義 
+vi /etc/bacula-dir.conf
+
+Directorの再起動 
+$sudo service bacula-dir restart
+
+Jobの実行 
+sudo bconsole
+
+■リストアジョブの定義
+作成したFileSetをリストアするジョブを定義します。 
+
+1.Jobの定義 
+定義済みのStorage/Pool/FileSetおよび、Clientを指定し、リストアの場所を指定します。 
+vi /etc/bacula-dir.conf
+
+2.Directorの再起動
+$ sudo service bacula-dir restart
+
+■リストアジョブの実行
+バックアップしたメディアから、リストアを行います。 
+
+リストアは、Baculaクライアントで実行するため、クライアントには、File Daemonおよ
+び、Bacula Consoleがインストールされ、Baculaサーバーと接続できることが必須とな
+ります。 
+このため、ディザスターリカバリやハードウェア障害からのリカバリを行うためには、
+上記の環境を構築した後、またはシステムリカバリツールなどで基本システムを復旧し
+た後に、リストアする必要があります。 
+
+1.Bacula Consoleの起動
+$ sudo bconsole
+
+2.最新バックアップの確認 
+リストアするクライアントの最新バックアップを確認します。 
+JobId: 5が最新だと確認できます。 
+*list jobs
+
+3.restoreコマンドの実行
+*restore
+実行すると、Jobメニューが表示されますので、
+[5:Select the most recent backup for a client]を選択します。 
+
+4.リストアするクライアントの選択 
+登録済みのクライアントがリストされますので、リストアするクライアントを選択しま
+す。
+Defined Clients:
+     1:bacula-client
+     2:bacula-fd
+     3:bacula-server
+Select the Clients(1-3):1 ←[1]を選択。
+
+5.リストアするファイルの選択 
+最新のバックアップメディアが、一時フォルダにリストアされた後、リストアするファ
+イルを選択する$プロンプトが表示されます。 
+mark *(アスタリスク)により、ファイルをマークし、doneを入力するとマーク指定が終了します。 
+
+6.リストアジョブの選択 
+マーク指定が終了すると、定義済みのリストアジョブが表示されますので、バックアッ
+プメディアに対応したリストアジョブを選択します。 
+
+# done
+
+The defined Restore Job resources are:
+     1:RestoreFiles
+     2:Restore Test Set
+Slect Restore Jpb(1-2): 2 ←[2]を選択。
+
+7.ジョブの実行確認 
+選択されたリストアジョブのリストア先、バックアップされたクライアント情報などが表示され、実行確認をされますので、yesを入力するとジョブがキューイングされます。 
+
+The job will require the following
+   Volume(s)                 Storage(s)                SD Device(s)
+===========================================================================
+
+    file1                     File                      FileStorage             
+
+Volumes marked with "*" are online.
+
+172 files selected to be restored.
+
+The defined Restore Job resources are:
+     1: RestoreFiles
+     2: Restore Test Set
+Select Restore Job (1-2): 2
+Run Restore job
+JobName:         Restore Test Set
+Bootstrap:       /var/spool/bacula/bacula-dir.restore.1.bsr
+Where:           /tmp/bacula-restore
+Replace:         always
+FileSet:         Test Set
+Backup Client:   bacula-client
+Restore Client:  bacula-client
+Storage:         File
+When:            2014-02-08 17:20:03
+Catalog:         MyCatalog
+Priority:        10
+Plugin Options:  *None*
+OK to run? (yes/mod/no): yes
+Job queued. JobId=8
+
+8.リストアの実行 
+しばらくするとリストアジョブが実行されます。 
+
+OK to run? (yes/mod/no): yes ←[yes]を応答。
+Job queued. JobId=8
+*
+08- 2月 17:20 bacula-dir JobId 8: Start Restore Job Restore_Test_Set.2014-02-08_17.20.35_15
+08- 2月 17:20 bacula-dir JobId 8: Using Device "FileStorage"
+08- 2月 17:20 bacula-sd JobId 8: Ready to read from volume "file1" on device "FileStorage" (/mybackup).
+08- 2月 17:20 bacula-sd JobId 8: Forward spacing Volume "file1" to file:block 0:57525661.
+08- 2月 17:20 bacula-dir JobId 8: Bacula bacula-dir 5.0.0 (26Jan10): 08- 2月-2014 17:20:38
+  Build OS:               i386-redhat-linux-gnu redhat
+  JobId:                  8
+  Job:                    Restore_Test_Set.2014-02-08_17.20.35_15
+  Restore Client:         bacula-client
+  Start time:             08- 2月-2014 17:20:37
+  End time:               08- 2月-2014 17:20:38
+  Files Expected:         172
+  Files Restored:         172
+  Bytes Restored:         23,796,079
+  Rate:                   23796.1 KB/s
+  FD Errors:              0
+  FD termination status:  OK
+  SD termination status:  OK
+  Termination:            Restore OK
+
+08- 2月 17:20 bacula-dir JobId 8: Begin pruning Jobs older than 43 years 7 months 24 days 8 hours 20 mins 38 secs.
+08- 2月 17:20 bacula-dir JobId 8: No Jobs found to prune.
+08- 2月 17:20 bacula-dir JobId 8: Begin pruning Jobs.
+08- 2月 17:20 bacula-dir JobId 8: No Files found to prune.
+08- 2月 17:20 bacula-dir JobId 8: End auto prune.
+
+9.リストア先の確認 
+リストアが成功したらConsoleを終了し、実行したリストアジョブで定義したリストア先を確認します。 
+

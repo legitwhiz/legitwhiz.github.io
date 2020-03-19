@@ -1,0 +1,29 @@
+powershell -command "Start-Process -Verb runas cmd"
+
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+-command "Start-Process -Verb runas cmd"
+
+
+-command "Start-Process -Verb runas D:\SakaTmp\eventlog_backup_logrotate.ps1"
+
+-command "D:\SakaTmp\eventlog_backup_logrotate.ps1"
+
+
+-Command "Start-Process powershell.exe -ArgumentList D:\SakaTmp\eventlog_backup_logrotate.ps1 -Verb runas"
+
+-Command "Start-Process powershell.exe -ArgumentList c:\temp\test.ps1 -Verb runas"
+
+
+
+'-Command "Start-Process powershell.exe -ArgumentList C:\Work\script\eventlog_backup_logrotate.ps1 -Verb runas"
+
+
+'-command "Start-Process -Verb runas C:\Users\Administrator\script\eventlog_backup_logrotate.ps1"
+
+
+
+
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe 
+
+
+-Command "Start-Process powershell.exe -ArgumentList D:\SakaTmp\eventlog_backup_logrotate.ps1 -Verb runas"

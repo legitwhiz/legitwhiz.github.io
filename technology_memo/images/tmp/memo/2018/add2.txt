@@ -1,0 +1,732 @@
+###############################################################################
+### まだ実機でやっていない事 ##################################################
+###############################################################################
+cgiを有効にする。
+a2enmod cgi 
+
+sudo vi /etc/hosts
+
+127.0.0.1       localhost
+127.0.1.1        Server1 localhost.localdomain localhost　［追加します］
+
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへSSL証明書を作成する
+SSLを用いた信頼性の高い通信経路を穀zするために必要な証明書を作成
+(1)OpenSSLのインストール
+1.OpenSSLのインストール
+sudo aptitude show openssl
+sudo apt-get install openssl
+sudo openssl version
+
+2.F/Wアクセスを許可
+sudo ufw allow 443
+sudo ufw reload 
+
+3.設定ファイル「openssl.cnf」を編集する
+sudo cp /etc/ssl/openssl.cnf /etc/ssl/openssl.cnfBAK
+sudo vi /etc/ssl/openssl.cnf
+
+[ CA_default ]
+dir =  /etc/ssl/CA # Where everything is kept　　　<42行目>　./demoCA　→　/etc/ssl/CA　に変更します
+
+default_days = 3650  # how long to certify for 　　　<73行目>　365日→3650日（10年）にしておきます
+
+# This is OK for an SSL server.
+nsCertType = server <176行目>　#のコメントアウトを外します
+
+# Some might want this also
+nsCertType = sslCA, emailCA <248行目>  #のコメントアウトを外します
+
+[ proxy_cert_ext ]
+………………
+# This is OK for an SSL server.
+nsCertType = server #<281行目>　#のコメントアウトを外します
+
+# For normal client use this is typical
+nsCertType = client, email #<287行目>　#のコメントアウトを外します
+ 
+[ tsa_config1 ]
+# These are used by the TSA reply generation only.
+dir = /etc/ssl/CA  # TSA root directory　<330行目>　./demoCA　→　/etc/ssl/CA　に変更します
+
+(2) 秘密鍵の作成
+1.ディレクトリ作成
+sudo mkdir /etc/apache2/ssl/
+cd /etc/apache2/ssl/
+
+2.RSA秘密鍵の作成
+sudo openssl genrsa -des3 -out server-sec.key 2048
+
+Enter pass phrase for server.key:# パスフレーズ設定
+Verifying - Enter pass phrase for server.key:# 確認再入力
+server-sec.keyが出来る
+
+3.証明書の署名要求（CSR）の作成
+sudo openssl req -new -key server-sec.key -out server.csr
+
+Country Name (2 letter code) [AU]:JP ←←←# 国
+State or Province Name (full name) [Some-State]:Kanagawa  ←←←# 地域（県）
+Locality Name (eg, city) []:Yokohama ←←←# 都市
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Private  ←←←# 組織名
+Organizational Unit Name (eg, section) []:  ←←←# 組織の部門名
+Common Name (e.g. server FQDN or YOUR name) []:192.168.11.11  ←←←# サーバーのFQDNorIPAddress
+Email Address []:xxx@sakatmp ←←←# 管理者アドレス
+
+server.csr が出来る
+
+4.X.509形式の証明書発行要求の作成
+認証書は、server.crtという名前でssl.crt
+sudo openssl x509 -req -days 3650 -in server.csr -signkey server-sec.key -out server.crt
+
+Signature ok
+subject=***
+Getting Private key
+
+server.crtが出来る
+
+5.RSA秘密鍵のパスフレーズ削除。Apache用にパスフレーズを入力しなくても秘密鍵を使用できるようにする。
+sudo openssl rsa -in server-sec.key -out server.key
+
+Enter pass phrase for server.key:# パスフレーズ
+writing RSA key
+server.key が出来る
+
+6./etc/apache2/ssl/に以下の4つのファイルが作成された
+ls -l /etc/apache2/ssl/
+cd /etc/apache2/ssl/
+sudo chmod 400 server.*
+server-sec.key (server key)
+server.csr (certificate signing request)
+server.crt (certificate)
+server.key (passwordless key for Apache)
+
+(3)Apache2にSSL設定をする
+1.apache2設定ファイルのバックアップ
+sudo cp -p /etc/apache2/sites-available/default-ssl.conf /tmp/default-ssl.conf_`date +%Y%m%d`
+
+2.apache2設定ファイルの編集
+sudo vi /etc/apache2/sites-available/default-ssl.conf
+
+###### 編集内容 #######
+
+NameVirtualHost 192.168.11.11:80
+<VirtualHost 192.168.11.11:80>
+DocumentRoot /var/www/html
+</VirtualHost>
+
+
+NameVirtualHost *:443
+<IfModule mod_ssl.c>
+<VirtualHost _default_:443> 
+SSLEngine on
+SSLCertificateFile /etc/apache2/ssl/server.crt
+SSLCertificateKeyFile /etc/apache2/ssl/server.key
+
+	<Directory /usr/lib/cgi-bin>
+		SSLOptions +StdEnvVars
+	</Directory>
+
+</VirtualHost>
+</IfModule>
+
+(3) Apache2のSSL設定を有効にする
+1.Apache2のsslモジュールをを有効にする
+sudo a2enmod ssl
+
+2.Apache2の"000-default"設定を無効にする
+sudo a2disite 000-default
+
+3.Apache2の"default-ssl"設定を有効にする
+sudo a2ensite default-ssl
+
+4.シンボリックリンクが作成されていることを確認
+ls -l /etc/apache2/sites-enabled/
+lrwxrwxrwx 1 root Root   26 2009-06-14 21:33 000-default -> ../sites-available/default
+lrwxrwxrwx 1 root Root   30 2009-07-04 21:09 default-ssl -> ../sites-available/default-ssl
+
+5.Apache2の再起動
+sudo service apache2 restart 
+
+6.LISTENであることを確認
+netstat -an | grep 443
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN 
+
+7.待ちうけポートの設定が行われているか、念のために確認。
+cat /etc/apache2/ports.conf
+ 
+NameVirtualHost *:80
+Listen 80
+ 
+<IfModule mod_ssl.c>
+    Listen 443
+</IfModule>
+
+8.apache2サービスをリスタートすると、次のような警告が出る。 （放っておいても問題ないが…）
+sudo /etc/init.d/apache2 restart
+ * Restarting web server apache2
+apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
+ ... waiting apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
+   ...done.
+ 
+9.Apache2設定ファイルにサーバ名を強制指定することで、警告を回避できる。
+
+sudo vi /etc/apache2/apache2.conf
+### Section 1: Global Environment
+#
+# The directives in this section affect the overall operation of Apache,
+# such as the number of concurrent requests it can handle or where it
+# can find its configuration files.
+#
+ 
+Servername  localhost     ← /etc/hosts に存在する名前にする
+
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへPHPで動くオンラインファイルマネージャー、AjaXplorerもといPydioを導入する手順
+
+1.AjaXplorerの公式サイトから最新版をダウンロード
+http://ajaxplorer.info/
+
+と思ったら名前がPydioと変わってるしURLも変わってた・・・。
+http://pyd.io/
+
+しかもダウンロードしなくてもパッケージ化されているし・・・。
+
+2.Pydioインストール
+cp -p /etc/apt/sources.list  ${BKDIR}/sources.list_`date +%Y%m%d`
+
+sudo vi /etc/apt/sources.list
+
+deb http://dl.ajaxplorer.info/repos/apt testing main
+deb-src http://dl.ajaxplorer.info/repos/apt testing main
+
+wget -O - http://dl.ajaxplorer.info/repos/charles@ajaxplorer.info.gpg.key | sudo apt-key add -
+
+sudo apt-get update
+sudo apt-get install php-mbstring php-gd php-mcrypt php-xml
+sudo apt-get install pydio
+
+3.Pydio
+sudo cp /usr/share/doc/pydio/apache2.sample.conf /etc/apache2/sites-enabled/pydio.conf
+
+sudo vi /etc/apache2/sites-enabled/pydio.conf
+特に設定ファイルらしきものはありませんが、conf/bootstrap_conf.php の 33行目、
+
+//define("AJXP_LOCALE", "");
+
+となっているところを、
+
+define("AJXP_LOCALE", "ja_JP.UTF-8");
+
+とだけ書き換えておいた方が良さげです＾＾
+// は削除します。
+
+4.ファイルアップロードの上限を変更 
+ファイルのアップロード上限はデフォルトで2MBなので増やしておく。
+/etc/php5/apache2/php.ini の以下設定を変更し apache 再起動。
+
+memory_limit = 500M
+post_max_size = 500M
+upload_max_filesize = 500M
+また、Pydioの設定からアップロード上限を変更しておく必要がある。
+バイト数で設定されているが、0を設定するとphpで設定している上限が設定されます。
+
+output_bufferingを無効にする 
+パフォーマンス向上のために
+/etc/php5/apache2/php.ini の以下設定を変更し apache 再起動。
+* output_buffering = Off
+
+5.apache2設定
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+	Alias /pydio/ "/usr/share/pydio"
+	<Directory "/usr/share/pydio">
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+sudo /etc/init.d/apache2 restart
+
+6.pydioへアクセス
+http://[ip]/pydio/
+
+click here to continue to Pydio.
+
+日本語で選択してstart wizardをクリック
+
+Admin Login			Admin
+Admin Display Name	Admin
+Admin Password		******
+Confirm				******
+[Global options]をクリック
+Application Title		Pydio
+Welcome Message			Welcome to Pydio
+Default Language		日本語
+Enable emails			NO(you can enable mails later)
+
+[Configurations storage]をクリック
+Storage Type		No Database(Quick Start)
+
+[Install Pydio Now]をクリック
+しばらく待つとログイン画面が出る！！これで設置は終わり
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへMuninをインストールする 
+・munin とは，ディスク，ネットワーク，CPU 負荷等のログファイルを自動でグラフ化し，Web ブラウザから簡単に見れることができるようにするャtトウエア．
+
+1.Muninのパッケージをインストール
+sudo apt-get install munin munin-node munin-plugins-extra
+
+2.munin用のディレクトリを用意する
+sudo mkdir /var/www/html/munin/
+sudo chown munin:munin /var/www/html/munin/
+
+3.muninの設定ファイルのバックアップ
+sudo cp -p /etc/munin/munin.conf /etc/munin/munin.conf.backup
+
+4.muninの設定ファイルの変更
+sudo vi /etc/munin/munin.conf
+
+以下の部分を変更
+# htmldir /var/cache/munin/www
+以下のように
+htmldir /var/www/html/munin
+(98行目)
+[ANDBOX44]
+
+sudo vi /etc/munin/apache.conf
+
+以下の部分を変更
+# htmldir /var/cache/munin/www
+以下のように
+htmldir /var/www/html/munin
+
+Allow from localhost 127.0.0.0/8 ::1
+以下のように
+Allow from all
+Require all granted
+
+5.apache設定
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+
+	Alias /admin/munin/ /var/www/admin/munin/
+	<Directory /var/www/admin/munin/>
+		Options None
+		order deny,allow
+		deny from all
+		allow from 127.0.0.0/24 192.168.1. ::1
+
+	<IfModule mod_expires.c>
+		ExpiresActive On
+		ExpiresDefault M310
+	</IfModule>
+	</Directory>
+
+6.muninの設定ファイルの変更を適用する
+sudo /etc/init.d/munin-nod restart
+
+7.munin-nodeが起動しているかどうかを調べる
+ps aux |grep munin-node
+sudo /etc/init.d/munin-node status
+
+8.apache2再起動
+sudo /etc/init.d/apache2 restart
+
+9.muninにアクセスする
+http://server.ip.address/munin/
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSにApacheMapをインストール
+・ApacheMapとは、ウェブサイトの訪問者がいる場所をIPアドレスを元にGoogle Map上に侮ヲするツールである。
+利用にあたっては Google API のキーを取得する必要がある。
+
+必要なPerlライブラリのインストール
+ApacheMapはlibwww-perlとperl-YAMLに依存しているので、これらのパッケージをインストールする。
+sudo apt-get install libwww-perl libyaml-perl
+
+インストール
+メ[スコードは subversion で管理されているので、SVN を使って最新版をダウンロードする。
+
+sudo apt-get install subversion
+まだ subversion がインストールされていない場合
+mkdir /tmp/workdir
+cd /tmp/workdir
+svn co http://dev.squarecows.com/svn
+cd svn
+sudo mkdir /var/www/html/apache-geo-map
+sudo cp apachemap.html data.xml /var/www/html/apache-geo-map
+sudo cp -r img /var/www/html/apache-geo-map
+sudo cp default.conf /etc/apache-ge-map.conf
+sudo cp apache-geo-map.pl /usr/local/sbin/
+sudo chown -R www-data:www-data /var/www/apache-geo-map
+sudo chwon www-data:www-data /usr/local/sbin/apache-geo-map.pl
+sudo chmod ug+x /usr/local/sbin/apache-geo-map.pl
+
+設定
+/etc/apache-geo-map.confを編集する。
+sudo vi /etc/apache-geo-map.conf
+
+data_dir: /var/www/html/apache-geo-map/
+
+Google MapsのAPIキーを取得して、/var/www/apache-geo-map/apachemap.htmlに埋め込む
+
+24行目の
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<YOUR_API_KEY>" type="text/javascript"></script>
+
+テスト
+ユーザ www-data で実行して、/var/www/html/apache-geo-map/data.xml が更新されるか調べる。（結克條ヤがかかるので注意）
+
+su - www-data -c "/usr/local/sbin/apache-geo-map.pl -c /etc/apache-geo-map.conf"
+http://servername/apache-geo-map/apachemap.html にアクセスして、Google Maps にアクセス元が侮ヲされればOK。
+
+
+cron に登録
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSでtty.jsを使う
+・Ubuntu環境に、Webブラウザから使える端末エミュレータのtty.jsを入れる方法です。
+
+sudo apt-get install nodejs npm
+
+cd ~
+sudo npm install tty.js
+
+カレントにnode_modulesというフォルダができるので、以下の様な内容のconf.jsonを作成して、
+###### 編集内容 #######
+{
+  "shell": "bash",
+  "users": {
+    "user": "password"
+  },
+  "port": 8080
+}
+#######################
+
+
+以下のようにしてtty.jsを起動します。
+
+> ./node_modules/tty.js/bin/tty.js --config ~/conf.json --daemonize
+
+
+後はブラウザから8080ポートに接続すると、ターミナルを開けます。
+
+設定ファイルなしでも起動しますが、認証なしでターミナルが開けてしまうので、最低でもパスワードは設定したほうが良いかと思います。
+
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSでApache アクセスログ解析 "AWstats"を使う
+・アクセスログ解析ツール AWstats をインストールします。 
+
+１．"AWstats"をインストール
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install awstats
+
+２．設定ファイルの編集
+sudo cp -p /etc/awstats/awstats.conf /tmp/awstats.conf_`date +%Y%m%d`
+sudo vi /etc/awstats/awstats.conf 
+
+###### 編集内容 #######
+#ログファイル名が異なる場合は書き換えます 
+LogFile="/var/log/apache2/access.log"
+# 122行目：変更
+# Apache のログフォーマットが"combined"の場合は「1」
+# "common"の場合は「4」( ただしこの場合ブラウザ情報等、一部の解析はできなくなる)
+LogFormat=1
+# 153行目：ホスト名指定
+SiteDomain="www.server.world" 
+# 168行目：除外するドメイン名/IPアドレス追記
+HostAliases="localhost 127.0.0.1 REGEX[server.world$] REGEX[^10.0.0.]" 
+# 222行目：変更
+DirIcons="./icon" 
+# 905行目：変更
+Lang="jp"
+#######################
+
+3."AWstats"用ディレクトリ及びシンボリックリンクの作成
+sudo mkdir /var/www/html/awstats
+sudo ln -s /usr/share/awstats/icon /var/www/html/awstats/icon
+
+4.apache2設定ファイルの編集
+sudo cp -p /etc/apache2/sites-available/000-default.conf /tmp/000-default.conf_`date +%Y%m%d`
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+###### 編集内容 #######
+<Directory "/usr/lib/cgi-bin">
+AllowOverride None
+Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+Order allow,deny
+Allow from 10.0.0.0/24# アクセス許可IP
+
+</Directory>
+
+# テキトーに下の方に追記
+<Location /awstats>
+Order deny,allow
+Deny from all
+Allow from 10.0.0.0/24# アクセス許可IP
+</Location>
+</VirtualHost> 
+#######################
+
+5.Apache本体を再起動
+/etc/init.d/apache2 restart 
+
+6.レポート出力
+/usr/lib/cgi-bin/awstats.pl -config=apache -update 
+
+7.出力したレポートをHTMLにする
+/usr/lib/cgi-bin/awstats.pl -config=apache -LogFile=access_log -output -staticlink > /var/www/awstats/index.html 
+
+cron設定
+
+#-----------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSでcron設定をGUIで行う。
+
+sudo apt-get install gnome-schedule
+
+sudo ln -s /usr/local/sbin/daily /etc/cron.daily/0my_daily
+
+ファイル名を 0からにしたのは /etc/cron.daily/logrotate (つまりログのローテート処理)より先に実行させるためです。
+
+これをすると、/etc/crontabで設定した時間で自動で実行されます。
+今見ると 毎日 6:25 に実行するようになっています。
+
+#-----------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSでHinemos
+
+Ubuntu対応版Hinemosは、OSS統合運用管理ャtトウェア「Hinemos」のコンポーネントのうち、Hinemosマネージャ及びHinemosエージェントをUbuntu上で動作するよう改変したものです。
+Ubuntu対応版Hinemosでは、オリジナルのHinemosで管理可狽ネRHEL系LinuxやWindows Server等に加えて、Ubuntuの各種監視、性拍﨣繒W、ジョブ実行等を行うことが可狽ナす。
+
+1.下記のURLよりダウンロード
+http://sourceforge.jp/projects/hinemosonubuntu/
+
+2.SSH、FTP等で"/tmp"へアップロード
+hinemos_manager-4.1.0_precise_64.tar.gz
+
+3.解凍
+cd /tmp
+tar zxvf ./hinemos_manager-4.1.0_precise_64.tar.gz
+
+4.前提パッケージのインストール(openjdk-7-jre-headless unzip expect krb5-clients snmpd openssh-server)
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install openjdk-7-jre-headless unzip expect krb5-clients snmpd
+
+5.Hinemosインストール
+インストール用スクリプト（manager_installer_JP.sh）を実行
+cd Hinemos_Manager-4.1.0_precise_64
+./manager_installer_JP.sh
+________________________________________________________________________________
+-------------------------------------------------------
+Welcome to the installation for Hinemos Manager
+Version 4.1.0
+Copyright (C) 2013 NTT DATA Corporation
+-------------------------------------------------------
+Hinemosマネージャのインストールを開始します。よろしいですか？(Y/N デフォルト:Y) : Y
+________________________________________________________________________________
+
+以下のメッセージが侮ヲされます。 NGとなった場合は、満たされていない前提条件を解消した後、manager_installer_JP.shを再実行します。
+実行ユーザの確認中... [OK]
+SELinux の確認中... [OK]
+OSバージョンの確認中... [OK]
+rpm パッケージの確認中...
+java-1.7.0-openjdk... [OK]
+rsyslog... [OK]
+rsyslog.confの確認中... [OK]
+
+ユーザhinemosのパスワードを設定します。
+パスワードの入力を求められます。ユーザhinemosのパスワードを入力します。
+________________________________________________________________________________
+ユーザ hinemos の確認中...
+グループ hinemos を作成しました。
+新しいパスワード: [パスワードを入力(入力内容は画面に侮ヲされません)]
+新しいパスワードを再入力してください: [パスワードを入力(入力内容は画面に侮ヲされません)]
+________________________________________________________________________________
+
+以下のメッセージが侮ヲされます。
+________________________________________________________________________________
+ユーザー hinemos のパスワードを変更。
+passwd: 全ての認証トークンが正しく更新できました。
+ユーザ hinemos （グループ hinemos）を作成しました。
+インストールディレクトリ /opt/hinemos の所有者を hinemos:hinemos に変更しました。
+________________________________________________________________________________
+
+JAVA_HOMEを指定します。
+JAVA_HOMEのディレクトリの入力が求められます。OpenJDKがインストールされているディレクトリを入力します。
+________________________________________________________________________________
+JAVA_HOME を入力してください。(デフォルト:/usr/lib/jvm/jre-1.7.0-openjdk.x86_64) :
+________________________________________________________________________________
+
+入力されたJAVA_HOMEのディレクトリの確認が出力されますので、問題がなければ“Y”と入力します。
+________________________________________________________________________________
+/usr/lib/jvm/jre-1.7.0-openjdk.x86_64 (/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/java)
+でよろしいでしょうか？(Y/N デフォルト:Y) : Y
+________________________________________________________________________________
+
+SNMP or WBEMどちらで監視するか選択
+WBEM使用しない場合は“N”と入力します。 デフォルトではプロセス監視やリメ[ス監視ではSNMPプロトコルを利用します。
+________________________________________________________________________________
+プロセス監視やリメ[ス監視にWBEMを利用しますか？(Y/N デフォルト:N) : Y
+________________________________________________________________________________
+
+一括制御機狽ナ利用するFTPサーバのIPアドレスを設定します。
+FTPサーバのIPアドレスの入力が求められますので、FTPサーバのIPアドレスを入力します。 (IPv6の場合は、IPアドレスの前
+後に[]を入れないでください。) 一括制御機狽pしない場合は、未入力でリターンキーを押します。（デフォルト設定と
+なります）
+________________________________________________________________________________
+一括制御で利用するFTPサーバのIPアドレスを入力してください。（デフォルト:127.0.0.1） : [IPAddress]
+________________________________________________________________________________
+
+入力したIPアドレスの確認が出力されますので、問題がなければ“Y”と入力します。
+________________________________________________________________________________
+192.168.0.1 でよろしいでしょうか？(Y/N デフォルト:Y) : Y
+________________________________________________________________________________
+
+必要なファイルのコピーと設定が実行されます。
+以下のメッセージが侮ヲされます。
+________________________________________________________________________________
+マウントされているファイルシステム一覧
+/dev/sda2 - /
+/dev/sda1 - /boot
+データベースディレクトリ(/opt/hinemos/var/data)はパーティション /内に格納されます。
+ログディレクトリ(/opt/hinemos/var/log)はパーティション /内に格納されます。
+必要なファイルのコピー実行中... [OK]
+設定ファイル（hinemos.cfg, postgresql.conf, persistence.xml, selfcheck-service.properties）の生成中... [OK]
+________________________________________________________________________________
+続けて、rsyslogの設定、起動を行います。
+________________________________________________________________________________
+rsyslog.confの確認中...
+rsyslog.confに設定を追記します。システムロガーを停止中: [ OK ]
+システムロガーを起動中: [ OK ]
+ファイルパーミッションの変更中... [OK]
+________________________________________________________________________________
+
+下記メッセージが侮ヲされれば、インストールは完了です。
+________________________________________________________________________________
+内部データベースの初期化中...
+checking database directory(/opt/hinemos/var/data)... done
+checking current user(hinemos)... done
+initializing database directory(/opt/hinemos/var/data)... done
+configuring database... done
+starting up database... done
+configuring database users... done
+configuring database schemas and loading initial data... done
+done
+shutting down database... done
+configuring authentication... done
+Hinemosマネージャのインストールが完了しました。
+________________________________________________________________________________
+
+6.マネージャ側OSのrsyslogdの設定
+Ubuntu 12.04 LTSのrsyslogdパッケージのデフォルトの設定では、rsyslogdの実行ユーザが「syslog」になっています。
+syslogユーザは特権ポート(TCPの1023番以下のポート)をbindできないため、この設定のままでは、514/TCPポートでsyslogメッセージを受信することができません。
+対処方法として、Ubuntu対応版Hinemos マネージャをインストールすることによって追加される設定ファイル(/etc/rsyslog_hinemos.conf)の下記の箇所を編集し、待ち受けポートを1024番以上に変更してください。
+今回は、使用していない"2514"をrsyslogへ割り当てる。
+
+sudo cp -p /etc/rsyslog_hinemos.conf /tmp/rsyslog_hinemos.conf_`date +%Y%m%d`
+sudo vi /etc/rsyslog_hinemos.conf
+
+###### 編集内容 #######
+〜省略〜
+$InputTCPServerRun 2514
+#######################
+
+7.併せて、監視対象ノード側のsyslog送信先ポートも、同じ番号に変更してください。下記はrsyslogの設定例です。
+sudo cp -p /etc/rsyslog.conf /tmp/rsyslog.conf_`date +%Y%m%d`
+sudo vi /etc/rsyslog.conf
+
+###### 編集内容 #######
+〜省略〜
+# Hinemos Agent 4.1.0 (for syslog monitoring)
+#
+*.info;mail.none;authpriv.none;cron.none @@{マネージャIP}:2514
+#######################
+
+8.rsyslogを再起動
+service rsyslog restart
+
+
+9.Hinemosマネージャの起動
+/opt/hinemos/bin/hinemos_start.sh
+
+
+起動の確認
+/opt/hinemos/bin/hinemos_status.sh
+ps -ef | grep /opt/hinemos/
+
+
+Hinemosマネージャの停止
+/opt/hinemos/bin/hinemos_stop.sh
+
+Hinemosマネージャのサービス化
+sudo cp /opt/hinemos/sbin/service/hinemos_manager /etc/init.d/
+
+OS起動時にHinemosマネージャが自動的に起動するよう設定
+sudo update-rc.d hinemos_manager defaults
+
+エージェント側OSのsnmpdの設定
+
+sudo cp -p /etc/snmp/snmpd.conf /tmp/snmpd.conf_`date +%Y%m%d`
+sudo vi /etc/snmp/snmpd.conf
+
+###### 編集内容 #######
+〜省略〜
+# Listen for connections from the local system only
+agentAddress udp:127.0.0.1:161
+〜省略〜
+#######################
+
+サービスの起動
+service hinemos_manager start
+
+起動状態の確認
+service hinemos_manager status
+
+サービスの停止
+service hinemos_manager stop
+
+
+
+#------------------------------------------------------------------------------
+【自宅サーバ】Ubuntu14.04LTSへowncloud(アプリの利用)
+ownCloudは「アプリ」と呼ばれるアドオンを追加することで，もっと便利な機狽g張できます。
+OpenBuildServiceからパッケージをインストールした場合は，一部のアプリしかインストールされないので，追加で次のパッケージをインストールしてください。
+
+sudo apt-get install ownclound-unsupported
+
+
+設定の「アプリ」を選択すると，たくさんのアプリが侮ヲされるはずです。太字が有効化済みのアプリです。個々のアプリを選択して，「Enable」「Disable」をクリックすればそれぞれ有効化，無効化できます。このうち特に便利なものをいくつか見ていきましょう。
+
+・PDF・ODFビューワー
+PDF ViewerとODF Viewerはそれぞれ，PDFやLibreOfficeのファイルをブラウザ内部で侮ヲするアプリです。有効化しておくと，わざわざファイルをダウンロードしなくても中身を確認できます。
+
+・カレンダー
+CalendarはownCloud内部にカレンダーを実装します。ThunderbirdのようなCalDav形式に対応したスケジューラーであれば，個人設定にあるCalDavのアドレスを渡すことでスケジュールの同期が可狽ナす。
+
+ちなみに有効にしたら一度，個人設定でタイムゾーンも設定しておきましょう。
+
+
+・メディアサーバー
+Mediaアプリを有効にすると，Ampacheというウェブベースのメディア配信ャtトウェアを使ってownCloud上のメディアをストリーミングできるようになります。
+
+個人設定に配信サーバーのアドレスが侮ヲされますので，Ampache対応クライアントにこのアドレスを設定しましょう。
+
+Ampache address: http://192.168.56.101/owncloud/remote.php/ampache/
+
+Rhythmboxであれば次のコマンドでAmpacheプラグインをインストールしてください。
+sudo apt-get install rhythmbox-ampache
+
+Rhythmboxを再起動したら，編集の設定から「Ampache Library」を有効にします。さらに設定ボタンから配信サーバーのアドレスとownCloudのユーザー名とアカウントを入力したら，サイドペインの共有にAmpacheが侮ヲされるはずです。あとはそこから自由にファイルを再生できます。
+
+Android用のAmpache対応クライアントとしては，公式のAmdroidや日本人が開発しているJUST PLAYERが有名です。
+
+
+
+

@@ -1,0 +1,16 @@
+
+LinuxでCPU使用率を上げる
+yes >> /dev/null &
+
+jobs
+kill %1 %2
+
+Memory
+/dev/null < $(yes) &
+
+jobs
+kill %1 %2
+
+
+Disk(1GB
+dd if=/dev/zero of=/dummyfile bs=1M count=1000

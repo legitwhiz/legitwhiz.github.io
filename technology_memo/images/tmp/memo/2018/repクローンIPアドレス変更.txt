@@ -1,0 +1,30 @@
+
+
+hostname
+
+hostnamectl set-hostname oldrepdev
+
+hostnamectl status
+
+
+nmcli device
+
+nmcli device show ens32
+nmcli device show ens33
+
+nmcli connection down ens32
+nmcli connection down ens33
+
+nmcli connection modify ens32 ipv4.addresses "192.168.20.76" ipv4.gateway 192.168.20.1
+nmcli connection modify ens33 ipv4.addresses "192.168.1.76"
+
+192.168.20.76
+192.168.1.76
+
+oldrepdev
+
+nmcli connection up ens32
+nmcli connection up ens33
+
+systemctl restart NetworkManager
+

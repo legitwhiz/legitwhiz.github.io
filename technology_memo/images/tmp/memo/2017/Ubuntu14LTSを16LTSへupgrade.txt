@@ -1,0 +1,68 @@
+Ubuntu14.04LTSを16.04LTSへUpgrade
+
+「Ubuntu 14.04 LTS」から「Ubuntu 16.04 LTS」Upgradeしてみました。
+まずは、現行の14.04 LTSを最新にアップグレードして、再起動をしておきます。
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo reboot
+
+再起動後に
+$ sudo apt-get install update-manager-core
+$ sudo do-release-upgrade
+
+「アップグレードをSSH越しに行うことは推奨されません。」と出力されたため
+コンソールから実行に変更。
+デスクトップにログインしたらポップアップで「アップグレードしますか？」と出力
+されたので「今すぐアプグレード」を選択。
+
+
+サードパーティが提供するリポジトリを使わないように設定しました。
+source.listにあるサードパーティが提供するリポジトリを使わない設定にしました。
+アップグレード完了後、ソフトウェアソースツールもしくはパッケージマネージャで
+再び利用可能な設定にすることが出来ます。
+
+
+a2dismod mpm_event
+a2enmod mpm_prefork
+service apache2 restart
+
+apachectl -V | grep 'Server MPM'
+Server MPM:     prefork
+
+sudo apt-get -y install php php-cgi libapache2-mod-php php-common php-pear php-mbstring
+
+sudo a2enconf php7.0-cgi
+sudo vi /etc/php/7.0/apache2/php.ini
+
+sudo /etc/init.d/apache2 start
+
+cd /etc/apache2
+sudo git clone https://github.com/letsencrypt/letsencrypt
+
+sudo cd letsencrypt/
+sudo ./letsencrypt-auto --apache -d regulus0134.dip.jp
+
+sudo /etc/init.d/apache2 stop
+
+sudo vi ../sites-available/default-ssl.conf
+       ServerName regulus0134.dip.jp
+       SSLCertificateFile /etc/letsencrypt/live/regulus0134.dip.jp/fullchain.pem
+       SSLCertificateKeyFile /etc/letsencrypt/live/regulus0134.dip.jp/privkey.pem
+
+sudo /etc/init.d/apache2 start
+
+HTTPを転送して常時HTTPS化
+sudo vi /etc/apache2/sites-available/000-default.conf
+sudo a2ensite 000-default.conf
+
+sudo /etc/init.d/apache2 restart
+
+
+証明書の自動更新
+Let’s Encryptが発行する証明書の有効期間は90日なので、最低三ヶ月に一度証明書を更新する必要が有ります。もちろんここも人が介在すること無く証明書の更新を自動化できます。
+
+更新処理の自動化にはcronサービスを使用するのが簡単です。例えば次のようなエントリーをrootのcrontabに登録すると、奇数月7の15日3時21分に更新処理が行われます。
+
+0 1 5 */2 * /etc/apache2/letsencrypt-auto certonly --text --renew-by-default --webroot -w /var/www/html -d regulus0134.dip.jp > /var/log/letsencrypt/renew-cert.log 2>1 && service apache2 restart
+

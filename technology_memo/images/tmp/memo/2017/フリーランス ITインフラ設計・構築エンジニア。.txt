@@ -1,0 +1,112 @@
+
+
+フリーランス ITインフラ設計・構築エンジニア。
+
+1974年生まれ、横浜在住。
+茅ヶ崎高校卒、東京工業専門学校機械科卒。
+新卒で空調施工会社に入社。
+オフィスビル等の空調機施工及び下請け業者の管理業務に携わる。
+2年の勤務ののち退職。
+
+IT企業にカスタマーエンジニアとして入社。ハードウェアの導入・保守に従事し、Solaris、HP-UX、汎用機、Cisco、Storage(Hitachi)、オフコンを経験。中でもSolaris、HP-UXなどUNIX系の導入に多く携わる。
+6年の勤務ののち退職。
+
+IT企業にITインフラのシステムエンジニアとして入社。システムの提案、要件定義、機器選定、設計、構築、試験、移行までと上流から下流まで経験。
+AIX、HP-UX、Solaris、RHEL等のUNIX系、VMWare、各種LPAR等の仮想環境、各種ストレージの設計、構築に多く携わる。
+12年の勤務ののち退職。
+
+2017年9月、フリーランスとして独立。
+ITインフラの設計、構築エンジニアとして更なるスキルアップを目指しております。
+
+sakamoto@legit_whiz.com
+
+【できること】
+
+●ITインフラ
+提案、要件定義、設計、コーディング（shell, bat）、構築、テスト、移行
+
+●OS
+AIX5～7.1、HP-UX11.0～11 v3、Solaris6～11.2、RHEL5.3～7.2、WindowsNT3.51～2012
+
+●ミドルウェア
+
+
+・ApplicationServer
+Cosminexus8.5
+
+・FileTransfer
+HULFT 7.3、JP1/全銀TCP 3.1
+
+・OLTP Server
+OpenTP1 7
+
+・SMTP
+qmail
+
+・POP
+
+・Backup
+NetBackup7.7
+
+・anti virus
+Sophos 9、SEP 12.1
+
+・ジョブ運用
+JP1/Base、JP1/AJS3、
+
+・監視
+JP1/SSO、JP1/NNMi、Zabbix
+
+・高可用性クラスタリング
+HA Monitor(RHEL5.4、AIX7.1)、
+HP SeviceGuard 11.19(HP-UX11v3)、Veritas Cluster Server 6.2(Solaris11.2)
+PowerHA(AIX)
+
+・
+
+●Storage
+Hitachi AMS、HUS、IBM DS6800、HP 、EMC DataDomain2500
+
+●仮想環境
+VMWare ESXi6.0、IBM pSerise LPAR
+Hitachi HVM、HP nPar、Hyper-V
+
+【関心事】
+
+マンガ、アニメ、ファンタジー、紅茶、カフェ、宗教、イスラーム、メンタルヘルス、スキー、音楽、ゲーム、
+語学（英語, 中国語, イタリア語, アラビヤ語, スペイン語, ドイツ語, ロシア語, ウイグル語, 造語）
+
+【こんな人です】
+
+真面目です。
+
+ものづくりは丁寧に、心を込めて。
+
+仕事では、人と敬意を大切に。
+
+よく考え事をしています。
+
+マイペースなように見えて、内心あわあわしています。
+
+しっかりしているように見えて、内心あわあわしています。
+
+「まっすぐ生きる」がモットーです。
+
+【事業概要】
+
+●屋号
+[legit whiz]
+●事業形態
+ [個人事業主、フリーランス]
+●代表 
+[坂本 大輔]
+●設立
+ [2017年9月1日]
+●事業内容
+ [ITインフラ設計]
+●メール
+ []
+●URL
+ [http://]
+●blog
+ []

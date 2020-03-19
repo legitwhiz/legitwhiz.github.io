@@ -1,0 +1,71 @@
+# パケットキャプチャ あんちょこ
+トラブルシューティングでは、よく使うが
+パケットキャプチャ。
+よく使うとはいえ、トラブらないと使わないから直ぐに忘れちゃうのでメモってみました。
+
+1. HP-UX、RHEL(tcpdump)
+
+- 宛先ホストへのデータをキャプチャー
+
+```
+tcpdump -s 0 -w /tmp/tcpdump_probe.pcap dst host probe_host
+```
+- ソースホストからのデータをキャプチャー
+```
+tcpdump -s 0 -w /tmp/tcpdump_ems.pcap src host ems_host
+```
+- 宛先ホストのポートへのデータをキャプチャー
+```
+tcpdump -s 0 -w /tmp/tcpdump_probe_port.pcap dst port probe_port
+```
+- ソースホストのポートへのデータをキャプチャー
+```
+tcpdump -s 0 -w /tmp/tcpdump_ems_port.pcap src port ems_port
+```
+- 出力ファイルを読めるように出力
+```
+tcpdump -r cap_filename > text_filename
+```
+2. AIX(iptrace)
+
+- 宛先ホストのポートへのデータをキャプチャー
+```
+startsrc -s iptrace -a "-i en0 -p PROBE_PORT /tmp/trace-port.pcap"
+stopsrc -s iptrace
+```
+- 宛先ホストへのデータをキャプチャー
+```
+startsrc -s iptrace -a "-i en0 -s FROM_HOST -d TO_HOST /tmp/probe-trace.pcap"
+stopsrc -s iptrace
+```
+- ソースホストからのデータをキャプチャー
+```
+startsrc -s iptrace -a "-i en0 -s TO_HOST -d FROM_HOST /tmp/ems-trace.pcap"
+stopsrc -s iptrace
+```
+- 出力ファイルを読めるように出力
+```
+ipreport -ns cap_filename > text_filename
+```
+3. Solaris(SNOOP)
+
+- 宛先ホストへのデータをキャプチャー
+```
+snoop -s 0 -o /tmp/tcpdump_probe.pcap dst host probe_host
+```
+- ソースホストからのデータをキャプチャー
+```
+snoop -s 0 -o /tmp/tcpdump_ems.pcap src host ems_host
+```
+- 宛先ホストのポートへのデータをキャプチャー
+```
+snoop -s 0 -o /tmp/tcpdump_probe_port.pcap dst port probe_port
+```
+- ソースホストのポートへのデータをキャプチャー
+```
+snoop -s 0 -o /tmp/tcpdump_ems_port.pcap src port ems_port
+```
+- 出力ファイルを読めるように出力
+```
+snoop -i cap_filename > text_filename
+```

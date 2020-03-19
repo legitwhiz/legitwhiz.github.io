@@ -1,0 +1,57 @@
+
+Ubuntu16.04LTSにUSBカメラ(Logicool C270)を付けて静止画を撮ってみる。
+
+まずはVMware ESXi 5.5にUSBパススルーを使用しUSBカメラを
+
+
+
+まず、仮想マシンを選択し、「サマリー」→「設定の編集」を選ぶ。
+「ハードウェア」の「追加」を選ぶ。
+「USBコントローラ」の追加を選んで「次へ」。
+さらに「次へ」を選ぶ。
+そして「終了」を選ぶ。これで「USB」コントローラの追加は終わり。
+
+次に「USBデバイス」の追加に入る。
+
+もう一度、「ハードウェア」の「追加」を選ぶ。
+「USBデバイス」の追加を選んで「次へ」。
+この画面で、追加できる「USBデバイス」を選択する。この例では、LogiCoolのWebカメラを選択して「次へ」。
+以上で、「USBデバイス」の追加は「終了」を選んで終わり。
+
+###Logicool C310は、UVC(USB Video Class)タイプのWebカメラであるため、デバイス・ドライバーを自作しなくても、Ubuntu上で以下のコマンドを実行するだけで、使用できるようになりますよ。
+
+### sudo apt-get install uvccapture guvcview
+
+
+
+
+USBカメラの認識確認
+sudo lsusb
+
+コマンドラインで使えるfswebcamのインストールと撮影
+インストール
+
+
+sudo apt-get install fswebcam
+
+解像度を指定して撮影する
+-rオプションを使うことで解像度を指定できます。
+
+$ fswebcam -r 1280x720 image2.jpg --no-banner
+
+fswebcam コマンドで撮影すると、実行終了後15秒程度はカメラがビジー状態になり、コマンドを実行しても撮影できないようです。
+
+fswebcam -D 5 -r 1280x720 -S 100 --no-title --no-banner --no-shadow /share/owncloud/data/sakamoto2/files/Camera/$DATE.jpg
+
+
+
+
+ffmpegコマンドでjpegファイルに保存する
+ffmpeg -ss 5 -f video4linux2 -s 640x480 -i /dev/video0 -vframes 1 ./test.jpg
+
+fswebcamコマンドでjpegファイルに保存する
+fswebcam -D 3 -S 100 -v -r 640x480 test.jpg
+
+USB カメラから静止画を取得したい場合の一例 (0 秒時点の静止画を 1 フレームだけ)
+ffmpeg -ss 0 -vframes 1 -f video4linux2 -s 1280x720 -i /dev/video0 -s 960x540 -f image2 out.jpg
+

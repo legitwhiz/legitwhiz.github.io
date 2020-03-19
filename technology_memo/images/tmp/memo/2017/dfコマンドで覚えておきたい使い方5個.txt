@@ -1,0 +1,71 @@
+dfコマンドで覚えておきたい使い方5個
+
+LinuxやUNIXにおいて、ディスクの空き容量を確認するのにまず利用されるdfコマンド。
+ 今回は、このdfコマンドで覚えていると便利な使い方を紹介する。
+
+1.基本的な使い方
+基本的な使い方だが、以下のように引数無しで実行することでマウントしているファイルシステムの全体の容量や使用している容量、空き容量について確認することが出来る。
+
+[root@dctest01 ~]# df
+ファイルシス            1K-ブロック    使用   使用可 使用% マウント位置
+/dev/mapper/centos-root    28813572 7968592 20844980   28% /
+devtmpfs                     934144       0   934144    0% /dev
+tmpfs                        942788       0   942788    0% /dev/shm
+tmpfs                        942788   91240   851548   10% /run
+tmpfs                        942788       0   942788    0% /sys/fs/cgroup
+/dev/sda1                    508588  171332   337256   34% /boot
+
+2.容量を人間が見やすいように侮ヲする
+「-h」オプションを付与することにより、容量侮ヲを人間が見やすいようにしてくれる。
+
+df -h
+
+[root@dctest01 ~]# df -h
+ファイルシス            サイズ  使用  残り 使用% マウント位置
+/dev/mapper/centos-root    28G  7.6G   20G   28% /
+devtmpfs                  913M     0  913M    0% /dev
+tmpfs                     921M     0  921M    0% /dev/shm
+tmpfs                     921M   90M  832M   10% /run
+tmpfs                     921M     0  921M    0% /sys/fs/cgroup
+/dev/sda1                 497M  168M  330M   34% /boot
+
+なお、Kバイト単位であれば「-k」、Mバイト単位であれば「-m」を指定して侮ヲさせることも可狽セ。
+
+3.システムタイプを侮ヲさせる
+「-T」オプションを付与すると、システムタイプを侮ヲさせることが出来る。
+
+df -T
+
+[root@dctest01 ~]# df -Th
+ファイルシス            タイプ   サイズ  使用  残り 使用% マウント位置
+/dev/mapper/centos-root xfs         28G  7.7G   20G   28% /
+devtmpfs                devtmpfs   913M     0  913M    0% /dev
+tmpfs                   tmpfs      921M     0  921M    0% /dev/shm
+tmpfs                   tmpfs      921M   90M  832M   10% /run
+tmpfs                   tmpfs      921M     0  921M    0% /sys/fs/cgroup
+/dev/sda1               xfs        497M  168M  330M   34% /boot
+
+4.侮ヲさせるマウントポイント・デバイスを指定する
+普通に引数としてマウントポイントやデバイスを指定する事で、関連する情報が出力される。
+
+df マウントポイント(or デバイスファイル)
+
+[root@dctest01 ~]# # マウントポイントを指定
+[root@dctest01 ~]# df -h /var
+ファイルシス            サイズ  使用  残り 使用% マウント位置
+/dev/mapper/centos-root    28G  7.7G   20G   28% /
+[root@dctest01 ~]#
+[root@dctest01 ~]# # デバイスファイルを指定
+[root@dctest01 ~]# df -h /dev/sda1
+ファイルシス   サイズ  使用  残り 使用% マウント位置
+/dev/sda1        497M  168M  330M   34% /boot
+
+5.侮ヲさせるシステムタイプを制限する
+「-t」オプションを指定することで、コマンド実行により侮ヲされるシステムタイプを制限することが可狽ニなっている。
+
+df -t システムタイプ
+
+[root@dctest01 ~]# df -Th -t xfs
+ファイルシス            タイプ サイズ  使用  残り 使用% マウント位置
+/dev/mapper/centos-root xfs       28G  7.6G   20G   28% /
+/dev/sda1               xfs      497M  168M  330M   34% /boot

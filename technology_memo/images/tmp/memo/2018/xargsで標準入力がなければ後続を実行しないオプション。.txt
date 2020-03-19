@@ -1,0 +1,41 @@
+xargsで標準入力がなければ後続を実行しないオプション。
+
+対象ファイルを探して、ファイル(コピー、移動、削除)運用するシェルはよくありますよね。
+
+今まで私は、(細かい処理は省いてます)
+
+```
+find <検索directory> -type f -mtime +14 > tmp.list
+
+while read LINE
+do
+if [ -n "${LINE}" ]; then
+    rm ${LINE} 
+    if [ $? -ne 0 ]; then
+         echo "rm ${LINE} Failed."
+    fi
+fi
+done < tmp.list
+```
+わざわざ、tmp.listにファイル一覧を出力してから
+次の処理にしていたのは、どのファイルで失敗しかた分からなくなってしまうからだ。
+
+どのファイルで失敗しかた分からなくてもいいのなら
+find <検索directory> -type f -mtime +14 | xargs /bin/rm
+
+でいいのだが、findで何も見つからなかったら
+
+rm: missing operand
+Try `rm --help' for more information.
+
+と出て格好悪い…
+
+そこでxargsには、標準入力が空だったら何もしない
+"--no-run-if-empty"オプションがあるではないかw
+
+find <検索directory> -type f -mtime +14 | xargs --no-run-if-empty /bin/rm
+
+とすればfindで何も見つからなくても
+格好悪いメッセージを出力することなく
+スルーしてくれます。
+

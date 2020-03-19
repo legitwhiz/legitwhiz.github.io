@@ -1,0 +1,128 @@
+VMware Horizon view概要
+
+
+1.VMware Horizon View概要
+
+VMware Horizon (with View) は業界標準サーバー、ストレージ、ネットワークの仮想化
+を実現するvSphere、vCenter Serverに加え、デスクトップ環境の展開、管理を行うView
+ Manager(Connection Server)、デスクトップのシン・プロビジョニングを実現するView
+ Composer、アプリケーションの仮想化を行うThinkAppなどから構成され、迅速なプロビ
+ジョニング、デスクトップの管理の効率化、ストレージ・コストの削減を実現します。
+VMware Horizon (with View)環境において、クライアントはVMware ESXiホスト上で動作
+する仮想デスクトップだけでなく、ネットワーク上にある物理システムにもアクセスす
+ることができます。
+
+ここでは各コンポーネントがサポートしているVersionやWindows OSについては触れてお
+りません。またどのコンポーネントをどのWindows OSにインストールするかによって必
+要なライセンス数を算出します。
+
+                                                                                     ┌──────┐
+                                                                           ┌───→│ DB         │
+                                     （ ThinAPP他 )                        │        │ Server     │
+ ┌──────┐                                                          │        └──────┘
+ │ 認証局     │──┐              ┌───┬────┐                  │        ┌──────┐
+ │ (CA)       │    │              │View  │ View   │                  ├───→│ View       │
+ └──────┘    │              │Agent │ Agent  │                  │        │ Composer   │
+                     │              ├───┴────┤                  │        └──────┘ 
+ ┌──────┐    │              │    vSphere     │                  │        ┌──────┐
+ │ KMS        │──┴───────│    for VDI     │─────────┴───→│ vCenter    │
+ │ Server     │                    └────────┘                            │ Server     │
+ └──────┘                           │ ESXi                                  └──────┘
+                                            │                  
+                                     ┌──────┐                         
+                                     │ Connection │                                ┌──────┐
+     ┌───────────────│ Server     │───────────┬───→│ Active     │
+     │                              └──────┘                      │        │ Directory  │
+┌─────┐                              │                             │        └──────┘
+│   FW     │                              │                             │ 
+└─────┘                              │                             │        ┌──────┐
+     │                 ┌─────────┼───────┐             │        │ DNS/       │
+     │                 │                  │              │             └────│ DHCP       │
+┌──────┐        │                  │              │                       └──────┘
+│ Security   │        │                  │              │             
+│ Server     │        │                  │              │
+│ /VPN       │        ↓                  ↓              ↓ 
+│ Server     │    ┌────┐      ┌────┐      ┌────┐
+└──────┘    │View    │      │View    │      │View    │
+     │             │Client  │      │Client  │      │Client  │
+┌─────┐      └────┘      └────┘      └────┘
+│   FW     │
+└─────┘
+    ↓       
+┌────┐ 
+│View    │ 
+│Client  │ 
+└────┘ 
+                        図1.1 VMware Horizon概要図
+
+1.1 VMware Horizon (with View) 環境のコンポーネントについて
+
+■vSphere基盤
+
+●ESXi ホスト
+Horizon View基盤の仮想マシンと仮想デスクトップの台数に応じて、必要台数を算出します。
+
+●vCenter Server
+大規模環境においては負荷を考慮し、Horizon View基盤の仮想マシンと仮想デスクトップの管理のために、複数台準備する場合もあります。
+
+■Horizon View基盤
+
+●Active Directory
+ユーザーの認証や、コンピューターをドメインに参加する際に使用します。またグループポリシーを使用した、ユーザーやコンピューターの環境を構成する際にも使用します。View Composerを使用した仮想デスクトップの展開では、仮想デスクトップを管理するためにOUを使用します。Horizon Viewの管理者はOU(組織単位)の作成やOU内のコンピュータアカウントの作成・削除などのタスクを要します。そのため、OUに関するこれらのタスクの権限付与が必須となります。
+
+●DNS / DHCP
+Active DirectoryではDNSは必要コンポーネントです。Horizon View環境では、逆引き参照ゾーンも必要条件です。また仮想デスクトップへのIP付与はDHCPのみです。
+
+●Database
+Horizon Viewのイベントに関する情報の記録と、View Composerのインストール時に必要です。データベースは1つのインスタンスにvCenter用・Horizon View Event用・View Composer用に構成することが多いようです。
+
+●Connection Server(View Manager)
+接続ブローカーであり、仮想デスクトップの管理ツールでもあります。仮想デスクトップはView Connection Serverを介し、仮想デスクトップに接続します。障害や負荷分散を考慮し、2台以上準備することをお勧めします。View Connection Serverの冗長化にはロードバランサーを準備する必要があります。またはユーザー側で手動の切り替えが必要です。
+
+(参考)Default設定では、PCoIPを使用した仮想デスクトップへの接続は、セッションを切断するまでView Connection Serverを介さない直接接続となります。RDP接続の場合は、View Connection Serverを解するトンネル接続です。 
+
+●View Composer
+リンククローン方式で仮想デスクトップを展開する時に必要です。Horizon View 5.2からvCenter以外のWindows Serverにインストールすることも可能となりました。現状は、仮想デスクトップの展開時のみの負荷であることやWindowsライセンス数を考慮し、vCenterと同システムにインストールすることが多いようです。
+
+(参考)リンククローン方式とは、マスターイメージの仮想ディスクと仮想デスクトップの差分ディスクから構成される展開方式です。そのためディスクの使用量を抑えることが可能です。詳しくは第3回で説明します。 
+
+社外からのSSL接続
+VMware社が提供するSecurity Serverとベンダーが提供するVPN Serverがあります。当社のSonicWallもご検討いただければと思います。
+
+●View Agent
+仮想デスクトップ側にインストールするソフトウェアです。
+
+●View Client
+View Connection Serverに接続デバイス側にインストールするソフトウェアです。
+
+●認証局
+セキュリティや自己証明書の期間(2年間)を考慮し、Defaultの自己証明書を置き換えます。社内のConnection Server・Composer ServerはPrivate CAの証明書を準備します。社外から接続するSecurity ServerやVPN Serverは、3rd-party CAの証明書を準備します。
+
+●Key Management Service (KMS)
+リンククローン方式でWindows 7仮想デスクトップを展開する場合には、Microsoftのボリュームアクティベーションを使用します。KMSには、KMS ライセンスキーが必要です。
+
+上記以外に挙げると、「エージェントレス型のアンチウィルスソフト」のご検討もあります。Horizon Viewに最適なトレンドマイクロ社のDeep Securityにの過去ブログを参照ください。
+http://ja.community.dell.com/techcenter/security/w/wiki/510.aspx
+
+
+
+
+
+	
+
+###############################################################################
+【参考】
+VMware製品が使う、TCP/IPポート番号一覧 
+http://www.vreference.com/2010/02/23/firewall-diagram-version-5/
+
+Horizon 6 View 利用ポートダイアグラム
+http://blogs.vmware.com/consulting/files/2014/06/Horizon-6-Firewall-3.png
+
+
+VMware View ポートとネットワーク接続要件(2054478)
+https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2054478
+
+正しい TCP/IP ポートが VMware Horizon View 仮想デスクトップ上で開いていることを確認する (2079246) 
+https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2079246
+
+

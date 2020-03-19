@@ -1,0 +1,57 @@
+プロセス毎のメモリ消費量を調べたい時に使えるコマンド
+
+前提知識
+
+名称意味
+VSS (virtual set size)仮想メモリ
+RSS (Resident set size)物理メモリの消費量
+PSS (proportional set size)プロセスが実質的に所有しているメモリ
+USS (unique set size)ひとつのプロセスが占有しているメモリ
+
+※この辺調査不足
+
+参考になりそうな記事↓
+http://stackoverflow.com/questions/131303/how-to-measure-actual-memory-usage-of-an-application-or-process
+
+方法1. ps
+
+基本中の基本。プロセスを調べるコマンド内にメモリ消費量が表示されてます。
+
+# ps aux | grep unicor[n] USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND user 1111 0.0 10.4 479180 177440 ? Sl Aug16 0:38 unicorn worker[0] -D -E production -c /RAILS_ROOT/config/unicorn.rb user 2222 0.0 10.5 547060 178604 ? Sl Aug16 0:39 unicorn worker[1] -D -E production -c /RAILS_ROOT/config/unicorn.rb user 3333 0.0 10.5 479180 178764 ? Sl Aug16 0:26 unicorn worker[2] -D -E production -c /RAILS_ROOT/config/unicorn.rbe user 4444 0.0 10.3 479324 175128 ? Sl Aug16 0:19 unicorn worker[3] -D -E production -c /RAILS_ROOT/config/unicorn.rb user 5555 0.0 10.7 552648 182308 ? Sl Aug16 0:50 unicorn worker[4] -D -E production -c /RAILS_ROOT/config/unicorn.rb user 6666 0.0 9.3 402900 158168 ? Sl Aug16 0:16 unicorn master -D -E production -c /RAILS_ROOT/config/unicorn.rb 
+
+%MEM の行にメモリの消費量(％)、RSSの行に実際のRSS値(kB)が書いてあります。
+この例だと、各 unicorn の worker が 180MB 程使ってる事がわかります。
+RSS値を足し上げれば、トータルの消費量が計算できます。
+
+# ps aux | grep unicor[n] | awk '{sum += $6}END{print sum}' => 1050436 
+
+1.05GB.. 結構使ってる。。
+
+方法2. pmap -x [PID]
+
+pmap はプロセスのアドレス空間マッピング情報を閲覧するコマンドですが、-x をつける事でメモリ割り当ての量も表示できます。
+
+# pmap -x 1111 Address Kbytes RSS Dirty Mode Mapping 0000000000400000 0 4 0 r-x-- ruby 0000000000600000 0 4 4 r---- ruby ...（中略）... ffffffffff600000 0 0 0 r-x-- [ anon ] ---------------- ------ ------ ------ total kB 479180 177448 172868 
+
+最終行に、RSS値の合計が表示されます(kB)。
+
+$ cat /tmp/unicorn.pid | xargs pmap -x | tail -n1 | tr -s ' ' | cut -d ' ' -f 4 => 177448 
+
+方法3. cat /proc/[PID]/smaps
+
+こちらもPIDがわかれば、RSS値とPSS値がわかります。
+/proc/[PID]/smaps では仮想メモリ空間の各アドレスにマッピングされた領域の状態を一覧で参照できます。
+
+# cat /proc/1111/smaps | less 00400000-00401000 r-xp 00000000 ca:01 35818 /RUBY_PATH/bin/ruby Size: 4 kB Rss: 4 kB Pss: 0 kB Shared_Clean: 4 kB Shared_Dirty: 0 kB Private_Clean: 0 kB Private_Dirty: 0 kB Referenced: 4 kB Anonymous: 0 kB AnonHugePages: 0 kB Swap: 0 kB KernelPageSize: 4 kB MMUPageSize: 4 kB Locked: 0 kB 00600000-00601000 r--p 00000000 ca:01 35818 /RUBY_PATH/bin/ruby Size: 4 kB Rss: 4 kB Pss: 0 kB Shared_Clean: 0 kB ...（後略）... 
+
+こちらのRssを足し上げれば、実際の値。
+
+Rss # cat /proc/1111/smaps | awk '/^Rss/{sum += $2}END{print sum}' => 177448(kB) 
+
+Pss # cat /proc/1111/smaps | awk '/^Pss/{sum += $2}END{print sum}' => 107824(kB) 
+
+unicorn のRss値合計 # ps aux | grep unicor[n] | awk '{print $2}' | xargs -i% cat /proc/%/smaps | awk '/^Rss/{sum += $2}END{print sum}' 
+
+あれ、ps に表示されてるRss値とpmapやsmapsで表示されるメモリの値が若干違う・・・。
+何故・・・。
+

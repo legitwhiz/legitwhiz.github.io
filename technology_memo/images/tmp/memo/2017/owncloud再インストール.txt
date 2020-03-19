@@ -1,0 +1,51 @@
+sh -c "echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/xUbuntu_14.10/ /' >> /etc/apt/sources.list.d/owncloud.list"
+apt-get update
+apt-get install owncloud
+
+
+Ubuntu上で、 http://localhost/owncloud/ へ行き、
+　初期設定をする。
+　『ストレージとデータベース』をクリックし、
+　MySQL/MariaDBを選択。
+　上のユーザー名とパスワードは、ownCloudで使うためのもの。
+　下のユーザー名はroot、パスワードはインストールの際に設定したパスワード。
+　データベース名はowncloud。
+　アドレスやサーバーはそのままでよい。
+
+管理者アカウント
+owncloud
+Daisukes20
+
+データフォルダー
+/var/www/owncloud/data
+
+データベースを設定してください
+MySQL/MariaDBを選択
+
+
+データベースのユーザ名
+root
+データベースのパスワード
+daisukes
+データベース名
+ownclouddb
+
+
+
+apt-get install apache2 mariadb-server libapache2-mod-php7.0
+apt-get install php7.0-gd php7.0-mysql php7.0-curl
+apt-get install php7.0-intl php7.0-mcrypt php-imagick
+apt-get install php7.0-zip php7.0-xml php7.0-mbstring
+
+apt-get install php-apcu (memory caching)
+
+wget -nv https://download.owncloud.org/download/repositories/9.1/Ubuntu_16.04/Release.key -O Release.key
+apt-key add - < Release.key
+Run the following shell commands as root to add the repository and install from there.
+
+sh -c "echo 'deb http://download.owncloud.org/download/repositories/9.1/Ubuntu_16.04/ /' > /etc/apt/sources.list.d/owncloud.list"
+apt-get update
+apt-get install owncloud owncloud-files
+
+
+sudo sh -c "echo 'deb http://download.owncloud.org/download/repositories/stable/xUbuntu_16.04/ /' >> /etc/apt/sources.list.d/owncloud.list"

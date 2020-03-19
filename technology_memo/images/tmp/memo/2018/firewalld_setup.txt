@@ -1,0 +1,74 @@
+firewall-cmd --get-active-zones
+firewall-cmd --set-default-zone=public
+
+###############################################################################
+
+firewall-cmd --add-service=ssh --zone=external --permanent
+firewall-cmd --add-service=snmp --zone=external --permanent
+firewall-cmd --add-service=http --zone=external --permanent
+firewall-cmd --add-service=https --zone=external --permanent
+
+firewall-cmd --permanent --new-service zabbix
+firewall-cmd --permanent --new-service sophos
+firewall-cmd --permanent --service=zabbix --add-port=10050/tcp
+firewall-cmd --permanent --service=zabbix --add-port=10051/tcp
+firewall-cmd --permanent --service=sophos --add-port=137/tcp
+firewall-cmd --permanent --service=sophos --add-port=138/tcp
+firewall-cmd --permanent --service=sophos --add-port=139/tcp
+firewall-cmd --permanent --service=sophos --add-port=445/tcp
+firewall-cmd --permanent --service=sophos --add-port=8192/tcp
+firewall-cmd --permanent --service=sophos --add-port=8194/tcp
+
+firewall-cmd --add-service=zabbix --zone=external --permanent
+firewall-cmd --add-service=sophos --zone=external --permanent
+
+firewall-cmd --add-source=192.168.20.0/24 --zone=external --permanent
+firewall-cmd --add-source=133.127.0.0/16 --zone=external --permanent
+firewall-cmd --add-source=133.89.0.0/16 --zone=external --permanent
+
+firewall-cmd --info-zone=external
+firewall-cmd -reload
+
+
+firewall-cmd --get-active-zones
+firewall-cmd --get-default-zone
+firewall-cmd --list-all
+firewall-cmd --list-all --zone=external
+
+###############################################################################
+firewall-cmd --add-service=http --zone=dmz --permanent
+firewall-cmd --add-service=https --zone=dmz --permanent
+
+firewall-cmd --get-active-zones
+firewall-cmd --get-default-zone
+firewall-cmd --list-all
+
+firewall-cmd --add-interface=ens160 –-zone=dmz --permanent
+firewall-cmd -reload
+systemctl restart NetworkManager
+
+firewall-cmd --get-active-zones
+firewall-cmd --get-default-zone
+firewall-cmd --list-all
+firewall-cmd --list-all --zone=dmz
+
+###############################################################################
+
+firewall-cmd --add-service=ssh --zone=internal --permanent
+firewall-cmd --add-service=snmp --zone=internal --permanent
+
+firewall-cmd --get-active-zones
+firewall-cmd --get-default-zone
+firewall-cmd --list-all
+
+firewall-cmd --add-interface=ens161 –-zone=internal --permanent
+firewall-cmd -reload
+systemctl restart NetworkManager
+
+firewall-cmd --get-active-zones
+firewall-cmd --get-default-zone
+firewall-cmd --list-all
+firewall-cmd --list-all --zone=internal
+
+
+

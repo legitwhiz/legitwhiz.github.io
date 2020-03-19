@@ -1,0 +1,214 @@
+diffコマンドで覚えておきたい使い方
+
+diffコマンドといえば、ファイルの差分を確認する際に良く利用するコマンドだ。
+ 今回は、このdiffコマンドについて覚えておきたい使い方について紹介する。
+
+1.基本的な使い方
+基本的には、以下のようにコマンドを実行することで、ファイルの差異を確認する。
+
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test
+aaaaa
+v4vvv
+ccccc
+ddddd
+ee2ee
+fffff
+ggggg
+
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test.nl
+aaaaa
+vvvvv
+ccccc
+ddddd
+eeeee
+fffff
+ggggg
+
+[root@BS-PUB-CENT7-01 ~]# diff /tmp/test /tmp/test.nl
+2c2
+< v4vvv --- > vvvvv
+5c5
+< ee2ee --- > eeeee
+#------------------------------------------------------------------------------
+
+2.差異があるか・無いかを出力する
+ファイルのどの行に差異があるのかは出力せず、ただ差異のある旨を知りたい場合は、
+「-q」オプションを、差異がない場合にその旨を出力させる場合は「-s」オプションを
+用いると良いだろう。
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test
+aaaaa
+v4vvv
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test.nl
+aaaaa
+vvvvv
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test.bk
+aaaaa
+v4vvv
+[root@BS-PUB-CENT7-01 ~]# diff -q /tmp/test /tmp/test.nl
+ファイル /tmp/test と /tmp/test.nl は異なります
+[root@BS-PUB-CENT7-01 ~]# diff -q /tmp/test /tmp/test.bk
+[root@BS-PUB-CENT7-01 ~]#
+[root@BS-PUB-CENT7-01 ~]# diff -s /tmp/test /tmp/test.nl
+2c2
+< v4vvv --- > vvvvv
+[root@BS-PUB-CENT7-01 ~]# diff -s /tmp/test /tmp/test.bk
+ファイル /tmp/test と /tmp/test.bk は同一です
+#------------------------------------------------------------------------------
+
+3.2列表示にする
+出力を2列表示にしたい場合は、「-y」オプションを用いる。
+diff -y ファイル1 ファイル2
+
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# diff /tmp/test /tmp/test.nl
+2c2
+< v4vvv --- > vvvvv
+[root@BS-PUB-CENT7-01 ~]# diff /tmp/test /tmp/test.bk
+[root@BS-PUB-CENT7-01 ~]#
+[root@BS-PUB-CENT7-01 ~]# diff -y /tmp/test /tmp/test.nl
+aaaaa                                                           aaaaa
+v4vvv                                                         | vvvvv
+[root@BS-PUB-CENT7-01 ~]# diff -y /tmp/test /tmp/test.bk
+aaaaa                                                           aaaaa
+v4vvv                                                           v4vvv
+#------------------------------------------------------------------------------
+
+4.context/unified形式で出力する
+context/unified形式で差分を出力したい場合は、「-c」オプション(context形式)、
+「-u」オプション(unified形式)を付与すると良いだろう。
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# diff -c /tmp/test /tmp/test.nl
+*** /tmp/test   2016-04-03 19:12:36.446000000 +0900
+--- /tmp/test.nl        2016-04-03 19:12:45.302000000 +0900
+***************
+*** 1,2 ****
+  aaaaa
+! v4vvv
+--- 1,2 ----
+  aaaaa
+! vvvvv
+[root@BS-PUB-CENT7-01 ~]# diff -u /tmp/test /tmp/test.nl
+--- /tmp/test   2016-04-03 19:12:36.446000000 +0900
++++ /tmp/test.nl        2016-04-03 19:12:45.302000000 +0900
+@@ -1,2 +1,2 @@
+ aaaaa
+-v4vvv
++vvvvv
+
+5.ディレクトリの差分を確認する
+diffでは、ディレクトリを指定してその差分を確認する事も出来る。
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# diff /tmp /tmp2
+共通のサブディレクトリー: /tmp/.ICE-unix と /tmp2/.ICE-unix
+共通のサブディレクトリー: /tmp/.Test-unix と /tmp2/.Test-unix
+共通のサブディレクトリー: /tmp/.X11-unix と /tmp2/.X11-unix
+共通のサブディレクトリー: /tmp/.XIM-unix と /tmp2/.XIM-unix
+共通のサブディレクトリー: /tmp/.font-unix と /tmp2/.font-unix
+/tmp のみに存在: abc
+diff /tmp/test /tmp2/test
+1c1
+< aaaa3 --- > aaaaa
+diff /tmp/test.bk /tmp2/test.bk
+1c1
+< aaaa3 --- > aaaaa
+#------------------------------------------------------------------------------
+
+サブディレクトリ配下も再帰的に差分確認したい場合は、「-r」オプションを付与する。
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# diff -r /tmp /tmp2
+diff -r /tmp/.Test-unix/aaaa /tmp2/.Test-unix/aaaa
+1c1
+< aaa` --- > aaaaa
+/tmp のみに存在: abc
+diff -r /tmp/test /tmp2/test
+1c1
+< aaaa3 --- > aaaaa
+diff -r /tmp/test.bk /tmp2/test.bk
+1c1
+< aaaa3 --- > aaaaa
+#------------------------------------------------------------------------------
+
+6.ファイルの比較時に大文字・小文字の違いや行末スペースを無視する
+ファイル比較時に、大文字・小文字の違いや行末スペースを無視したい場合は、以下の
+ようなオプションを付与する。
+ -i … 大文字・小文字の差異を無視する
+ -E … タブ展開で発生する差異を無視する
+ -Z … 行末のスペースを無視する
+ -b … スペース数の違いを無視する
+ -w … 全てのスペースを無視する
+ -B … 空白行(^$)を無視する
+ -I=RE … REで指定(正規表現指定)した差異を無視する
+
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test
+aaaa3
+v4vvv
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test.bk
+aaaa3
+
+v4vvv
+[root@BS-PUB-CENT7-01 ~]# diff /tmp/test /tmp/test.bk
+1a2
+>
+[root@BS-PUB-CENT7-01 ~]# diff -B /tmp/test /tmp/test.bk
+[root@BS-PUB-CENT7-01 ~]#
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test
+aaaa3
+v4vvv
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test.bk2
+aaaa3
+123
+v4vvv
+[root@BS-PUB-CENT7-01 ~]# diff /tmp/test /tmp/test.bk2
+1a2
+> 123
+[root@BS-PUB-CENT7-01 ~]# diff -I=*123* /tmp/test /tmp/test.bk2
+[root@BS-PUB-CENT7-01 ~]#
+#------------------------------------------------------------------------------
+
+7.色付きで表示させる
+差分を色付きで表示させる場合、標準のdiffだとgroup-formatオプションを指定してあ
+げる必要がある。
+ 以下、例。(共通行：黄色、旧ファイル行:赤、新ファイル行:青)
+
+diff --old-group-format=$'e[0;31m%<e[0m'       --new-group-format=$'e[0;36m%>e[0m' 
+     --unchanged-group-format=$'e[0;33m%=e[0m' 
+     ファイル1 ファイル2
+
+そらで打つのは難しい(+面倒)だと思うので、基本的にはこちらでも紹介したcolordiffやdiffcを利用した方が良いだろう。
+
+8.ssh越しにdiffを行う
+ssh越しに、別のサーバ上にあるファイルとdiffを行う場合は、以下のように行う。
+
+ssh ユーザ名@ホスト名 "cat リモート側のファイルパス" | diff - ローカル側のファイルパス
+
+9.コマンドの出力結果でdiffを行う
+任意のコマンドの出力結果でdiffを行う場合は、以下のようにする。
+
+diff <(コマンド1) <(コマンド2)
+#------------------------------------------------------------------------------
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test123
+123
+456
+789
+1aa
+[root@BS-PUB-CENT7-01 ~]# cat /tmp/test123_
+456
+789
+123
+456
+1ab
+[root@BS-PUB-CENT7-01 ~]# diff /tmp/test123 /tmp/test123_
+1d0
+< 123
+4c3,5
+< 1aa --- > 123
+> 456
+> 1ab
+[root@BS-PUB-CENT7-01 ~]# diff <(sort /tmp/test123) <(sort /tmp/test123_)
+2c2,3
+< 1aa --- > 1ab
+> 456
+#------------------------------------------------------------------------------

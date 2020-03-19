@@ -1,0 +1,169 @@
+iptables使用時ネットワークパフォーマンス劣化
+
+ip_conntrackを設定する理由
+パケットフィルタリングツールであるiptablesは、パケットを解析するときにip_conntrackというファイルにトラッキング情報を記録します。
+ip_conntrackには、最大トラッキング数があり、それをオーバーすると新規セッションを弾いてしまって、ネットワークパフォーマンスの劣化を招きます。
+
+/var/log/messageにこのようなメッセージが出ていたら、ip_conntrackが溢れている状態です。
+ip_conntrack: table full, dropping packet
+
+大量のトラフィックを捌くロードバランサーやキャッシュなどの目的を持ったLinuxマシンで、iptablesを使っているときには、ip_conntrackの最大トラッキング数を忘れずに設定しておきましょう。
+
+ここでは、手元のマシンCentOS 5と6で設定をしていきます。
+
+検証環境
+CentOS 6.3(64bit)
+CentOS 5.8(64bit)
+
+ip_conntrackの状態確認(syslogにip_conntrackが溢れているメッセージが出力されていれば確認するまでのないが・・・)
+まず、現在のトラッキング数と最大トラッキング数を確認しましょう。
+現在使用しているip_conntrackのトラッキング数を確認します。
+
+CentOS 5
+# cat /proc/sys/net/ipv4/netfilter/ip_conntrack_count
+24030
+CentOS 6
+# cat /proc/sys/net/netfilter/nf_conntrack_count
+24030
+
+最大トラッキング数を確認。
+CentOS 5
+# cat /proc/sys/net/ipv4/ip_conntrack_max
+65536
+CentOS 6
+# cat /proc/sys/net/netfilter/nf_conntrack_max
+net.nf_conntrack_max = 65536
+
+###############################################################################
+ip_conntrackの設定方法
+カーネルパラメータに最大トラッキング数を設定してきます。
+ip_conntrackは1トラッキングにつき350バイトのメモリを必要とします。
+http://www.netfilter.org/documentation/FAQ/netfilter-faq-3.html
+これは、スワップできないメモリです。
+メモリ量と相談して、余裕を持って最大トラッキング数を決めましょう。
+今回は100万トラッキング（約350Mバイト必要）としました。
+
+使用メモリ算出
+オブジェクトサイズ * エントリ数のメモリを必要とします。
+slab のため swap 不可なので、拡張の際には、余裕がある事を計算/確認しておきましょう。
+オブジェクトサイズは /proc/slabinfo 内のエントリで確認出来ます。カーネルによって微妙にサイズが変わりますが、概ね200バイトから400バイト程度です。
+
+# grep conntrack /proc/slabinfo | grep -v expect | tr -s " " | cut -d" " -f4
+304
+
+
+CentOS 5
+# vi /etc/sysctl.conf
+net.ipv4.netfilter.ip_conntrack_max = 1000000
+CentOS 6
+# vi /etc/sysctl.conf
+net.nf_conntrack_max = 1000000
+
+カーネルパラメータを反映します。
+「sysctl -p」を実行すると、設定ファイルが読み込まれて値が反映されます。
+CentOS 5/6
+/sbin/sysctl -p
+
+設定値を確認しましょう。
+CentOS 5
+# cat /proc/sys/net/ipv4/ip_conntrack_max
+1000000
+CentOS 6
+# cat /proc/sys/net/netfilter/nf_conntrack_max
+1000000
+
+無事、設定が完了しました。
+iptablesをリスタートしたとき、設定がリセットされないようにする
+
+CentOS 5の場合、iptablesのバージョンが低く（iptables v1.3.5）、iptablesをリスタート、またはOSをリブートするときに最大トラッキング数がデフォルト値に戻ってしまいます。
+このまま運用すると、トラフィック増大時にトラッキング数オーバーとなり、ネットワークパフォーマンスの劣化を招く結果となってしまいます。
+これを、回避するようにします。
+
+※CentOS 6（iptables v1.4.7）、Ubuntu 12（iptables v1.4.12）では同様の現象はありませんでした。
+まず、iptablesをリスタートして設定が元に戻る事を確認します。
+
+# /etc/init.d/iptables restart
+Flushing firewall rules:                                   [  OK  ]
+Setting chains to policy ACCEPT: filter                    [  OK  ]
+Unloading iptables modules:                                [  OK  ]
+Applying iptables firewall rules:                          [  OK  ]
+Loading additional iptables modules: ip_conntrack_netbios_n[  OK  ]
+
+設定されている最大トラッキング数を確認してみましょう。
+# cat /proc/sys/net/ipv4/ip_conntrack_max
+65536
+
+リスタートしたときに「Unloading iptables modules」となり、モジュールがアンロードされて設定が戻ってしまっているのが判りますね。
+これを回避するために、iptables-configで設定をnoにします。
+
+# vi /etc/sysconfig/iptables-config 
+IPTABLES_MODULES_UNLOAD="no"
+
+カーネルパラメータを再反映します。
+# /sbin/sysctl -p
+# cat /proc/sys/net/ipv4/ip_conntrack_max
+1000000
+
+iptablesをrestartします。
+
+# /etc/init.d/iptables restart
+Flushing firewall rules:                                   [  OK  ]
+Setting chains to policy ACCEPT: filter                    [  OK  ]
+Applying iptables firewall rules:                          [  OK  ]
+Loading additional iptables modules: ip_conntrack_netbios_n[  OK  ]
+
+今回は、モジュールがアンロードされていません。
+# cat /proc/sys/net/ipv4/ip_conntrack_max
+1000000
+
+
+ip_conntrack_max/nf_conntrack_max 拡張設定
+sysctlコマンドで値を拡張/設定してもいいのですが、hashsizeを変更して、関連するパラメータも変更されるようにした方が良いでしょう。
+confファイルに記述する場合は再起動が必要です。一時的に拡張する場合はmodprobeコマンドで適用します。
+
+CentOS 5の場合 
+# sysctl net.ipv4.ip_conntrack_max
+net.ipv4.ip_conntrack_max = 65536
+
+#vi /etc/modprobe.conf
+options ip_conntrack hashsize=32768
+
+再起動後。 
+# sysctl net.ipv4.ip_conntrack_max
+net.ipv4.ip_conntrack_max = 262144
+
+CentOS 6の場合 
+# sysctl net.nf_conntrack_max
+net.nf_conntrack_max = 65536
+
+#vi/etc/modprobe.d/nf_conntrack.conf
+options nf_conntrack hashsize=32768
+
+再起動後。 
+# sysctl net.nf_conntrack_max
+net.nf_conntrack_max = 262144
+
+hashsize の変更適用により、以下のパラメータが変動します。
+-net.netfilter.nf_conntrack_max = 65536
+-net.netfilter.nf_conntrack_buckets = 16384
++net.netfilter.nf_conntrack_max = 262144
++net.netfilter.nf_conntrack_buckets = 32768
+-net.netfilter.nf_conntrack_expect_max = 256
++net.netfilter.nf_conntrack_expect_max = 512
+-net.nf_conntrack_max = 65536
++net.nf_conntrack_max = 262144
+
+
+一時的に適用する場合 
+# modprobe nf_conntrack hashsize=32768
+
+
+ip_conntrackの値をNagios/Muninで監視
+最後に、ip_conntrackの数値を監視するNagios/Muninのプラグインをご紹介します。
+Githubで公開されています。
+Nagios
+https://github.com/hrix/nagios-plugin-ip_conntrack
+Munin
+https://github.com/hrix/munin-plugin-ip_conntrack
+
+これを設定しておけば、安心できますね。

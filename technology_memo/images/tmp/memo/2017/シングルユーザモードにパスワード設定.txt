@@ -1,0 +1,32 @@
+RHLE5
+[/etc/inittab]に下記を設定。
+~~:S:wait:/sbin/sulogin
+
+RHEL6
+[/etc/sysconfig/init]に下記を設定。
+SINGLE=/sbin/sushell
+
+###############################################################################
+SINGLE=value
+The single-user mode type. The value has to be either /sbin/sulogin (a user will be prompted for a password to log in), or /sbin/sushell (the user will be logged in directly). For example:
+SINGLE=/sbin/sushell
+###############################################################################
+
+RHEL7
+RHEL7では旧来のシングルユーザモードに相当するレスキューモードに入ってもrootユーザ
+のパスワードを要求されるの。
+
+
+AIX
+デフォルト パスワード必要なし
+
+HP-UX
+
+Solaris
+
+
+
+
+
+
+

@@ -1,0 +1,8 @@
+コマンドが出力する標準エラーにタイムスタンプを挿入しログファイルに出力する
+
+
+command |& stdbuf -oL gawk -v OutputShellName=$ShellName '{print strftime("%Y/%m/%d  %H:%M:%S "), OutputShellName $0; }'  >> ${LogFile}
+
+command |& stdbuf -oL iconv -f UTF-8 -t SJIS >> $LOGFILE
+
+音声合成を行うコマンドラインのGNU/Linux用のソフトウェアを探さねばならない。調べると、espeakというソフトウェアが見つかった。

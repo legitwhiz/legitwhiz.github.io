@@ -1,0 +1,882 @@
+対話的なシェルスクリプトといえばexpect
+
+インフラSEであるならば、ログインやstatus確認、ログ採取等をTeratermマクロを使用
+して簡易的に仕事をこなしているとは思いますが、Teratermはそもそもフリーソフトで
+使用出来ない環境もあるでしょう。
+
+そこで、RHEL6では。OSインストール時に[システム管理ツール]を選択するか
+[開発ツール]の詳細でexpectを選択すればOSサポートの範囲内で使用することが可能な
+expectで作業を簡易化してみようと記録しておきます。
+
+●expectとは
+expectは対話型の処理を自動化するためのツールです。
+特定の文字列とマッチすると自動的に応答します。
+ 具体例で言うと、例えば
+1.AサーバからBサーバにSSHログインし、
+2.Bサーバ上で処理を実行する
+ということを自動的に行えるようになります。
+
+expectはTclの拡張ライブラリで、対話型の入力が必要な時の自動実行ツールで有名で
+す。Tclのプログラムがそのまま使えるらしいのです。
+・拡張デバッグ・オプション
+・文字指向型のダイアログを記述するための便利なコマンド
+・面倒な文字指向型端末に対するこの上なく優秀な管理
+
+●expectがカバーできること
+ネットワーク機器の作業を自動化/コード化/CI&CD化するにはいくつか段階があります。
+┌─────────────┬────────────┬───────────┐
+│自動化内容                │ 当該技術               │ 得られるメリット     │
+├─────────────┼────────────┼───────────┤
+│イベントなどトリガーベース│shell                   │自動化による手離れダウ│
+│で必要な作業を自律的に実行│                        │ンタイムの短縮        │
+│する。                    │                        │障害対応拘束の削減    │
+├─────────────┼────────────┼───────────┤
+│ベンダー差異を意識すること│NETCONF、YANG           │得手不得手のカバー    │
+│なく必要な設定を加えたりで│                        │作業の統一化と共有    │
+│きる。                    │                        │                      │
+├─────────────┼────────────┼───────────┤
+│手作業と同じ内容だが時間や│Cron/Kcron              │拘束時間の削減        │
+│数量が手作業を超えるものを│rancid                  │                      │
+│自動実行する。            │                        │                      │
+├─────────────┼────────────┼───────────┤
+│手作業を同じ内容を代行する│Teratermマクロ          │作業内容の明文化と共有│
+│マクロ的な仕組み          │expect                  │入力ミスやコピペミスの│
+│                          │                        │排除                  │
+└─────────────┴────────────┴───────────┘
+expectは最初の段階にあたる、手作業と同じ内容をマクロ的に実行することに特化した
+、スクリプト言語tclの拡張実装です。
+
+●expectの良いところ
+作業の自動化コード化の恩恵はインフラ技術者にもあるはずです。
+
+以下にネットワーク技術者がexpectに触れるメリットを挙げてみます。
+・ 使い始めるまでの学習コストがきわめて小さい
+
+telnetでログインしログアウト
+#------------------------------------------------
+#!/usr/bin/expect
+set timeout 60
+spawn telnet rauter.example.com
+expect "Password:"
+send "ExpectExample101n"
+expect ">"
+send "exitn"
+#------------------------------------------------
+
+SSHでログインするだけなら以下で済む。
+#------------------------------------------------
+expect -c ”
+spawn ssh ホスト名
+expect password: ; send ”パスワードr”
+interact
+”
+#------------------------------------------------
+
+コマンドプロンプトの応答をexpect、入力するコマンドをsendで送る、という大まかな
+流れなので分かりやすいかと思います。
+また、Teratermマクロを書いたことがあれば容易に入れる。
+
+expectは古くからある枯れた実装なので、参考書籍も1994年刊のオライリー本がほぼ
+唯一なので迷うこともありません。
+
+JavaScriptのような変化の激しい処理系に比べると、多少腰を据えて学習しても陳腐化
+することは無いというのは作業を楽にしたいだけのエンジニアにとってはメリットにな
+るでしょう。
+
+それでもプログラムやDSLを書くのはイヤだ、という方にはautoexpectというツールがあ
+ります。
+こちらはLinuxであればexpectパッケージに含まれる便利コマンドで、MS Officeや
+Teraterm、RLoginのマクロ記録 - マクロ実行と同じような感覚で、コマンドラインの
+作業をexpectスクリプトに記録して再実行可能にするものです。
+
+#------------------------------------------------
+$ autoexpect
+
+～～作業を行う～～
+
+$exit
+#------------------------------------------------
+
+作業内容をexpectスクリプトにしたscript.expというファイルが生成されます。
+もう一度同じ作業を行う場合は、./script.expと生成されたファイルを実行するだけで
+OKです。簡単ですね！
+
+・ネットワーク機器作業に特化したラッパーrancidの存在
+rancidは主要ベンダー製品への自動ログイン機構を備えており、configのバージョン管
+理や定期取得、差分検知などの基本的かつ広く共通したニーズが満たされるます。
+
+まだこれらが実現できていないという環境には、とっかかりとして良いのではないでし
+ょうか。
+
+・tclはネットワーク機器ファームでもサポートされていたりする
+Cisco社のファームウェアにはtcl/tclshが実装されていて、ルータ上でtclスクリプトを
+動かすことができます。
+ルータの一機能だと思えば抵抗感も少なくなるのではないでしょうか。
+
+●一方、expectの注意すべきところ
+記録＆再生マクロのように気軽に使える分、極めて狭いスコープを対象とした特定の作
+業のみを行う、似て非なるスクリプトが量産されてしまう事態に陥りやすいです。
+
+これを避けつつスケールさせていくためには、ある程度スクリプト作成に慣れたところで
+・共通部分のテンプレート化と変数の抜き出し
+・直接expectスクリプトを作るのではなく置換などでexpectスクリプトを生成するよう
+  なメタスクリプトの作成
+
+といったことを視野に入れる必要があります。
+
+●Teratermマクロのようにログ取り
+今までTeratermマクロを使用していたかたなら、真っ先にログが取れるのかと思いますよね!?
+
+以下の様にすると簡単にログが取れます。
+#------------------------------------------------
+#!/usr/bin/expect -f
+set timeout 10
+set date [exec date +%Y%m%d]
+set hostname [exec hostname]
+set logfile $hostname-$date.log
+log_file ~/log/$logfile
+
+spawn ssh user@remotehost -p 10022
+expect "password: "
+send -- "passn"
+expect "]$ "
+send -- "su -n"
+expect "ワード:"
+send -- "supassn"
+interact
+expect eof
+#------------------------------------------------
+
+■expectスクリプトを書く上での注意事項
+●スペースの取り扱いが大切というか特殊
+スペース文字の取り方が重要です。 下記は、メソッド名ですが、shellとかの感覚でスペ
+ースをつけたり、外したりすると動きません。
+#------------------------------------------------
+proc sum {arg1 arg2} {
+   set x [expr {$arg1 + $arg2}];
+   return $x
+} 
+
+puts " The sum of 2 + 3 is: [sum 2 3]nn"
+#------------------------------------------------
+
+●文字列のエスケープ
+・[はエスケープしておこう
+・"もエスケープすべし
+・スペースもエスケープ
+・シングルクォートは普通の文字だからあてにするな
+・$もエスケープせよ
+・タイムアウト無効は-1
+
+例を下記に書いておきます。
+#------------------------------------------------
+for num in ${list[@]};do
+table=${num}
+file=${table}_dump.sql
+mysqldump --opt -c -u root ozaka $table > $file
+pass03=program3
+pc03=program3@192.168.1.119
+send=~/deployscripts/expectscripts/send.expect
+$send $file $pc03 $pass03
+done
+#------------------------------------------------
+エスケープするとこうなる
+#------------------------------------------------
+set command03 ""
+append command03 for num in ${list[@]};do "n"
+append command03 table=${num} "n"
+append command03 file=${table}_dump.sql "n"
+append command03 mysqldump --opt -c -u root ozaka $table > $file "n"
+append command03 pass03=program3 "n"
+append command03 pc03=program3@192.168.1.119 "n"
+append command03 send=~/deployscripts/expectscripts/send.expect "n"
+append command03 $send $file $pc03 $pass03 "n"
+append command03 done "n"
+append command03 "n"
+#------------------------------------------------
+
+●引数に配列を使う
+例えば下記のようにシェルで配列を定義したとします。
+list=( "aa" "bb")
+
+この引数をtclで取り扱うサンプルコードを作ることができました。
+#------------------------------------------------
+#!/usr/bin/expect
+
+proc quoteList {list} {
+  set ret ""
+  for {set i 0} {$i<[llength $list]} {incr i} {
+     append ret " "" [lindex $list $i] """
+
+  }
+  return $ret
+}
+
+set m [quoteList $argv]
+set mm "list=(" 
+append mm $m ")"
+puts $mm
+#------------------------------------------------
+使い方例
+これをexpectのスクリプトに渡します。
+
+ファイル名を仮にchangeTables.exceptとします。
+changeTables.except $list
+
+結果
+list=( "aa" "bb")
+
+●実行が５秒かかるならば、exceptが失敗している †
+タイムアウトを５で指定しているので、 実行までに5秒かかる場合は、exceptが失敗している可能性が濃厚です。
+
+●対話が必要なアプリはswanで実行する
+対話が必要なアプリはspawnで実行するのがコツなようです。
+#はプロンプトなので、スーパユーザならば#だろうしか一般ユーザならば$がよくつかわれる。
+ただ、プロンプトは設定で変更できるので、確認は必要。
+
+実行結果
+シェルに成功したのか失敗したいのか返したいとき
+
+成功
+exit 0
+
+失敗
+exit 1
+
+受け取り側の記述例
+シェル側はこんな感じ
+#------------------------------------------------
+if exceptのシェル
+then
+
+else
+
+fi
+#------------------------------------------------
+
+
+###############################################################################
+●SSHの自動化を改良する
+もう少し改良してみましょう。
+とりあえず以下の点をどうにかします。
+・実行時のログをログファイルに記録する
+・複数のプロンプトに対応できるようにする
+・ホストとパスワードを埋め込む
+・パターンマッチの表現を明確にする
+・頭にハイフンが付いているパスワードが入力されてもちゃんと処理されるようにする
+・SSH接続をそのまま留めるようにする
+
+これら全部を実現します。
+
+●ssh.exp
+#------------------------------------------------
+#!/usr/bin/expect
+
+#ホストとパスワード、SSHポート番号を埋め込む
+set loginUser "ctc"
+set loginPassword "ctc"
+set mgmtServerAddress localhost
+set ssh_port "22"
+
+#ログファイル
+set date [exec date +%Y%m%d%s]
+set hostname $mgmtServerAddress
+set logfile $hostname-$date.log
+set log_dir "/tmp/log"
+
+if {[file isdirectory ${log_dir}]} {
+        ; #puts [exec mkdir -m 777 $log_dir ]
+} else {
+        puts [exec mkdir -m 777 $log_dir ]
+}
+
+log_file ${log_dir}/${logfile}
+
+#複数のプロンプト対応
+set Prompt "[#$%>]"
+
+set timeout 5
+
+#SSH
+spawn /usr/bin/ssh -l $loginUser $mgmtServerAddress -p $ssh_port
+
+expect {
+    "(yes/no)" {
+        send "yesn"
+        exp_continue
+    }
+    -re "[Pp]assword:" {
+        send -- "${loginPassword}n"
+    }
+    -re "Name or service not known" {
+        exit
+    }
+    -re "Connection refused" {
+        exit
+    }
+}
+
+expect {
+    -glob "${Prompt}" {
+        send "daten"
+        send "uname -nn"
+        send "idn"
+        send "echo $LANGn"
+        send "cat /etc/redhat-releasen"
+        interact
+        exit 0
+    }
+}
+
+#------------------------------------------------
+
+●scp.exp
+#------------------------------------------------
+#!/usr/bin/expect
+
+#ホストとパスワード、SSHポート番号を埋め込む
+set loginUser "root"
+set loginPassword "P@ssw0rd"
+set mgmtServerAddress localhost
+set ssh_port "22"
+
+#ログファイル
+set date [exec date +%Y%m%d%s]
+set hostname $mgmtServerAddress
+set logfile $hostname-$date.log
+set log_dir "/tmp/log"
+
+if {[file isdirectory ${log_dir}]} {
+        ; #puts [exec mkdir -m 777 $log_dir ]
+} else {
+        puts [exec mkdir -m 777 $log_dir ]
+}
+
+log_file ${log_dir}/${logfile}
+
+#複数のプロンプト対応
+set Prompt "[#$%>]"
+#SCP対象SourcePath
+set SourcePath /tmp
+#SCP対象DestPath
+set DestPath /home/ctc
+
+set timeout -1
+
+#SSH sosreport採取
+spawn /usr/bin/ssh -l $loginUser $mgmtServerAddress -p $ssh_port
+
+expect {
+    "(yes/no)" {
+        send "yesn"
+        exp_continue
+    }
+    -re "password:" {
+        send -- "${loginPassword}n"
+    }
+}
+
+expect {
+    -glob "${Prompt}" {
+        send "daten"
+        send "uname -nn"
+        send "idn"
+        send "echo $LANGn"
+        send "cat /etc/redhat-releasen"
+        #CPUの優先度を下げてsosreportを実行
+        send "/usr/bin/chrt -i 0 /usr/sbin/sosreport --batchn"
+        send "exitn"
+        interact
+    }
+}
+
+#SCP
+spawn /usr/bin/scp  -P $ssh_port ${loginUser}@${mgmtServerAddress}:${SourcePath}/sosreport*.tar.xz ${DestPath}
+
+expect {
+    "(yes/no)" {
+        send "yesn"
+        exp_continue
+    }
+    -re "password:" {
+        send -- "${loginPassword}n"
+    }
+}
+
+expect {
+    -glob "${Prompt}" {
+        send "daten"
+       }
+}
+expect eof
+
+#------------------------------------------------
+
+ターミナルに残る場合は、「interact」をcron等で処理を実行し終了させる場合は「expect eof」とする。
+# expect /myscripts/list_server.exp
+デバッグするには-dオプションをつける
+
+###############################################################################
+OracleVMの情報を採取
+sample.exp
+#!/usr/bin/expect
+
+## Access CLI
+set loginUser "admin"
+set loginPassword "password"
+set mgmtServerAddress manager_host
+
+## Expect Parameters
+set timeout 20
+set successMsg "Status: Success"
+set failureMsg "Status: Failure"
+
+spawn ssh -l $loginUser $mgmtServerAddress -p 10000
+expect_after eof {exit 0}
+
+set timeout 10
+
+##interact with SSH
+##expect "yes/no" {send "yesr"}
+expect "password:" {send "$loginPasswordr"}
+puts "n## Starting Generated OVMCLI Script... ##n"
+set timeout 600
+
+expect "OVM> "
+send "set OutputMode=Verboser"
+expect $successMsg {} 
+    timeout { puts "nnTest Failure: nr"; exit} 
+
+expect "OVM> "
+  send  "list Serverr"
+  expect $successMsg {} 
+   timeout { puts "nnScript Failure: nr"; exit}
+
+###############################################################################
+●実装例1：Linuxにユーザーを追加
+
+利用するコマンド 
+・expect
+・useradd
+・passwd
+
+set_user.sh
+#------------------------------------------------ 
+#!/usr/bin
+
+useradd UserName 
+expect -c "
+spawn passwd UserName
+expect "New password:"
+send -- "hogehogen"
+expect "Retype new password:"
+send -- "hogehogen"
+expect "passwd: all authentication tokens updated successfully."
+send -- "exitn"
+"
+#------------------------------------------------
+
+で、実行
+$ chmod +x set_passwd.sh 
+$ ./set_passwd.sh 
+
+●実装例2：CSVのデータを元にLinuxにユーザーを追加
+
+仕様
+1.[ユーザー名]と[パスワード]をCSVに記入
+2.csv内の値を引数に、useradd, passwdを順次実行
+
+実装
+ユーザーとパスワードをhoge.csvに記入
+
+hoge.csv
+#------------------------------------------------
+user1,hogehoge
+user2,fugafuga
+user3,hafuhafu
+user4,puripuri
+#------------------------------------------------
+
+シェルスクリプトを作成
+
+
+set_user.sh
+#------------------------------------------------ 
+#!/usr/bin/
+csvfile=hoge.csv
+for line in `cat ${csvfile} | grep -v ^#`
+do
+    user=`echo ${line} | cut -d ',' -f 1`
+    pass=`echo ${line} | cut -d ',' -f 2`
+    useradd $user
+    expect -c "
+    spawn passwd ${user}
+    expect "New password:"
+    send -- "${pass}n"
+    expect "Retype new password:"
+    send -- "${pass}n"
+    expect "passwd: all authentication tokens updated successfully."
+    send -- "exitn"
+    "
+done
+#------------------------------------------------
+で、実行
+$ chmod +x set_passwd.sh 
+$ ./set_passwd.sh 
+
+●追記
+本当はLinuxのユーザーのパスワードを200件ほど書き換えたくて効率的な方法を探していた。。
+ 今回はexportを利用したが、記事を書き終えてすぐ chpasswdなるコマンドーの存在を知っていま絶望している........。。。。。
+
+chpasswd < testpass.txt
+
+というわけで、まずはLinuxでのパスワード一括変更の方法から。これは専用のコマンドがあるから非常に簡単。「chpasswd」というコマンドを使用すればいい。
+
+このコマンドはRHEL6、CentOSやDebian、Ubuntuにもデフォルトで入っている(はず)。
+
+使い方は簡単で、まずは以下のようなユーザ名と設定するパスワードの対応ファイルを作成する。
+
+●testpass.txt
+test1:testpass1
+test2:testpass2
+test3:testpass3
+test4:testpass4
+test5:testpass5
+test6:testpass6
+test7:testpass7
+test8:testpass8
+test9:testpass9
+
+なお、この設定ファイルは空白行があると失敗する。
+ファイルの最後の行が空白ではないことをちゃんと確認すること。
+
+コマンドを実行する前に、/etc/shadowファイルを確認する。
+
+ちなみに、外部ファイルを使用しないでパスワードを変更させるのは以下。
+　echo “username:password” | chpasswd
+
+###############################################################################
+
+■ 1.基礎
+1.1 インタラクティブ環境
+  インタラクティブ環境はtclshコマンドでシェル風REPLが起動します。
+
+$ tclsh
+% puts "Hello tclsh" 
+Hello tclsh
+% exit
+
+1.2 puts文
+  puts文です。自動的に末尾に改行が付加されます。
+  改行しないときは -nonewline をオプションに付けます
+
+# Hello World
+puts "Hello World!"
+
+# 改行なし
+puts -nonewline "Hello World!"
+
+1.3 コメント文
+  コメント文です。Perlと違い、スペースを含め行頭が#でないとエラーとなります。
+  途中から#を使ってコメントしたい場合は、; で文を区切ります。
+
+# コメント
+puts "Hello World!" # こんにちは世界 <- これはエラー
+puts "Hello World!" ; # こんにちは世界 <- これはOK
+
+1.4 変数の宣言
+  変数はsetコマンドで設定します。unsetコマンドで削除です。
+  setコマンドで設定した変数は変数名の前に$付けて参照します。
+
+# 変数の設定
+set hoge 777
+puts $hoge
+  -> 777
+# 変数の削除
+unset hoge
+puts $hoge
+  -> can't read "hoge": no such variable
+
+1.5 スクリプトの実行
+  スクリプトの実行です。
+
+tclsh script.tcl
+  出力結果をファイルに書き出すにはリダイレクトを使います。
+
+tclsh script.tcl > out.txt
+
+■ 2.数値
+2.1 数値の表現
+  整数、小数、指数が使用できます。
+
+set num 123
+set num 0.1
+set num 1.1e+10
+
+2.2 四則演算
+  演算はexprコマンドを使います。
+
+expr 1 + 1    -> 2
+expr 1 - 1    -> 0
+expr 1 * 2    -> 2
+expr 1 / 2    -> 0
+expr 1.0 / 2  -> 0.5
+expr 1 % 2    -> 1
+
+2.3 インクリメントとデクリメント
+ インクリメントとデクリメントはincrコマンドを使います。
+
+#インクリメント
+incr i 1
+#デクリメント
+incr i -1
+
+■ 3.文字列
+3.1 数値の表現
+  文字列はシングルクォートかダブルクォートで囲みます。ダブルクォートの中ではt(タブ)やn(改行)などの特殊文字を利用することができます。またダブルクォートで囲まれた文字列の中では変数展開することができます。
+
+set str1 = 'abc';
+set str2 = 'def';
+set str3 = 'atbcn';
+# 変数展開(結果は abc def)
+set str4 = "$str1 def";
+
+3.2  文字列操作
+  各種文字列操作です。
+
+# 結合
+append str1 "aaa" "bbb"
+
+# 分割
+split "aaa,bbb,ccc" ,
+
+# 長さ
+string length "abcdef"
+
+# 切り出し
+string range  "abcd" 0 2   -> "ab"
+
+# 検索
+string first "cd" "abcd"    -> 2
+
+■ 4.配列
+4.1 配列の宣言と代入
+  配列です。またtclの配列はハッシュです。
+  配列名と添字で代入をします。
+
+# 配列への代入
+set array(1) "abc"
+
+4.2 配列の要素の参照と代入
+  配列の要素を参照と代入です。
+
+# 要素の参照
+puts $array(1)
+
+# 要素の代入(配列の代入と同じ)
+set array(1) "def"
+
+4.3 配列の個数
+  配列の個数を取得です。
+
+array size  array
+
+4.4 配列の操作
+  ハッシュなので配列の先頭とか末尾の取り出すようなことはしません。
+
+■ 5.ハッシュ
+5.1 ハッシュ変数の宣言と代入
+  tclの配列はハッシュのようなものですが、キーに対してのアクセスがあまりできません。
+  ディクショナリ型を作成するdictを使ってハッシュを作ります。
+
+# ハッシュ作成
+dict create
+# ハッシュ作成＆代入
+set hash [dict create "abc" 123]
+
+5.2 ハッシュの要素の参照と代入
+  ハッシュの要素の参照と代入です。
+
+# 要素の参照
+dict get $hash "abc"
+
+# 要素の代入
+dict set hash "def" 456
+
+5.3 ハッシュに関する関数
+
+# キーの取得
+dict keys $hash
+
+# 値の取得
+dict values $hash
+
+# キーの存在確認
+dict exists $hash "abc"
+
+# ハッシュのキーの削除
+dict unset hash "abc"
+
+■ 6.制御文
+6.1 if文
+  if文です。
+
+if {条件} {
+ # 処理
+}
+
+6.2 if ～ else文
+  if ～ else文です。
+
+if {条件} {
+# 処理
+} else { 
+    # 処理
+}
+
+6.3 if ～ elseif文
+  if ～ elseif文です
+
+if {条件} {
+ # 処理
+} elseif {条件} {
+ # 処理
+}
+
+6.4 while文
+  while文です
+
+set i 5
+while {$i != 0} {
+    # 処理
+    incr i -1
+}
+
+6.5 for文
+  for文です
+
+for {set i 1} {$i <= 5} {incr i} {
+    # 処理
+}
+
+6.6 foreach文
+  foreach文です。
+
+foreach i {A B C} {
+    # 処理
+}
+
+　EDAツールだと、合成/STAとかだとクロック指定や外部端子のリスト、
+  レイアウトではPLACED/FIXED属性のインスタンスやシールド属性の付加用のリストなどを頻繁に作ります。
+  しかし10Mインスタンスぐらいの規模になると、設計データのファイルサイズが大きすぎるため(数～十数GB)
+  設計データから抽出するのが厳しくなるため、EDAツールにビルトインされているtclを使い効率良く情報を取り出します。
+
+6.7 比較演算子
+比較演算子です。tclは文字列型なのでPerlのように比較演算子が区別されていません。
+
+$num1 == $num2 ; # $num1は$num2と等しい
+$num1 != $num2 ; # $num1は$num2と等しくない
+$num1 < $num2 ; # $num1は$num2より小さい
+$num1 > $num2 ; # $num1は$num2より大きい
+$num1 <= $num2 ; # $num1は$num2以下
+$num1 >= $num2 ; # $num1は$num2以上
+
+■ 7 プロシージャ
+tclでは関数、サブルーチンのことをプロシージャと言います。
+tclで新しいプロシージャを作るには、procコマンドを使用します。
+
+proc multiple { x y } {
+  puts [expr $x * $y ]
+  return
+}
+# 実行
+multiple 4 5    -> 20
+
+returnに何も指定していないとヌル文字を返します。
+またプロシージャの外で定義された変数はglobalコマンドで参照します。
+
+set x 4
+
+proc multiple { y } {
+  global x
+  puts [expr $x * $y ]
+  return
+}
+# 実行
+multiple 5 -> 20
+
+可変引数の場合は、引数の最後にargsを使いプロシージャ内で取り出します。
+
+proc multiple { x y args } {
+  set work [expr $x * $y]
+
+  foreach i $args {
+    set work [expr $work * $i]
+  }
+  puts $work
+}
+# 実行
+multiple 1 2 3 4 -> 24
+
+■ 8 ファイル入出力
+ファイルの入出力です。
+
+# 読み出し専用で開く
+open filename r
+# 書き込み専用で開く
+open filename w
+
+■ファイル操作コマンド
+
+●cd　$dirName
+作業ディレクトリィを変更する。
+
+●open　$fileName $access
+ファイルを開きファイル識別子を返す。
+$accessはr,r+,w,w+,a,a+のいずれか。
+デフォルトはr。
+
+●close　$fileID
+ファイルを閉じる。
+
+●puts　$option $fileID $string
+文字列$stringを識別子$fileIdのファイルに書く。 
+$fileIdを省略するとstdoutに出力される。
+$optionに-nonewlineを指定しないと改行コードが書かれる。
+
+●gets　$fileID verName
+識別子$fileIdのファイルから文字列を読み込み、変数varNameに代入しその文字数を返す。
+ファイル末尾に達した場合は-1を返す。
+変数名が省略されると文字列を返す。
+末尾に達した場合は空文字を返す。
+
+●read　$option $fileID
+識別子$fileIdのファイルから残りのデータをすべて読み込み、それらを返す。
+-nonewlineが指定されている場合には末尾に改行コードがあれば削除される。
+
+●seek　$fileID $offset $origin
+識別子$fieldIdファイルのアドレス$offsetにシークする。
+$originはstart,current,endのいずれか。
+省略するとstart。
+
+●tell　$fileID
+識別子$fileIdファイルの現在のアクセス位置を返す。
+
+●eof　$fileID
+識別子$fileIdファイルのアクセス位置がeofに達している場合は1を、それ以外の場合は0を返す。
+
+●file　$option $fileName arg...
+ファイル名$fileNameのファイルに$optionで与えた操作を行う。
+$optionは下記のいずれか。
+atime最後に参照された時刻を返すdirnameファイル名からディレクトリ名を取り出すexecutable実行可能なら1を返すexists存在し、アクセス可能なら1を返すextensionファイルの拡張子を取り出すisdirectoryディレクトリファイルなら1を返すisfile通常のファイルなら1を返すlstatlstatのシステムコールを実行しargで与えた変数に結果を返すmtime最後に修正された時刻を返すowned現在のオーナーが自分なら1を返すreadable読み込み可能なら1を返すreadlinkリンクファイル名を返すrootname最後のドットまで(ドットは含まない)の文字列を返すsizeファイルサイズを返すstatシステムコールstatを実行し、argで与えた変数に結果を返すtailファイル名を返すtypeファイルの種類を返す。種類はfile,directory,などwritableファイルが書き込み可能なら1を返す
+
+●flush　$fileID
+バッファに蓄積されているデータを識別子$fileIdのファイルに吐き出す。
+
+●glob　$switch $pattern $pattern...
+$patternに合致するすべてのファイル名のリストを返す。
+
+●pwd
+現在の作業ディレクトリ名を返す。
+
+

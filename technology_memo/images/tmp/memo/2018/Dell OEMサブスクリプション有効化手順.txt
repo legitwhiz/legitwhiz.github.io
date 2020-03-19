@@ -1,0 +1,10 @@
+"メーカーに手順を確認中となります。
+9/10　RHELのアクティベート手順ですが、RHEL6と同等の手順で問題ないことをメーカに確認を致しました。
+
+■[RHEL] Dell OEMサブスクリプション有効化手順
+https://www.dell.com/support/article/jp/ja/jpdhs1/sln272695/ja
+
+■Red Hat Enterprise Linux　サブスクリプション登録ガイド
+https://jp-redhat.com/opencollaboration/dell/simultaneous_purchase/index.html
+"
+

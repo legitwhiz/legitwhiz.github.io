@@ -1,0 +1,36 @@
+HP-UX fource fsck
+
+Maximum mount count(30) - Mount count(10)
+
+Last checked(2017年1月1日9時) + Check interval(6ヶ月:15552000秒)
+    ※ただし、1のマウント回数によりFSCKが先に実行された場合は、その日時から6ヶ月(15552000秒)後に変更されます。
+
+# tune2fs -l /dev/vgroot/LogVol02 | egrep -i 'mount count|check'
+
+Mount count: 5
+Maximum mount count: 21
+Last checked: Tue Nov 3 12:52:13 2015
+Check interval: <i>15552000 (6 months) 
+
+
+Setting maximal mount count to “-1”
+Setting interval between checks to “0” seconds.
+
+
+# tune2fs -c 0 -i 0 -l /dev/vgroot/LogVol02 | egrep -i 'mount count|check'
+
+Setting maximal mount count to -1
+Setting interval between checks to 0 seconds
+Mount count: 5
+Maximum mount count: -1
+Last checked: Tue Nov 3 12:52:13 2015
+Check interval: 0 (<none>)
+
+
+Reboot  system with “-f” option.But don’t  forget this is not  permanently action. It ‘ll  only  perform boot  without  FSCK  for this  boot time. If your server  crashed  or rebooted without “-f”  option  it ‘ll  perform  FSCK  if it’s defined on your  configuration.
+
+#shutdown -rf now
+
+
+
+

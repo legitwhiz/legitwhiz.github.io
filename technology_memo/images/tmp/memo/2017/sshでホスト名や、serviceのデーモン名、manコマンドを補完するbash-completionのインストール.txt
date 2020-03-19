@@ -1,0 +1,78 @@
+sshでホスト名や、serviceのデーモン名、manコマンドを補完する　bash-completion　のインストール 
+
+ホスト名が補完されるbash-completion　をインストールしてみます。これがあれば、打ち間違えも押さえられるし、効率化にも繋がります。
+
+インストール作業　# centOSの場合
+パッケージインストール済みかを確認。
+# rpm -qa | grep bash-completion
+
+ソースインストールを考慮し、コマンドでも確認。
+# complete
+かなりの行数が表示されると入っています。
+ 無ければインストールします。
+
+レポジトリ確認
+# yum repolist | grep epel
+無ければepelを追加しましょう。
+
+インストール。
+# yum install bash-completion
+パッケージをインストールすると、.bashrc等に記述を記載する必要はありません。　/etc/profile.d/　に設置してくれている。
+
+一度ログアウトして再ログイン。
+# ssh <tab>
+
+で、ホスト名が表示されていればOK.
+sshの他にも、色々なサービスの引数に対応しています。第1引数、第２引数というようにコマンドによって、起動スクリプトの中身まで読んで補完をしてくれているようです。
+ただし、補完しないコマンドも多数なので気をつけないと行けません。
+
+補完の情報は以下で設定されている
+/etc/bash_completion.d/ に格納のコマンドが対象です。
+
+# ls  /etc/bash_completion.d/
+_subversion  bind-utils  cryptsetup  gdb  iproute2  mdadm  perl  rcs  shadow  util-linux
+_yum  bzip2  cvs  getent  iptables  mkinitrd  pkg-config  redefine_filedir  smartctl  wireless-tools
+_yum-utils  chkconfig  dd  gpg  lftp  module-init-tools  pm-utils  rpcdebug  sqlite3  xmllint
+aspell  configure  dhclient  gzip  lsof  mysqladmin  postfix  rpm  ssh  xmlwf
+autoconf  coreutils  e2fsprogs  iconv  lvm  net-tools  procps  rsync  strace  xorg-x11-server-utils
+automake  cpio  findutils  ifupdown  make  open-iscsi  python  service  tar  xsltproc
+bash-builtins  crontab  gcc  info  man  openssl  quota-tools  sh  tcpdump  yp-tools
+
+もし、何か付け足したい場合はここにbashファイルを置いて上げると補完対象になります。
+
+RedHat系のディストリビューションではBash-Completionからダウンロードしてインストールします。
+$ wget http://bash-completion.alioth.debian.org/files/bash-completion-1.2.tar.gz -O bash-completion-1.2.tar.gz
+$ tar xvzf bash-completion-1.2.tar.gz
+$ cd bash-completion-1.2
+$ ./configure --prefix=''
+$ make
+$ sudo make install
+
+bash-completion-1.2の場合、/etc/bash_completion.d/serviceスクリプトに不具合があるので修正します。
+修正箇所は下記の通り。
+--- service     2010-10-23 11:47:38.000000000 +0900
++++ service_fix 2010-10-23 12:21:08.000000000 +0900
+@@ -32,9 +32,10 @@
+     return 0
+ } &&
+ complete -F _service service
+-[ -d /etc/init.d/ ] && complete -F _service -o default 
+-    $(for i in /etc/init.d/*; do
+-    complete -p ${i##*/} &>/dev/null || printf '%sn' ${i##*/}; done)
++[ -d /etc/init.d/ ] && (
++    services=$(for i in /etc/init.d/*; do
++        complete -p ${i##*/} &>/dev/null || printf '%sn' ${i##*/}; done)
++    [ -n "$services" ] && complete -F _service -o default $services;)
+ # Local variables:
+ # mode: shell-script
+
+その後、bash_completionをロードするように下記のように.bashrcに記述します。
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+
+
+
+
+
+

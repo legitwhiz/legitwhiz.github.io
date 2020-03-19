@@ -1,0 +1,73 @@
+
+#-------------##### ソースからZabbix Server install #####------------------------
+
+1.準備作業
+1.1 ソース解凍
+ソースを/tmpに配置
+
+cd /tmp
+
+tar zxvf ./zabbix-2.2.10.tar.gz
+cd ./zabbix-2.2.10
+
+1.2 ユーザ・グループ作成
+groupadd -g 492 zabbix
+useradd -u 496 zabbix -g zabbix
+id zabbix
+
+#下記のようになっていることを確認
+#uid=496(zabbix) gid=492(zabbix) groups=492(zabbix) 
+
+1.3 Zabbixデータベースの作成
+CD-ROMよりMySQLをインストール
+
+shell> mysql -u<username> -p<password>
+mysql> create database zabbix character set utf8 collate utf8_bin;
+mysql> quit;
+shell> mysql -u<username> -p<password> zabbix < database/mysql/schema.sql
+# stop here if you are creating database for Zabbix proxy
+shell> mysql -u<username> -p<password> zabbix < database/mysql/images.sql
+shell> mysql -u<username> -p<password> zabbix < database/mysql/data.sql
+
+2.Install
+
+2.1.configure
+#オプション確認
+sudo ./configure --help
+
+sudo ./configure --enable-server --with-mysql --with-net-snmp --with-libcurl --with-libxml2
+
+2.2. Zabbix ServerのInstall
+sudo make install
+
+2.3. 各設定は「」を参照。
+
+
+#-------------##### ソースからZabbix Agent install #####------------------------
+
+1.準備作業
+1.1 ソース解凍
+ソースを/tmpに配置
+
+cd /tmp
+
+tar zxvf ./zabbix-2.2.10.tar.gz
+cd ./zabbix-2.2.10
+
+1.2 ユーザ・グループ作成
+groupadd -g 492 zabbix
+useradd -u 496 zabbix -g zabbix
+id zabbix
+
+#下記のようになっていることを確認
+#uid=496(zabbix) gid=492(zabbix) groups=492(zabbix) 
+
+2.Install
+
+2.1.configure
+Zabbixエージェントのソースを設定するには、次のように実行します。 
+./configure --enable-agent
+
+2.2. Zabbix AgentのInstall
+sudo make install
+

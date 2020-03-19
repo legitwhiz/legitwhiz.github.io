@@ -1,0 +1,25 @@
+Windows eventlog 複数サーバから収集bat
+
+set TODAY=%DATA:~0,4%%DATE:~5,2%%DATE:~8,2%
+echo %TODAY% のエラーログを表示します。
+
+REM Server List
+call :PRINT_ERROR_EVENTLOG server1 <domain>\<username> <password>
+call :PRINT_ERROR_EVENTLOG server2 <domain>\<username> <password>
+call :PRINT_ERROR_EVENTLOG server3 <domain>\<username> <password>
+
+goto :EOF
+
+REM ###===========================================
+ :PRINT_ERROR_EVENTLOG
+REM ###===========================================
+
+REM echo --- %1 (Application)---------------------
+wmic /Node:%1 /User:%2 /Password:%3 ntevent where "(LogFile='application' and EventType='2' and TimeGenerated>='%TODAY%
+%000000.0+540')" list brif
+
+REM echo --- %1 (System)---------------------
+wmic /Node:%1 /User:%2 /Password:%3 ntevent where "(LogFile='system' and EventType='2' and TimeGenerated>='%TODAY%000000.0+540')" list brif
+
+goto: EOF
+

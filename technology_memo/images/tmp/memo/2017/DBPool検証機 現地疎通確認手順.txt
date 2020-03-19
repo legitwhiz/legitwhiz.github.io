@@ -1,0 +1,68 @@
+
+DBPool検証機 現地疎通確認
+サーバは電源投入、ランプ確認レベルを想定。
+[DL380 Gen9サーバーユーザーガイド.pdf]のP.8を参照。
+
+OS側はping確認、機能確認(ntp、mail)を想定。 
+
+1.ping確認
+mii-tool eth0
+mii-tool eth2
+[link ok]が出力されていればlinkupはOKです。
+
+grep -v -e '^s*#' -e '^s*$' /etc/hosts | awk '{ print $1 }' | xargs -n 1 ping -c 1 
+
+2.機能確認(ntp)
+2.1 ntpサービス停止
+service ntpd stop
+
+2.2 強制時刻同期
+ntpdate -b -u 133.217.201.104
+※offset の値が0.1以下"になるまで、強制的に時刻調整すること。
+
+2.3 システム時間をHWへ反映
+clock -w
+
+2.4 システム時間とHW時刻の確認
+clock;date
+
+2.5 ntpサービス起動
+service ntpd start
+
+2.6 時刻同期確認
+ntpq -p
+
+※下記内容を確認し左端に「*」付くまで繰り返すこと。
+ ntpqコマンドで同期状態を確認します。
+ 起動直後は時刻同期が出来てません。（時刻同期が完了するまで5分ぐらいかかります） # ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ ntp-b2.nict.go. .NICT.           1 u    2   64    1   12.238   -0.346   0.001
+ ntp-b3.nict.go. .NICT.           1 u    1   64    1   10.813    0.710   0.001
+ LOCAL(0)        .LOCL.          10 l    -   64    1    0.000    0.000   0.001
+
+
+ 5分後ぐらいに再び同期状態を確認します。左端に「*」が付けば同期が出来ています。 # ntpq -p
+      remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
++ntp-b2.nict.go. .NICT.           1 u   30   64  377   10.542    0.835   0.810
+*ntp-b3.nict.go. .NICT.           1 u   29   64  377   10.367   -0.020   0.469
+ LOCAL(0)        .LOCL.          10 l   37   64  377    0.000    0.000   0.001
+
+
+3.機能確認(mail)
+3.1 メール送信先設定
+vi /etc/aliases
+
+3.2 編集後に反映させるコマンド
+newaliases
+
+3.3 テスト
+root宛のメールが転送されるかテスト。
+echo "send a test mail root" | mail root
+
+aliasesに届いたか確認
+
+vi /etc/aliases
+#decode:                root
+

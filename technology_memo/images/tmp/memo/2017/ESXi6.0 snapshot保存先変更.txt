@@ -1,0 +1,15 @@
+ESXi6.0 snapshot保存先変更
+
+1.対象仮想マシン停止
+
+2.対象仮想マシンの構成情報(.vmx)
+をローカルにダウンロード
+
+3.vmx編集
+snapshot.redoNotWithParent = "TRUE"
+workingDir = "/vmfs/volumes/xxxxxx-xxxxxx-xxxxx/snapshot"
+
+4.vmxをアップロード
+
+5.仮想マシン起動
+

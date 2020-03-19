@@ -1,0 +1,388 @@
+■ユーザー追加コマンド　−　ldapadd
+例）　#ldapadd -x -D “cn=Manager,dc=company,dc=jp” -w xxxx -c -f ./input_file.ldif -S ./skip_file.out
+
+
+ldapadd -x -D uid=admin,o=nhk.or.jp -W -c -f ./input_file2.ldif
+
+■ユーザー更新コマンド　−　ldapmodify
+例）　#ldapmodify -x -D “cn=Manager,dc=company,dc=jp” -w xxxx -c -f ./input_file.ldif -S ./skip_file.out
+
+⇒　ldapadd と ldapmodify について
+ldapadd（追加）はldapmodify（更新）のハードリンクであり、「 ldapmodify　」を　-a オプション付きで実行することと同じです。
+
+■ユーザー削除コマンド　−　ladpdelete
+例）　#ldapdelete -x -D “cn=Manager,dc=company,dc=jp” -w xxxx -c -f ./input_file.ldif
+
+■■■ldapsearch - LDAP 検索ツール■■■
+
+ldapsearch -x -LLL -D "cn=manager,dc=company,dc=jp" -W -b "ou=people,dc=company,dc=jp"
+
+ldapsearch -x -D "cn=Manager,dc=example,dc=com" -W  +
+
+ldapsearch  -x -b 'dc=example,dc=com' 'uid=testuser'
+
+
+ldapsearch -x -H ldap://133.127.33.188 -D uid=admin,o=nhk.or.jp -w admin -b ou=people,o=nhk.or.jp '(uid=0000121212)'
+
+ldapsearch -x -H ldap://192.168.20.48 -D uid=admin,o=nhk.or.jp -w admin -b ou=people,o=nhk.or.jp '(uid=0000121212)'
+
+ldapsearch -LLL -x -H ldap://192.168.20.48 -D uid=admin,o=nhk.or.jp -w admin -b ou=people,o=nhk.or.jp uid=0000121212
+
+
+uid番号だけを出力する場合
+ldapsearch -x -h localhost -b 'ou=Users, dc=example, dc=com' uidNumber
+
+ldapsearch -x -H ldap://192.168.20.48 -D uid=admin,o=nhk.or.jp -w admin -b ou=people,o=nhk.or.jp uidNumber
+
+ldapsearch -x -H ldap://192.168.20.48 -D uid=admin,o=nhk.or.jp -w admin -b ou=people,o=nhk.or.jp uidNumber companyName
+
+uidとuidNumberなど複数出力したい場合
+ldapsearch -x -h localhost -b 'ou=Users, dc=example, dc=com' uid uidNumber
+
+ldapsearch -x -H ldap://192.168.20.48 -D uid=admin,o=nhk.or.jp -w admin -b ou=people,o=nhk.or.jp uidNumber
+
+-x	SASL の代わりに簡易認証を使う
+-L	検索結果を LDAP データ交換フォーマット(LDIF) で表示する
+-LL	コメントを出力しない
+-LLL	LDIF バージョンを出力しない
+-D	LDAP ディレクトリにバインドする識別名 binddn を指定
+-W	簡易認証のためのプロンプトを出す
+-w	簡易認証のためのパスワードを指定
+-b	検索エントリの条件
+-h		LDAPサーバのアドレスorホスト名
+
+■ベースツリー
+ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config -s base
+
+■frontendデータベース
+ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b olcDatabase={-1}frontend,cn=config
+
+■configデータベース
+ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b olcDatabase={0}config,cn=config
+
+■monitorデータベース
+ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b olcDatabase={1}monitor,cn=config
+
+■デフォルトのデータベース
+ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b olcDatabase={2}bdb,cn=config
+
+
+
+■■■LDAPユーザー一括追加シェル(collectively_add_user.sh)■■■
+
+#!/bin/sh
+#collectively_add_user.sh
+com_add="/usr/bin/ldapadd"
+com_search="/usr/bin/ldapsearch"
+com_del="/usr/bin/ldapdelete"
+com_mod="/usr/bin/ldapmodify"
+ldap_admin="cn=Manager,dc=company,dc=jp"
+ldap_pass="passl620"
+ldap_people="ou=People,dc=company,dc=jp"
+user_del_file="./DAT/user_del.ldif"
+user_add_file="./DAT/user_add.ldif"
+user_mod_file="./DAT/user_mod.ldif"
+skipped_file="./DAT/skipped.txt"
+DELIM=,
+SUFFIX="dc=company,dc=jp"
+OU_USERS="ou=People"
+OU_GROUPS="ou=Group"
+OUT_FILE=./OUT/add.out
+SKIP_FILE=./SKIP/add.skip
+TMP_FILE=./TMP/add.tmp
+echo "" > ${OUT_FILE}
+echo "" > ${TMP_FILE}
+ 
+function start_stamp(){
+        START=`date +%s`
+}
+function stamp() {
+ END=`date +%s`
+ SS=`expr ${END} - ${START}`
+ HH=`expr ${SS} / 3600`
+ SS=`expr ${SS} % 3600`
+ MM=`expr ${SS} / 60`
+ SS=`expr ${SS} % 60`
+ echo "${HH}:${MM}:${SS}"
+}
+ 
+start_stamp
+filename=$1
+lineno=0
+while read line
+do
+  lineno=`expr ${lineno} + 1`
+  echo ${lineno}
+  uid=`echo ${line} | cut -d ${DELIM} -f 1`
+  cn=`echo ${line} | cut -d ${DELIM} -f 2`
+  sn=`echo ${line} | cut -d ${DELIM} -f 3`
+  des=`echo ${line} | cut -d ${DELIM} -f 4`
+  pass=`echo ${line} | cut -d ${DELIM} -f 5`
+  echo -e "dn: uid=${uid},${OU_USERS},${SUFFIX}\nuid: ${uid}\ncn: ${cn}\nsn: ${sn}\ndescription: ${des}\nuserPassword: ${pass}\nobjectClass: inetOrgPerson\n" >> ${TMP_FILE}
+done < ${filename} stamp >> ${OUT_FILE}
+echo "adding ..."
+${com_add} -x -D "${ldap_admin}" -w $ldap_pass -c -f ${TMP_FILE} -S ${SKIP_FILE}
+if test 0 -ne $? ; then
+  echo ERROR OCCURED.
+fi
+stamp >> ${OUT_FILE}
+
+
+■■■LDAPユーザー一括更新シェル(collectively_modify_user.sh)■■■
+
+#!/bin/sh
+#collectively_modify_user.sh
+START=`date +%s`
+com_add="/usr/bin/ldapadd"
+com_search="/usr/bin/ldapsearch"
+com_del="/usr/bin/ldapdelete"
+com_mod="/usr/bin/ldapmodify"
+ldap_admin="cn=Manager,dc=company,dc=jp"
+ldap_pass="passl620"
+ldap_people="ou=People,dc=company,dc=jp"
+user_del_file="./DAT/user_del.ldif"
+user_add_file="./DAT/user_add.ldif"
+user_mod_file="./DAT/user_mod.ldif"
+skipped_file="./DAT/skipped.txt"
+DELIM=,
+SUFFIX="dc=company,dc=jp"
+OU_USERS="ou=People"
+OU_GROUPS="ou=Group"
+OUT_FILE=./OUT/mod.out
+SKIP_FILE=./SKIP/mod.skip
+TMP_FILE=./TMP/mod.tmp
+echo "" > ${OUT_FILE}
+
+filename=$1
+echo "" > ${TMP_FILE}
+
+function start_stamp(){
+        START=`date +%s`
+}
+function stamp() {
+ END=`date +%s`
+ SS=`expr ${END} - ${START}`
+ HH=`expr ${SS} / 3600`
+ SS=`expr ${SS} % 3600`
+ MM=`expr ${SS} / 60`
+ SS=`expr ${SS} % 60`
+ echo "${HH}:${MM}:${SS}"
+}
+
+lineno=0
+while read line
+do
+  lineno=`expr ${lineno} + 1`
+  echo ${lineno}
+  uid=`echo ${line} | cut -d ${DELIM} -f 1`
+  cn=`echo ${line} | cut -d ${DELIM} -f 2`
+  sn=`echo ${line} | cut -d ${DELIM} -f 3`
+  des=`echo ${line} | cut -d ${DELIM} -f 4`
+  pass=`echo ${line} | cut -d ${DELIM} -f 5`
+  echo -e "dn: uid=${uid},${OU_USERS},${SUFFIX}\nchangetype: modify\nreplace: cn\ncn: ${cn}\n-\nreplace: sn\nsn: ${sn}\n-\nreplace: description\ndescription: ${des}\n-\nreplace: userPassword\nuserPassword: ${pass}\n" >> ${TMP_FILE}
+done < ${filename} stamp >> ${OUT_FILE}
+echo "modifing ..."
+${com_mod} -x -D "${ldap_admin}" -w $ldap_pass -c -f ${TMP_FILE} -S ${SKIP_FILE}
+if test 0 -ne $? ; then
+  echo ERROR OCCURED.
+fi
+stamp >> ${OUT_FILE}
+
+
+■■■LDAPユーザー削除シェルプログラム(collectively_delete_user.sh)■■■
+
+#!/bin/sh
+#collectively_delete_user.sh
+com_add="/usr/bin/ldapadd"
+com_search="/usr/bin/ldapsearch"
+com_del="/usr/bin/ldapdelete"
+com_mod="/usr/bin/ldapmodify"
+ldap_admin="cn=Manager,dc=company,dc=jp"
+ldap_pass="passl620"
+ldap_people="ou=People,dc=company,dc=jp"
+user_del_file="./DAT/user_del.ldif"
+user_add_file="./DAT/user_add.ldif"
+user_mod_file="./DAT/user_mod.ldif"
+skipped_file="./DAT/skipped.txt"
+DELIM=,
+SUFFIX="dc=company,dc=jp"
+OU_USERS="ou=People"
+OU_GROUPS="ou=Group"
+OUT_FILE=./OUT/del.out
+SKIP_FILE=./SKIP/del.skip
+TMP_FILE=./TMP/del.tmp
+echo "" > ${OUT_FILE}
+echo "" > ${TMP_FILE}
+
+function start_stamp() {
+  START=`date +%s`
+}
+function stamp() {
+ END=`date +%s`
+ SS=`expr ${END} - ${START}`
+ HH=`expr ${SS} / 3600`
+ SS=`expr ${SS} % 3600`
+ MM=`expr ${SS} / 60`
+ SS=`expr ${SS} % 60`
+ echo "${HH}:${MM}:${SS}"
+}
+
+start_stamp
+filename=$1
+lineno=0
+while read line
+do
+  lineno=`expr ${lineno} + 1`
+  echo ${lineno}
+  uid=`echo ${line} | cut -d ${DELIM} -f 1`
+  cn=`echo ${line} | cut -d ${DELIM} -f 2`
+  sn=`echo ${line} | cut -d ${DELIM} -f 3`
+  des=`echo ${line} | cut -d ${DELIM} -f 4`
+  pass=`echo ${line} | cut -d ${DELIM} -f 5`
+  echo "uid=${uid},${OU_USERS},${SUFFIX}" >> ${TMP_FILE}
+done < ${filename} stamp >> ${OUT_FILE}
+echo "deleting ..."
+${com_del} -x -D "${ldap_admin}" -w $ldap_pass -c -f ${TMP_FILE}
+if test 0 -ne $? ; then
+  echo ERROR OCCURED.
+fi
+stamp >> ${OUT_FILE}
+
+■■■単一ユーザー追加用LDIFファイル作成スクリプト(create_user_ldif.sh)■■■
+
+#!/bin/sh
+
+read -p "ベースDN(例:dc=example,dc=com) : " BASE_DN_NAME
+read -p "ユーザー名(例:testuser)        : " USER_NAME
+read -p "ユーザーID(例:1001)            : " USER_ID
+read -p "グループID(例:1001)            : " GROUP_ID
+read -p "ユーザーパスワード(例:pass)    : " USER_PASSWORD
+read -p "Home Directory(/home/testuser) : " USER_DIRECTORY
+
+PASSWORD=$(slappasswd -s "${USER_PASSWORD}")
+
+echo "
+dn: uid=${USER_NAME},ou=People,${BASE_DN_NAME}
+uid: ${USER_NAME}
+cn: ${USER_NAME}
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+objectClass: shadowAccount
+userPassword: ${PASSWORD}
+shadowLastChange: 15862
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/bash
+uidNumber: ${USER_ID}
+gidNumber: ${GROUP_ID}
+homeDirectory: ${USER_DIRECTORY}
+"
+
+
+■■■slaptest - 設定ファイル slapd.conf の適合性を検査■■■
+slaptest -v -f /etc/openldap/slapd.conf.test
+slaptest -v -f /etc/openldap/slapd.conf -F /etc/openldap/slapd.d
+
+-f	slapd.confファイルを指定
+-F	設定ディレクトリを指定
+-v	冗長モード
+-u	dry-run モード (データベースがなくてもエラーにならない)
+
+■■■slapindex - SLAPD 索引の再生成■■■
+slapindex -v -b "dc=example,dc=com" -f slapd.conf
+-b	索引を再生成するデータベース決定するための接尾辞 suffix を指定
+-f	slapd.confファイルを指定
+
+■■■ldapadd - LDAP エントリ追加ツール■■■
+ldapadd -x -D "cn=Manager,dc=example,dc=com" -W -f ./main.ldif
+-x	SASL の代わりに簡易認証を使う
+-D	LDAP ディレクトリにバインドする識別名 binddn を指定
+-W	簡易認証のためのプロンプトを出す
+-f	標準入力の代わりにファイル file からエントリ更新情報を読み込む
+-w	簡易認証のためのパスワードを指定
+
+
+
+■■■ldapmodify, ldapadd - LDAP エントリ更新/追加ツール■■■
+ldapmodify -x -D "cn=Manager,dc=company,dc=jp" -W -f ./modify1.ldif
+-x	SASL の代わりに簡易認証を使う
+-D	LDAP ディレクトリにバインドする識別名 binddn を指定
+-W	簡易認証のためのプロンプトを出す
+-w	簡易認証のためのパスワードを指定
+-f	標準入力の代わりにファイル file からエントリ更新情報を読み込む
+
+■■■ldapdelete - LDAP エントリ削除ツール■■■
+ldapdelete -x -D "cn=Manager,dc=company,dc=jp" -W "uid=user02,ou=people,dc=company,dc=jp"
+-x	SASL の代わりに簡易認証を使う
+-D	LDAP ディレクトリにバインドする識別名 binddn を指定
+-W	簡易認証のためのプロンプトを出す
+-w	簡易認証のためのパスワードを指定
+
+属性タイプ
+dn	Distinguished Name	識別子
+objectClass	objectClass	オブジェクトクラス
+dc	Domain Component	ドメイン構成要素
+o	Organization	組織名
+ou	Organization Unit	組織単位
+cn	Common Name	一般名称
+
+■■■データベースの作成■■■
+
+# サービスの停止
+$sudo service slapd stop
+Stopping slapd:                                            [  OK  ]
+
+# データベース定義ファイルの削除
+$sudo rm /etc/openldap/slapd.d/cn\=config/olcDatabase\=\{2\}bdb.ldif
+
+# サービス起動
+$sudo service slapd start
+Starting slapd:                                            [  OK  ]
+
+example_com.ldif
+dn: olcDatabase=hdb,cn=config
+objectClass: olcHdbConfig
+olcDatabase: hdb
+olcDbDirectory: /var/lib/ldap
+olcSuffix: dc=example,dc=com
+olcRootDN: cn=Manager,dc=example,dc=com
+olcAccess: to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage by * none
+
+$ldapadd -Y EXTERNAL -H ldapi:/// -f example_com.ldif
+
+$ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config
+
+
+
+■■■■■■
+■■■■■■
+
+■■■■■■
+
+■■■■■■
+UID=
+ldapsearch -x -D uid=admin,o=nhk.or.jp -W -b ou=ldapuser,o=nhk.or.jp uid=${UID} 
+
+
+
+ldapsearch -x -h localhost -b 'uid=admin,o=nhk.or.jp' -W -b ou=people,o=nhk.or.jp uidNumber
+
+
+
+ldapsearch -x -D uid=admin,o=nhk.or.jp -W -b ou=people,o=nhk.or.jp uidNumber
+
+
+cat /home/radmin/20181113/updatelog-0000.log |sed '1,9d' | sed -e '$d' | sed -e '$d' | sed -e '$d'| sed -e '$d'| sed -e '$d' | awk '{ print $4 }' > /home/radmin/20181113/updatelog-0000_UID.log
+
+
+
+while read LINE
+do
+ldapsearch -x -H ldap://133.127.98.67 -D uid=admin,o=nhk.or.jp -W -b ou=people,o=nhk.or.jp uid=${LINE} passwordExpirationTime
+
+done < /home/radmin/20181113/updatelog-0000_UID.log
+
+
+

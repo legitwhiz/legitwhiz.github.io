@@ -1,0 +1,36 @@
+suできないユーザーへsuする。
+
+phpや、cgi等、apacheユーザーの権限で実行されるスクリプトの動作を調べる際に、
+apacheユーザーへsuして処理を試そうとしましたが、 ログインシェルに、/sbin/nologin
+が指定されていて、suでのスイッチ、ログインができませんでした。 
+
+apacheユーザーのログインシェルを確認してみます
+# grep apache /etc/passwd
+apache:x:48:48:Apache:/var/www:/sbin/nologin  ← ログインシェルがnologinで
+ログインできない
+
+この状態で、そのままsuしようとするとエラーとなります。 
+[root@sandbox1 ~]# su - apache
+This account is currently not available.  ← 利用できないと言われる。
+
+
+こんな場合はnologinシェルではない別のシェルを指定してsuしてあげれば問題なく
+スイッチできます。ここでは、bashを指定してみます。
+# su -s /bin/bash apache  ← ログインシェルにbashを指定してsuする。
+
+bash-4.1$ pwd
+/root
+
+bash-4.1$ id
+uid=48(apache) gid=48(apache) 所属グループ=48(apache)
+↑ apacheユーザーになれた。
+
+もしくは
+# su -s /bin/bash - apache  ← 「-」付きでsu。（現在の環境変数を解除してそのユーザーでログイン）
+-bash-4.1$ id
+uid=48(apache) gid=48(apache) 所属グループ=48(apache)
+
+-bash-4.1$ pwd
+/var/www  ← apacheユーザーのホームディレクトリ
+
+

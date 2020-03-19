@@ -1,0 +1,40 @@
+Apache2.4で、アクセス制限の記述方法が変更されていた
+
+新しくサイトを立ち上げるために、
+自宅サーバ(Ubuntu16.04)
+Apache にVirtual Hostを追加し、
+Apacheをブラウザで開いたところ、無情にもForbiddenが・・・。
+
+Forbidden You don't have permission to access /index.html on this server
+
+まあ、メッセージ内容から
+ファイルのパーミッションなのかと
+調べたが、どこも悪くなさそう…
+
+なのでerror_logを調査。
+に以下の内容が出力されていました。
+AH01630: client denied by server configuration:
+
+あーなんかアクセス拒否してるし
+じゃあ、Apacheのconfigかー
+
+そこで気付いたのが、
+ubuntuをapt-getでupgradeしたら、
+いつの間にかapacheが
+2.4系にアップデートされていた…。
+
+う～ん、configでは全許可しているのに…
+ネットで調べたら、Apache2.4系はアクセス制限設定が変わってたのね！
+
+2.2系
+<Directory "/var/www/html">
+ Order allow,deny Allow from all 
+</Directory> 
+
+2.4系
+<Directory "/var/www/html">
+ Require all granted
+</Directory>
+
+configを修正し、Apacheを再起動しOK!
+

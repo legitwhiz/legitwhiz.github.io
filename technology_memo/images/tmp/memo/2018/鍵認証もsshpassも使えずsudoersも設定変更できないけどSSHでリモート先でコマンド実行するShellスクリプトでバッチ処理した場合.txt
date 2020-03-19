@@ -1,0 +1,19 @@
+
+
+readonly SSH_USER=<SSH_Login_User_Name>
+readonly SSH_PASS=<SSH_Login_User_Password>
+host=
+Command=
+
+#PASSWORD=""
+if [ -n "$PASSWORD" ]; then
+  cat <<< "$PASSWORD"
+  exit 0
+fi
+
+export PASSWORD=$SSH_PASS
+export SSH_ASKPASS=$0
+export DISPLAY=dummy:0
+
+exec setsid ssh -o "StrictHostKeyChecking=no" ${SSH_USER}@${host} "${Command}"
+

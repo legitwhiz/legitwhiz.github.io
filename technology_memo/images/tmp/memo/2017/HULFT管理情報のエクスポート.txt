@@ -1,0 +1,69 @@
+HULFT管理情報のエクスポート
+
+HULFTのWindows版ではutligenコマンドにより管理情報のエクスポートができます。
+
+サンプルコード
+
+rem 配信管理情報のエクスポート
+utligen -f FILENAME -i snd
+
+実行例
+c:\HULFT Family\hulft800\bin>utligen -f "c:\ParameterFile.txt" -i snd
+utligen : SUCCESS!
+
+c:\HULFT Family\hulft800\bin>type c:\ParameterFile.txt
+#
+# ID=LOOPBACK
+#
+
+SNDFILE=LOOPBACK
+FILENAME=C:\HULFT\LOOPSND.txt
+TRANSTYPE=T
+TRANSPRTY=50
+INTERVAL=0
+BLOCKLEN=4096
+BLOCKCNT=3
+COMP=N
+GRPID=LOOPBACK
+KJCHNGE=S
+CLEAR=K
+CODESET=A
+SHIFTTRANSACT=Y
+END
+
+必須パラメータ
+-f FILENAME
+
+エクスポート先ファイル指定パラメータ
+管理情報の出力先ファイルを絶対パスで指定します。
+
+-i { snd | rcv | job | hst | tgrp | fmt | mfmt | sch | trg }
+
+エクスポート管理情報指定パラメータ 
+以下の管理情報をエクスポートすることができます。
+
+snd : 配信管理情報
+rcv : 集信管理情報
+job : ジョブ起動情報
+hst : 詳細ホスト情報
+tgrp : 転送グループ情報
+fmt : フォーマット情報
+mfmt : マルチフォーマット情報
+sch : スケジュール情報
+trg : ファイルトリガ情報
+
+省略可能パラメータ
+
+-id ID
+
+エクスポートファイルID指定パラメータ
+エクスポートを行う対象のIDを指定できます。
+
+●完了コード
+0
+正常終了
+
+0以外
+異常終了
+
+

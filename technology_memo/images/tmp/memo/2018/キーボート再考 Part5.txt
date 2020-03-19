@@ -1,0 +1,176 @@
+キーボート再考 Part5
+
+
+HHKBも大分、身体に馴染んできた感じです。
+
+■自分のキーボードのクセは？
+
+自分のキーボードのクセを掴むため
+KeyBoardのタイプの統計情報を採取する
+[type数カウンター]を導入してみました。
+毎日、キーカウントを[type数カウンター]で
+採取していましたが、これが見ているだけでも結構楽しい。
+無駄にバックスペースとかdeleteを使用していることから
+まだまだ、キーボードに慣れてないのだなーと
+見た目で分かりますw
+
+[タイプ数カウンター
+]
+https://freesoft-100.com/review/type-su-counter.php
+
+■毎日エクスポートするには？
+
+ですが、各キーの総合計は累積で見ることは
+出来るのですが、日毎のキータイプ数の変化は、
+日次で消去されてしまうので、ちゃんと統計情報を
+取るには日次で何かしら結果をエクスポート
+するしかありません。
+
+なので、[ListView to CSV]を導入し、
+毎日、GUI操作でCSVに出力していました。
+ただ、毎日GUI操作は面倒です・・・。
+それに、ついつい忘れがち・・・。
+
+[ListView to CSV]
+https://www.inasoft.org/lv2csv/
+
+■自動でCSV出力するには？
+
+[ListView to CSV]にコマンドで
+エクスポート機能とかあれば
+スクリプトにも簡単に組み込むことは、
+簡単なのですが、そんな機能は存在せず...。
+
+なので、GUI操作を自動化できないか
+調査したところ
+[UI Automation PowerShell Extensions]
+なるものを導入することで
+PowerShellで自動化できるとのことで
+導入してみました。
+
+・[UI Automation PowerShell Extensions]を使うためには
+
+    [https://uiautomation.codeplex.com/]
+    から[download archive]を押すと
+    ダウンロードでき、解凍しましたが、
+    なんと過去のソース全てが含まれている…。
+    そのためまず、使用するバージョンの
+    ソースを探すところから始めないといけません...。
+
+    解凍した配下に[releases]ディレクトリがあり、
+    [releaseList.json]に今までの更新履歴があったので
+    最新の[UIAutomation.<version>.NET35.zip]
+    を探し、それと紐づいた実ファイル名
+    を取得し実際のファイル名を修正します。
+    以下の場合だと
+    [./44/93a26058-f33a-4f5b-bbbe-4a93b0071e00]
+    を[UIAutomation.0.8.7B3.NET35.zip]に
+    リネームしてから更に解凍します。
+    ※たぶん、powershellでは、.NET35版の
+    最新であれば大丈夫。たぶん…。
+
+    [releaseList.json抜粋]
+    "FileName": "UIAutomation.0.8.7B3.NET35.zip",
+    "Url": "./44/93a26058-f33a-4f5b-bbbe-4a93b0071e00",
+
+    解凍したファイル群を適当なフォルダに移します。
+
+・ powershellに組み込むには
+    powershellでUIAutomationを組み込むには、
+    モジュールをスクリプトの最初でインポートする必要があります。
+
+    Import-Module <導入したパス>\UIAutomation.dll
+
+・スクリプトコーディング
+
+    ①LV2CSV.exe[ListView to CSV]起動
+
+    まずは、[ Start-Process ]コマンドレットでLV2CSV.exeを起動する。
+
+    $exePath = "<ListView to CSVを導入したパス>\LV2CSV.EXE"
+    $process = Start-Process $exePath -PassThru | Get-UiaWindow;
+
+    ②ListView to CSV画面でtype数カウンター(0000000000050562)を選択
+
+    Get-UiaWindow -Class 'ListView to CSV' -Name 'ListView to CSV' | `
+    Get-UiaDataItem -Name '0000000000050562' | `
+    Get-UiaText -Name '0000000000050562' | Invoke-UiaMenuItemClick | Out-Null
+
+    としたいところですが、Nameが毎回変わるのでNG...。
+    ウィンドウの最上部にtype数カウンターが来るのは、
+    起動順序から分かったのですが、最上部を選択する
+    方法が分からん。
+
+    GUI画面からOCRで読み取る方法があるみたいですが、
+    かなり面倒そうなのでパスし、ウィンドウ内部を
+    選択するショートカット操作で逃げる。
+    ※ウィンドウアクティブ時にAlt+Cでウィンドウ内部に選択が移り
+       ↓キーを１回押し、最上部なので↑キーを押すGUI操作を
+        以下スクリプトで実現しています。
+
+    $process.Keyboard.KeyDown([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt キーを押す
+    $process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::VK_C) | Out-Null; # C キーを押す
+    $process.Keyboard.KeyUp([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt キーを放す
+    $process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::DOWN) | Out-Null; # ↓ キーを押す
+    Start-Sleep -m 100
+    $process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::UP) | Out-Null; # ↑ キーを押す
+    Start-Sleep -m 100
+
+
+     ③ [名前を付けて保存]画面に遷移
+     ListView to CSV画面でtype数カウンターを選択状態で
+     Alt + v → Enter の順でキーを押すと，[名前を付けて保存]画面が出る
+
+    $process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt キーを押す
+    $process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::VK_V) | Out-Null; # v キーを押す
+    $process.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::RETURN) | Out-Null; # Enter キーを押す
+
+
+    ④ファイル名入力
+    [名前を付けて保存]画面でファイル名を入力しEnterするには
+    なお、$targetFileは、スクリプト中で設定する必要があります。
+
+    $openWnd = Get-UiaWindow -Name '名前を指定して保存';
+    $selectItem = $openWnd | Get-UiaEdit -Name 'ファイル名:';
+    $selectItem.Value = $targetFile;
+    $selectItem.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::RETURN) | Out-Null;
+
+    ⑤ポップアップが出力するまでには時間を要するため、700ms待つ
+
+    Start-Sleep -m 700
+
+
+    ⑤GUIのポップアップで確認画面が出力されるので画面で[OK]ボタンを押す。
+
+$window = Get-UiaWindow -Name 'ListView to CSV'
+$window | Get-UiaButton -Name 'OK' | Invoke-UiaButtonClick | Out-Null
+
+
+    ⑥元のListView to CSV画面に戻るのでAlt+F4で閉じるには
+
+$window.Keyboard.KeyDown([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt キーを押す
+$window.Keyboard.KeyPress([WindowsInput.Native.VirtualKeyCode]::F4) | Out-Null; # F4 キーを押す
+$window.Keyboard.KeyUp([WindowsInput.Native.VirtualKeyCode]::MENU) | Out-Null; # Alt キーを押す
+
+
+この出来上がったスクリプトをシャットダウンスクリプトを置けば
+自動的に毎日CSV出力されるようになるはずだった・・・。
+
+ですが、グループポリシーでシャットダウンスクリプトとして
+登録しました。
+ですが、テストしてみるとGUIが終了している状態で
+スクリプトを実行しているようでNG・・・。
+
+タスクスケジューラーで、シャットダウンの開始の
+イベントログをトリガーとして設定してみましたが、
+シャットダウンスクリプトと同様にGUIが終了
+してから実行されるようでNG・・・。
+
+
+
+
+
+本当は、月次などでエクセルにグラフ化するなどして
+視覚的に分かり易くしたいですねー。
+
+

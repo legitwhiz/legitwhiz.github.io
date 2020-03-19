@@ -1,0 +1,102 @@
+LifeKeeper for Linux コマンド一覧(Ver9.2.1)
+
+SIOS LifeKeeper for Linux コマンド一覧(Ver9.2.1)
+LifeKeeperドキュメントリンク(http://jpdocs.us.sios.com/)
+※各CommandのPathは、「/opt/LifeKeeper/bin/」です。
+
+●LifeKeeper自体
+|内容               |コマンド                         |参考                       |
+|:------------------|:--------------------------------|:--------------------------|
+|LK停止             |lkstop                           |                           |monstop
+|監視一時停止       |lkstop -f                        |                           |
+|LK起動             |lkstart                          |                           |monstart
+|LK起動確認         |lktest                           |プロセス(lcm,lcd,ttymonlcm)|monshow
+|                   |                                 |が表示さていればLK起動状態 |
+|License適用        |lkkeyins file                    |フルパスまたは相対パス     |
+|License確認        |typ_list -l                      |UNLICENSED=Core License適用|
+|                   |                                 |EVAL=Temporary License適用 |
+|                   |                                 |PERMANENT=Recovery Kit適用 |
+|                   |                                 |NEEDED=Recovery Kit不適用  |
+|SwitchBackType     |ins_list                         |INTELLIGENT=無効(default)  |
+|                   |                                 |AUTOMATIC=有効             |
+|設定flag一覧       |flg_list                         |                           |
+|flag作成           |flg_create [-d destname] -f flag |flag：フラグファイル名     |
+|                   |                                 |destname：サーバー名       |
+|flag削除           |flg_remove [-d destname] -f flag |flag：フラグファイル名     |
+|                   |                                 |destname：サーバー名       |
+|ログの参照         |lk_log [-t number] [-f] log      |number：行数(整数値)       |
+|                   |                                 |-fオプションはリアルタイム |
+|                   |                                 |/var/log/lifekeeperを参照可|
+|ノード指定の       |lcdremexec -d destname           |destname：サーバー名       |
+|コマンド実行       |-- "command"                     |command：実行コマンド      |
+|Communication      |ins_list [-f x]                  |x：任意の区切り文字        |monsp,monpath
+|Pathの状態確認     |                                 |ALIVE=ノード間の通信可     |
+|                   |                                 |DEAD=ノード間の通信不可    |
+
+●GUI
+|内容               |コマンド                         |参考                       |
+|:------------------|:--------------------------------|:--------------------------|
+|GUIClient起動      |lkGUIapp                         |                           |
+|GUIServer起動      |lkGUIserver start                |                           |
+|GUIServer停止      |lkGUIserver stop                 |                           |
+
+
+●リソース
+|内容               |コマンド                         |参考                       |
+|:------------------|:--------------------------------|:--------------------------|
+|リソース状態       |ins_list [-f x]                  |x：任意の区切り文字        |monshow
+|                   |                                 |ISP=Active                 |
+|                   |                                 |OSU=Standby                |
+|                   |                                 |OSF=Failed                 |
+|リソース状態一覧   |lcdstatus [-d destname]          |destname：サーバー名       |monshow
+|リソース起動       |perform_action -t tagname        |tagname ：リソース名       |monbegin
+|                   | -a restore [-b]                 |                           |
+|リソース停止       |perform_action -t tagname        |tagname ：リソース名       |monend
+|                   | -a remove                       |                           |
+|switch over/       |perform_action -t tagname        |tagname ：リソース名       |monswap
+| switch back       | -a restore [-b]                 |                           |
+
+●レプリケーション
+|内容               |コマンド                         |参考                       |
+|:------------------|:--------------------------------|:--------------------------|
+|Replication状態    |mirror_status tagname            |tagname ：リソース名       |
+|Replication一時停止|mirror_action tagname pause      |tagname ：リソース名       |
+|                   | [source] [target]               |source：ミラー元サーバ     |
+|                   |                                 |target：ミラー先サーバ     |
+|Replication再開    |mirror_action tagname resume     |                           |
+|                   | [source] [target]               |                           |
+|Replication全同期  |mirror_action tagname fullresync |                           |
+|                   | [source] [target]               |                           |
+|Replication強制開始|mirror_action tagname force      |                           |
+|                   | [source] [target]               |                           |
+
+●ポリシー管理
+|内容               |コマンド                         |参考                       |
+|:------------------|:--------------------------------|:--------------------------|
+|ポリシー確認       |lkpolicy -g -v                   |-gオプション:デフォルト    |
+|                   |                                 |から変更された箇所のみ出力 |
+|特定のリソースの   |lkpolicy -s Failover -E          |                           |
+| failover無効化    | tag="tagname"                   |                           |
+|特定のリソースの   |lkpolicy -s Failover -e          |                           |
+| failover有効化    | tag="tagname"                   |                           |
+|特定のリソースの   |lkpolicy -s LocalRecovery -E     |                           |
+| local recovery    | tag="tagname"                   |                           |
+| 無効化            |                                 |                           |
+|特定のリソースの   |lkpolicy -s LocalRecovery -e     |                           |
+| local recovery    | tag="tagname"                   |                           |
+| 有効化            |                                 |                           |
+|local recovery     |lkpolicy -s TemporalRecovery     |number：整数値             |
+| 回数超過による    | -e recoverylimit=number         |                           |
+| failover有効化    | period=number                   |                           |
+
+
+●その他
+|内容               |コマンド                         |参考                       |
+|:------------------|:--------------------------------|:--------------------------|
+|LK構成情報のbackup |lkbackup -c [--cluster]          |                           |
+|LK構成情報のrestore|lkbackup -x -f filepath          |                           |
+|hostname/          |lk_chg_value -o old_value        |                           |
+|IPアドレスの変更   | -n new_value -v                 |                           |
+|LK情報の一括取得   |lksupport [--full]               |                           |monts
+
+

@@ -1,0 +1,32 @@
+【NFSv4】マウントしたディレクトリのowner,groupがnobodyになる不具合について
+
+NFSv4 サーバとクライアントは、UNIX UID/GID とは別の NFSv4 ID というものによってユーザを区別しています。
+
+/etc/idmapd.conf を編集して
+
+#Domain = localdomain.edu 
+の部分を
+Domain = mydomain.edu 
+のように本物のドメイン（でなければならないのかどうかは不明）に書き換え、
+
+# service rpcidmapd restart 
+を実行し、マウントをし直す。これでマウントされたディレクトリとその下のファイルが正しいファイル所有者になった。
+
+【回避方法】
+
+/etc/nfsmount.conf　の34行目をコメントアウトして編集。
+
+# Protocol Version [2,3,4]
+
+# This defines the default protocol version which will
+
+# be used to start the negotiation with the server.
+
+#Defaultvers=4
+
+Defaultvers=3
+
+サーバとやりとりをNFSのバージョン３に設定。
+
+再マウントしてnfsstat -mかls -lで確認して終わり。
+

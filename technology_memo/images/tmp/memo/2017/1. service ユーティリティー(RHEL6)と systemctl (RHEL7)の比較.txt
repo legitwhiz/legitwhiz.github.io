@@ -1,0 +1,60 @@
+1. service ユーティリティー(RHEL6)と systemctl (RHEL7)の比較
+
+・サービス起動
+[RH6]# service ${name} start
+[RH7]# systemctl start ${name}.service
+
+・サービス停止
+[RH6]# service ${name} stop
+[RH7]# systemctl stop ${name}.service
+
+・サービス再起動
+[RH6]# service ${name} restart
+[RH7]# systemctl restart ${name}.service
+
+・サービスが実行中の場合のみ、再起動
+[RH6]# service ${name} condrestart
+[RH7]# systemctl try-restart ${name}.service
+
+・設定を再読み込み
+[RH6]# service ${name} reload
+[RH7]# systemctl reload ${name}.service
+
+・サービスのステータス確認
+[RH6]# service ${name} status
+[RH7]# systemctl status ${name}.service
+[RH7]# systemctl is-active ${name}.service
+
+・すべてのサービスのステータス確認
+[RH6]# service --status-all
+[RH7]# systemctl list-units --type service --all
+
+2. chkconfig(RHEL6)とsystemctl(RHEL7)の比較
+
+・サービス有効化設定
+[RH6]# chkconfig ${name} on
+[RH7]# systemctl enable ${name}.service
+
+・サービス無効化設定
+[RH6]# chkconfig ${name} off
+[RH7]# systemctl disable ${name}.service
+
+・サービス有効無効設定確認
+[RH6]# chkconfig --list ${name}
+[RH7]# systemctl status ${name}.service
+[RH7]# systemctl is-enabled ${name}.service
+
+・すべてのサービス有効無効設定確認
+[RH6]# chkconfig --list
+[RH7]# systemctl list-unit-files --type service
+
+・指定されたユニットの前に開始するよう命令されるサービスを一覧表示します。
+[RH6]# chkconfig --list
+[RH7]# systemctl list-dependencies --after
+
+・指定されたユニットの後に開始するよう命令されるサービスを一覧表示します。
+[RH6]# chkconfig --list
+[RH7]# systemctl list-dependencies --before
+
+
+

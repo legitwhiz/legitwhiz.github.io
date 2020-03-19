@@ -1,0 +1,53 @@
+特定のCPU負荷が高くなる
+
+Linuxを利用していて、ネットワーク負荷が高いサーバを運用していると、特定のCPU負荷が高くなっている事があるのですが、そのようなケースを経験されたことはないでしょうか？
+
+topでみると特定CPU(topを起動して1を押すとCPU単位で確認できる)の%si(software interrupt)がやたら高くなっている場合、それはネットワークの負荷が原因かも知れません。(実際のtopを貼り付けたかったのですが、持ち合わせがなかった・・・。)何も設定していない場合はネットワークの割り込みは特定のCPUで行われるため、ネットワークの割り込みに関連づいたCPUの%siが高くなります。ソフトウェア割り込みを確認するには、/proc/interruptsを確認しましょう。
+
+# cat /proc/interrupts 
+           CPU0       CPU1       CPU2       CPU3       
+  0:        129          0          0          0   IO-APIC-edge      timer
+  1:          7          1          0          0   IO-APIC-edge      i8042
+  7:          0          0          0          0   IO-APIC-edge      parport0
+  8:          0          0          0          0   IO-APIC-edge      rtc0
+  9:          0          0          0          0   IO-APIC-fasteoi   acpi
+ 12:        108          1          0          1   IO-APIC-edge      i8042
+ 14:         22          1         39         21   IO-APIC-edge      ata_piix
+ 15:          0          0          0          0   IO-APIC-edge      ata_piix
+ 16:          0          0          0          0   IO-APIC-fasteoi   vmci
+ 17:     129013     482231      35345      34170   IO-APIC-fasteoi   ioc0
+ 18:   21809010          8          0          0   IO-APIC-fasteoi   eth0
+ 24:          0          0          0          0   PCI-MSI-edge      pciehp
+<< snip >>
+※ 下から2行目でeth0がCPU0で処理されていることがわかります。
+
+要するに、これを各CPUで分散させればOKなわけです。これらを分散させるにはハードウェア的に行う方法(高級？なNICが必要。Multi-Queue NICと言われている奴になります。詳細は「Receive Side Scaling (RSS)」で検索しましょう。ちなみにvmwareのvmxnet3はmulti-queue対応です。)とソフトウェアで実現する方法があるのですが、今回はソフトウェア的に分散させる方法をご紹介します。
+
+●RPS,RFSを設定しよう
+機能的には「Receive Packet Steering(RPS)」と「Receive Flow Steering(RFS)」を利用します。RHELのドキュメントでは、下記に記載が有ります。6.1以降と記載が有りますね。(なので、CentOS6.1以降であれば使える。)
+https://access.redhat.com/documentation/ja-JP/Red_Hat_Enterprise_Linux/6/html/Performance_Tuning_Guide/main-network.html#s-network-future
+ RPSがRSSをソフトウェア的に実現したもので、分散先をより最適にするのがRFSとなります。
+
+具体的な設定方法は、先のRHELのドキュメントにもありますがRPSの設定は「/sys/class/net/ethX/queues/rx-N/rps_cpus」へどのCPUへ分散させるかを指定します。ちなみにCentOS6.6で確認すると、rx-Nに加えてtx-Nも確認できます。きっと受信に加えて送信でも分散させることが出来るのでしょう。(ちゃんと調べてない) rx-Nはmulti-queue nicの場合は複数存在することになります。(つまりはrx-0しか無いケースが多い。)
+
+rps_cpusに指定する値ですが、CPU数を2進数の10で表現し、それを16進数に直した値を指定します。わかりづらいですね。例えば4CPUであれば、4bitで1111(16進数でf)で全CPUで処理。0011(16進数で3)で2個のCPUで処理、と言った感じです。1001(9)なんかも行けます(これも2個のCPUだけど、1番目と4番目を使う)。
+
+# echo f > /sys/class/net/eth0/queues/rx-0/rps_cpus
+# echo f > /sys/class/net/eth0/queues/tx-0/xps_cpus
+
+RFSの方は「/proc/sys/net/core/rps_sock_flow_entries」と「/sys/class/net/ethX/queues/rx-N/rps_flow_cnt」を設定する必要が有ります。rps_sock_flow_entriesはシステム全体のエントリー数、rps_flow_cntはNICのqueue毎のエントリー数を設定し、合計がrps_sock_flow_entriesを超えてはいけないようです。どれぐらいが適切かは、アプリやミドルウェア、使い方によってきそうですが、Unbreakable Linuxのドキュメントが参考になるかも知れません。
+
+https://docs.oracle.com/cd/E39368_01/b71105/ol_about_uek.html
+
+RFSを有効にするには、rps_sock_flow_entriesの値を現在アクティブな接続の最大予測数に設定し、rps_flow_cntの値をrps_sock_flow_entries/Nqに設定します(Nqはデバイス上の受信キューの数です)。入力値は、すべて2の最も近い累乗値に切り上げられます。適度な負荷のサーバーに対して推奨されるrps_sock_flow_entriesの値は、32768です。
+
+# echo 32768 > /proc/sys/net/core/rps_sock_flow_entries
+# echo 32768 > /sys/class/net/eth0/queues/rx-0/rps_flow_cnt
+
+設定したらtopで%siがばらけているか確認してみましょう！
+ 実際効果があるかなどは実機で確認した方が良いです。ちゃんと確認しましょう。ばらけたのは確認できても、パフォーマンス自体は変わらないとかもありえますね。
+
+vmxnet3のマルチキューのキューの数はデフォルトではCPU数と同じらしい。
+http://kb.vmware.com/selfservice/search.do?cmd=displayKC&docType=kc&docTypeID=DT_KB_1_1&externalId=2101307
+
+

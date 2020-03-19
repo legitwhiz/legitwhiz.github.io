@@ -1,0 +1,239 @@
+duコマンドで覚えておきたい使い方8個
+
+フォルダごとの容量を確認したい時に役立つコマンドといえば、duコマンドだ。
+ 今回は、そんなduコマンドで覚えておきたい使い方について紹介する。
+
+1.基本的な使い方
+基本的には、以下のようにコマンドを実行することで、カレントディレクトリ配下の各ディレクトリのブロックサイズを侮ヲしてくれる。
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du
+4       ./arp-scan/.git/refs/heads
+0       ./arp-scan/.git/refs/tags
+4       ./arp-scan/.git/refs/remotes/origin
+4       ./arp-scan/.git/refs/remotes
+8       ./arp-scan/.git/refs
+0       ./arp-scan/.git/branches
+44      ./arp-scan/.git/hooks
+4       ./arp-scan/.git/info
+1176    ./arp-scan/.git/objects/pack
+0       ./arp-scan/.git/objects/info
+1176    ./arp-scan/.git/objects
+4       ./arp-scan/.git/logs/refs/remotes/origin
+4       ./arp-scan/.git/logs/refs/remotes
+4       ./arp-scan/.git/logs/refs/heads
+8       ./arp-scan/.git/logs/refs
+12      ./arp-scan/.git/logs
+1272    ./arp-scan/.git
+2532    ./arp-scan
+4       ./tmp
+2540    .
+
+また、引数に対象PATHを指定することで、その配下のディレクトリ容量を確認することが出来る。
+
+du 対象PATH
+
+ここで注意したいのが、出力されるのはあくまでも「ブロックサイズ」、それもKB単位だということ。
+フォルダ配下のファイルサイズの合計ではないので注意。
+
+2.ブロックサイズではなくバイト単位で出力させる
+さて、先ほど説明したが、duコマンドでは標準だとブロックサイズで容量が侮ヲされる。
+ 大体のファイルシステムだとブロックサイズの最小単位を4096バイト(4.0KB)としているので、たとえ1バイトのファイルしか使っていなくても4.0KBの領域を使っている事になってしまう。
+
+これだと正確なフォルダの容量を確認出来ないので、正確な値を知りたい場合は、出力される容量のサイズをバイト単位にする必要がある。
+バイト単位での出力には、「-b」オプションを付与すれば良い。
+
+du -b
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du -b
+60      ./arp-scan/.git/refs/heads
+6       ./arp-scan/.git/refs/tags
+49      ./arp-scan/.git/refs/remotes/origin
+68      ./arp-scan/.git/refs/remotes
+177     ./arp-scan/.git/refs
+6       ./arp-scan/.git/branches
+18884   ./arp-scan/.git/hooks
+260     ./arp-scan/.git/info
+1201046 ./arp-scan/.git/objects/pack
+6       ./arp-scan/.git/objects/info
+1201080 ./arp-scan/.git/objects
+197     ./arp-scan/.git/logs/refs/remotes/origin
+216     ./arp-scan/.git/logs/refs/remotes
+199     ./arp-scan/.git/logs/refs/heads
+447     ./arp-scan/.git/logs/refs
+655     ./arp-scan/.git/logs
+1231032 ./arp-scan/.git
+2364646 ./arp-scan
+4096    ./tmp
+2369099 .
+
+3.人間が読みやすい単位で侮ヲさせる
+オプション無しの場合、KB単位(かつブロックサイズ)での侮ヲとなるが、この侮ヲだと非常に分かりにくい。
+ 「-h」オプションを付与することで、人間が読みやすい単位で侮ヲさせる事が出来る。
+
+du -h
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du -h
+4.0K    ./arp-scan/.git/refs/heads
+0       ./arp-scan/.git/refs/tags
+4.0K    ./arp-scan/.git/refs/remotes/origin
+4.0K    ./arp-scan/.git/refs/remotes
+8.0K    ./arp-scan/.git/refs
+0       ./arp-scan/.git/branches
+44K     ./arp-scan/.git/hooks
+4.0K    ./arp-scan/.git/info
+1.2M    ./arp-scan/.git/objects/pack
+0       ./arp-scan/.git/objects/info
+1.2M    ./arp-scan/.git/objects
+4.0K    ./arp-scan/.git/logs/refs/remotes/origin
+4.0K    ./arp-scan/.git/logs/refs/remotes
+4.0K    ./arp-scan/.git/logs/refs/heads
+8.0K    ./arp-scan/.git/logs/refs
+12K     ./arp-scan/.git/logs
+1.3M    ./arp-scan/.git
+2.5M    ./arp-scan
+4.0K    ./tmp
+2.5M    .
+
+なお、ブロックサイズではなく、バイトサイズで更に単位を分かりやすく侮ヲさせる場合は、以下のようにコマンドを実行する。
+オプションの順番が逆だと正常に動作しないので注意。
+
+du -bh
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du -bh
+60      ./arp-scan/.git/refs/heads
+6       ./arp-scan/.git/refs/tags
+49      ./arp-scan/.git/refs/remotes/origin
+68      ./arp-scan/.git/refs/remotes
+177     ./arp-scan/.git/refs
+6       ./arp-scan/.git/branches
+19K     ./arp-scan/.git/hooks
+260     ./arp-scan/.git/info
+1.2M    ./arp-scan/.git/objects/pack
+6       ./arp-scan/.git/objects/info
+1.2M    ./arp-scan/.git/objects
+197     ./arp-scan/.git/logs/refs/remotes/origin
+216     ./arp-scan/.git/logs/refs/remotes
+199     ./arp-scan/.git/logs/refs/heads
+447     ./arp-scan/.git/logs/refs
+655     ./arp-scan/.git/logs
+1.2M    ./arp-scan/.git
+2.3M    ./arp-scan
+4.0K    ./tmp
+2.3M    .
+
+4.合計サイズを出力させる
+「-c」オプションを付与すると、出力結果の末尾にフォルダの合計サイズを出力させることができる。
+
+du -c
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du -c
+4       ./arp-scan/.git/refs/heads
+0       ./arp-scan/.git/refs/tags
+4       ./arp-scan/.git/refs/remotes/origin
+4       ./arp-scan/.git/refs/remotes
+8       ./arp-scan/.git/refs
+0       ./arp-scan/.git/branches
+44      ./arp-scan/.git/hooks
+4       ./arp-scan/.git/info
+1176    ./arp-scan/.git/objects/pack
+0       ./arp-scan/.git/objects/info
+1176    ./arp-scan/.git/objects
+4       ./arp-scan/.git/logs/refs/remotes/origin
+4       ./arp-scan/.git/logs/refs/remotes
+4       ./arp-scan/.git/logs/refs/heads
+8       ./arp-scan/.git/logs/refs
+12      ./arp-scan/.git/logs
+1272    ./arp-scan/.git
+2532    ./arp-scan
+4       ./tmp
+2540    .
+2540    合計
+
+…まぁ、標準だと出力結果の最後にカレントディレクトリの配下全てを合計した容量が侮ヲされるので、このオプションは他のオプションと組み合わせて使うものだと思ってもらいたい。
+なお、指定したフォルダ配下のみを合計する場合は、「-s」オプションを付与する。
+
+du -s
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du -s
+2540    .
+
+6.ファイル単位で結果を出力する
+duコマンドといえばフォルダ単位での容量を出力するコマンドなのだが、実はファイル単位でも結果を出力することが可狽セ。
+それには、「-a」オプションを付与する。
+
+du -a
+
+ただ、ディレクトリの除外が出来ない事を考えると、容量の大きいファイルを探す場合はfindコマンドを使う方が良いだろう。
+
+7.出力させる階層を指定する
+duコマンドは、標準だと指定したPATHの配下にある全てのディレクトリを侮ヲしてしまう。
+これを1階層のみ侮ヲさせるといった指定をする場合は、「-d」オプションを利用する。
+
+du -d 侮ヲさせる階層
+
+[root@dctest01 work]# pwd
+/work
+[root@dctest01 work]# du
+4       ./arp-scan/.git/refs/heads
+0       ./arp-scan/.git/refs/tags
+4       ./arp-scan/.git/refs/remotes/origin
+4       ./arp-scan/.git/refs/remotes
+8       ./arp-scan/.git/refs
+0       ./arp-scan/.git/branches
+44      ./arp-scan/.git/hooks
+4       ./arp-scan/.git/info
+1176    ./arp-scan/.git/objects/pack
+0       ./arp-scan/.git/objects/info
+1176    ./arp-scan/.git/objects
+4       ./arp-scan/.git/logs/refs/remotes/origin
+4       ./arp-scan/.git/logs/refs/remotes
+4       ./arp-scan/.git/logs/refs/heads
+8       ./arp-scan/.git/logs/refs
+12      ./arp-scan/.git/logs
+1272    ./arp-scan/.git
+2532    ./arp-scan
+4       ./tmp
+2540    .
+[root@dctest01 work]# du -d 1
+2532    ./arp-scan
+4       ./tmp
+2540    .
+
+8.ディレクトリの更新日時を侮ヲさせる
+「--time」オプションを付与することで、ディレクトリの更新日時を侮ヲさせることも出来る。
+
+du --time
+
+[root@dctest01 work]# du --time
+4       2015-04-23 20:14        ./arp-scan/.git/refs/heads
+0       2015-04-23 20:14        ./arp-scan/.git/refs/tags
+4       2015-04-23 20:14        ./arp-scan/.git/refs/remotes/origin
+4       2015-04-23 20:14        ./arp-scan/.git/refs/remotes
+8       2015-04-23 20:14        ./arp-scan/.git/refs
+0       2015-04-23 20:14        ./arp-scan/.git/branches
+44      2015-04-23 20:14        ./arp-scan/.git/hooks
+4       2015-04-23 20:14        ./arp-scan/.git/info
+1176    2015-04-23 20:14        ./arp-scan/.git/objects/pack
+0       2015-04-23 20:14        ./arp-scan/.git/objects/info
+1176    2015-04-23 20:14        ./arp-scan/.git/objects
+4       2015-04-23 20:14        ./arp-scan/.git/logs/refs/remotes/origin
+4       2015-04-23 20:14        ./arp-scan/.git/logs/refs/remotes
+4       2015-04-23 20:14        ./arp-scan/.git/logs/refs/heads
+8       2015-04-23 20:14        ./arp-scan/.git/logs/refs
+12      2015-04-23 20:14        ./arp-scan/.git/logs
+1272    2015-04-23 20:14        ./arp-scan/.git
+2532    2015-04-23 20:14        ./arp-scan
+4       2015-04-29 19:53        ./tmp
+2540    2015-06-22 23:50        .

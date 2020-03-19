@@ -1,0 +1,109 @@
+tcpdumpとは 
+tcpdumpとはネットワーク通信の生のデータをキャプチャし、その結果を出力してくれるキャプチャツールです。
+Linuxだとディストリのパッケージ管理ソフトでわりとさくっと入ると思います。
+実際には導入していませんが、WindowsでもWinDumpというtcpdumpライクなツールがあります。
+
+
+フィルタをかける
+
+・ポートで絞る
+なにもフィルタをかけないと出力が多すぎてわけがわからないので、例えば http (80番) ポートに絞る場合は次のようにします。
+$ sudo tcpdump port 80
+
+	・発信または受信だけに絞りたい場合は、それぞれ dst, src を使います。
+	$ sudo tcpdump dst port 80 # 発信
+	$ sudo tcpdump src port 80 # 受信
+
+	・http および https に絞り込みたい場合は、or を使う事ができます。
+	$ sudo tcpdump src port 80 or src port 443
+
+・ホストで絞る
+host を使うと IP アドレスで絞り込めます。
+$ sudo tcpdump host 192.168.1.1
+$ sudo tcpdump dst host 192.168.1.1
+$ sudo tcpdump src host 192.168.1.1
+
+・ネットワークアドレスで絞る
+net を使うとネットワークアドレスで絞れます。
+$ tcpdump net 192.168.2.0 mask 255.255.255.0
+192.168.2.0/24ネットワークとのパケットだけを表示します。
+
+・インターフェースを指定して実行
+tcpdump -i [interface name]
+
+・送信元ipアドレスを指定
+tcpdump src host [src_ip]
+
+・送信先ipアドレスを指定
+tcpdump dst host [dst_ip]
+
+送信元もしくは送信先にipアドレスを指定
+・tcpdump host [target_ip]
+
+・送信元ipアドレスレンジを指定
+tcpdump src net [src_net] mask [net_mask]
+
+・送信先ipアドレスレンジを指定
+tcpdump dst net [dst_net] mask [net_mask]
+
+・送信元もしくは送信先にipアドレスレンジを指定
+tcpdump host [target_net] mask [net_mask]
+
+・送信元のポート番号を指定
+tcpdump src port [port_num]
+
+・送信先のポート番号を指定
+tcpdump dst port [port_num]
+
+・送信先もしくは送信元のポート番号を指定
+tcpdump port [port_num]
+条件をandやorで組み合わせることもできます。
+
+・特定IPアドレスの80番ポートに関するトラフィックを見る
+tcpdump port 80 and host 192.168.0.100
+
+・パケットの中身も表示したい
+オプション -X を使用するとヘッダだけではなくパケットの中身も表示できます。16進とASCIIで表示してくれます。
+$ sudo tcpdump -X dst port 80
+-X ではなく-A を使うとパケットの中身を ASCII だけで表示してくれます。
+
+・ファイルに書き出す
+tcpdump -w dumpfile
+
+・ファイルに出力した内容を見る
+tcpdump -r dumpfile
+
+###########################################################
+良く使いそうなオプション
+よく使いそうなオプションをリストアップしておきます。
+-i  キャプチャするインターフェースを指定。 
+-n  アドレスやポート番号を名前に変換しない。DNS lookup の時間短縮 
+-nn ポート番号をプロトコル名に変換(80 を http など)しない 
+-p プロミスキャスモードにしない。自分宛のパケットのみキャプチャ
+-s  キャプチャするサイズを指定。0 だと全て 
+-w  生データをそのままファイルに書き込む。WireSharkやEtherealで開くこともできる 
+-r -w で保存したファイルを開く  
+-c 指定した個数のパケットを受信したら終了。ディスク圧迫しないように使う 
+-X  16進とASCII文字で表示を行う。 
+-A  ASCII文字で表示を行う。 
+-G ファイル書き込みを指定時間間隔で rotate する。-w のファイル名に時間フォーマットを指定 
+-W -G での rotate の回数を制御する。-W の回数に達すると終了 
+
+よく使いそうなテンプレ
+1) いつも使う基本形 -s0 -A
+$ sudo tcpdump -s0 -A port 80 and host www.google.co.jp
+
+2) ファイル吐き出しをする場合に、ファイルが巨大に１つになってしまうと追いづらいので、指定時間間隔で rotate させる。-G オプションを使う
+$ sudo tcpdump -s0 -A port 80 -G <rotate_seconds> -w /tmp/tcpdump_%Y%m%d_%H%M.cap
+
+3) crontab に仕込んで毎日 12:00 - 13:00 だけパケットキャプチャしたい場合
+オプション -G 60 で毎分 rotate させ、-W 60 で 60回 rotate したら、つまり１時間たったら、tcpdump 終了。ただし、一切書き込みがない場合、ファイル rotate が発生せず、tcpdump が終了しない挙動となるため、念のために kill もしている。
+0 12 * * * sudo /usr/sbin/tcpdump -i bond0 -s 512 -A -n -nn -p "tcp port 80" -G 60 -W 60 -w /tmp/tcpdump_%Y%m%d_%H%M.cap >/dev/null 2>&1 & echo $! > /tmp/tcpdump.pid
+0 13 * * * sudo kill $(cat /tmp/tcpdump.pid)
+
+4) localhost 間の通信をみる
+loopback interface を指定すればOK
+linux)
+$ sudo tcpdump -i lo
+この場合、なぜか port xxxx ではダメで、tcp port xxxx とのように tcp まで指定しないと port 番号で絞れない。
+

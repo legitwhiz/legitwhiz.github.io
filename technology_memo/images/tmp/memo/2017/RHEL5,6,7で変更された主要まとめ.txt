@@ -1,0 +1,503 @@
+RHEL5,6,7で変更された主要まとめ
+┌────────┬──────┬──────┬────────────┐
+│パッケージ      │  RHEL 5    │  RHEL 6    │  RHEL 7                │
+├────────┼──────┼──────┼────────────┤
+│カーネル        │ 2.6.18     │ 2.6.32     │3.10.0                  │
+├────────┼──────┼──────┼────────────┤
+│Grub            │ Grub 0.97  │ Grub 0.97  │Grub2 v2.00             │
+├────────┼──────┼──────┼────────────┤
+│GUI             │ Gnome 2.16 │ Gnome 2.28 │Gnome 3.8               │
+├────────┼──────┼──────┼────────────┤
+│起動シーケンス  │ SVR4 init  │ Upstart    │systemd                 │
+├────────┼──────┼──────┼────────────┤
+│Loging          │ Syslog     │ Rsyslog    │journalctl plus Rsyslog │
+├────────┼──────┼──────┼────────────┤
+│User  Password  │ MD5        │ SHA-512    │SHA-512                 │
+└────────┴──────┴──────┴────────────┘
+
+■■■　サービス系コマンド　■■■
+
+RHEL 7では、サービス起動デーモンとして、SysVinit/Upstartに代わり、systemdが導入されました。これにより、サービス系コマンドが大幅に変更されています。
+
+■サービス逐次起動系
+┌──────────────┬──────────────────┬───────────────────┐
+│処理内容                    │                RHEL 5,6            │            RHEL 7                    │
+├──────────────┼──────────────────┼───────────────────┤
+│状態の表示（サービス単位）  │ /sbin/service                      │/usr/bin/systemctl status unit_name   │
+│                            │ [1]service_name status             │                                      │
+├──────────────┼──────────────────┼───────────────────┤
+│状態の表示（全サービス）    │ /sbin/service --status-all         │ /usr/bin/systemctl list-units        │
+│                            │                                    │ [2]--type service                    │
+├──────────────┼──────────────────┼───────────────────┤
+│起動                        │/sbin/service service_name start    │/usr/bin/systemctl start unit_name    │
+├──────────────┼──────────────────┼───────────────────┤
+│終了                        │/sbin/service service_name stop     │/usr/bin/systemctl stop unit_name     │
+├──────────────┼──────────────────┼───────────────────┤
+│強制終了                    │kill -9 PID /usr/bin/systemctl      │kill -s 9 unit_name                   │
+├──────────────┼──────────────────┼───────────────────┤
+│再起動                      │/sbin/service service_name restart  │/usr/bin/systemctl restart unit_name  │
+├──────────────┼──────────────────┼───────────────────┤
+│設定反映                    │/sbin/service service_name reload   │/usr/bin/systemctl reload unit_name   │
+└──────────────┴──────────────────┴───────────────────┘
+[1]/etc/init.d/service_nameでも同様
+[2]list-unitsは省略可
+
+■サービス自動起動系
+┌──────────────┬──────────────────┬───────────────────┐
+│処理内容                    │                RHEL 5,6            │            RHEL 7                    │
+├──────────────┼──────────────────┼───────────────────┤
+│(全サービス)定義の表示      │  ls /etc/init.d/                   │/usr/bin/systemctl list-unit-files    │
+│                            │                                    │ --type service                       │
+├──────────────┼──────────────────┼───────────────────┤
+│(サービス単位の)定義の登録  │ /sbin/chkconfig --add service_name │ /usr/bin/systemctl daemon-reload     │
+│                            │                                    │ [3]                                  │
+├──────────────┼──────────────────┼───────────────────┤
+│自動起動の確認              │/sbin/chkconfig --list service_name │/usr/bin/systemctl is-enabled         │
+│                            │                                    │ unit_name                            │
+├──────────────┼──────────────────┼───────────────────┤
+│自動起動の有効化            │/sbin/chkconfig service_name on     │/usr/bin/systemctl enable unit_name   │
+├──────────────┼──────────────────┼───────────────────┤
+│自動起動の無効化            │/sbin/chkconfig service_name off    │/usr/bin/systemctl disable unit_name  │
+└──────────────┴──────────────────┴───────────────────┘
+[3]Unitファイルを再読み込みすることにより登録される
+
+systemdでは、「Unit」という単位でさまざまな処理を行います。従来のサービスに相当する処理は「.service」という拡張子がつくファイルとして管理されており、サービス関連の処理を行うときは、この名前を指定します。Unitには、ほかにもマウントポイントの処理を行う「.mount」、デバイスの処理を行う「.device」、Unitをグループ化する「.target」などがあります。
+
+また、自動起動の登録を行ったUnitは、「/usr/lib/systemd/system/unit_name」内の[Install]セクションのWantedByオプションで指定されているUnitのディレクトリ（例：/etc/systemd/system/multi-user.target.wants/）にシンボリックリンクが張られることにより、自動起動が有効となります。
+
+RHEL 6と同じコマンドを利用したい方は……
+
+RHEL 7のserviceコマンドやchkconfigコマンドは、systemctlコマンドにリダイレクトするシェルスクリプトとなっているのでそのまま利用できます。
+# サービスの一時停止
+$ sudo service crond stop
+Redirecting to /bin/systemctl stop crond.service
+# サービスの自動起動の無効化
+$ sudo chkconfig crond off
+Note: Forwarding request to 'systemctl disable crond.service'. rm '/etc/systemd/system/multi-user.target.wants/crond.service' 
+ただし、chkconfig --listについては、出力結果にも注意書きがあるとおり、一部のサービスしか表示されないため注意が必要です。
+$ chkconfig --list
+Note: This output shows SysV services only and does not include native systemd services. SysV configuration data might be overridden by native systemd configuration. 
+
+
+■■■　ランレベル系コマンド　■■■
+RHEL 7では、従来のランレベルに相当する起動モードも「.target」という拡張子がつくUnitで管理されるようになっています。これまでのランレベルとの対応は、下記のとおりです。なお、targetファイルを自作して、独自の起動モードを利用することも可能です。
+┌──────────┬─────┬─────────┐
+│処理内容            │RHEL 5,6  │  RHEL 7          │
+├──────────┼─────┼─────────┤
+│システム停止        │ 0        │poweroff.target   │
+├──────────┼─────┼─────────┤
+│シングルユーザモード│ 1        │rescue.target     │
+├──────────┼─────┼─────────┤
+│マルチユーザモード  │ 3        │multi-user.target │
+├──────────┼─────┼─────────┤
+│グラフィカルモード  │ 5        │graphical.target  │
+├──────────┼─────┼─────────┤
+│再起動              │ 6        │reboot.target     │
+├──────────┼─────┼─────────┤
+│緊急モード          │N/A       │emergency.target  │
+└──────────┴─────┴─────────┘
+
+通常の起動の際は、いずれかのtargetへのシンボリックリンク（通常はmulti-user.targetかgraphical.target）となっているdefault.targetが参照されます。
+
+■ランレベル系コマンドの一覧
+┌───────────┬──────────┬────────────────────┐
+│処理内容              │    RHEL 5,6        │  RHEL 7                                │
+├───────────┼──────────┼────────────────────┤
+│起動モードの変更      │ telinit runlevel   │systemctl isolate target_name           │
+├───────────┼──────────┼────────────────────┤
+│標準起動モードの変更  │/etc/inittabの編集  │sudo systemctl set-default target_name  │
+└───────────┴──────────┴────────────────────┘
+# rescue.target（従来のシングルユーザモード相当）に変更
+$ sudo systemctl isolate rescue.target
+# デフォルトの起動モードをマルチユーザモードへ変更
+$ sudo systemctl set-default multi-user.target
+$ rm '/etc/systemd/system/default.target'
+$ ln -s '/usr/lib/systemd/system/multi-user.target' '/etc/systemd/system/default.target' 
+
+RHEL 6と同じコマンドを利用したい方は……
+
+現在と1つ前のランレベルを表示するrunlevelコマンド、ランレベルを一時的に変更するtelinit（init）コマンドも利用できます。ただし、/etc/inittabは、ファイルそのものはあるもののコメントだけとなっているため、標準起動モードの変更については、systemctl set-default target_nameの実行が必要なようです。
+
+
+■■■　ログ確認系コマンド　■■■
+
+systemdによって起動されたUnitのログは、/var/log/journal以下にバイナリ形式で保存されるようになっています。そのため、ログの確認にはjournalctlコマンドを利用します。
+
+ログ確認系コマンドの一覧は下記のとおりです。
+
+┌─────────────┬────────────────┬─────────────────┐
+│処理内容                  │    RHEL 5,6                    │  RHEL 7                          │
+├─────────────┼────────────────┼─────────────────┤
+│(サービス単位の)ログ確認  │ cat /var/log/service_name      │journalctl -u unit_name           │
+├─────────────┼────────────────┼─────────────────┤
+│ログの更新監視            │ tail -f /var/log/service_name  │journalctl -f -u unit_name        │
+├─────────────┼────────────────┼─────────────────┤
+│起動ログの確認            │ dmesg                          │sudo systemctl journalctl --dmesg │
+└─────────────┴────────────────┴─────────────────┘
+
+journalctlによる表示には、デフォルトでページャ（less）で表示されます。パイプ処理などでページャを利用したくない場合は、--no-pagerオプションを付加します。また、--sinceオプションで相対時間（例：30 min ago）、絶対時間（2015-04-30）以降のログ出力、--outputオプションでJSONなどの各種形式で出力、-bオプションでN世代前のブートログ表示など、数多くの機能を備えています。
+ただし、デフォルト設定のままの場合、/run/systemd/journal以下にログが書き込まれ、再起動すると消えてしまうので注意が必要です。再起動後もログを残すには、/var/log/journalを作成して、journaldの再起動（systemctl restart systemd-journald）を行う必要があります。
+
+
+■■■　ネットワーク系コマンド　■■■
+
+RHEL 7では、ifconfigやnetstatといった馴染みのあるコマンドが含まれている、net-toolsパーッケージがインストールされなくなりました。
+
+ネットワーク系コマンドの一覧は下記のとおりです。なお、ipコマンドのオプションは、一意な文字列まで入力すれば認識してくれるので、短縮表記例も併記しておきます。
+
+
+┌──────────────┬────────────┬───────────┬───────────┐
+│処理内容                    │     RHEL 5,6           │ RHEL 7(フル表記)     │ RHEL 7(短縮表記例)   │
+├──────────────┼────────────┼───────────┼───────────┤
+│全アクティブインターフェイス│ /sbin/ifconfig         │/sbin/ip address show │/sbin/ip a            │
+│の情報表示                  │                        │or /sbin/ip link show │or /sbin/ip l         │
+├──────────────┼────────────┼───────────┼───────────┤
+│特定インターフェイス        │ /sbin/ifconfig eth0    │/sbin/ip address show │ /sbin/ip a s         │
+│の情報表示                  │                        │ dev enp0s3           │  dev enp0s3          │
+├──────────────┼────────────┼───────────┼───────────┤
+│ルーティングテーブルの表示  │/sbin/route             │/sbin/ip route        │/sbin/ip r            │
+├──────────────┼────────────┼───────────┼───────────┤
+│デフォルトゲートウェイ      │/sbin/route add default │ip route add default  │/sbin/ip r a default  │
+│の追加                      │ gw xxx.xxx.xxx.xxx     │ via xxx.xxx.xxx.xxx  │ via xxx.xxx.xxx.xxx  │
+├──────────────┼────────────┼───────────┼───────────┤
+│デフォルトゲートウェイ      │/sbin/route del default │ip route del default  │/sbin/ip r d default  │
+│の削除                      │ gw xxx.xxx.xxx.xxx     │ via xxx.xxx.xxx.xxx  │ via xxx.xxx.xxx.xxx  │
+├──────────────┼────────────┼───────────┼───────────┤
+│TCPの接続状態の表示         │/bin/netstat -tan       │ss -tan               │左に同じ              │
+├──────────────┼────────────┼───────────┼───────────┤
+│インターフェイスごと        │ /bin/netstat -i        │ip -s link            │ip -s l               │
+│の統計情報                  │                        │                      │                      │
+├──────────────┼────────────┼───────────┼───────────┤
+│ARPテーブルの表示           │ /sbin/arp -n           │/sbin/ip neighbour    │/sbin/ip n            │
+└──────────────┴────────────┴───────────┴───────────┘
+
+MAC Address /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/udev/rules.d/70-persistent-net.rules
+
+RHEL 6と同じコマンドを利用したい方は……
+net-toolsパッケージをインストールすれば、RHEL 6で使用していたネットワーク系コマンドはすべて利用可能となります。
+
+
+■■■　NetworkManager系コマンド　■■■
+NetworkManagerは、RHEL 4から搭載されているネットワークユーティリティで、RHEL 7で新しく追加されたわけではありません。しかし、RHEL 7より、ネットワーク設定にはこのユーティリティを使用することが推奨されるようになったので、今後は利用頻度が高くなると思います。
+
+NetworkManagerには、X上で動作するGUIツールのほか、ターミナル上でGUIで設定できるnmtuiコマンド、CUIで設定するnmcliコマンドがあります。ここでは、最も利用しやすいとnmcliコマンドを用いたNetworkManager系コマンドを下記に紹介します。
+
+なお、デバイスを示す「デバイス名」と、接続に名前をつけた「接続名」は異なることがあるので注意してください。
+
+┌─────────────┬──────────────────┬───────────────────┐
+│処理内容                  │ nmcliコマンド（フル表記）          │ nmcliコマンド（短縮表記例）          │
+├─────────────┼──────────────────┼───────────────────┤
+│デバイス一覧の表示        │ /usr/bin/nmcli device              │/usr/bin/nmcli d                      │
+│                          │                                    │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│デバイス情報の表示        │ /usr/bin/nmcli device              │ /usr/bin/nmcli d sh device_name      │
+│                          │  show device_name                  │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続の作成                │/usr/bin/nmcli connection add       │/usr/bin/nmcli c a type type_name     │
+│                          │  type type_name ifname if_name     │ ifname if_name con-name              │
+│                          │  con-name connection_name          │ connection_name                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続の削除                │/usr/bin/nmcli connection delete    │/usr/bin/nmcli c de connection_name   │
+│                          │  connection_name                   │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続一覧の表示            │/usr/bin/nmcli connection           │/usr/bin/nmcli c                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続情報の表示(すべて)    │/usr/bin/nmcli connection show      │/usr/bin/nmcli c s connection_name    │
+│                          │  connection_name                   │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続の変更                │/usr/bin/nmcli connection           │/usr/bin/nmcli c m ...                │
+│                          │  modify ....                       │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続の開始                │/usr/bin/nmcli connection up        │/usr/bin/nmcli c u connection_name    │
+│                          │  connection_name                   │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続の停止                │/usr/bin/nmcli connection down      │/usr/bin/nmcli c d connection_name    │
+│                          │  connection_name                   │                                      │
+├─────────────┼──────────────────┼───────────────────┤
+│接続情報の表示            │/usr/bin/nmcli --fields field_name  │/usr/bin/nmcli -f field_name c s      │
+│(特定フィールド)          │  connection show connection_name   │ connection_name                      │
+└─────────────┴──────────────────┴───────────────────┘
+
+●RHEL6でのNetworkManager
+
+デフォルトで NetworkManager サービスが起動するため /etc/sysconfig/network-scripts/ifcfg-XXX の書式が従来と変わっています。
+
+従来の書式で設定ファイルを書く場合は、設定ファイルに下記の1行を追加します。
+NM_CONTROLLED=no
+
+もしくは NetworkManager サービスを停止します。
+# chkconfig NetworkManager off
+# service NetworkManager stop
+
+●RHEL6でのethX と MAC Address の紐付け
+
+RHEL5では/etc/sysconfig/network-scripts/ifcfg-XXXにHWADDRとして記載していたが
+RHEL6では、/etc/udev/rules.d/70-persistent-net.rules で指定します。
+
+# cat /etc/udev/rules.d/70-persistent-net.rules
+# This file was automatically generated by the /lib/udev/write_net_rules
+# program, run by the persistent-net-generator.rules rules file.
+#
+# You can modify it, as long as you keep each rule on a single
+# line, and change only the value of the NAME= key.
+
+# PCI device 0x14e4:0x164c (bnx2) (custom name provided by external tool)
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:14:5e:fa:98:a2", ATTR{type}=="1", KERNEL=="eth*", NAME="eth1"
+
+# PCI device 0x14e4:0x164c (bnx2) (custom name provided by external tool)
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:14:5e:fa:98:a0", ATTR{type}=="1", KERNEL=="eth*", NAME="eth0"
+
+が、相変わらず、/etc/sysconfig/network-scripts/ifcfg-ethX にも HWADDR 指定があるので、両方を合わせないといけない。ifcfg-ethX の HWADDR は削除した方が幸せになれるかも知れません。
+
+●ロードモジュール
+RHEL6では、/etc/modprobe.conf が無くなりました。目的別に対応を説明します。
+
+(1) initrdに投入する内蔵ディスク用のデバイス・ドライバの指定（alias scsi_hostadapterXX）
+RHEL5 までは、mkinitrd コマンドは /etc/modporbe.conf をみて、そのサーバを起動するために必要なドライバを含む initrd を作成しました。initrd に含まれる初期化スクリプト init では、下記の例のように必要なドライバを直接 insmod しています。
+
+echo "Loading ehci-hcd.ko module"
+insmod /lib/ehci-hcd.ko
+echo "Loading ohci-hcd.ko module"
+insmod /lib/ohci-hcd.ko
+...
+
+RHEL6 では、initrd の作成が dracut に変わって、サーバ個別の initrd ではなく、汎用的な initrd が作成されるようになったので、/etc/modprobe.conf による指定は不要になりました。dracut が作成する initrd では、udev によって、サーバに接続されたデバイスに応じたドライバを自動判別してロードします。
+
+具体的には、initrd に含まれる etc/udev/rules.d/80-drivers.rules のルールから modprobe が呼び出されます。
+# cat 80-drivers.rules
+# do not edit this file, it will be overwritten on update
+
+ACTION!="add", GOTO="drivers_end"
+
+DRIVER!="?*", ENV{MODALIAS}=="?*", RUN+="/sbin/modprobe -b $env{MODALIAS}"
+SUBSYSTEM=="tifm", ENV{TIFM_CARD_TYPE}=="SD", RUN+="/sbin/modprobe -b tifm_sd"
+SUBSYSTEM=="tifm", ENV{TIFM_CARD_TYPE}=="MS", RUN+="/sbin/modprobe -b tifm_ms"
+SUBSYSTEM=="memstick", RUN+="/sbin/modprobe -b --all ms_block mspro_block"
+SUBSYSTEM=="i2o", RUN+="/sbin/modprobe -b i2o_block"
+SUBSYSTEM=="scsi", ENV{DEVTYPE}=="scsi_device", TEST!="[module/sg]", RUN+="/sbin/modprobe -b sg"
+SUBSYSTEM=="module", KERNEL=="parport_pc", RUN+="/sbin/modprobe -b ppdev"
+
+LABEL="drivers_end"
+
+そうは言っても特定のドライバを特定の順序で読み込ませたい場合は、カーネルオプション rdloaddriver にドライバを読み込む順に記載します。具体的には、init スクリプトから下記のスクリプトが実行されて、指定のドライバがロードされます。
+# cat cmdline/01parse-kernel.sh
+#!/bin/sh
+
+for p in $(getargs rdloaddriver=); do
+        modprobe $p
+done
+
+dracut が標準で initrd に含めないドライバを使用する際は、dracut の -d オプションで強制的に initrd に入れておきます。dracut については、レッドハットニュースレター：vol.53 - dracut もどうぞ。
+http://www.jp.redhat.com/magazine/jp/201102/rhel.html
+
+2) NIC用のデバイス・ドライバの指定（alias ethXX）
+
+サーバ起動後の追加のドライバのロードは、すべて udev で処理されるようになっています。具体的には、rc.sysinit から start_udev したタイミングで、/lib/udev/rules.d/80-drivers.rules に従って自動的に modprobe されます。（dracut 内部の動作と基本的には同じです。）
+# cat /lib/udev/rules.d/80-drivers.rules
+# do not edit this file, it will be overwritten on update
+
+ACTION!="add", GOTO="drivers_end"
+
+DRIVER!="?*", ENV{MODALIAS}=="?*", RUN+="/sbin/modprobe -b $env{MODALIAS}"
+SUBSYSTEM=="tifm", ENV{TIFM_CARD_TYPE}=="SD", RUN+="/sbin/modprobe -b tifm_sd"
+SUBSYSTEM=="tifm", ENV{TIFM_CARD_TYPE}=="MS", RUN+="/sbin/modprobe -b tifm_ms"
+SUBSYSTEM=="memstick", RUN+="/sbin/modprobe -b --all ms_block mspro_block"
+SUBSYSTEM=="i2o", RUN+="/sbin/modprobe -b i2o_block"
+SUBSYSTEM=="scsi", ENV{DEVTYPE}=="scsi_device", TEST!="[module/sg]", RUN+="/sbin/modprobe -b sg"
+SUBSYSTEM=="module", KERNEL=="parport_pc", RUN+="/sbin/modprobe -b ppdev"
+
+LABEL="drivers_end"
+
+ちなみに、udev が必要なドライバを判別する方法は次のとおりです。まず、PCI デバイスなどは、/sys に登録されるとカードに固有の modalias 情報が登録されます。
+# cat /sys/devices/pci0000:00/0000:00:06.0/0000:03:00.0/0000:04:00.0/modalias
+pci:v000014E4d0000164Csv00001014sd00000342bc02sc00i00
+
+一方、各ドライバは、サポートするデバイスの modalias 情報を持ちます。下記の alias: 部分です。
+# modinfo bnx2
+filename:       /lib/modules/2.6.32-71.el6.x86_64/kernel/drivers/net/bnx2.ko
+firmware:       bnx2/bnx2-rv2p-09ax-5.0.0.j10.fw
+firmware:       bnx2/bnx2-rv2p-09-5.0.0.j10.fw
+firmware:       bnx2/bnx2-mips-09-5.0.0.j15.fw
+firmware:       bnx2/bnx2-rv2p-06-5.0.0.j3.fw
+firmware:       bnx2/bnx2-mips-06-5.0.0.j6.fw
+version:        2.0.8-j15
+license:        GPL
+description:    Broadcom NetXtreme II BCM5706/5708/5709/5716 Driver
+author:         Michael Chan <mchan@broadcom.com>
+srcversion:     8CDA41B3E0DF70A112FBA80
+alias:          pci:v000014E4d0000163Csv*sd*bc*sc*i*
+alias:          pci:v000014E4d0000163Bsv*sd*bc*sc*i*
+alias:          pci:v000014E4d0000163Asv*sd*bc*sc*i*
+alias:          pci:v000014E4d00001639sv*sd*bc*sc*i*
+alias:          pci:v000014E4d000016ACsv*sd*bc*sc*i*
+alias:          pci:v000014E4d000016AAsv*sd*bc*sc*i*
+alias:          pci:v000014E4d000016AAsv0000103Csd00003102bc*sc*i*
+alias:          pci:v000014E4d0000164Csv*sd*bc*sc*i*
+alias:          pci:v000014E4d0000164Asv*sd*bc*sc*i*
+alias:          pci:v000014E4d0000164Asv0000103Csd00003106bc*sc*i*
+alias:          pci:v000014E4d0000164Asv0000103Csd00003101bc*sc*i*
+depends:
+vermagic:       2.6.32-71.el6.x86_64 SMP mod_unload modversions
+parm:           disable_msi:Disable Message Signaled Interrupt (MSI) (int)
+
+これらの情報は、depmod がまとめて /lib/modules/$(uname -r)/modules.alias に記録しており、「modporbe 」を実行すると modules.alias から必要なドライバを判別して自動的にロードします。/lib/udev/rules.d/80-drivers.rules では、Kernel が udev に通知した modalias を使って modprobe しています。udev に勝手にロードしてほしくないドライバは、/etc/modprobe.d/blacklist.conf 内に blacklist オプションで指定しておきます。
+
+
+■■■　ホスト名操作系コマンド　■■■
+RHEL 7では、ホスト名もsystemdが管理しているため、永続的なホスト名の変更方法も変更されました（hostnameコマンドを利用した一時的なホスト名の変更はRHEL 6と同じです）。
+
+ホスト名操作系コマンドの一覧は下記のとおりです。
+┌─────────────┬────────────────┬────────────────────┐
+│処理内容                  │    RHEL 5,6                    │  RHEL 7                                │
+├─────────────┼────────────────┼────────────────────┤
+│ホスト名の確認            │ hostname                       │hostname or hostnamectl                 │
+├─────────────┼────────────────┼────────────────────┤
+│ホスト名の変更(永続的)    │ /etc/sysconfig/networkを編集   │hostnamectl set-hostname  new_host_name │
+│                          │                                │ ,/etc/hostnameを編集                   │
+└─────────────┴────────────────┴────────────────────┘
+なお、「nmcli global hostname new_host_hame」を実行して、NetworkManager経由でも変更することができます。
+
+■■■　ファイアウォール系コマンド　■■■
+
+RHEL 7では、ファイアウォールとしてfirewalldが導入されました。これは、内部的にはiptablesを利用しているものの、「ゾーン」と呼ばれるiptablesとはまったく異なる機能を提供しているため、コマンド一覧は割愛します（iptabelesサービスとの併用もできません）。
+
+■■■　モジュール組み込み　■■■
+aliasの記載もRHEL6,7では変更されている
+
+┌─────────────┬─────────────────┬─────────────────┐
+│RHEL 5                    │    RHEL 6                        │  RHEL 7                          │
+├─────────────┼─────────────────┼─────────────────┤
+│/etc/modprobe.conf        │ /etc/modprobe.d/                 │ /etc/modprobe.d/                 │
+│                          │ ※bondingのaliasはnet-alias.conf │ ※bondingのaliasはnet-alias.conf │
+└─────────────┴─────────────────┴─────────────────┘
+
+■■■　Storage　■■■
+FS Size	
+┌─────┬──────┬──────────────┐
+│Release   │Default FS  │            Maximum         │
+│          │            ├───────┼──────┤
+│          │            │ Volume size  │ File size  │
+├─────┼──────┼───────┼──────┤
+│RHEL5     │ext3        │4-32TiB       │16GiB-2TiB  │
+├─────┼──────┼───────┼──────┤
+│RHEL6     │ext4        │1EiB          │16TiB       │
+├─────┼──────┼───────┼──────┤
+│RHEL7     │xfs         │16EiB         │8EiB        │
+├─────┼──────┼───────┼──────┤
+│RHEL?     │Btrfs       │16EiB         │8EiB        │
+└─────┴──────┴───────┴──────┘
+
+■■■　Diskパーティション系コマンド　■■■
+┌──────┬──────────┐
+│ ブート方式 │パーティション管理  │
+├──────┼──────────┤
+│ BIOS       │MBR形式             │
+├──────┼──────────┤
+│ UEFI       │GPT形式             │
+└──────┴──────────┘
+
+┌─────────────┬────────────┬───────────┐
+│処理内容                  │ MBR形式                │ GPT形式              │
+├─────────────┼────────────┼───────────┤
+│サポートするファームウェア│ BIOS,UEFI              │UEFI                  │
+├─────────────┼────────────┼───────────┤
+│基本パーティション        │最大4                   │最大128               │
+├─────────────┼────────────┼───────────┤
+│拡張パーティション        │1                       │無し                  │
+├─────────────┼────────────┼───────────┤
+│拡張パーティション内      │制限無し                │無し                  │
+│の論理パーティション      │                        │                      │
+├─────────────┼────────────┼───────────┤
+│ツール                    │fdisk、parted           │parted,gdisk,gparted  │
+├─────────────┼────────────┼───────────┤
+│ブートローダの制限        │ハードディスクの2.2TB内 │9.4ZB(ゼタバイト)     │
+├─────────────┼────────────┼───────────┤
+│Redhat Linux サポート状況 │RHEL 5 x86              │RHEL 6 x86_64         │
+│                          │RHEL 5 x86_64           │RHEL 7 x86_64         │
+│                          │RHEL 6 x86              │                      │
+│                          │RHEL 6 x86_64           │                      │
+└─────────────┴────────────┴───────────┘
+(*)各ディスクの先頭に保存されているMBR（マスター・ブート・レコード）はパーティション・テーブルのデータ長が32bitです。よって2の32乗セクタ×512bytes＝約2.2Tbytesとなります。
+
+BIOSとUEFIではパーティション管理形式も異なります。BIOSではMBR形式のみです。一方UEFIではMBR形式とGPT形式がサポートされています。
+RHEL5,6ではpartedが OS 標準のRPMとして含まれている。
+RHEL7 では gdisk が OS 標準のRPMとして含まれている。
+
+2TBを越えるディスク領域を使用する際の注意事項 
+パーティション作成にはpartedユーティリティを使用し、GPT(GUIDパーティションテーブル)を使用します。fdiskでは2TBを越えるディスクスペースは扱えません。
+Anacondaインストーラーは、GPTをサポートしていない為、2TBを越えるディスクスペースは扱えません。
+/boot, / パーティションは 2TB未満のディスク領域にインストールする必要があります。
+
+■■■　ファイルシステム系コマンド　■■■
+RHEL 7ではファイルシステムもext4からxfsに変更されています。
+・EXT4 と XFS コマンドの参照表
+┌────────────┬───────┬───────┬───────┬──────────────┐
+│処理内容                │     ext3     │     ext4     │ XFS          │ Btrfs                      │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FS作成                  │mkfs.ext3     │mkfs.ext4     │mkfs.xfs      │mkfs.btrfs                  │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSを                    │mount         │mount         │mount         │mount                       │
+│ マウントする           │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │resize2fs     │resize2fs     │xfs_growfs    │btrfs filesystem resize     │
+│ サイズを変更する       │              │              │[a]           │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │e2fsck        │e2fsck        │xfs_repair    │ btrfsck                    │
+│ 準備を整える           │fsck.ext3     │fsck.ext4     │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │e2label       │e2label       │xfs_admin -L  │ btrfs property             │
+│ ラベルを変更する       │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│ディスク領域および      │quota,quotaon │quota,quotaon │xfs_quota     │ btrfs quota                │
+│ ファイル使用量を報告   │, repquota    │, repquota    │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSを                    │debugfs       │debugfs       │xfs_db        │                            │
+│ デバッグする           │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの重要なメタデータを  │e2image       │e2image       │xfs_metadump  │btrfs-image                 │
+│ ファイルに保存する     │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの情報表示            │dumpe2fs      │dumpe2fs      │xfs_info      │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │tune2fs       │tune2fs       │xfs_admin     │ btrfs property             │
+│ メタデータの変更       │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │dump          │dump          │xfsdump       │ btrfs image                │
+│ バックアップ           │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │restore       │restore       │xfsrestore    │ btrfs image                │
+│ リストア               │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│ファイルのディスク上の  │filefrag      │filefrag      │xfs_bmap      │                            │
+│ ブロック一覧表示       │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │e4defrag      │e4defrag      │xfs_fsr       │btrfs filesystem defragment │
+│ デフラグ               │              │              │              │                            │
+├────────────┼───────┼───────┼───────┼──────────────┤
+│FSの                    │fsfreeze      │fsfreeze      │xfs_freeze,   │                            │
+│ 一時停止               │              │              │fsfreeze      │                            │
+└────────────┴───────┴───────┴───────┴──────────────┘
+[a]XFSファイルシステムのサイズは縮小できません。サイズを拡大する場合にのみコマンドを使用します。  
+
+■XFSの設定のポイント
+
+ほとんどのシステムでは特別なチューニングを行うことなくデフォルトの状態でXFSを利用できますが、要件によっては設定次第で性能が向上する可能性があります。例えば、RAIDアレイ上にXFSを構築する場合、ストライプユニットをRAIDアレイのストライプユニットと一致させることにより、性能向上が期待できます。ストレージデバイスがOSに自身のストライプユニットを通知している場合は、特にユーザーが設定する必要はありません。手動でストライプユニット、ストライプ幅を設定する場合、以下のようにしてファイルシステムを作成します。
+
+# mkfs.xfs -d su=64k,sw=4 /dev/sda1
+
+suはファイルシステムのストライプユニット、swはストライプ幅を意味します。swにはストライピングを構成するハードディスクの数（パリティディスクは含まない）を設定します。
+
+上記の設定をした場合、ジャーナル領域へのログ書き込みのストライプユニットも同様の値に設定されます（上記の例では64kB）。もし同期書き込みが多いワークロードでXFSを使用する場合、ログ書き込みのストライプユニットが大きいと性能低下の原因となることがあります。そのような場合、以下のようにログ書き込みのストライプユニットを最小値（1ブロックサイズ：通常は4kB）に設定すると性能が改善するかもしれません。
+
+# mkfs.xfs -d su=64k,sw=4 -l su=4k /dev/sda1
+
+また、ログ書き込みのオーバヘッドを改善する対処策としては、ログが書き出されるジャーナル領域を、データ用の領域として使用するデバイスとは別に用意するという方法も考えられます。
+その場合、以下のようにしてファイルシステムを作成します。
+
+# mkfs.xfs -d su=64k,sw=4 -l logdev=/dev/sdb1 /dev/sda1
+
+上記コマンドでは、データ用の領域を/dev/sda1に、ジャーナル領域を/dev/sdb1に作成しています。
+
+
+■■■　最後に　■■■
+今回調べてみて、RHEL 7での変更点の多さを改めて痛感しました。もはや、これまでのRHELとは別のOSになったような雰囲気すらあります。ただし、RHELにかぎらず、多くのディストリビューションがsystemdへの対応を表明していますので、使いこなせるようになっておきたいところです。そのためにも、今回は詳しくは触れられなかった、Unitの仕組みの理解が不可欠と思いました。

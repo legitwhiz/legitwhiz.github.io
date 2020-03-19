@@ -1,0 +1,262 @@
+rundeckをメンテナンスするための機能に【rundeck cli】と【rundeck api】があります。
+
+【rundeck api】は、aclを設定する必要がありますが、【rundeck cli】は別途インストールする必要があります。
+
+
+
+rundeck ジョブ実行ログ解析
+
+■プロジェクト名一覧
+
+■ジョブの一覧
+
+・リクエスト
+curl -H 'X-Rundeck-Auth-Token: RmpEE5oxIZBSq3xiPLMq3dSlh1xdaCDG' "http://localhost:4440/rundeck/api/2/project/Root-JobNet/jobs"
+
+
+・レスポンス
+<result success='true' apiversion='14'>
+  <jobs count='2'>
+    <job id='7c0f25b9-7bb0-4818-a5f4-eac9cd9029c6' href='http://xxx.xxx.xx.xx:4440/api/14/job/7c0f25b9-7bb0-4818-a5f4-eac9cd9029c6' permalink='http://xxx.xxx.xx.xx:4440/project/hello-world/job/show/7c0f25b9-7bb0-4818-a5f4-eac9cd9029c6'>
+      <name>hello-world</name>
+      <group />
+      <project>hello-world</project>
+      <description></description>
+    </job>
+    <job id='fdf1cca5-e729-491b-a1fa-3d8fef373d46' href='http://xxx.xxx.xx.xx:4440/api/14/job/fdf1cca5-e729-491b-a1fa-3d8fef373d46' permalink='http://xxx.xxx.xx.xx:4440/project/hello-world/job/show/fdf1cca5-e729-491b-a1fa-3d8fef373d46'>
+      <name>hello-world</name>
+      <group />
+      <project>hello-world</project>
+      <description></description>
+    </job>
+  </jobs>
+</result>
+
+環境変数設定
+$ vi ~/.bash_profile
+RD_USER=admin
+RD_PASSWORD=admin
+RD_URL=http://localhost:4440
+export RD_USER
+export RD_PASSWORD
+export RD_URL
+
+
+
+
+
+rundeck_executions_cleanup.sh
+
+#!/bin/bash
+###########################################################################
+#
+#  システム名      ：  XXX System
+#  サブシステム名  ：  log Operation
+#  シェル名        ：  rundeck_executions_cleanup_cli.sh
+#  機能名          ：  RundeckのBulk executionsをクリーニング
+#  機能概要        ：  RundeckのBulk executionsの7日より古いBulk メッセージを削除する
+#                      
+#                      
+#  CALLED BY       ：  Rundeck Job
+#  CALL TO         ：  NONE
+#  ARGUMENT        ：  1.Project Name
+#                      2.none
+#  RETURNS         ：  0      正常 
+#                      0以外  異常 
+#-------------------------------------------------------------------------
+#  作成元          ：  新規
+#  作成日　        ： 2018/11/12    作成者　：　D.SAKAMOTO(legit whiz)
+#  修正履歴　      ：
+#
+###########################################################################
+
+
+# export required vars
+export RD_PROJECT=Root-JobNet
+export RD_URL=https://regulus0134.dip.jp/rundeck/api/27
+export RD_Token=rbM1dYUQxY17M4Cp0JywBTvQE9KcvID1
+export JobID=ba9a7652-256e-4042-93fd-adbaf8dbbcd3
+export RD_HTTP_TIMEOUT=300
+
+# make sure rd & jq commands are in the PATH
+which -- rd jq >/dev/null
+
+del_executions() {
+local project=$1
+while true; do
+rd executions deletebulk -y -m ${RD_OPTION_BATCH:-20} --older ${RD_OPTION_OLDER_THAN:-7d} -p $project || break
+sleep 1s
+done
+}
+
+_del_executionss(){
+  local _project="${1}"
+  local _batch_size="${2}"
+  local _max_age="${3}"
+
+  printf "Deleting executions from project: \"${_project}\" older than: \"${_max_age}\" in batches of ${_batch_size}...\n"
+
+  # Delete executions in $_project in batches of $_batch_size older than $_max_age.
+  _executions_detected=true
+
+  while [[ "${_executions_detected}" == true ]]; do
+
+    exec {_stdout_copy}>&1 # make the FD named in "$stdout_copy" a copy of FD 1
+    _executions_deleted=$(RD_FORMAT=json rd executions deletebulk --confirm --project "${_project}" --max "${_batch_size}" --older "${_max_age}" | tee /dev/fd/"${_stdout_copy}") # JSON format ensures either executions will be deleted or there will be no output.
+    exec {_stdout_copy}>&- # close that copy previously created
+
+    _executions_deleted_count=$(echo "${_executions_deleted}" | wc -l)
+    printf "Executions deleted: ${_executions_deleted_count}...\n"
+
+    sleep 1s
+
+    if [[ -z "${_executions_deleted}" ]]; then
+      _executions_detected=false
+    fi
+
+  done
+}
+
+# delete executions for each project
+for p in $(RD_FORMAT=json rd projects list | jq -r .[]); do
+    del_executions $p
+done
+
+exit 0
+
+
+#########################################################################
+
+RD_USER=admin
+RD_PASSWORD=red5nigellmansell6370
+RD_URL=http://localhost:4440
+export RD_USER
+export RD_PASSWORD
+export RD_URL
+export RD_DATE_FORMAT="yyyy-MM-dd' 'HH:mm:ss"
+export RD_HTTP_TIMEOUT=30
+export RD_CONNECT_RETRY=false
+export RD_FORMAT=json
+export RD_TOKEN=
+project=Root-JobNet
+
+rd executions deletebulk -y -m ${RD_OPTION_BATCH:-20} --older ${RD_OPTION_OLDER_THAN:-7d} -p $project
+
+rd jobs list -p Root-JobNet
+
+
+vi ~/.rd/rd.conf
+
+export RD_CONF=~/.rd/rd.conf
+export RD_URL=http://localhost:4440
+export RD_PROJECT=Root-JobNet
+export RD_USER=admin
+export RD_PASSWORD=red5nigellmansell6370
+export RD_AUTH_PROMPT=false
+export RD_COLOR_INFO=blue
+export RD_COLOR_WARN=orange
+export RD_COLOR_ERROR=cyan
+export RD_DATE_FORMAT="yyyy-MM-dd' 'HH:mm:ss"
+export RD_HTTP_TIMEOUT=30
+export RD_CONNECT_RETRY=false
+
+rd projects list
+
+Rundeck Proでないとできない？
+
+
+
+export RD_URL=https://regulus0134.dip.jp/rundeck
+export RD_PROJECT=Root-JobNet
+export RD_Token=RmpEE5oxIZBSq3xiPLMq3dSlh1xdaCDG
+
+
+
+
+curl -H "X-Rundeck-Auth-Token: ${RD_Token}" "${RD_URL}/project/${RD_PROJECT}/jobs"
+
+curl -H "X-Rundeck-Auth-Token: ${RD_Token}" "${RD_URL}/api/11/tokens"
+curl -s --tlsv1 -H "X-Rundeck-Auth-Token: ${RD_Token}" "${RD_URL}/api/11/tokens"
+
+curl -H "X-Rundeck-Auth-Token: ${RD_Token}" "${RD_URL}/api/1/job/13c55d8c-03ee-446e-8870-164fc65afa1a/run"
+
+
+export RD_URL=http://localhost/rundeck
+export RD_PROJECT=TEST-Job-Project
+
+
+
+
+
+
+export RD_PROJECT=Root-JobNet
+export RD_URL=https://regulus0134.dip.jp/rundeck/api/27
+export RD_TOKEN=rbM1dYUQxY17M4Cp0JywBTvQE9KcvID1
+export JobID=ba9a7652-256e-4042-93fd-adbaf8dbbcd3
+export Job_Exec_ID=2338
+curl --verbose -H 'Accept:application/json '  -H "X-Rundeck-Auth-Token: ${RD_TOKEN}" ${RD_URL}/project/${RD_PROJECT}/jobs
+
+curl -H 'Accept:application/json '  -H "X-Rundeck-Auth-Token:${RD_TOKEN}" ${RD_URL}/job/${JobID}/info | jq '.'
+
+curl -X POST -H 'Accept:application/json ' -H "X-Rundeck-Auth-Token: ${RD_TOKEN}" ${RD_URL}/job/${JobID}/executions | jq '.'
+
+curl -X GET -H 'Accept:application/json ' -H "X-Rundeck-Auth-Token: ${RD_TOKEN}" ${RD_URL}/job/${JobID}/executions  | jq '.'
+
+curl -H 'Accept:application/json ' -H "X-Rundeck-Auth-Token: ${RD_TOKEN}" ${RD_URL}/job/${JobID}/execution/${Job_Exec_ID}  | jq '.'
+
+
+
+
+
+curl --verbose -H 'Accept:application/json '  -H 'X-Rundeck-Auth-Token:mpEE5oxIZBSq3xiPLMq3dSlh1xdaCDG' https://regulus0134.dip.jp/rundeck/api/27/job/ba9a7652-256e-4042-93fd-adbaf8dbbcd3/info
+
+
+
+
+
+curl --verbose -H 'Accept:application/json '  -H 'X-Rundeck-Auth-Token: RmpEE5oxIZBSq3xiPLMq3dSlh1xdaCDG' http://localhost:4440/api/27/jobs
+
+curl --verbose -H 'Accept:application/json '  -H 'X-Rundeck-Auth-Token: rbM1dYUQxY17M4Cp0JywBTvQE9KcvID1' https://regulus0134.dip.jp/rundeck/api/27/job/ba9a7652-256e-4042-93fd-adbaf8dbbcd3/info
+
+curl --verbose -H 'Accept:application/json '  -H 'X-Rundeck-Auth-Token: rbM1dYUQxY17M4Cp0JywBTvQE9KcvID1' http://localhost:4440/api/27/job/ba9a7652-256e-4042-93fd-adbaf8dbbcd3/info
+
+https://regulus0134.dip.jp/rundeck/api/2/system/info?authtoken=rbM1dYUQxY17M4Cp0JywBTvQE9KcvID1
+
+
+export RD_URL=http://https://regulus0134.dip.jp/rundeck/api/27
+
+
+
+
+
+* Connection #0 to host regulus0134.dip.jp left intact
+{"href":"https://regulus0134.dip.jp/rundeck/api/27/job/ba9a7652-256e-4042-93fd-adbaf8dbbcd3","averageDuration":37769,"id":"ba9a7652-256e-4042-93fd-adbaf8dbbcd3","scheduleEnabled":true,"scheduled":true,"enabled":true,"nextScheduledExecution":"2018-11-13T08:00:00Z","permalink":"https://regulus0134.dip.jp/rundeck/project/Root-JobNet/job/show/ba9a7652-256e-4042-93fd-adbaf8dbbcd3","group":null,"description":"","project":"Root-JobNet","name":"IP_Set_ie"}root@Server1:/etc/rundeck#
+root@Server1:/etc/rundeck#
+
+
+
+export RD_PROJECT=Root-JobNet
+export RD_URL=https://regulus0134.dip.jp/rundeck/api/27
+export RD_Token=rbM1dYUQxY17M4Cp0JywBTvQE9KcvID1
+export JobID=ba9a7652-256e-4042-93fd-adbaf8dbbcd3
+
+curl -H "X-Rundeck-Auth-Token:${RD_Token}" -X DELETE ${RD_URL}/job/${JobID}/executions
+
+
+| python -mjson.tool
+'.'
+
+Rundeck管理者
+
+Project管理者 →実行、開発
+Project開発者 →実行、開発(対象Projectのみ)
+Project運用者 →参照のみ(対象Projectのみ)
+Project
+
+
+
+
+
+rd executions deletebulk -y --autopage --older ${RD_OPTION_OLDER_THAN:-7d} -p Root-JobNet
+
+

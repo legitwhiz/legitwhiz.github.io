@@ -1,0 +1,167 @@
+マルチパスI/Oの設定(RedHat)
+
+最近のHPサーバ等を見ると、NICの二重化、ストレージパスの二重化、サーバの二重化（クラスタ）はほとんどOS標準のモノを使えと書いてある。IBMもそうなりつつある。
+
+ 従来、こういった分野ではNICやストレージであれば、LANボードを作っているベンダのソフト（たとえばIntelProSet）、EMCならPowerPath、日立ストレージであればHitachi Dynamic Link Managerといった専用のソフト、またはVERITASのようなサードパーティ製のソフトを使う必要があった。
+
+しかしこれらのソフトは組み合わせが非常に厳密で、
+
+・ソフトのバージョン
+ ・OSバージョン
+ ・パッチバージョン
+ ・HBA/NICの型式
+・ドライババージョン
+ ・NW/FCスイッチ型式
+・ストレージの型式
+
+ 上記の全てでメーカ保証が取れていないとサポート外といったとんでもない状況だった（基本的にNWもFCも規格化されているので基本的にはつながるのだが、メーカー独自の拡張がされたりするとつながらない場合もある）
+
+ 最近はメーカーとしても全ての組み合わせでの検証が重荷になったのか、OS標準のを使ってくれというスタンスに変化しつつあり、ストレージメーカーが設定ファイル等のサンプルを公開しているケースが多い。
+
+ 各OSにおけるI/Oマルチパスの機能名（この名前とストレージ製品名で検索するとサンプルが記載されたマニュアル等ヒットする）
+
+・Windows2008(MPIO)
+・RedHat(dm-multipath)
+・Solaris(MPxIO)
+・HP-UX(PV-Link)
+
+ここではRedHatを使ってマルチパス構成をテストしてみる。
+
+
+RHELのマルチパス制御に使われるDevice Mapper Multipath(以下dm-multipath)については
+
+http://www-06.ibm.com/jp/domino01/mkt/cnpages7.nsf/page/default-002673C7
+
+が非常に参考になります。
+
+ 以下はRedHat Enterprise Linux 5.3を使って設定する流れ。
+
+
+１．ストレージのコントローラ設定
+
+ 設定の際、ストレージがActive-Active I/Oをサポートするのか、Active-Standbyなのかは非常に重要なので必ず確認すること（ここではActive-Activeであることを想定する）
+
+
+
+２．dm-multipathのインストール
+
+普通にRHELをインストールすると標準で入る。入っていない場合はインストールメディアからインストール
+
+# rpm -ihv device-mapper-multipath-0.4.7-23.el5.i386.rpm
+
+
+
+３．ストレージを接続、デバイス認識
+
+ここではFC/iSCSIを接続したとする。
+
+ストレージを認識させると、fdisk -l や、 ls -alF /dev/disk/by-id 、dmesgにディスクが表示される。
+
+FCやiSCSIの場合は固有のWWIDを持って認識されるのでそのWWIDをメモしておく
+
+
+
+４．設定ファイルの編集　/etc/multipath.conf
+// デフォルトで全てのデバイスについてのマルチパスを無効にする
+blacklist {
+  devnode "^(ram|raw|loop|fd|md|dm-|sr|scd|st)[0-9]*"
+  devnode "^(hd|xvd)[a-z]*"
+5.  wwid    *
+  device {
+    vendor  "*"
+    product "*"
+  }
+10.}
+ 
+// 特定のWWIDのみをマルチパス配下に置く（xxxxには３でメモしたWWIDを記載する）
+blacklist_exceptions {
+  wwid "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+15. 
+}
+ 
+// 認識されたマルチパスデバイスにわかりやすい名前を付けてくれる。これがないとWWIDの長い名前になる。
+defaults {
+20.  user_friendly_names yes
+}
+ 
+// WWID指定でマルチパスのポリシーを設定する。
+multipaths {
+25.  multipath {
+    wwid           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    alias          yellow
+    path_grouping_policy multibus
+    path_checker    readsector0
+30.    path_selector  "round-robin 0"
+    failback       manual
+    rr_weight      priorities
+    no_path_retry  5
+  }
+35.}
+
+
+
+上記のセレクションの詳細はマニュアル(man multipath.conf)や、IBMのドキュメント参照。詳しく記載されている。
+
+ 特に重要なのは以下の二つ。
+
+■path_grouping_policy
+マルチパスのI/Oポリシーを決定する（ストレージがAct-Act、Act-Stbyなのかが重要）
+
+→ multibus：Act-Act I/O用。全てのパスを使ってI/Oする
+
+→ failover：Act-Stby用。1つのパスを選択してI/Oする
+
+
+■path_checker
+パスのチェック方法を定義する（ストレージがサポートする方式を選択する必要がある）
+
+Novelのページから抜粋
+http://www.novell.com/ja-jp/documentation/sles11/stor_admin/?page=/ja-jp/documentation/sles11/stor_admin/data/bbi89rh.html
+
+ → directio: (multipath-toolsバージョン0.4.8以降でのデフォルト)。直接I/Oを持つ最初のセクタを読み込みます。DASDデバイスの場合、有用です。/var/log/messagesに障害メッセージをログ記録します。
+
+→ readsector0: (multipath-tools version 0.4.7以前でのデフォルト)。デバイスの最初のセクタを読み込みます。/var/log/messagesに障害メッセージをログ記録します。
+
+→ tur: デバイスに対するSCSIテストユニットレディコマンドを発行します。これはLUNによってサポートされている場合の推奨設定です。このコマンドは、障害時に/var/log/messagesにメッセージを入れることはありません。
+
+
+ 一部のSANベンダは、カスタムオプションとしてpath_checkerを提供しています。 
+
+→ emc_clariion: EMC ClariionのEVPDページ0xC0をクエリしてパスの状態を判別します。
+
+→ hp_sw: Active/Standbyファームウェアを持つHPストレージアレイのパスの状態(アップ、ダウン、またはゴースト)をチェックします。
+
+→ rdac: LSI/Engenio RDACストレージコントローラのパスｍｐ状態をチェックします。
+
+ 上の３つは汎用的にFC/iSCSIで使える。下の3つは特定のストレージ専用のチェッカーになる。
+
+ここは適当に設定するとデータ破損するので注意。ストレージの種別がよくわからない場合は、failover, readsector0を設定しておくと確実。ただしパスのバランシングを行わないので、パフォーマンスが発揮できない場合もある。
+
+
+
+５．multipathdの起動
+
+# /etc/init.d/multipathd start
+ # multipath -ll
+
+で指定したWWIDに対してマルチパス設定情報が表示されればOK。
+
+ 何も表示されないか、意図しないディスクがマルチパス化場合はどこか間違えている。その場合は設定ファイルを見直し、
+
+# multipath
+
+で設定を再ロードする。
+
+
+
+６．fdisk + mkfs
+マルチパス化されたデバイスファイルは、/dev/mapper/mpathXX(XXは数字)に配置される。このデバイスに対して、fdisk, mkfsし、マウントをかける。
+
+
+
+７．自動起動、自動マウント設定
+
+# chkconfig multipathd on
+ # echo "/dev/mapper/mpath0 /mnt/storage0 ext3 defaults 1 2" >> /etc/fstab
+
+手順としてはこれで終了。 

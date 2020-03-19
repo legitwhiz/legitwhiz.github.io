@@ -1,0 +1,9 @@
+
+Copy-Item C:\Users\1030920204\Backup_EventLog\system_20180903.txt C:\Users\1030920204\Backup_EventLog\system_20170505.txt
+
+$touch_file = "C:\Users\1030920204\Backup_EventLog\system_20170505.txt"
+$touch_day = "05/05/2017 10:50 AM"
+
+Set-ItemProperty $touch_file -Name LastWriteTime -Value "$touch_day"
+
+

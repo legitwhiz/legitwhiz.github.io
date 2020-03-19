@@ -1,0 +1,43 @@
+
+#Perlモジュールの確認方法
+instmodsh
+
+Available commands are:
+   l            - List all installed modules
+   m <module>   - Select a module
+   q            - Quit the program
+cmd? l   ←[l]を入力
+Installed modules are:
+   Crypt::DES
+   Digest
+   Digest::HMAC
+   Digest::MD5
+   Digest::SHA
+   Digest::SHA1
+   Net::SNMP
+   Perl
+cmd?q   ←[q]を入力
+
+#PerlモジュールのVersion確認方法
+
+# perl -m<Perl module name> -le 'print $<Perl module name>::VERSION'
+
+<例>
+perl -mCrypt::DES -le 'print $Crypt::DES::VERSION'
+perl -mDigest -le 'print $Digest::VERSION'
+perl -mDigest::HMAC -le 'print $Digest::HMAC::VERSION'
+perl -mDigest::MD5 -le 'print $Digest::MD5::VERSION'
+perl -mDigest::SHA -le 'print $Digest::SHA::VERSION'
+perl -mDigest::SHA1 -le 'print $Digest::SHA1::VERSION'
+
+
+ただし、Net::SNMPのみモジュールにVERSIONの定義がされていないため、Perlドキュメントから確認して下さい。
+
+perldoc -m Net::SNMP
+
+(4%ぐらいに記載)
+## Version of the Net::SNMP module
+
+our $VERSION = 'v6.0.1'; ←これが詳細Version
+    $VERSION = eval $VERSION;
+

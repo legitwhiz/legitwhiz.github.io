@@ -1,0 +1,16 @@
+grepでAND検索とOR検索
+
+grepでand検索
+
+grep hoge [ファイル名] | grep fuga 
+
+grepでOR検索
+
+grep -e hoge -e fuga [ファイル名]
+
+egrep 'hoge|fuga' [ファイル名]
+
+
+
+
+

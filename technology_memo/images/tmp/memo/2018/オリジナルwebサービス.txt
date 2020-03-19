@@ -1,0 +1,13 @@
+オリジナルwebサービス
+
+HTML
+CSS
+JavaScript
+Instafeed（InstagramのAPI）
+
+アイデアをブラッシュアップした結果、
+「文房具の写真を『Instagram』や
+『Pinterest』から引っ張ってきて、
+さまざまな文房具をチェックできるWebアプリ
+
+

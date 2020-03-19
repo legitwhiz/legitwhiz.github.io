@@ -1,0 +1,44 @@
+Zabbix3.0でサーバ-エージェント間の通信を暗号化する
+
+Zabbix 3.0では、サーバ⇔エージェント間の通信を暗号化する事ができるようになったらしい。
+ 今回は、それを実際に試してみる事にする。以下のページを参考に作業を行った。
+" Zabbix 3.0の新機能：通信暗号化(PSK)(http://qiita.com/atanaka7/items/2ff1fd6a12f1dde4075f)
+
+なお、OSはZabbixサーバ、エージェント共にCentOS 7を用いるものとする。
+
+1.共有鍵の生成
+まずは、サーバ側でpsktoolコマンドを用いて、共有鍵の生成を行う。
+ここでは、psktoolをインストールしてデフォルト長の鍵を生成している。
+
+yum -y install gnutls-utils
+psktool -u zabbix_agent -p passwd.psk
+ 
+[root@BS-PUB-MONITOR-01 ~]# psktool -u zabbix_agent -p passwd.psk
+Generating a random key for user 'zabbix_agent'
+Key stored to passwd.psk
+[root@BS-PUB-MONITOR-01 ~]# cat passwd.psk
+zabbix_agent:4a478eXb1b9Xb33e1Xd06Xc6cXX16210
+
+生成された鍵ファイルは、「ユーザ名:キー」となっている。
+
+2.エージェント側の設定
+エージェント側で「/etc/zabbix/cert/zabbix_agentd.psk」というファイルを作成し、
+先ほど作成した鍵ファイルのキーの部分のみを貼り付ける。
+
+●/etc/zabbix/cert/zabbix_agentd.psk
+4a478eXb1b9Xb33e1Xd06Xc6cXX16210
+
+次に、以下のコマンドを実行しサーバとの通信を暗号化するように設定ファイルに書き加える。
+
+cat <<EOF >> /etc/zabbix/zabbix_agentd.conf
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity=user1
+TLSPSKFile=/etc/zabbix/cert/zabbix_agentd.psk
+EOF
+
+3.サーバ側の設定
+次に、サーバ側で暗号化通信の設定を行う。
+[設定] > [ホスト]から対象のホストを選択し、[暗号化]で設定を変更する。
+
+これでサーバ⇔エージェント間で暗号化がされた。

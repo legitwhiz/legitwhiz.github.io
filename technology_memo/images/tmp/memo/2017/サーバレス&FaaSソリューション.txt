@@ -1,0 +1,28 @@
+サーバレス&FaaSソリューション
+
+●SAML
+
+●OpenID Connect
+facebookやgoogleのID
+
+●BaaS
+バックエンドをサービスとして提供
+データベース、メッセージング、各種Web
+
+●API Gateway
+Backend for Frontend
+
+●FaaS(関数をサービスとして提供する)エンジン
+kubernetes リソーススケジューラ
+・Apache OpenWhisk
+・Fn Project
+・OpenFaaS
+・Kubeless
+・fission
+
+●Twilio
+
+Twilioとは、ソフトウェア開発者が自社のWebサービスAPIを使って電話やテキストメッセージの送受信をプログラムすることを可能にしている。
+
+
+

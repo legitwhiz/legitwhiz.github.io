@@ -1,0 +1,10 @@
+drwx-wx-wt
+1755
+
+drwx-wx-wt 2 root root 745472 12月 25 18:06 sessions
+
+sudo chmod 700 /var/lib/php/sessions
+
+sudo chown -R www-data:www-data /var/lib/php/sessions
+
+

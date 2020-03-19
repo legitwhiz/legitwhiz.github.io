@@ -1,0 +1,182 @@
+# 改めてのpsコマンド
+CentOS Linux release 7.5.1804 (Core)
+procps-ng version 3.3.10
+
+インストールプログラム:free, pgrep, pidof, pkill, pmap, ps, pwdx, slabtop, sysctl, tload, top, uptime, vmstat, w, watch
+インストールライブラリ:libprocps.so
+
+ps -ef
+
+UID        PID  PPID  C STIME TTY          TIME CMD
+apache    5123   987  0  6月10 ?      00:00:00 /usr/sbin/httpd -DFOREGROUND
+apache    5124   987  0  6月10 ?      00:00:00 /usr/sbin/httpd -DFOREGROUND
+apache    5125   987  0  6月10 ?      00:00:00 /usr/sbin/httpd -DFOREGROUND
+apache    5126   987  0  6月10 ?      00:00:00 /usr/sbin/httpd -DFOREGROUND
+apache    5127   987  0  6月10 ?      00:00:00 /usr/sbin/httpd -DFOREGROUND
+
+ps axu
+
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+apache    5123  0.0  0.4 317672  8088 ?        S     6月10   0:00 /usr/sbin/httpd -DFOREGROUND
+apache    5124  0.0  0.4 318292  9272 ?        S     6月10   0:00 /usr/sbin/httpd -DFOREGROUND
+apache    5125  0.0  0.4 318064  9232 ?        S     6月10   0:00 /usr/sbin/httpd -DFOREGROUND
+apache    5126  0.0  0.4 318064  9236 ?        S     6月10   0:00 /usr/sbin/httpd -DFOREGROUND
+apache    5127  0.0  0.4 318312  9388 ?        S     6月10   0:00 /usr/sbin/httpd -DFOREGROUND
+
+
+ps ax -o thcount,rss,size,%mem,%cpu,user,group,pid,ppid,args
+
+THCNT   RSS  SIZE %MEM %CPU USER     GROUP      PID  PPID COMMAND
+    1  8088  4960  0.4  0.0 apache   apache    5123   987 /usr/sbin/httpd -DFOREGROUND
+    1  9272  5580  0.4  0.0 apache   apache    5124   987 /usr/sbin/httpd -DFOREGROUND
+    1  9232  5352  0.4  0.0 apache   apache    5125   987 /usr/sbin/httpd -DFOREGROUND
+    1  9236  5352  0.4  0.0 apache   apache    5126   987 /usr/sbin/httpd -DFOREGROUND
+    1  9388  5600  0.4  0.0 apache   apache    5127   987 /usr/sbin/httpd -DFOREGROUND
+
+
+
+
+EXAMPLES
+To see every process on the system using standard syntax:
+   ps -e
+   ps -ef
+   ps -eF
+   ps -ely
+
+To see every process on the system using BSD syntax:
+   ps ax
+   ps axu
+
+To print a process tree:
+   ps -ejH
+   ps axjf
+
+To get info about threads:
+   ps -eLf
+   ps axms
+
+To get security info:
+   ps -eo euser,ruser,suser,fuser,f,comm,label
+   ps axZ
+   ps -eM
+
+To see every process running as root (real & effective ID) in user format:
+   ps -U root -u root u
+
+To see every process with a user-defined format:
+   ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:14,comm
+   ps axo stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm
+   ps -Ao pid,tt,user,fname,tmout,f,wchan
+
+Print only the process IDs of syslogd:
+   ps -C syslogd -o pid=
+
+Print only the name of PID 42:
+   ps -q 42 -o comm=
+
+スレッド数確認
+
+psコマンドを使う
+mオプションをつかう。ps m pid
+$ ps m `pgrep hogehoge`
+ 6824 pts/1    -      0:00 ./hogehoge
+    - -        S+     0:00 -
+    - -        S+     0:00 -
+    - -        S+     0:00 -
+    - -        S+     0:00 -
+    - -        S+     0:00 -
+    - -        S+     0:00 -
+6個あるのがわかる
+
+procを見る
+statusを見るとThreadsのとこにスレッド数が書いてある。
+$ cat /proc/`pgrep hogehoge`/status
+Name:   hogehoge
+State:  S (sleeping)
+SleepAVG:       88%
+Tgid:   6824
+Pid:    6824
+中略
+Threads:        6
+後略
+
+procを見る2
+taskを見るとスレッドの数だけpidが書いてある。
+$ ls /proc/`pgrep hogehoge`/task
+6824  6825  6826  6827  6828  6829
+6個あるのがわかる。中身も普通のプロセスと同じ感じで書いてある。
+
+
+-Lオプションを付けて実行
+↓のような感じでmysqldがスレッド単位で表示されました。
+NLWP(スレッド数)も表示されていますね。
+$ ps -efL | grep -e mysqld -e PID | grep -v grep
+UID        PID  PPID   LWP  C NLWP STIME TTY          TIME CMD
+root      4570     1  4570  0    1 Dec09 ?        00:00:00 /bin/sh /usr/bin/mysqld_safe
+mysql     4606  4570  4606  0   12 Dec09 ?        00:00:02 /usr/sbin/mysqld
+mysql     4606  4570  4608  0   12 Dec09 ?        00:00:00 /usr/sbin/mysqld
+mysql     4606  4570  4609  0   12 Dec09 ?        00:00:05 /usr/sbin/mysqld
+mysql     4606  4570  4610  0   12 Dec09 ?        00:03:37 /usr/sbin/mysqld
+mysql     4606  4570  4611  0   12 Dec09 ?        00:15:21 /usr/sbin/mysqld
+mysql     4606  4570  4615  0   12 Dec09 ?        00:00:00 /usr/sbin/mysqld
+mysql     4606  4570  4616  0   12 Dec09 ?        00:00:03 /usr/sbin/mysqld
+mysql     4606  4570  4617  0   12 Dec09 ?        00:17:35 /usr/sbin/mysqld
+mysql     4606  4570  4618  0   12 Dec09 ?        01:20:07 /usr/sbin/mysqld
+mysql     4606  4570  4619  3   12 Dec09 ?        08:11:25 /usr/sbin/mysqld
+mysql     4606  4570  4620  6   12 Dec09 ?        15:15:46 /usr/sbin/mysqld
+mysql     4606  4570  4631  0   12 Dec09 ?        00:00:16 /usr/sbin/mysqld
+
+
+スレッド単位でCPU使用率も表示させる
+ということで、これも"-L"オプションを付けて実行してやることで、↓のようにスレッド単位でのCPU使用率を確認することが出来ます。なるほどねー。
+$ ps auxww -L | grep -e mysqld -e PID | grep -v grep
+USER       PID   LWP %CPU NLWP %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      4570  4570  0.0    1  0.0  63828  1212 ?        S    Dec09   0:00 /bin/sh /usr/bin/mysqld_safe
+mysql     4606  4606  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   0:02 /usr/sbin/mysqld
+mysql     4606  4608  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   0:00 /usr/sbin/mysqld
+mysql     4606  4609  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   0:05 /usr/sbin/mysqld
+mysql     4606  4610  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   3:37 /usr/sbin/mysqld
+mysql     4606  4611  0.1   12 28.4 7238080 7012620 ?     Sl   Dec09  15:21 /usr/sbin/mysqld
+mysql     4606  4615  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   0:00 /usr/sbin/mysqld
+mysql     4606  4616  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   0:03 /usr/sbin/mysqld
+mysql     4606  4617  0.1   12 28.4 7238080 7012620 ?     Sl   Dec09  17:35 /usr/sbin/mysqld
+mysql     4606  4618  0.5   12 28.4 7238080 7012620 ?     Sl   Dec09  80:08 /usr/sbin/mysqld
+mysql     4606  4619  3.3   12 28.4 7238080 7012620 ?     Sl   Dec09 491:33 /usr/sbin/mysqld
+mysql     4606  4620  6.1   12 28.4 7238080 7012620 ?     Sl   Dec09 916:02 /usr/sbin/mysqld
+mysql     4606  4631  0.0   12 28.4 7238080 7012620 ?     Sl   Dec09   0:16 /usr/sbin/mysqld
+
+ちなみにmanの通りですが、"-L"オプションだけではなく"H"オプションなどでも表示されます。
+
+
+プロセス毎のメモリ消費量
+プロセスを調べるpsコマンド内にメモリ消費量が表示されてます。
+
+RSS (Resident set size)が物理メモリの消費量なので
+
+ps aux | grep mysql | grep -v grep | awk '{ print $6}'
+
+合計するなら
+ps aux | grep httpd | awk '{sum += $6}END{print sum}'
+
+メモリ使用率の高いTop10
+ps aux | sort -k 6 -n -r | head -n 10
+
+
+
+
+
+
+ps aux | grep mysql | grep -v grep | awk '{ print $6}'
+ps aux | grep zabbix | grep -v grep | awk '{ print $6}'
+
+
+ps aux | grep java | grep -v grep | awk '{ print $6}'
+ps aux | grep certd | grep -v grep | awk '{ print $6}'
+ps aux | grep httpd | grep -v grep | awk '{ print $6}'
+
+
+ps aux | grep -v java | grep -v certd | grep -v httpd | grep -v mysql | grep -v zabbix | grep -v grep | awk '{ print $6}'
+
+
+
+

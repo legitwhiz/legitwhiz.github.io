@@ -1,0 +1,7 @@
+owncloud webdav接続
+
+webdavs://example.org/owncloud/remote.php/webdav
+
+https://regulus0134.dip.jp/owncloud/remote.php/webdav
+
+webdavs://regulus0134.dip.jp/owncloud/remote.php/webdav
