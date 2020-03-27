@@ -1,0 +1,163 @@
+# Netbackup あんちょこ(NetBackup 7.7.3)
+
+## ●ストレージユニットの追加
+
+```
+bpstuadd -label <storage unit name> -path <path> -dt <disk type> -mfs 524287 -M <master hostname>
+```
+
+## ●Retention Period設定
+
+```
+bpretlevel -U
+bpretlevel -r <level> <number> <y:year,m:month,d:day>
+```
+
+## ●ポリシー追加
+
+```
+bppolicynew <policy name> -M <master hostname>
+```
+
+## ●ポリシー設定
+
+### 通常
+
+```
+bpplinfo <policy name> -modify -M <master hostname> -active -pt Standard -residence <storage unit name>
+```
+
+### カタログバックアップ
+
+```
+bpplinfo <policy name> -modify -M <master hostname> -active -pt NBU-Catalog -residence <storage unit name>
+```
+
+## ●ポリシー確認
+
+```
+bppllist
+bpplinfo <policy name> -U
+```
+
+## ●スケジュール追加
+
+```
+bpplsched <policy name> -M <master hostname> -add <schedule name> -st FULL -freq <backup 間隔> -rl <retention level>
+```
+
+## ●スケジュール確認
+
+```
+bpplsched <policy name> -L
+```
+
+## ●バックアップ元登録
+
+```
+bpplinclude <policy name> -add <backup path>
+```
+
+## ●バックアップ元登録確認
+
+```
+bpplinclude <policy name> -L
+```
+
+## ●Client確認
+
+```
+bpplclients <policy name> -M <master hostname> -add <client hostname> <host type>
+```
+
+## ●Client確認
+
+```
+bpplclients <policy name> -U
+```
+
+## ●CatalogバックアップDisaster Recovery設定
+
+```
+bpplcatdrinfo <policy name> -set -p <path>
+```
+
+## ●CatalogバックアップDisaster Recovery設定確認
+
+```
+bpplcatdrinfo <policy name> -L
+```
+
+## ●バックアップ
+
+```
+bpbackup -p <policy name> -s <schedule name> -S <master hostname> -L <log path> -i -w
+```
+
+## ●リストア
+
+```
+bprestore -p <policy name> -w -L <log path>  -S <master hostname> -r -f <restore list filename>
+```
+
+※-rオプションは、rawデバイスの場合
+
+## ●カタログリストア
+
+```
+bprecover -wizard
+```
+
+## ●バックアップ保持期間確認
+
+```
+bpimagelist -L -d <バックアップ日付:yyyy/mm/dd>
+```
+
+## ●バックアップジョブレポート
+
+```
+bpdbjobs -report
+```
+
+## ●netbackupログディレクトリ作成
+
+```
+mklogdir
+```
+
+## ●netbackup停止
+
+```
+bp.kill_all
+```
+
+## ●netbackup起動
+
+```
+bp.start_all
+```
+
+## ●プロセス確認
+
+```
+bpps -x
+```
+
+## ●管理コンソール起動
+
+```
+jnbSA
+```
+
+## ●diskエラー確認
+
+```
+bperror -disk
+```
+
+## ●netbackupエラー確認
+
+```
+bperror -all -U
+```
