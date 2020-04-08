@@ -1,0 +1,39 @@
+
+＜HULFTマニュアル記載箇所＞
+https://www.hulft.com/help/ja-jp/HULFT-V8/UX-ADM/Content/HULFT_ADM_UNIX/Env/inclusion_external_chara.htm?tocpath=3.%20HULFT%E3%81%AE%E5%8B%95%E4%BD%9C%E7%92%B0%E5%A2%83%7C3.10%20%E5%A4%96%E5%AD%97%E3%83%86%E3%83%BC%E3%83%96%E3%83%AB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%7C_____1
+
+<コマンド>
+utlgtfextd <パラメーター1> <パラメーター2>
+
+＜パラメーター1＞
+　-i　：インポート
+　-o　：設定確認
+
+<パラメーター2>
+外字テーブル展開ファイルを作成します。（省略可）
+es:EUC-JPからShift-JISの外字テーブルを展開
+ei:EUC-JPからIBM漢字の外字テーブルを展開
+ej:EUC-JPからJEFの外字テーブルを展開
+ek::EUC-JPからKEISの外字テーブルを展開
+ ・
+ ・
+ ・(コード毎にあります)
+a: 
+すべての外字テーブルを展開
+
+
+
+#####外字テーブルファイルのフォーマット#####
+
+#
+# UTF-8  -> Shift-JIS
+#
+
+# default output code
+defaultcode=08x81A0
+
+#incode         #outcpde
+#UTF8           #SJIS
+0xE388B1        0x878A
+
+

@@ -1,0 +1,65 @@
+####################################################################################################
+#
+# td-agent Aggregator Dockerfile.
+#
+# - build
+#   docker build -f build/Dockerfile .
+#
+#   - condition for docker build
+#     td-agent.conf must exist in the docker build directory.
+#
+# - run
+#   docker run \
+#       -d -p 24224:24224 \
+#       -e AGGREGATOR=<blue fluent aggregator host> \
+#       -e AGGREGATOR_PORT=<blue fluent aggregator port> \
+#       -e S3_LOGGING_BUCKET=<s3 logging bucket name> \
+#       -e S3_REGION=<s3 logging bucket region> \
+#       -e SUBSYSTEM_ID=<sub system id> \
+#       -e LOGGING_SERVER_HOST=<logging server host> \
+#       -e LOGGING_SERVER_PORT=<logging server port> \
+#       -e S3_NEXT_LABEL=<s3 next label> \
+#       -e LOGGING_NEXT_LABEL=<logging next label> \
+#       -e SUPPRESSOR_NEXT_LABEL=<suppressor next label> \
+#       --add-host log-forwarder:<your logging host ip> \
+#       <image>
+#
+####################################################################################################
+FROM amazonlinux:2018.03
+
+ARG fluentd_package=""
+ARG fluentd_link=""
+ARG packages=""
+
+ARG groupname=""
+ARG username=""
+
+## Base install
+RUN set -x && yum install -y ${packages}
+
+## Fluentd install
+RUN set -x && mkdir -p /tmp/fluentd
+RUN set -x && cd /tmp/fluentd \
+           && curl -OL  ${fluentd_link}/${fluentd_package}  \
+           && rpm -ivh ${fluentd_package} \
+           && /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grep \
+           && /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-forest \
+           && td-agent-gem install fluent-plugin-ec2-metadata:0.1.1 \
+           && td-agent-gem install fluent-plugin-prometheus:1.0.1 \
+           && td-agent-gem install fluent-plugin-suppress \
+           && td-agent-gem install fluent-plugin-route \
+           && td-agent-gem install fluent-plugin-rewrite-tag-filter
+
+RUN set -x && rm -rf /tmp/fluentd
+RUN set -x && mkdir -p /var/log/fluentd \
+           && chown ${username}:${groupname} /var/log/fluentd
+RUN set -x && yum clean all
+
+COPY td-agent.conf /etc/td-agent/td-agent.conf
+
+RUN set -x && mkdir -p /opt/apps
+COPY run.sh /opt/apps/
+RUN set -x && chmod 755 /opt/apps/run.sh
+
+EXPOSE 24224
+CMD [""]

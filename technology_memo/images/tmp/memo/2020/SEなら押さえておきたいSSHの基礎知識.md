@@ -1,0 +1,578 @@
+# SEなら押さえておきたいSSHの基礎知識
+
+サーバーの用意やネットワーク周りの設定はインフラ部門がやってくれるけど、アプリのデプロイ／設定は開発者がする事が多いので、開発メインでやってるエンジニアでも最低限SSHの知識は必要になる。
+
+というわけでインフラエンジニアじゃなくてもSSHクライアントの知識は必須になってきているので、改めてSSHの再学習をしてみることにした。
+
+## 1.SSHとは
+暗号や認証の技術を利用して、安全にリモートコンピュータと通信するためのプロトコル。
+
+SSHでは以下の点で従来のTelnetより安全な通信が行える。
+・パスワードやデータを暗号化して通信する。
+・クライアントがサーバーに接続する時に、接続先が意図しないサーバーに誘導されていないか厳密にチェックする。
+
+## 1.1 SSHの認証方式
+
+SSHの主要な認証方式としてはパスワード認証方式と公開鍵認証方式がある。
+
+### 1.1.1. パスワード認証方式
+
+パスワード認証方式はデフォルトの認証方式で、ユーザー名とパスワードでログインする方式。
+ユーザー名とパスワードは接続先OSのユーザーアカウントの情報が使用される。
+
+### 1.1.2. 公開鍵認証方式
+
+公開鍵認証方式は公開鍵と秘密鍵の２つの鍵(キーペア)を使用した接続方式。
+サーバーに公開鍵、クライアントに秘密鍵を置いて使用する。
+ 公開鍵認証を使うとパスワード入力なしでログインする事が可能になる。 
+パスワード認証方式はサーバー側で明示的に無効にしていない限り使用できるが、セキュリティ的には脆弱なので無効にしている事も多い。
+
+公開鍵の仕組みというか考え方については以下が分かりやすいと思う。
+簡単に説明すると南京錠は、閉めることはだれでもできるが、開けることは鍵を持っている人しかできない。
+なので南京錠をだれでも手に入るところにおいておけば、その南京錠で鍵をかけて僕に送りつけることで僕だけが箱を開けられる。
+
+```sequence
+Title: SSHセッションフロー
+Note over SSH Client: 1.秘密鍵＆公開鍵の生成
+SSH Client->SSH Server: 2.公開鍵を渡す
+Note over SSH Server: 3.ユーザと公開鍵を結びつける
+SSH Client->SSH Server: 4.ログイン(ユーザとIP指定)
+Note over SSH Server: 5.乱数を生成
+SSH Server->SSH Client: 6.公開鍵と乱数で暗号作成
+Note over SSH Client: 7.秘密鍵をパスフレーズで\n復号したものと受取った\n暗号で乱数を復号
+Note over SSH Client: 8.乱数からハッシュ値を計算
+SSH Client->SSH Server: 9.ハッシュ値を渡す
+Note over SSH Server: 10.受取ったハッシュ値と\n既存のハッシュ値を比較
+Note over SSH Server: 11.一致していたら認証
+
+```
+
+#### ① 接続までの流れ
+
+##### １．TeraTermでの鍵生成方法については下記を参照。
+
+http://server-setting.info/blog/teraterm-publickey-ssh.html
+
+##### ２．~/.ssh/にid_rsa.pubをアップデート
+
+##### ３．サーバ側での公開鍵設定
+
+```
+$ cd ~
+$ chmod 700 .ssh
+$ cd .ssh
+$ cat id_rsa.pub >> authorized_keys
+$ chmod 600 authorized_keys
+$ rm -fv id_rsa.pub
+```
+
+※authorized_keysに公開鍵を貼り付けます
+
+##### ４．TeraTermでログイン
+ユーザ名、１で設定したパスフレーズを入力し[RSA/DSA鍵を使う]にチェックを入れログイン
+
+##### ５．サーバー側sshd設定変更
+
+```
+# vi /etc/ssh/sshd_config
+以下の行のコメントをはずして有効化する。
+#RSAAuthentication yes
+#PubkeyAuthentication yes
+#AuthorizedKeysFile     .ssh/authorized_keys
+```
+
+##### ６．クライアントからログイン確認 
+
+初回のみ-iオプションで秘密鍵の指定が必要。
+
+```
+$ ssh -i ~/.ssh/hoge_rsa user@host
+```
+
+##### ７．エイリアス設定 
+
+クライアント側の~/.ssh/configを設定することで user@host の部分を省略できる。
+これは鍵認証と直接関係ないが、やっておくと便利。
+
+```
+$ vi ~/.ssh/config
+Host hoge-server
+    HostName xxx.xxx.xxx.xxx
+    User hoge
+    IdentityFile ~/.ssh/hoge_rsa
+
+$ chmod 600 ~/.ssh/config
+$ ssh hoge-server
+```
+
+## 1.2. OpenSSH
+SSHプロトコルを使用する為のソフトで、SSHクライアントとSSHサーバーの両方が含まれている。
+Linuxではデファクトスタンダードとなっていて、ほぼデフォルトでインストールされている。
+WindowsでもCygwinをインストールしたり、Gitに同梱されているGit Bashで使用できる。
+
+### 1.2.1 OpenSSHの主要コマンド
+
+#### ①ssh
+
+SSHでリモートホストに接続してコマンドを実行する。
+
+#### ②scp
+
+SSHを使用してリモートホストとの間でファイルを転送を行う。
+
+#### ③ssh-keygen
+
+公開鍵認証方式で使用するキーペアを生成する。
+
+#### ④ssh-copy-id
+
+公開鍵をリモートホストに登録するコマンド。環境によってはインストールされていない場合がある。
+
+### 1.2.2. sshコマンド
+
+sshコマンドはリモートホストに接続してコマンドを実行する時に使用する。
+
+```
+ssh [user@]hostname [command]
+```
+
+・ユーザー名を省略するとクライアントの現在のユーザーが使用される。
+・コマンドを指定するとリモートホストに接続したあと指定のコマンドだけ実行してログアウトする。
+・コマンドを省略した場合はリモートホストにログインした状態でコマンドプロンプトが表示されるので、任意のコマンドを実行できる。ログアウトしたい時はexit。
+
+#### ①主要なオプション
+
+| オプション       | 内容                                                         |
+| ---------------- | ------------------------------------------------------------ |
+| -i identity_file | 公開鍵認証で使用する秘密鍵ファイルを指定する。デフォルトでは~/.ssh/id_rsaなどが使用される。 |
+| -F configfile    | 設定ファイルを指定する。デフォルトでは`~/.ssh/config`が使用される。 |
+| -p               | ポート番号を指定する。<br>上記オプションは他のコマンドでもほぼ共通。 |
+
+[OpenSSH 日本語マニュアルページ - SSH](http://euske.github.io/openssh-jman/ssh.html)
+
+### 1.2.3. scpコマンド
+
+scpコマンドはSSHを使用してリモートホストとの間でファイルを転送を行うコマンド。
+・クライアントのfile1とfile2をリモートホストのdir1へコピーする
+
+```
+scp file1 file2 [user@]hostname[:dir1]
+```
+
+・リモートホストのfile1とfile2をクライアントのdir1へコピーする
+
+```
+scp [user@]hostname:file1 [user@]hostname:file2 dir1
+```
+
+[OpenSSH 日本語マニュアルページ - SCP](http://euske.github.io/openssh-jman/scp.html)
+
+### 1.2.4. パスワード認証方式での接続
+
+```
+[vagrant@node1 ~]$ ssh node2 ←node1からSSHでnode2へ接続
+The authenticity of host 'node2 (192.168.33.12)' can't be established.
+RSA key fingerprint is c4:4d:f9:05:09:31:33:05:cd:99:52:5b:fc:e0:10:b5.
+Are you sure you want to continue connecting (yes/no)? yes ←初めて接続するサーバーの場合に確認を求められる。
+Warning: Permanently added 'node2,192.168.33.12' (RSA) to the list of known hosts.
+vagrant@node2's password: ←パスワードを入力
+Last login: Fri Mar  7 16:57:20 2014 from 10.0.2.2
+[vagrant@node2 ~]$ ←node2のコマンドプロンプト
+[vagrant@node2 ~]$ pwd
+/home/vagrant
+[vagrant@node2 ~]$ exit
+logout
+Connection to node2 closed.
+[vagrant@node1 ~]$ 
+```
+
+### 1.2.5. 公開鍵認証方式での接続(クライアントとして使用する場合)
+
+#### ①キーペアの作成
+
+公開鍵認証で使用するキーペアはssh-keygenコマンドで生成する。
+
+```
+[vagrant@node1 ~]$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/vagrant/.ssh/id_rsa): ←生成する秘密鍵ファイル名を入力
+Enter passphrase (empty for no passphrase): ←パスフレーズを入力
+Enter same passphrase again: 
+Your identification has been saved in /home/vagrant/.ssh/id_rsa.
+Your public key has been saved in /home/vagrant/.ssh/id_rsa.pub.
+The key fingerprint is:
+c4:bf:ba:b6:e0:40:82:8c:29:ca:ee:ae:96:e4:07:c6 vagrant@node1
+The key's randomart image is:
++--[ RSA 2048]----+
+|                 |
+|       .         |
+|        o        |
+|oo     . .       |
+|*.. .   S .      |
+|+E o       .     |
+|=.o . .   .      |
+|.+ . o ...       |
+|*+.   ..+o       |
++-----------------+
+```
+
+パスフレーズは秘密鍵を暗号化するためのもので、パスワード認証方式のパスワードとは別のもの。
+パスフレーズを未設定にすることで、以後の接続でパスワード／パスフレーズの入力なしで接続することができるようになる。
+
+#### ②公開鍵をサーバーに登録する
+
+・ssh-copy-idを使うと、リモートホストの指定ユーザーの~/.ssh/authorized_keysに公開鍵が追加される。
+
+```
+[vagrant@node1 ~]$ ssh-copy-id node2
+vagrant@node2's password: 
+Now try logging into the machine, with "ssh 'node2'", and check in:
+  .ssh/authorized_keys
+to make sure we haven't added extra keys that you weren't expecting.
+```
+
+・ssh-copy-idが使えない場合は、sshコマンドでリモートホストに接続してauthorized_keysに公開鍵を追加する。
+
+```
+[vagrant@node1 ~]$ cat ~/.ssh/id_rsa.pub | ssh node3 'cat >> ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys'
+The authenticity of host 'node3 (192.168.33.13)' can't be established.
+RSA key fingerprint is c4:4d:f9:05:09:31:33:05:cd:99:52:5b:fc:e0:10:b5.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'node3,192.168.33.13' (RSA) to the list of known hosts.
+vagrant@node3's password: 
+```
+
+・authorizedkeysは複数の公開鍵を登録するファイルなので、既存の情報を消してしまわないように追加モードで書き込む事。
+公開鍵をサーバーに登録した後にsshコマンドで接続すると、パスワードを聞かれずにログインできるようになる。(パスフレーズを設定している場合はパスフレーズを聞かれる)
+
+```
+[vagrant@node1 ~]$ ssh node3
+Last login: Fri Mar  7 16:57:20 2014 from 10.0.2.2
+[vagrant@node3 ~]$ 
+```
+
+#### ③~/.ssh/内のファイル
+
+| ファイル名      | 内容                                                     |
+| --------------- | -------------------------------------------------------- |
+| authorized_keys | 接続を許可する公開鍵を登録しておくサーバー側のファイル。 |
+| config          | SSH接続の情報を書くファイル。                            |
+| id_rsa          | ssh-keygenで生成した秘密鍵。                             |
+| id_rsa.pub      | ssh-keygenで生成した公開鍵。                             |
+| known_hosts     | 過去に接続したことがあるサーバー。                       |
+
+OpenSSHでは~/.ssh/内のファイルがモード600(ユーザーのみ読み書き可能)でないと使用できない。
+
+#### ④~/.ssh/config
+~/.ssh/configにはSSH接続時の情報を定義しておくことができるので、sshコマンドのオプションを省略したり、コマンドラインオプションでは指定できない情報も設定できる。
+
+・~/.ssh/configの例
+
+```
+Host web01
+  HostName 127.0.0.1
+  User vagrant
+  Port 2222
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /vagrant/.vagrant/machines/default/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL  
+```
+
+#### ⑤主要な設定項目
+
+| 項目         | 内容                                                         |
+| ------------ | ------------------------------------------------------------ |
+| Host         | sshコマンド等で指定するホスト名。                            |
+| HostName     | 実際に接続ホストのアドレス。IPアドレスや/etc/hostsに指定したホスト名等を指定する。 |
+| User         | ユーザー名                                                   |
+| Port         | ポート番号                                                   |
+| IdentityFile | 秘密鍵ファイル                                               |
+
+以下のサイトでおそらく全設定項目が確認できる。
+[OpenSSH 日本語マニュアルページ - SSH_CONFIG](http://euske.github.io/openssh-jman/ssh_config.html)
+
+
+### 1.2.6. 踏み台サーバー/SSHゲートウェイ/SSHプロキシ経由での多段SSH接続
+
+現在使用しているマシンから作業対象マシンに接続したい時に、あるサーバーを経由しないといけないケースがある。
+こういう経由しなければならないサーバーの事を「踏み台サーバー」とか「SSHゲートウェイ」とか「SSHプロキシ」とかいう。(以下、踏み台サーバー3）
+踏み台サーバー経由で作業対象サーバーにSSH接続する場合、普通にやると先ず踏み台サーバーにsshコマンドで接続して、そこからさらに作業対象サーバーにsshコマンドで接続することになる。
+
+・node2を経由してnode3に接続
+
+```
+[vagrant@node1 ~]$ ssh node2
+Last login: Sun Feb 22 15:39:03 2015 from 192.168.33.11
+[vagrant@node2 ~]$ ssh node3
+Last login: Sun Feb 22 15:39:09 2015 from 192.168.33.12
+[vagrant@node3 ~]$ 
+```
+
+この接続方法だとコマンドを２回実行するので面倒だし、踏み台サーバー上に秘密鍵を置いたりすることになるため、セキュリティ上あまり好ましくない(らしい)。
+
+こういう時には~/.ssh/configに多段SSH接続の情報を設定しておくと、踏み台サーバーに秘密鍵を置く必要もなく、コマンド一発で接続できるようになる。
+
+・以下はnode2を経由してnode3に接続する設定例。
+
+```~/.ssh/config
+Host node2
+Host node3
+  ProxyCommand ssh -W %h:%p node2
+```
+
+node3に直接ログインできるようになる
+
+```
+[vagrant@node1 ~]$ ssh node3
+Last login: Sun Feb 22 15:39:48 2015 from 192.168.33.12
+[vagrant@node3 ~]$ exit
+```
+
+・node2->node3->node4というように複数の踏み台サーバーを経由する設定もできる。
+~/.ssh/config
+
+```
+Host node2
+Host node3
+  ProxyCommand ssh -W %h:%p node2
+Host node4
+  ProxyCommand ssh -W %h:%p node3
+```
+
+### 1.2.7. ssh経由でコマンドを実行するとPATHが通らない
+
+リモートホストにある ~/bin/mycmd などのコマンドを実行しようとすると
+
+```
+$ ssh remotehost mycmd
+bash: mycmd: コマンドが見つかりません
+```
+
+となってしまいます。
+
+$PATHを確認してみると、 
+
+```
+$ ssh <remote host>  'echo $PATH'
+/usr/local/bin:/bin:/usr/bin
+```
+
+となっており$PATHが貧弱ぅ貧弱ぅな感じです。
+
+#### ①原因
+
+sshの仕様で、リモートログインのときは profile(~/.bash_profileなど)が読み込まれないみたいです。
+よって環境変数などがセットされない。
+
+#### ②対策1:コマンド実行時にprofile読み込みを明示
+コマンド実行時に以下のようにしてprofile読み込みを明示する。
+
+```
+$ ssh user@host "source ~/.profile; /path/to/command"
+```
+
+#### ②対策2: sshdの設定PermitUserEnvironmentを変える。
+
+sshdの設定を変えて、環境変数を読むようにする。
+~/.ssh/environmentを作っておき、sshd設定でPermitUserEnvironmentをYesに設定すると、その中身を読んでくれる。
+デフォルトではNoになっている。
+sshd_configでPermitUserEnvironment yesにする。
+
+```
+$ sudo vi /etc/ssh/sshd_config
+#PermitUserEnvironment no
+PermitUserEnvironment yes
+```
+
+sshdを再起動。
+
+~/.ssh/environmentを作る。
+ここで注意点。
+environmentは下記の書式しか受け付けない。詳細は実例で後述。
+environment=value
+
+しかし$PATHを与えても展開されずそのまま。
+environmentのvalueには変数を使わない。exportも使わないこと。
+
+以上より面倒でも対策①がセキュリティ的にも無難ですね。
+
+### 1.2.8.サーバ間でdiffをとる方法
+
+複数サーバ間の設定ファイルを比較したいときはこうすればよいです。 
+ローカルファイルとリモートサーバのファイルを比較
+
+```
+$ ssh remotename cat /etc/hosts | diff /etc/hosts  - 
+```
+
+こういう書き方もあります。 $ diff <(ssh remotename cat /etc/hosts) /etc/hosts  
+
+リモートサーバ間のファイルを比較
+
+```
+$ diff <(ssh remote1 cat /etc/hosts) <(ssh remote2 cat /etc/hosts)
+```
+
+#### ①解説
+
+```
+ssh hostname cat /path/to/file
+```
+
+"cat /path/to/file"というコマンドを別サーバ(hostname)上で実行させて、結果を自マシンの標準出力に出力します。 
+"diff /path/to/file -" diffで、ファイル名を指定する代わりに「-」と書くと、ファイルの代わりに標準入力を読み込みます。  <(command)
+この書式は「プロセス置換」というもので、コマンドの実行結果をあたかもファイルのように扱うことができます。 cat <(date)
+などとしてみるとよくわかると思います。 
+
+### 1.2.9. SSHの鍵ペアを非対話的に(つまりコマンドだけで)生成するには下記のようにします。
+
+
+```
+ssh-keygen -N my_secret_passphrase -C any_comment -f ~/tmp/mykeyfile
+```
+
+実行すると、
+~/tmp/mykeyfile が秘密鍵
+~/tmp/mykeyfile.pub が公開鍵
+となります。
+
+あまりないケースかと思いますが、サーバ管理者が一括で個人別の鍵ペアを生成したい場合はシェルでループして人数分作成するとよいでしょう。
+
+```
+for name in nobita shizuka ; do ssh-keygen -N himitsu_no_kotoba -C $name@localpc -f ~/tmp/$name ; done
+```
+
+ここで生成した秘密鍵を利用者に渡すときは、十分安全な経路で(sshとかhttpsとかUSBメモリとかで)送るようにしましょう。
+メールで送ったりしては本末転倒ですよ。 
+
+
+## 2.SSH File
+
+### 2.1 プログラムのファイル構成
+
+| Config File                | 詳細                                   |
+| -------------------------- | -------------------------------------- |
+| /usr/local/bin/ssh(slogin) | OpenSSH クライアント プログラム        |
+| /usr/local/bin/scp         | ファイルコピー プログラム              |
+| /usr/local/bin/sftp        | ファイル転送プログラム (SFTP)          |
+| /usr/local/bin/ssh-keygen  | 公開鍵・秘密鍵 管理ユーティリティ      |
+| /usr/local/bin/ssh-agent   | 認証エージェント                       |
+| /usr/local/bin/ssh-add     | 認証エージェントの鍵管理ユーティリティ |
+| /usr/local/bin/ssh-keyscan | 認証エージェントの鍵管理ユーティリティ |
+| /usr/local/sbin/sshd       | OpenSSH サーバ デーモン                |
+
+### 2.2 システム全体の設定ファイル
+| Config File                   | 詳細                                                         |
+| ----------------------------- | ------------------------------------------------------------ |
+| /etc/ssh/moduli               | セキュアなトランスポート層を構築するために非常に重要となる、Diffie-Hellman 鍵交換に使用される Diffie-Hellman グループが格納されています。SSH セッションの始めで鍵が交換される時、共有秘密値が作成されますが、どちらか一方の当事者だけでは決定できません。この値はホスト認証を行う場合に使用されます。 |
+| /etc/ssh/ssh_config           | デフォルトの SSH クライアント設定ファイルです。~/.ssh/config が存在する場合には、これにより上書きされる点に注意して下さい。 |
+| /etc/ssh/sshd_config          | sshd デーモン用の設定ファイルです。                          |
+| /etc/ssh/ssh_host_dsa_key     | sshd デーモンにより使用される DSA 秘密鍵です。               |
+| /etc/ssh/ssh_host_dsa_key.pub | sshd デーモンにより使用される DSA 公開鍵です。               |
+| /etc/ssh/ssh_host_key         | sshd デーモンにより使用される SSH プロトコルのバージョン 1 用の RSA秘密鍵です。 |
+| /etc/ssh/ssh_host_key.pub     | sshd デーモンにより使用される SSH プロトコルのバージョン 1 用の RSA公開鍵です。 |
+| /etc/ssh/ssh_host_rsa_key     | sshd デーモンにより使用される SSH プロトコルのバージョン 2 用の RSA秘密鍵です。 |
+| /etc/ssh/ssh_host_rsa_key.pub | sshd デーモンにより使用される SSH プロトコルのバージョン 2 用の RSA公開鍵です。 |
+
+### 2.3 ユーザー固有の設定ファイル
+| Config File            | 詳細                                                         |
+| ---------------------- | ------------------------------------------------------------ |
+| ~/.ssh/authorized_keys | サーバー用の認証済み公開鍵の一覧が含まれています。クライアントがサーバーに接続する時、サーバーはこのファイル内に格納されている署名済み公開鍵を確認してクライアントを認証します。 |
+| ~/.ssh/id_dsa          | ユーザーの DSA 秘密鍵が含まれています。                      |
+| ~/.ssh/id_dsa.pub      | ユーザーの DSA 公開鍵です。                                  |
+| ~/.ssh/id_rsa          | ssh により使用される SSH プロトコルのバージョン 2 用の RSA 秘密鍵です。 |
+| ~/.ssh/id_rsa.pub      | ssh により使用される SSH プロトコルのバージョン 2 用の RSA 公開鍵です。 |
+| ~/.ssh/identity        | ssh により使用される SSH プロトコルのバージョン 1 用の RSA 秘密鍵です。 |
+| ~/.ssh/identity.pub    | ssh により使用される SSH プロトコルのバージョン 1 用の RSA 公開鍵です。 |
+| ~/.ssh/known_hosts     | ユーザーによりアクセスされる SSH サーバーの DSA ホスト鍵が格納されています。このファイルは SSH クライアントが正しい SSH サーバーに接続していることを確認するために非常に重要です。 |
+
+
+
+### ssh&sudoでエラーになったら
+
+sshでリモートホストにアクセスしてsudoする処理があるスクリプトをcronにしかけると、以下のエラーになってしまう。
+
+sudo: sorry,you must have a tty to run sudo. 
+
+tty（端末）を持っていない状態でsudoしてるから。これは/etc/sudoersの編集で簡単に解決する。
+
+```
+# visudo
+#--------------------------------------
+ Defaults requiretty
+ ↓　↓　↓
+ #Defaults requiretty
+ or
+ Defaults !requiretty
+#--------------------------------------
+```
+特定のユーザに対して許可したかったら以下のように。
+Defaults:system_user !requiretty
+
+
+### sshd_config＆PAMの設定
+
+sshd_configの設定は、最低限の設定だけしておいてあとは放ったらかし、という状況が多いかも。何のことかわかっていない項目も実はあったりするので、おさらいしてみた。とはいえ、全て網羅するのはしんどいので、気になるところだけあげてみる。
+
+・・・と、その前に注意点を。
+sshd_configにおいて#で始まる項目は実は全てのデフォルト値である。
+ （本当のコメントにはスペースが入っている）
+ 例えば以下はコメントがついてるから無効、ではなく有効なデフォルト値となる。
+
+```
+#PasswordAuthentication yes
+```
+
+これらのデフォルト値は#を外しても設定行を削除しても、設定そのものは変化しない。
+ 設定を変更したい場合に、sshd_configの作法に沿って記述するのであれば、以下のようになる。
+
+```
+#PasswordAuthentication yes
+ PasswordAuthentication no
+```
+
+※デフォルト値は残しておき、変更後の値とセットにしておく
+
+前置きはこれくらいにしておいて、まずは一番の肝といえるログイン認証の設定。
+
+| 項目                                                         | 内容                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| PasswordAuthentication                                       | パスワード認証の許可。デフォルトはyes。                      |
+| PermitEmptyPasswords                                         | パスワード認証が有効な場合において、空のパスワードを許可するか。デフォルトはno。そりゃそうだろう。 |
+| ChallengeResponseAuthentication                              | チャレンジレスポンス認証を許可するかどうかを指定。<br/>デフォルトはyes。<br/>login.confに記述されている認証形式が使用できる。<br/>ログインを公開鍵認証だけにする場合、ここはnoにしておく。 |
+| UsePAM                                                       | PAM（Pluggable Authentication Module）認証を許可するか。<br/>つまり、パスワード認証やチャレンジレスポンス認証を使用するケースにおいて、<br/>その認証をPAMで行うか。デフォルトno。<br/>後述するが、PAMの設定を行うのであればここは有効になっている必要がある。<br/>RSA認証のみ使用するのであればPAMはいらないのだろうか？とも思ったが、<br/>いるみたいだ。その辺りの動きがどうなっているのかはよくわからない。 |
+| PermitRootLogin                                              | rootログイン許可設定。引数は以下より選択。<br/>yes<br/> no   |
+| without-password（パスワード認証は無効だが公開鍵認証でなら可能） | forced-commands-only（公開鍵認証でのログイン時に、その鍵にcommandオプションが指定されている場合のみ有効）<br/>多くのサイトでやたらとnoにすることを勧めているが、バッチ処理などでroot<br/>によるリモートホストへのアクセスが必要となるケースもある。<br/>そういった場合はwithout-passwordやforced-commands-onlyを利用できる。 |
+| AllowGroups                                                  | ログインを許可するグループ名をスペース区切りで指定。ワイルドカートの使用も可。<br/>DenyGroupsで拒否するグループを指定することも可能。 |
+| AllowUsers                                                   | 上記と同様にログインを許可するユーザ名を指定する。username@hostnameとすればユーザ名＆ホスト名での制限ができる。<br/>MySQLのユーザアカウントと同様ということになる。<br/>DenyUsersで拒否するユーザを指定することも可能。 |
+| ClientAliveInterval                                          | sshd は一定時間ごとにクライアントに応答を要求するメッセージ (client alive message) を送信するが、その時何もデータが送られてこなかったらタイムアウトする時間を秒数で指定する。デフォルトの値は 0 で、これはメッセージを送らないことを意味する。 |
+| ClientAliveCountMax                                          | 上記のclient alive messageを送信する最大回数を指定。この送信に対するクライアントからの応答が連続して指定した回数だけなかった場合、sshdはセッションを切断する。<br/>デフォルトの値は3。<br/> 上記を踏まええると、ClientAliveInterval x ClientAliveCountMaxが、クライアントが無反応でもセッションが保持される時間となる。<br/> 例えばClientAliveCountMaxを60に指定し、ClientAliveCountMaxが10なら、無反応のクライアントは600秒／10分後にセッションを切断される。 |
+| GatewayPorts                                                 | ポート中継を許可するか。デフォルトではループバックアドレスにbindされるため、リモートホストが転送されたポートに接続できないようになっている。 |
+| HostbasedAuthentication                                      | 公開鍵ホスト認証が成功した時、rhosts認証を許可するかの指定。デフォルトはno。<br/>RhostsRSAAuthenticationに似ているオプション。 |
+| IgnoreRhosts (rhostsの無視)                                  | このオプションに関連。デフォルトはyesなので.rhostsは使用できない。ただし/etc/hosts.equivは有効。 |
+| IgnoreUserKnownHosts                                         | ユーザの $HOME/.ssh/known_hostsの無視。デフォルトはnoなので使用する設定になっている。 |
+| KeepAlive                                                    | デフォルトはyes。クライアントはネットワークがダウンするか、リモートホストがクラッシュすると通知してくる。 |
+| LoginGraceTime                                               | ログインの猶予時間。デフォルトは120秒なので、ユーザがこの時間内にログインしないとマシンは接続を切る。0を指定すると無制限となる。 |
+| StrictModes                                                  | デフォルトはyesで、ログインするユーザのディレクトリやファイルのパーミッションをチェックする。<br/>ユーザがホームディレクトリを誰でも書き込めるようにしてしまう事故を防いでくれる。 |
+| ListenAddress                                                | 接続を受け付けるアドレスを指定する。デフォルトでは全てのローカルアドレスの<br/>接続を受け付ける。対象マシンが多いと管理が大変。<br/>よほどの場合でないとこのオプションは使わないような気が。 |
+| X11 Forwarding                                               | X window systemを利用しないのであればno。                    |
+
+[参考URL](http://www14.plala.or.jp/campus-note/vine_linux/server_ssh/sshd_config.html)
+
+
+
+PAMでパスワード制約の設定をする
+PAMの詳細については関連記事を参照いただくとして・・・、ひと言メモ。
+ユーザのログイン試行回数など、ログイン時の制約を設定するには、/etc/pam.d/system-authを編集する。
+またアクセスユーザの制限は二通りあり、先に書いたようにsshd_configに直接AllowUsersで定義する他、
+/etc/pam.d/sshd&/etc/security/access.confを用いてPAMで定義する方法もある。
+どちらにしても”UsePAM yes”になっていること。
+
+ちなみにsuにおけるパスワード入力回数を設定するには/etc/pam.d/suを編集する。
+
+追記
+ 本題からそれるが、ssh鍵認証が動作しないときの原因としてSELinuxが邪魔している、というのがある。鍵やディレクトリのパーミッションその他を正しくセットしているのに拒否られてしまうときは、SELinuxを疑うべし。こいつは鍵のコンテキストを厳密にチェックしていて、scpで転送したものとかは場合によっては弾かれる。SELinuxが有効になっていたら無効にするべし。ていうか、SELinuxって何のためにあるんだよ。こいつのせいで半日 + @つぶれた。fxxk you  !!!って言いたいね…
+

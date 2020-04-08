@@ -1,0 +1,9 @@
+Amazon S3 は 99.999999999%
+
+SNS 99.9
+NAT Gateway 99.9
+AWS Backup 99.9
+
+Direct Connect 99.9
+Elastic IP 99.9
+CloudWatch 99.9

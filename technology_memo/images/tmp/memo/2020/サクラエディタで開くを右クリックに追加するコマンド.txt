@@ -1,0 +1,12 @@
+
+
+サクラエディタで開くを右クリックに追加するコマンド
+
+
+64bit環境
+reg add HKLM\SOFTWARE\Classes\*\shell\sakuraeditor /d "SAKURAで開く(&E)"
+reg add HKLM\SOFTWARE\Classes\*\shell\sakuraeditor\command /t REG_SZ /d "\"%ProgramFiles(x86)%\sakura\sakura.exe\" \"%1\""
+32bit環境
+reg add HKLM\SOFTWARE\Classes\*\shell\sakuraeditor /d "SAKURAで開く(&E)"
+reg add HKLM\SOFTWARE\Classes\*\shell\sakuraeditor\command /t REG_SZ /d "\"%ProgramFiles%\sakura\sakura.exe\" \"%1\""
+

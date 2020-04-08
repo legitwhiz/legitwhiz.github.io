@@ -1,0 +1,19 @@
+# ベースとなるイメージを指定する
+# FROM <イメージ>
+# または
+# FROM <イメージ>:<タグ>
+
+
+FROM ubuntu                      
+FROM debian                      #Debian Linux
+FROM busybox                     #標準UNIXコマンドでプログラムを単一ファイルに詰め込んだプログラム
+FROM inokappa/wheezy-7.2-basic   #Debian Linux
+FROM alpine                      #超軽量Linux
+FROM windowsservercore
+FROM ruby:2.5                    #ruby実行環境
+FROM golang:1.13.6-alpine3.11    #go言語実行環境
+FROM php:7.3.10-apache           #PHP実行環境
+FROM elixir:1.9.0                #関数型言語
+FROM python:3.7.3                #python実行環境
+
+

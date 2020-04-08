@@ -1,0 +1,162 @@
+#HinemosAgent(監視)_03_ソフトウェアバージョン_01
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#①以下のコマンドを実行する
+cat /opt/hinemos_agent/_version
+
+#③時刻を記録
+date
+
+#HinemosAgent(監視)_04_起動・停止_01
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②プロセスを確認
+systemctl status  hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#③以下のコマンドを実行する
+systemctl stop hinemos_agent
+
+#④プロセスを確認
+systemctl status  hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#⑤ログを確認(ls -ltrで、最新のログを開くこと。）
+tail -n 100 /opt/hienmos_agent/var/log/agent.log
+
+#⑥時刻を記録する
+date
+
+
+
+#HinemosAgent(監視)_04_起動・停止_02
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②プロセスを確認
+systemctl status  hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#③以下のコマンドを実行する
+systemctl start hinemos_agent
+
+#④プロセスを確認
+systemctl status  hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#⑤ログを確認(ls -ltr で、最新のログを確認して開くこと）
+tail -n 100 /opt/hienmos_agent/var/log/agent.log
+
+#⑥時刻を記録する
+date
+
+
+
+#HinemosAgent(監視)_04_起動・停止_03
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②プロセスを確認
+systemctl status  hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#③サービス再起動する
+systemctl restart hinemos_agent
+
+#④プロセスを確認
+systemctl status  hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#⑤ログを確認
+tail -n 100 /opt/hienmos_agent/var/log/agent.log
+
+#⑥時刻を記録する
+date
+
+
+#HinemosAgent(監視)_04_起動・停止_01
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②サービスを停止
+systemctl stop hinemos_agent
+
+#③プロセスを確認
+systemctl status hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#④rootユーザにて、OSを再起動する
+reboot
+
+#⑤teratermで接続しなおし、再起動後のプロセスを確認
+systemctl status hinemos_agent
+ps -ef | grep hinemos_agent | grep -v grep
+
+#⑥ログを確認
+tail -n 100 /opt/hienmos_agent/var/log/agent.log
+
+#⑦時刻を記録する
+date
+
+
+#HinemosAgent(監視)_07_パラメタ設定_01
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②以下のコマンドを実行する
+cat /opt/hinemos_agent/conf/log4j.properties
+
+#③Teraterm の[ファイル(F)]→[SSH SCP...] から、以下ファイルを持ち出し、エビデンスフォルダに格納する。
+/opt/hinemos_agent/conf/log4j.properties
+
+#④ 時刻を記録する。
+date
+
+#HinemosAgent(監視)_07_パラメタ設定_02
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②以下のコマンドを実行する
+cat /opt/hinemos_agent/conf/hinemos_agent.cfg
+
+#③Teraterm の[ファイル(F)]→[SSH SCP...] から、以下ファイルを持ち出し、エビデンスフォルダに格納する。
+/opt/hinemos_agent/conf/hinemos_agent.cfg
+
+#④ 時刻を記録する。
+date
+
+
+
+#HinemosAgent(監視)_07_パラメタ設定_03
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②以下のコマンドを実行する
+cat /opt/hinemos_agent/conf/Agent.properties
+
+#③Teraterm の[ファイル(F)]→[SSH SCP...] から、以下ファイルを持ち出し、エビデンスフォルダに格納する。
+/opt/hinemos_agent/conf/Agent.properties
+
+#④ 時刻を記録する。
+date
+
+#HinemosAgent(監視)_13_機能単体_01
+
+#① 時刻・ホスト名・ユーザ名を記録
+date; uname -n; id
+
+#②以下のコマンドを実行する
+ls -ltr /var/log/hinemos_agent/
+
+#③手順②の翌日、以下のコマンドを実行する。
+date; uname -n; id
+ls -ltr /opt/hinemos_agent/var/log

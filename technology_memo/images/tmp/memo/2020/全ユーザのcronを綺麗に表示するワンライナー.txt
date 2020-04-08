@@ -1,0 +1,22 @@
+全ユーザのcronを綺麗に表示するワンライナー
+
+for user in $(cut -f1 -d: /etc/passwd); do echo -n :kaigyo1:[${user}]:kaigyo2:;\
+ crontab -u $user -l 2>&1 ; done  | grep -v "no crontab" | sed s/:kaigyo1:/\\n\\n/ \
+ | sed s/:kaigyo2:/\\n/
+
+
+
+出力イメージ
+[root@myserver ~]# for user in $(cut -f1 -d: /etc/passwd); do echo -n :kaigyo1:[${user}]:kaigyo2:; crontab -u $user -l 2>&1 ; done  | grep -v "no crontab" | sed s/:kaigyo1:/\\n\\n/ | sed s/:kaigyo2:/\\n/
+
+
+[a_san]
+#Ansible: kirei ni suru
+0 6 * * * /bin/bash /home/a_san/hamigaki.sh >> /tmp/hamigaki.log
+#Ansible: energy hokyu
+10 6 * * * /bin/bash /home/a_san/asa_gohan.sh >> /tmp/asa_gohan.log
+
+
+[b_san]
+#Ansible: miharasi ii
+1 10 * * 0 /usr/bin/yamanobori --config /etc/yamanobori.yml /etc/yamanobori_action_file.yml

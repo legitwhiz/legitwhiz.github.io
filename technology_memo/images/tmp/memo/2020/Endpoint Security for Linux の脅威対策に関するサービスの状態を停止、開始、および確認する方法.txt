@@ -1,0 +1,61 @@
+Endpoint Security for Linux の脅威対策に関するサービスの状態を停止、開始、および確認する方法
+技術的な記事 ID:   KB88223
+最終更新:  2020/02/04
+環境
+
+McAfee Endpoint Security for Linux Threat Prevention (ENSLTP) 10.6.x, 10.5.x, 10.2.x
+概要
+この記事には、手動で ENSLTP サービスを停止および開始するコマンド、または ENSLTP サービスのステータスを確認するコマンドについて記載されています。ENSLTP 10.6.5 以前のバージョンで実行されている isectpd と isecespd の 2 つのサービス プロセスがあります。 ENSLTP 10.6.6 以降のバージョンでは mfetpd と mfeespd に名前が変更になりました。
+
+ENSLTP 10.6.6 以降のバージョン:
+ENSLTP サービスを停止するには、次のコマンドを実行します。
+
+# /opt/McAfee/ens/tp/init/mfetpd-control.sh stop
+# /opt/McAfee/ens/esp/init/mfeespd-control.sh stop
+ 
+ENSLTP サービスを開始するには、次のコマンドを実行します。
+ 
+# /opt/McAfee/ens/esp/init/mfeespd-control.sh start
+# /opt/McAfee/ens/tp/init/mfetpd-control.sh start
+ 
+ENSLTPサービスのステータスを確認するには、次のコマンドを実行します。
+ 
+# /opt/McAfee/ens/tp/init/mfetpd-control.sh status
+# /opt/McAfee/ens/esp/init/mfeespd-control.sh status
+ 
+ENSLTP サービスを無効にするには、次のコマンドを実行します。
+
+# /opt/McAfee/ens/tp/init/mfetpd-control.sh disable
+# /opt/McAfee/ens/esp/init/mfeespd-control.sh disable
+ENSLTP サービスを無効にするには、次のコマンドを実行します。
+
+# /opt/McAfee/ens/tp/init/mfetpd-control.sh enable
+# /opt/McAfee/ens/esp/init/mfeespd-control.sh enable
+
+ENSLTP 10.6.5 以前のバージョン:
+ENSLTP サービスを停止するには、次のコマンドを実行します。
+
+# /opt/isec/ens/threatprevention/bin/isectpdControl.sh stop
+# /opt/isec/ens/esp/bin/isecespdControl.sh stop
+ 
+ENSLTP サービスを開始するには、次のコマンドを実行します。
+ 
+# /opt/isec/ens/esp/bin/isecespdControl.sh start
+# /opt/isec/ens/threatprevention/bin/isectpdControl.sh start
+ 
+ENSLTPサービスのステータスを確認するには、次のコマンドを実行します。
+ 
+# /opt/isec/ens/threatprevention/bin/isectpdControl.sh status
+# /opt/isec/ens/esp/bin/isecespdControl.sh status
+ 
+ENSLTP サービスを無効にするには、次のコマンドを実行します。
+
+# /opt/isec/ens/threatprevention/bin/isectpdControl.sh disable
+# /opt/isec/ens/esp/bin/isecespdControl.sh disable
+ENSLTP サービスを無効にするには、次のコマンドを実行します。
+
+# /opt/isec/ens/threatprevention/bin/isectpdControl.sh enable
+# /opt/isec/ens/esp/bin/isecespdControl.sh enable
+免責事項
+この記事の内容のオリジナルは英語です。英語の内容と翻訳に相違がある場合、常に英語の内容が正確です。一部の内容は Microsoft の機械翻訳による訳文となっています。
+
