@@ -1,0 +1,16 @@
+
+cloudwatchlogs -> lambda -> SNSを試してみた
+https://qiita.com/sadayuki-matsuno/items/83b70ee97755e534764f
+
+
+CloudWatchLogsの内容をフィルタリングしてLambdaで通知させたい
+特定の文字が入ったメッセージは送信されないようにフィルタ
+https://www.dcom-web.co.jp/lab/cloud/aws/notify_filtered_cloudwatchlogs_by_lambda
+
+
+Lambdaリアルタイムログ監視、ログレベル毎に通知先をSNSで一括管理してSlackやメールで通知したい
+https://qiita.com/koshilife/items/4b49bd08b92c1bf7d0e9
+
+CloudWatch-LogsからリアルタイムにLambdaを呼ぶ
+https://qiita.com/uetash/items/166e42b7842b48917451
+
