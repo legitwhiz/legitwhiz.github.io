@@ -1,0 +1,29 @@
+
+■IAM
+・AMCアクセス
+  rootアカウントとは別に以下のようなユーザを作成？
+  管理者ユーザ
+  業務ユーザ
+  基盤ユーザ
+  運用ユーザ
+  参照専用ユーザ
+  
+・AWS CLI
+  CLI実行用
+  アクセスキー/シークレットアクセスキーの利用について
+
+・IAMロール、ポリシー設計
+  プログラム(SDK)に付与するIAMロール（ポリシー）の設計
+  ※いろいろな機能を利用する際の手順に権限付与として説明されているもの
+
+・IAMユーザーのMFA（多要素認証）を導入する？
+  IAMユーザーのMFA（多要素認証）は有効になっていますか？現状を確認→是正→適切な状態を維持するまでの流れを整理してみた
+  https://dev.classmethod.jp/articles/mfa-for-iam-user-management/
+  仮想 Multi-Factor Authentication (MFA) デバイスの有効化 (コンソール)
+  https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_credentials_mfa_enable_virtual.html
+
+
+
+20190129 AWS Black Belt Online Seminar AWS Identity and Access Management (AWS IAM) Part1
+https://www.slideshare.net/AmazonWebServicesJapan/20190129-aws-black-belt-online-seminar-aws-identity-and-access-management-iam-part1
+

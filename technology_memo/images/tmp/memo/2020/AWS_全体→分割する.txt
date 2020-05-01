@@ -1,0 +1,540 @@
+
+Amazon Data Lifecycle Manager (Amazon DLM)
+RDSスナップショット
+CloudWatch Logs
+
+
+RDSがEBSと同様のスナップショット管理となっているか、
+明示的な記載が見当たらないのですが、１つ余分に存在するとの記載など
+何らかの管理がされており、おそらくEBSと同じような仕組みかと思います。
+
+なお、マルチAZでは、自動バックアップはスタンバイ側から取得されるようです。
+
+自動化バックアップとデータベーススナップショット
+https://aws.amazon.com/jp/rds/faqs/
+例えば、バックアップウィンドウが 1 日に設定されている場合、自動化スナップショットは 2 つ必要で、これで過去 24 時間中の任意の時点への復帰をサポートしています。
+
+バックアップは、DB インスタンスプライマリ上の I/O 中断を避けるため、単純にお客様のスタンバイから取得されます。
+
+
+■■■■■検討事項メモ■■■■■
+
+※随時追加
+
+■EC2
+  最適化インスタンス
+  キャパシティ
+  などの設定項目の要否
+
+■S3
+・アクセス制御
+  ACL
+  バケットポリシー
+  IAMポリシー
+
+・バージョニング機能
+・ライフサイクル利用
+・Glacierへのアーカイブ（監査データ等）
+
+■RDS
+・マルチAZ
+・自動バックアップ
+・自動パッチ適用
+
+・DBデータのバックアップ(エクスポート)
+
+■CloudWatch
+・モニタリングデータ保持期間
+・標準メトリックス、カスタムメトリックス（追加対象）
+・基本モニタリング/詳細モニタリング
+・アラームとアクション（SNS、AutoScaling、Action※起動停止など）
+
+■SNS
+通知用途で利用するSNSの一覧？
+・メッセージ
+・サブスクライバ
+・トピック（複数単一のサブスクライバをまとめたもの）
+
+■GuardDuty
+
+■AWS Config
+
+■System Manager
+AWS再入門ブログリレー AWS Systems Manager編
+https://dev.classmethod.jp/articles/relay-re-introduction-2019-ssm/
+AWS Systems Manager (SSM) を やってみよう  ★2020年4月16
+http://blog.serverworks.co.jp/tech/2020/04/16/systems_manager_yattemiyou/
+備えあれば憂いなし！ルートボリュームをリストアする AWS Systems Manager ドキュメントをやってみよう！！
+https://dev.classmethod.jp/articles/preparation-automation-document-restore/
+
+■■■■■社内資料■■■■■
+
+\\10.177.108.25\catb4$\BPM基盤構築\02_ファイナンス\04_SKY再構築（三鷹）\22_受領資料\20200218_クラウド利用ガイドライン（レビュー中）
+
+■■■■■参考URL■■■■■
+①	災害対策	データセンター	AWS Artifact参照
+	データ外部保管	AWS Artifact参照
+
+復旧	Amazon DLM
+
+鍵管理	AWS Key Management Service (KMS)
+DBアクセス制御	Secrets Manager、IAM
+AWS Artifact
+サーバ不正監視	CloudTrail、AmazonGuardDuty
+※WebサーバにDeepSecurityを導入する
+
+リモートアクセス制御	Systems Manager（SessionManager）
+
+ネットワーク不正監視	VPC Flow Logs
+※SOCによる監視
+
+
+サーバ設定	AWS Inspector
+
+
+
+---------------------------------------AWS全般---------------------------------------
+
+
+●AWS サービス一覧
+AWSサービス一覧（2019/03版）※2020/01/03更新
+https://qiita.com/moritalous/items/31a56acbf2ce367b712d
+
+
+AWSサービスを一枚絵でサラッと抑える！グラレコ満載の「awsgeek.com」は眺めるだけで楽しい
+https://dev.classmethod.jp/articles/awsgeek-iiyo/
+
+
+---------------------------------------EC2全般---------------------------------------
+●EC2
+【新機能】EC2 Cloudwatchの新機能「Auto Recovery」を使ってみた
+https://dev.classmethod.jp/articles/ec2-auto-recovery-feature/
+
+
+●SnapShot
+snapshot取得・復元ロジックを整理し、課金も正しく理解する
+https://qiita.com/kaojiri/items/1c4a95c271fb1584476a
+https://www.slideshare.net/AmazonWebServicesJapan/aws-black-belt-tech-amazon-ebs/12
+snapshotは、ディスクイメージを取得するのですが、その容量はディスクサイズそのものではなく、
+実使用容量分をさらに圧縮した結果のサイズになるので、EBSディスクのサイズよりかなり小さくなります。
+しかも、同じEBSのsnapshotを複数回取得する場合、2回目以降は差分のみ取得されるため、
+その実容量はとても小さくなります。
+参考:snapshotの取得処理方式
+
+「じゃ、全てのsnapshotを保存しておかないと、復元できないのでは？」とお思いになると思いますが、
+心配ご無用です。AWSは、復元に必要なデータを裏で全て保存するような仕組みを担保しています。
+1つのsnapshotさえ残っていれば、他の全てのsnapshotを削除しても、復元できる仕組みとなっています。
+参考:snapshotのリストア処理方式
+
+
+●ELB
+
+
+---------------------------------------S3全般---------------------------------------
+●S3アクセスコントロール
+
+S3のアクセスコントロールまとめ
+https://qiita.com/ryo0301/items/791c0a666feeea0a704c
+
+S3のアクセスコントロールが多すぎて訳が解らないので整理してみる
+https://dev.classmethod.jp/articles/s3-acl-wakewakame/
+
+S3のアクセス制限(バケットポリシー, IAMポリシー, ACL)
+https://www.wakuwakubank.com/posts/487-aws-s3-access-limitation/
+
+Amazon S3 のセキュリティのベストプラクティス
+https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/security-best-practices.html
+---------------------------------------VPC全般---------------------------------------
+●NAT Gateway
+・1 つだけの Elastic IP アドレスを関連付けることができます。
+
+ネットワーク ACL(サブネット単位で許可/拒否指定)
+
+セキュリティグループ(インスタンス単位で許可指定)、
+
+
+
+---------------------------------------NW関連---------------------------------------
+●AWS Transit Gateway 
+
+AWS Direct Connect の AWS Transit Gatewayサポートが東京リージョンに対応しました
+https://aws.amazon.com/jp/blogs/news/aws-direct-connect-transit-gateway-support/
+
+
+
+●AWS Direct Connect
+AWS初心者 入門編
+「AWS Direct Connect」はどうやって使うの？
+https://www.bit-drive.ne.jp/managed-cloud/column/column_19.html
+
+
+
+●VGW(Virtual private gateway)
+
+●VPC Flow Logs
+【新機能】VPC Flow LogsでVPC内のIPトラフィックを監視することができるようになりました!
+https://dev.classmethod.jp/articles/introduce-to-vpc-flow-log/
+EC2の疎通は「Instance Status Checks」でも確認できそう。
+
+---------------------------------------セキュリティ関連---------------------------------------
+●AWS WAF
+
+●API Gateway
+
+
+●GuardDuty
+【全員必須】GuardDutyがコスパ最強の脅威検知サービスであることを証明してみた
+https://dev.classmethod.jp/articles/guardduty-si-strongest-thread-detection/
+
+Amazon GuardDutyでセキュリティ分析したらどんな結果が返ってくるのかまとめてみた #reinvent
+https://dev.classmethod.jp/articles/re-invent-2017-guardduty-finding-type/
+
+●Amazon Detective
+
+●Security Hub
+【祝リリース】Security HubがGAになったので特徴と使い方まとめてみた
+https://dev.classmethod.jp/articles/security-hub-ga/
+
+●Amazon Inspector
+Amazon Inspectorの導入
+https://qiita.com/s5601026/items/91ab636c9867b76c2414
+
+---------------------------------------バックアップ関連---------------------------------------
+
+●AWS Backup
+AWS データベースサービスの自動バックアップ設定まとめ
+https://dev.classmethod.jp/articles/automated-snapshots-of-aws-database-services/
+
+特定の時点への DB インスタンスの復元
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_PIT.html
+
+0180425 AWS Black Belt Online Seminar Amazon Relational Database Service
+https://www.slideshare.net/AmazonWebServicesJapan/20180425-aws-black-belt-online-seminar-amazon-relational-database-service-amazon-rds-96509889
+
+
+●RDS
+バックアップストレージ
+https://aws.amazon.com/jp/rds/postgresql/pricing/
+手動、自動バックアップともに
+AWSのドキュメントに明示的にS3に保存と記載されていない、
+実際にS3上で確認不可。
+ただし、FAQにはS3とある。
+https://aws.amazon.com/jp/rds/faqs/
+Q: 自動バックアップと DB スナップショットの保存場所と保存内容を管理する方法について教えてください。
+
+Amazon RDS DB スナップショットと自動バックアップは S3 に保存されます。
+---------------------------------------その他サービス---------------------------------------
+●CloudFront
+CDN
+
+●CloudFormation
+
+●AWS CAF
+
+
+●Amazon Time Sync Service
+マネージドNTPのAmazon Time Sync Serviceが便利な理由
+https://dev.classmethod.jp/articles/amazon-time-sync-service-is-convenient/
+
+
+●Amazon Athena
+https://qiita.com/simonritchie/items/069c75059af3ba2ba914
+Amazon Athenaではじめるログ分析入門
+https://qiita.com/miyasakura_/items/174dc73f706e8951dbdd
+
+●AWS Config
+
+
+
+---------------------------------------監視関連---------------------------------------
+●Amazon SNS
+Amazon Simple Notification Service とは
+https://docs.aws.amazon.com/ja_jp/sns/latest/dg/welcome.html
+
+●AWS CloudTrail
+https://qiita.com/leomaro7/items/c1457699c96d08adfc33
+1.AWS CloudTrailとは？
+「いつ誰が何をしたのか」を記録しておいてくれるサービスです。
+
+AWS CloudTrail による IAM および AWS STS の API コールのログ記録
+https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/cloudtrail-integration.html
+※S3への保存
+https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-create-a-trail-using-the-console-first-time.html#creating-a-trail-in-the-console
+
+
+
+2.特徴
+デフォルトでOnになっている。
+90日間保存できる。（90日以上保存させる場合は、S3に保存させるようにする。）
+S3の保存先はS3でバージョンニングを有効にするか、クラスアカウントなどを利用することを検討する。
+5分おきに作成される。
+
+●CloudWatch基本
+Amazon CloudWatch ドキュメント
+https://docs.aws.amazon.com/cloudwatch/index.html
+AWS初心者向けWebinar これで完璧、AWSの運用監視
+https://www.slideshare.net/AmazonWebServicesJapan/awswebinar-aws-56679485
+AWS再入門 ? CloudWatch編
+https://dev.classmethod.jp/articles/cm-advent-calendar-2015-aws-re-entering-cloudwatch/
+【AWS】CloudWatchでの監視項目まとめ
+https://qiita.com/iron-breaker/items/a53c88e1082a0c333ea4
+Amazon CloudWatch の料金
+https://aws.amazon.com/jp/cloudwatch/pricing/
+
+https://d1.awsstatic.com/events/jp/2017/summit/slide/D4T3-5.pdf
+https://www.slideshare.net/akuwano/aws-77583244
+
+Amazon CloudWatch を使用した NAT ゲートウェイのモニタリング
+https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-nat-gateway-cloudwatch.html
+
+
+●CloudWatch ＋ エンドポイント
+CloudWatch が VPC Endpoint に対応！プライベートサブネットからカスタムメトリクスが PUTできます
+https://dev.classmethod.jp/articles/cloudwatch-support-vpc-endpoint/
+
+CloudWatch とインターフェイス VPC エンドポイントの使用
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-and-interface-VPC.html
+VPC を CloudWatch に接続するには、CloudWatch の インターフェイス VPC エンドポイントを定義します。
+このタイプのエンドポイントにより、VPC を AWS サービスに接続できるようになります。
+このエンドポイントは、インターネットゲートウェイ、ネットワークアドレス変換 (NAT) インスタンス、または VPN 接続を必要とせず、信頼性が高くスケーラブルな CloudWatch への接続を提供します。
+
+
+
+
+
+
+
+
+■ノード監視(EC2)
+【AWS】CloudWatch入門／EC2のステータスチェックを行ってみよう
+https://dev.classmethod.jp/articles/cloudwatch-metrics-for-ec2-status-checks/
+
+
+【公式】インスタンスのステータスチェック
+https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring-system-instance-status-check.html
+
+■ノード監視(RDS)
+RDS のイベントログを Amazon SNS 経由で Mackerel のグラフアノテーション登録する PoC を作る
+https://dev.classmethod.jp/articles/201912-mackerel-rds-event-sns/
+※Amazon RDS のイベント Amazon SNS 通知の実例
+  RDS イベントサブスクリプションにて、SNSトピックとソースタイプ(インスタンス)を指定
+
+・DB インスタンス再起動
+・DB インスタンスシャットダウン
+・DB インスタンスのバックアップ
+・DB インスタンスのバックアップ完了
+など
+
+【公式】Amazon RDS イベント通知の使用 ★良い
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_Events.html
+
+
+
+【公式】Amazon RDS のイベントの表示
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_ListEvents.html
+
+
+
+
+■ログ監視(EC2)
+〇文字列検知→メール通知
+awslogsでEC2のログをCloudWatch連携する方法
+https://colsis.jp/blog/tech/awslogs.html
+→Lambda使用事例
+→ アラートのSlack通知は、Lambdaに標準で提供されているSlack通知用のBlueprint（cloudwatch-alarm-to-slack-python3）を使うので、Lambdaが必要★納得
+
+CloudWatch Logs を文字列検知してログ内容をメールを送信してみた ★2019.07.19
+https://dev.classmethod.jp/articles/notification_cloudwatchlogs_from_sns/
+→Lambda使用事例
+→メールを成形しているため？
+  
+CloudWatch Logsで任意の文字列を監視し、メールで通知する
+https://tsukada.sumito.jp/2018/10/03/cloudwatch-logs-monitor/
+→Lambda使用事例
+  トリガーがLogsとしてるので、Lambdaのnode.js で随時ログを監視？
+
+
+CloudWatch LogsでAmazonLinux上のApacheエラーログを監視する ★2015.03.06
+https://dev.classmethod.jp/articles/cloudwatch-logs-apache/
+→Lambda使用なし。awslogsエージェントを利用しているが、ログフィルタのアラーム設定はCloudWatch Agentも同様のはず。
+
+Amazon CloudWatch Logsによるログの収集とフィルタとアラーム設定 ★2014.07.11
+https://dev.classmethod.jp/articles/cloudwatch-logs/
+→Lambda使用なし。awslogsエージェントを利用しているが、ログフィルタのアラーム設定はCloudWatch Agentも同様のはず。
+
+CloudWatch Logsで大文字と小文字を区別せずにキーワードを検知する ★2015.04.08
+https://dev.classmethod.jp/articles/cloudwatch-logs-case-insensitive/
+→Lambda使用なし。awslogsエージェントを利用しているが、ログフィルタのアラーム設定はCloudWatch Agentも同様のはず。
+
+
+
+〇ログを定期的にS3にエクスポート
+
+CloudWatch Logs に蓄積したログをS3に定期的にエクスポートする
+https://honeybe.hatenablog.jp/entry/2018/03/14/114635
+
+
+AWS CLIで構築するCloudWatch Agent
+https://dev.classmethod.jp/articles/cloudwatch-agent-aws-cli/
+
+
+https://dev.classmethod.jp/articles/cloudwatch-logs-case-insensitive/
+
+awslogsでEC2のログをCloudWatch連携する方法
+https://colsis.jp/blog/tech/awslogs.html
+「CloudWatchログを定期的にS3にエクスポートする」の部分を参照
+
+https://blog.manabusakai.com/2016/08/cloudwatch-logs-to-s3/
+Lambda を使って CloudWatch Logs から S3 へ自動的にエクスポートする
+
+
+■プロセス監視(EC2)
+EC2上のプロセスを監視し自動復旧する
+https://dev.classmethod.jp/articles/cloudwatchagent-process-monitor-action/
+
+
+■リソース監視(カスタムメトリックス)
+コマンドラインを使用して CloudWatch エージェントをダウンロードおよび設定する
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/download-cloudwatch-agent-commandline.html
+
+AWS Systems Manager を使用して CloudWatch エージェントをインストールする
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html
+
+
+はじめてのCloudWatch Agent導入 (SSM & CentOS)  ★★★新しい2020/02更新
+http://blog.serverworks.co.jp/tech/2020/01/28/cloudwtach-agent-ssm-centos/
+
+新しいCloudWatch Agentでメトリクスとログの収集が行なえます
+https://dev.classmethod.jp/articles/new-cloudwatch-agent-collect-metrics-and-logs/
+
+CloudWatch Agent が複数設定ファイルの利用が可能になりました
+https://dev.classmethod.jp/articles/cloudwatch-multiple-agent-configuration-files/
+
+CloudWatch Logs/統合CloudWatchエージェントの違いと移行時の注意点 2019年12月20日
+http://blog.serverworks.co.jp/tech/2019/12/20/cloudwatch_agent_migration/
+
+CloudWatch エージェントにより収集されるメトリクス
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html
+
+新しいCloudWatch AgentでEC2インスタンスのメモリ使用率を監視する ★詳しいが、AmazonEC2RoleforSSM を利用している。。
+https://qiita.com/hayao_k/items/d983177510b3b3a69561
+
+★(補足)AmazonEC2RoleforSSM は非推奨となり、AmazonSSMManagedInstanceCoreがよいとのこと
+
+→新ポリシー AmazonSSMManagedInstanceCore がサポートされました
+  https://dev.classmethod.jp/articles/not-recommended-amazonec2roleforssm/
+
+★(補足)
+  Systems Manager を使用して CloudWatch エージェントをインストールまたは設定するには、[AmazonSSMManagedInstanceCore] の横にあるボックスを選択します。
+  この AWS 管理ポリシーにより、インスタンスは Systems Manager サービスコア機能を使用できます必要に応じて、検索ボックスを使用してポリシーを見つけます。
+  コマンドラインのみ使用してエージェントを開始および設定する場合、このポリシーは必要ありません。
+
+
+【AWS】【AmazonLinux2】CloudWatch エージェントでログ監視をする設定手順【awslogsd】【追記：awslogsdがなくてもログ監視が可能になった】
+https://go-journey.club/archives/12931
+※やっていることは、「はじめてのCloudWatch Agent導入 (SSM & CentOS)」と同じ
+
+
+
+■リソース監視(閾値アラート)
+
+静的しきい値に基づいて CloudWatch アラームを作成する
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ConsoleAlarms.html
+
+AWSのCloudwatchにアラート(Alarm）を設定し、監視する
+https://blog.isao.co.jp/aws_cloudwatch_alarm_setting/
+
+
+
+
+
+■ログ監視(RDS)
+【やさしいAWS】RDSのログをlambdaを経由してメール送信をしてみた
+https://blog.ismg.kdl.co.jp/aws/send-cloudwatch-logs
+
+PostgreSQL データベースのログファイル
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html
+
+CloudWatch Logs への PostgreSQL ログの発行
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html#USER_LogAccess.PostgreSQL.PublishtoCloudWatchLogs
+
+
+Amazon RDS のモニタリング
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/CHAP_Monitoring.html#USER_Monitoring
+
+[新機能]Amazon RDSでOSの詳細情報を取得できるようになりました！
+https://dev.classmethod.jp/articles/rds-enhanced-monitoring/
+
+[RDS Oracle]拡張モニタリングが使えるようになっています
+https://dev.classmethod.jp/articles/enhanced-monitoring-is-now-available-for-amazon-rds-for-oracle/
+
+
+〇ログを定期的にS3にエクスポート
+RDS および Aurora PostgreSQL ログの操作: パート 1
+https://aws.amazon.com/jp/blogs/news/working-with-rds-and-aurora-postgresql-logs-part-1/
+
+Amazon RDS または Aurora for MySQL インスタンスのログを CloudWatch に公開するにはどうすれば良いですか?
+https://aws.amazon.com/jp/premiumsupport/knowledge-center/rds-aurora-mysql-logs-cloudwatch/
+
+
+■プロセス監視(RDS)
+
+
+■リソース監視(RDS)
+Best Practices for Running PostgreSQL on AWS
+https://www.slideshare.net/AmazonWebServicesJapan/best-practices-for-running-postgresql-on-aws
+
+PostgreSQL データベースエンジンを実行する DB インスタンスへの接続
+https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html
+
+カスタムメトリクスのインスタンスIDがちがうときは
+https://qiita.com/taichi_akippa/items/c8c0bfb4c500be247418
+
+【ログが混ざる！？】CloudWatchモニタリングスクリプトのインスタンスIDキャッシュに気をつけようの話
+https://dev.classmethod.jp/articles/warning-cloudwatch-id-cache/
+
+
+---------------------------------------インスタンス関連---------------------------------------
+●cloud-init
+
+●Amazon Systems Manager(SSM)
+SSMエージェントのアップデート
+CloudWatch Agentのインストール
+
+AWS Systems Manager を試してみた
+https://qiita.com/yi7027/items/4c4f6cf12ffa2f4b6b0c
+AWS Systems Manager とは
+「AWS re:Invent 2017」で発表された管理系の新サービスです。
+内容としては以前からあった「EC2 systems manager」や「AWS config」、「AWS CloudTrail」等の管理系のサービスを統合したインターフェースで利用できるイメージです。
+
+AWS再入門ブログリレー AWS Systems Manager編
+https://dev.classmethod.jp/articles/relay-re-introduction-2019-ssm/
+
+StatsD を使用したカスタムメトリクスの取得
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-custom-metrics-statsd.html
+
+CloudWatchAgentのStatsDを試してみる
+https://qiita.com/murata-tomohide/items/9bd1320865b2eba47538
+
+
+
+---------------------------------------ノウハウ---------------------------------------
+
+
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/gs_monitor_estimated_charges_with_cloudwatch.html
+予想請求額モニタリング
+
+【書評】意図しない請求を防ぐためのノウハウが凝縮！「クラウド破産を回避するAWS実践ガイド」レビュー
+https://dev.classmethod.jp/articles/review-how-to-prevent-cloud-bankruptcy/
+
+
+●AWS 踏み台
+http://blog.serverworks.co.jp/tech/2019/08/21/thinkbastion/
+
+●EC2の自動起動、停止
+ec2-scheduler
+
+[AWS] CloudWatchでEC2の自動起動・停止をスケシ゛ュールする
+https://agohack.com/scheduled-start-and-stop-ec2-with-aws-cloudwatch-event/
+[速報] RDSインスタンスの起動/停止
+https://dev.classmethod.jp/articles/start-stop-db-instance-for-rds/

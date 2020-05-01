@@ -1,0 +1,57 @@
+
+
+■通知メールについて
+メール件名に以下が記載される
+-----
+リージョン名
+リソースタイプ（EC2、VPCなど）
+リソースID
+変更種別（新規作成-create、構成変更-update、削除-delete）
+AWSアカウントID
+-----
+
+■課題
+S3に保存されるAWSリソースの構成情報(設定情報)のスナップショット、変更情報(設定履歴)が
+改行無しのjsonコード出力されるため、参照が難しい
+
+・AWS Configの通知内容をLambdaで整形
+・サードパーティの可視化ツールを利用？
+
+
+■URL
+AWS Config
+https://aws.amazon.com/jp/config/
+
+20190618 AWS Black Belt Online Seminar AWS Config ★
+https://www.slideshare.net/AmazonWebServicesJapan/20190618-aws-black-belt-online-seminar-aws-config
+https://aws.amazon.com/jp/blogs/news/webinar-bb-aws-config-2019/
+
+【AWS Black Belt Online Seminar】
+AWS CloudTrail & AWS Config
+https://d1.awsstatic.com/webinars/jp/pdf/services/20160831-AWS_BlackBelt-CloudTrail-Config-public.pdf
+
+
+【運用保守】構成管理サービスAWS Config利用のすゝめ【ITIL】 
+https://dev.classmethod.jp/articles/aws-config-suggestion/
+
+[新サービス] AWS Configを触ってみた  2014.11.13
+https://dev.classmethod.jp/articles/aws-config-ataglance/
+
+AWS ConfigがTokyoリージョンに対応しました！！ 2015.04.07
+https://dev.classmethod.jp/articles/config-in-tokyo/
+
+AWS再入門 AWS Config編
+https://dev.classmethod.jp/articles/cm-advent-calendar-2015-aws-re-entering-aws-config/
+
+
+
+AWS Configの通知内容をLambdaで整形 2019年03月09日に更新
+https://qiita.com/tomoki_s/items/0d3b249da6ce9cbafdeb
+
+LogstorageでAWSの全体構成を可視化する
+https://dev.classmethod.jp/articles/aws-logstorage-config/
+
+
+AWS Configにてマネージドルールを定期評価をさせる方法
+https://qiita.com/tomoki_s/items/a5c16db2f97059304d44
+

@@ -1,0 +1,6 @@
+aws cli install
+
+yum -y install python36 python36-virtualenv python36-pip
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade awscli
+
