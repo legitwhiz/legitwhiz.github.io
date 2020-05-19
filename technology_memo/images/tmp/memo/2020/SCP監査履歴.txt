@@ -1,0 +1,13 @@
+
+WinSCPでのサーバアクセスの監査ログについて、
+SSHの仕様で、SCPやSFTPでログインしてもwやlastlogにログイン履歴は残りません。
+
+
+sshd_configでSyslogFacilityをAUTHPRIV、LogLevelをVERBOSE（デフォルトはINFO）に設定変更すれば、
+/var/log/secureに出力されるようになります。
+ただし、ログインの時間が分かるだけで、何をアップロード、ダウンロードしたかまでは出力しません。
+
+grep "Accepted publickey" /var/log/secure
+
+【出力例】
+Apr 5 13:21:20 pandora sshd[2037]: Accepted publickey for nori from 192.168.0.12 port 2236 ssh2　
