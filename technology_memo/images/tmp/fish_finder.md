@@ -1,8 +1,8 @@
 
 
-■『魚探(PS-500C)のバッテリ交換』
+# 『魚探(PS-500C)のバッテリ交換』
 
-●魚探バッテリー劣化
+## 魚探バッテリー劣化
 
 ホンデックスPS-500Cの電源は今まで、
 充電式乾電池(単３)x8本で
@@ -22,7 +22,7 @@
 【充電式乾電池】
 1.2v x 8本 ＝ 9.6v
 
-●必要放電容量
+## 必要放電容量
 
 ホンデックスPS-500Cの仕様では、
 電源電圧:DC11~14V
@@ -37,7 +37,7 @@
 があれば十分代用できるということだ
 あくまでも最大なので【20000mA】もあれば十分だろう。
 
-●代替えバッテリー選定
+## 代替えバッテリー選定
 
 【20000mA】ぐらいだったら、
 【USBバッテリー】でもいけるのでは？
@@ -84,7 +84,7 @@ EC5というコネクタで接続されているようですが
 皆無なので同じ値段帯の
 【モバイルジャンプスターター】にしました。
 
-●接続ケーブル作成
+## 接続ケーブル作成
 
 12Vの接続に【内径2.1mm外径5.5mmΦ DCプラグ L型】、
 魚探側の接続に【マイクコネクタプラグ2P(PLT-162-P-R)】、
@@ -101,7 +101,9 @@ DCプラグ同様にケーブルを剥いてから熱収縮チューブ、
 マイクコネクタプラグの元を通し、半田ゴテでケーブルを固定します。
 この時、1番がプラスとなるよう接続すること。
 
-●防水ケース
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/tmp/IMG_20200713_085121_064.jpg" width="440">
+
+## 防水ケース
 
 ただ、このままだとバッテリーが濡れて、ショートする可能性があるので、
 防水ケースに納める必要があります。
@@ -115,30 +117,31 @@ W110   D210   H100 で収まりそうです。
 
 取付穴径(Φmm): 12.2  なので12mmのドリルで穴を開けます。
 
-●防水ケース取り付け
+<img src="https://raw.githubusercontent.com/legitwhiz/legitwhiz.github.io/master/technology_memo/images/tmp/IMG_20200713_085021_818.jpg" width="440">
+
+## 防水ケース取り付け
 
 防水ケースをシーカヤックへの取り付けは、
 簡単に取り付け、取り外しできるように
 マジックテープで対応しました。
 
-●使用部品
+## 使用部品
 
-【TACKLIFE T6ジャンプスターター 12V車用】
-https://www.amazon.co.jp/your-orders/pop/ref=ppx_yo_mob_b_pop?_encoding=UTF8&gen=canonical&lineItemId=mjmkpwiqtqmvtw&orderId=503-0831718-9071814&packageId=1&returnSummaryId=&returnUnitIndices=&returnUnitMappingId=&shipmentId=D28Ym38gD
-【内径2.1mm外径5.5mmΦ DCプラグ L型】
-https://www.monotaro.com/p/7592/9192/
-【マイクコネクタプラグ2P(PLT-162-P-R)】
-https://www.sengoku.co.jp/mod/sgk_cart/detail.php?code=EEHD-4RHS
-【熱収縮チューブセット】
-https://www.marutsu.co.jp/pc/i/165549/
-【BCAP型防水・防塵開閉式プラボックス(BCAP112110T)】
-https://www.monotaro.com/p/8821/7281/
-【AG型 ケーブルグランド 高防水タイプ(AG12-6.5B)】
-https://www.monotaro.com/p/8836/4613/
+[【TACKLIFE T6ジャンプスターター 12V車用】](https://www.amazon.co.jp/your-orders/pop/ref=ppx_yo_mob_b_pop?_encoding=UTF8&gen=canonical&lineItemId=mjmkpwiqtqmvtw&orderId=503-0831718-9071814&packageId=1&returnSummaryId=&returnUnitIndices=&returnUnitMappingId=&shipmentId=D28Ym38gD)
 
-●使用してみて
-実際の電圧出力は、充電が満タン状態で12.2Vで、
-半分で11.6Vでした。
+[【内径2.1mm外径5.5mmΦ DCプラグ L型】](https://www.monotaro.com/p/7592/9192/)
 
-#電子工作 #電気 #電圧 #放電容量 #arduino #半田ゴテ #バッテリー #魚探 #ホンデックス #hondex #ジャンプスターター #DIY #シーカヤック #釣り
+[【マイクコネクタプラグ2P(PLT-162-P-R)】](https://www.sengoku.co.jp/mod/sgk_cart/detail.php?code=EEHD-4RHS)
+
+[【熱収縮チューブセット】](https://www.marutsu.co.jp/pc/i/165549/)
+
+[【BCAP型防水・防塵開閉式プラボックス(BCAP112110T)】](https://www.monotaro.com/p/8821/7281/)
+
+[【AG型 ケーブルグランド 高防水タイプ(AG12-6.5B)】}(https://www.monotaro.com/p/8836/4613/)
+
+## 使用してみて
+
+実際の電圧出力は、充電が満タン状態で12.2Vで、半分で11.6Vでした。
+
+
 
