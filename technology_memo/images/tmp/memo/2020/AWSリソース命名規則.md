@@ -20,7 +20,7 @@ aws cliを使用したスクリプトやTeraformのコードでハードコー�
   - サブシステムで一意となる識別子(例：yyy)
 
 - 環境(env)
-  - 本番、検証、開発など(prod/stg/dev)
+  - 本番、検証、開発、災対など(prod/stg/dev/dr)
 
 - Region(tky/ue1/uw2)3文字(略称)
 
