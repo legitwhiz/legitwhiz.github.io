@@ -1,0 +1,249 @@
+■ PostgreSQL  AutoVacuum、pg_statsinfo 変更手順
+
+###############################################################################
+## 【作業概要】
+##
+## 対象ホスト: bdmdb001, bdmdb002
+## 設定対象ファイル：/data/pgdata/data/postgresql.conf
+##
+## ■ 作業の流れ
+## ① autovacuum,pg_statsinfo 変更(bdmdb002)
+## ② autovacuum,pg_statsinfo 変更(bdmdb001)
+## ③ 設定変更反映（DB再起動）
+##
+###############################################################################
+
+**********************************************
+ログイン・準備
+**********************************************
+## 以下のログイン情報で、Teratermでホスト接続する
+【bdmdb001】
+10.115.94.162
+sudoope
+**********
+
+【bdmdb002】
+10.115.94.163
+sudoope
+**********
+
+## 以下のコマンドで、日時・ホスト(bdmdb001/bdmdb002)・id(root)を確認。
+date; uname -n; id
+
+## rootへ移行
+su -
+**********
+id
+→rootユーザであること
+
+## 作業ディレクトリ作成
+mkdir -m 777 /work/houshiki/`date +%Y%m%d`
+ll -ld /work/houshiki/`date +%Y%m%d`
+→パーミッション777でディレクトリ作成できていること
+
+
+**********************************************
+① AutoVacuum、pg_statsinfo 変更(bdmdb002)
+**********************************************
+## 設定ファイルバックアップ
+cp -p /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
+ls -l /work/houshiki/`date +%Y%m%d`/
+→ バックアップ取得を確認
+
+## maintenance_work_mem 変更(bdmdb002)
+vi /data/pgdata/data/postgresql.conf
+以下のように編集
+--------------------------------------
+#autovacuum = on                      # Enable autovacuum subprocess?  'on'
+log_autovacuum_min_duration = 1min    # -1 disables, 0 logs all actions and
+autovacuum_max_workers = 10           # max number of autovacuum subprocesses
+autovacuum_freeze_max_age = 2000000000        # maximum XID age before forced vacuum
+autovacuum_vacuum_cost_limit = 400    # default vacuum cost limit for
+pg_statsinfo.snapshot_interval = 10min
+pg_statsinfo.repository_keepday = 7
+↓↓↓↓↓↓
+autovacuum = off                      # Enable autovacuum subprocess?  'on'
+#log_autovacuum_min_duration = -1     # -1 disables, 0 logs all actions and
+#autovacuum_max_workers = 3           # max number of autovacuum subprocesses
+#autovacuum_freeze_max_age = 200000000        # maximum XID age before forced vacuum
+#autovacuum_vacuum_cost_limit = -1    # default vacuum cost limit for
+pg_statsinfo.snapshot_interval = 30min
+pg_statsinfo.repository_keepday = 3
+--------------------------------------
+設定変更したら、:wqで保存して閉じる
+
+## タイムスタンプ更新確認
+ls -l /data/pgdata/data/postgresql.conf
+→タイムスタンプが編集した日時であることを確認
+
+## 差分確認
+diff /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
+→上記変更箇所が差分として確認できること
+< autovacuum = off                      # Enable autovacuum subprocess?  'on'
+---
+> #autovacuum = on                      # Enable autovacuum subprocess?  'on'
+520c520
+< #log_autovacuum_min_duration = -1     # -1 disables, 0 logs all actions and
+---
+> log_autovacuum_min_duration = 1min    # -1 disables, 0 logs all actions and
+524c524
+< #autovacuum_max_workers = 3           # max number of autovacuum subprocesses
+---
+> autovacuum_max_workers = 10           # max number of autovacuum subprocesses
+533c533
+< #autovacuum_freeze_max_age = 200000000        # maximum XID age before forced vacuum
+---
+> autovacuum_freeze_max_age = 2000000000        # maximum XID age before forced vacuum
+541c541
+< #autovacuum_vacuum_cost_limit = -1    # default vacuum cost limit for
+---
+> autovacuum_vacuum_cost_limit = 400    # default vacuum cost limit for
+691c691
+< pg_statsinfo.snapshot_interval = 30min
+---
+> pg_statsinfo.snapshot_interval = 10min
+695c695
+< pg_statsinfo.repository_keepday = 3
+---
+> pg_statsinfo.repository_keepday = 7
+
+**********************************************
+② AutoVacuum、pg_statsinfo 変更(bdmdb001)
+**********************************************
+## 設定ファイルバックアップ
+cp -p /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
+ls -l /work/houshiki/`date +%Y%m%d`/
+→ バックアップ取得を確認
+
+## maintenance_work_mem 変更(bdmdb001)
+vi /data/pgdata/data/postgresql.conf
+以下のように編集
+--------------------------------------
+pg_statsinfo.snapshot_interval = 10min
+pg_statsinfo.repository_keepday = 7
+↓↓↓↓↓↓
+pg_statsinfo.snapshot_interval = 30min
+pg_statsinfo.repository_keepday = 3
+--------------------------------------
+設定変更したら、:wqで保存して閉じる
+
+## タイムスタンプ更新確認
+ls -l /data/pgdata/data/postgresql.conf
+→タイムスタンプが編集した日時であることを確認
+
+## 差分確認
+diff /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
+→上記変更箇所が差分として確認できること
+691c691
+< pg_statsinfo.snapshot_interval = 30min
+---
+> pg_statsinfo.snapshot_interval = 10min
+695c695
+< pg_statsinfo.repository_keepday = 3
+---
+> pg_statsinfo.repository_keepday = 7
+
+**********************************************
+③ 設定変更反映（DB再起動）
+**********************************************
+●反映前確認
+## postgresユーザへ移行
+su - postgres
+**********  ← rootからのsuなので、不要
+id
+→postgresユーザであること
+
+## 反映前設定値確認
+psql
+→プロンプトが postgres=# と表示されること
+show autovacuum;
+→ 設定値がon であること
+show log_autovacuum_min_duration;
+→ 設定値が1min であること
+show autovacuum_max_workers;
+→ 設定値が10 であること
+show autovacuum_freeze_max_age;
+→ 設定値が2000000000 であること
+show autovacuum_vacuum_cost_limit;
+→ 設定値が400 であること
+show pg_statsinfo.snapshot_interval;
+→ 設定値が10min であること
+show pg_statsinfo.repository_keepday;
+→ 設定値が7 であること
+\q
+→psqlを抜けること
+id
+→postgresユーザであること
+
+
+●DB再起動
+## rootに戻る
+exit
+id
+→rootユーザであること
+
+## 起動状態確認
+ps -ef | grep -v grep | grep postgres
+→プロセス起動していること
+
+## DB停止シェル実行
+ls -l /houshiki/unyou/shell/posgre_normalstop.sh
+/houshiki/unyou/shell/posgre_normalstop.sh
+→正常に処理が完了すること
+      
+      ※ シェルを使わずsystemctlで停止する場合
+         systemctl stop postgresql-11
+
+## DB停止確認
+ps -ef | grep -v grep | grep postgres
+→プロセス停止していること
+
+## DB起動シェル実行
+ls -l /houshiki/unyou/shell/posgre_starting.sh
+/houshiki/unyou/shell/posgre_starting.sh
+→正常に処理が完了すること
+      
+      ※ シェルを使わずsystemctlで起動する場合
+         systemctl start postgresql-11
+
+## DB起動確認
+ps -ef | grep -v grep | grep postgres
+→プロセス起動していること
+
+
+●設定反映確認
+## postgresユーザへ移行
+su - postgres
+id
+→postgresユーザであること
+
+## 反映前設定値確認
+psql
+→プロンプトが postgres=# と表示されること
+show autovacuum;
+→ 設定値がoff であること
+show log_autovacuum_min_duration;
+→ 設定値が-1 であること
+show autovacuum_max_workers;
+→ 設定値が3 であること
+show autovacuum_freeze_max_age;
+→ 設定値が200000000 であること
+show autovacuum_vacuum_cost_limit;
+→ 設定値が-1 であること
+show pg_statsinfo.snapshot_interval;
+→ 設定値が30min であること
+show pg_statsinfo.repository_keepday;
+→ 設定値が3 であること
+\q
+→psqlを抜けること
+
+## rootユーザまで戻る
+id
+→postgresユーザであること
+exit
+id
+→rootユーザであること
+
+
+
+

@@ -1,0 +1,101 @@
+
+8/26,8/27,8/28とPostgreSQLのバックアップが異常終了しております。(以下に対象アラート)
+log.line=2020-08-28 02:00:54.006 JST,"postgres","postgres",21208,"[local]",5f47e693.52d8,3,"idle",2020-08-28 02:00:03 JST,5/0,0,WARNING,01000,"aborting backup due to backend exiting before pg_stop_backup was called",,,,,,,,"nonexclusive_base_backup_cleanup, xlogfuncs.c:54","pg_rman"
+
+メッセージから、バックアップで使用していプロセスがタイムアウトが発生しております。
+バックアップは、maintenance_work_memを使用しており8/24にこのパラメータを拡張したことにより、物理メモリが溢れSWAP発生により性能の劣化招いたようです。
+さらにmaintenance_work_memは、NOPAでも最大1GBとしております。
+
+また、maintenance_work_memを拡張する要因となったアラートは、以下だと我々は認識しておりますがメッセージの起因となっている「tuplesort」のソースを確認すると「work_mem」を使用しているように見受けられます。
+https://doxygen.postgresql.org/tuplesort_8c.html#a2701de372ca352627348044b33506988
+
+log.line=2020-08-14 17:16:56.904 JST,"postgres","db_clm",22894,"10.115.94.162:32928",5f3647e2.596e,5,"SELECT",2020-08-14 17:14:26 JST,4/72958306,127154,ERROR,XX000,"faild in tuplesort_performsort",,,,,,"SELECT * FROM pgbulkload.pg_bulkload($1)",,"_bt_mergeload, pg_btree.c:565","pg_bulkload"
+
+お手数ではありますが、設定の見直しをお願い致します。
+
+
+
+< autovacuum = off                      # Enable autovacuum subprocess?  'on'
+---
+> #autovacuum = on                      # Enable autovacuum subprocess?  'on'
+520c520
+< #log_autovacuum_min_duration = -1     # -1 disables, 0 logs all actions and
+---
+> log_autovacuum_min_duration = 1min    # -1 disables, 0 logs all actions and
+524c524
+< #autovacuum_max_workers = 3           # max number of autovacuum subprocesses
+---
+> autovacuum_max_workers = 10           # max number of autovacuum subprocesses
+533c533
+< #autovacuum_freeze_max_age = 200000000        # maximum XID age before forced vacuum
+---
+> autovacuum_freeze_max_age = 2000000000        # maximum XID age before forced vacuum
+541c541
+< #autovacuum_vacuum_cost_limit = -1    # default vacuum cost limit for
+---
+> autovacuum_vacuum_cost_limit = 400    # default vacuum cost limit for
+691c691
+< pg_statsinfo.snapshot_interval = 30min
+---
+> pg_statsinfo.snapshot_interval = 10min
+695c695
+< pg_statsinfo.repository_keepday = 3
+---
+> pg_statsinfo.repository_keepday = 7
+
+
+###################################
+postgres=# show maintenance_work_mem;
+ maintenance_work_mem
+----------------------
+ 2GB
+(1 行)
+
+postgres=# show autovacuum;
+ autovacuum
+------------
+ off
+(1 行)
+
+postgres=# show log_autovacuum_min_duration;
+ log_autovacuum_min_duration
+-----------------------------
+ 1min
+(1 行)
+
+postgres=# show autovacuum_max_workers;
+ autovacuum_max_workers
+------------------------
+ 10
+(1 行)
+
+postgres=# show autovacuum_freeze_max_age
+postgres-# show autovacuum_freeze_max_age;
+ERROR:  syntax error at or near "show"
+行 2: show autovacuum_freeze_max_age;
+      ^
+postgres=# show autovacuum_freeze_max_age;
+ autovacuum_freeze_max_age
+---------------------------
+ 2000000000
+(1 行)
+
+postgres=# show autovacuum_vacuum_cost_limit;
+ autovacuum_vacuum_cost_limit
+------------------------------
+ 400
+(1 行)
+
+postgres=# show pg_statsinfo.snapshot_interval;
+ pg_statsinfo.snapshot_interval
+--------------------------------
+ 10min
+(1 行)
+
+postgres=# show pg_statsinfo.repository_keepday;
+ pg_statsinfo.repository_keepday
+---------------------------------
+ 7
+(1 行)
+
+postgres=#

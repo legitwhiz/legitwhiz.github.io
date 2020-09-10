@@ -1,0 +1,39 @@
+postgres=# set maintenance_work_mem to '2GB';
+SET
+postgres=# show maintenance_work_mem;
+ maintenance_work_mem
+----------------------
+ 2GB
+(1 行)
+
+postgres=# \q
+-bash-4.2$ psql
+psql (11.2)
+"help" でヘルプを表示します。
+
+postgres=# show maintenance_work_mem;
+ maintenance_work_mem
+----------------------
+ 64MB
+(1 行)
+
+postgres=# ALTER SYSTEM SET maintenance_work_mem to '2GB';
+ALTER SYSTEM
+postgres=# SELECT pg_reload_conf();
+ pg_reload_conf
+----------------
+ t
+(1 行)
+
+postgres=# show maintenance_work_mem;
+ maintenance_work_mem
+----------------------
+ 2GB
+(1 行)
+#psqlで再接続
+postgres=#
+postgres=# show maintenance_work_mem;
+ maintenance_work_mem
+----------------------
+ 2GB
+(1 行)

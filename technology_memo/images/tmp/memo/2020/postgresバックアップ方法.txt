@@ -1,0 +1,47 @@
+postgresユーザにてフルバックアップを取得する際は以下のコマンドを実行してください。
+----------------------------------------------------------------------------------
+  PGDATA="/data/pgdata/data"                   #データベースクラスタのパス
+  BACKUP_PATH="/backup/dbbackup"               #バックアップカタログのパス
+  ARCLOG_PATH="/data/pgdata/pgarch/archives"   #WAL アーカイブ先のパス
+  PATH=$PATH:/usr/pgsql-11/bin
+  export PGDATA
+  export BACKUP_PATH 
+  export ARCLOG_PATH
+  export PATH
+
+pg_rman backup --backup-mode=full --compress-data --progress
+----------------------------------------------------------------------------------
+postgresユーザにて増分バッアップを取得する際は以下のコマンドを実行してください。
+----------------------------------------------------------------------------------
+  PGDATA="/data/pgdata/data"                   #データベースクラスタのパス
+  BACKUP_PATH="/backup/dbbackup"               #バックアップカタログのパス
+  ARCLOG_PATH="/data/pgdata/pgarch/archives"   #WAL アーカイブ先のパス
+  PATH=$PATH:/usr/pgsql-11/bin
+  export PGDATA
+  export BACKUP_PATH 
+  export ARCLOG_PATH
+  export PATH
+
+pg_rman backup --backup-mode=incremental --compress-data --progress
+----------------------------------------------------------------------------------
+バックアップの取得状態および容量は以下のコマンドを実行してください。
+----------------------------------------------------------------------------------
+pg_rman show detail
+
+※ 例
+======================================================================================================================
+ StartTime           EndTime              Mode    Data  ArcLog  SrvLog   Total  Compressed  CurTLI  ParentTLI  Status 
+======================================================================================================================
+2020-06-26 02:00:03  2020-06-26 02:25:26  INCR    61GB  3925MB    ----  6054MB        true       2          1  OK
+2020-06-25 02:00:04  2020-06-25 02:21:07  INCR    45GB  3170MB    ----  4935MB        true       2          1  OK
+2020-06-24 02:00:03  2020-06-24 02:19:46  INCR    42GB  3154MB    ----  4727MB        true       2          1  OK
+2020-06-23 02:00:02  2020-06-23 02:19:48  INCR    40GB  4362MB    ----  4682MB        true       2          1  OK
+2020-06-22 02:00:03  2020-06-22 02:04:04  INCR  5039MB  3053MB    ----   735MB        true       2          1  OK
+2020-06-21 02:00:03  2020-06-21 02:58:29  FULL   244GB  4580MB    ----    11GB        true       2          1  OK
+2020-06-20 02:00:03  2020-06-20 02:09:07  INCR    19GB  3036MB    ----  1866MB        true       2          1  OK
+2020-06-19 02:01:36  2020-06-19 02:07:55  INCR    15GB  2197MB    ----  1284MB        true       2          1  OK
+2020-06-18 02:00:03  2020-06-18 02:37:22  INCR   129GB  2550MB    ----    10GB        true       2          1  OK
+2020-06-17 02:00:04  2020-06-17 02:40:04  INCR   127GB    14GB    ----    11GB        true       2          1  OK
+2020-06-16 02:00:04  2020-06-16 02:04:28  INCR  6016MB  2533MB    ----   882MB        true       2          1  OK
+2020-06-15 02:00:04  2020-06-15 02:03:43  INCR  4194MB  2365MB    ----   683MB        true       2          1  OK
+2020-06-14 02:00:04  2020-06-14 03:34:58  FULL   440GB  2617MB    ----    22GB        true       2          1  OK

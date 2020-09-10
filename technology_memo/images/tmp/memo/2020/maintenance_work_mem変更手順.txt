@@ -1,0 +1,151 @@
+■ PostgreSQL  maintenance_work_mem 変更手順
+
+###############################################################################
+## 【作業概要】
+##
+## 対象ホスト: bdmdb001, bdmdb002
+## 設定対象ファイル：/data/pgdata/data/postgresql.conf
+##
+## ■ 作業の流れ
+## ① maintenance_work_mem 変更
+## ② 設定変更反映（DB再起動）
+##
+###############################################################################
+
+**********************************************
+ログイン・準備
+**********************************************
+## 以下のログイン情報で、Teratermでホスト接続する
+【bdmdb001】
+10.115.94.162
+sudoope
+**********
+
+【bdmdb002】
+10.115.94.163
+sudoope
+**********
+
+## 以下のコマンドで、日時・ホスト(bdmdb001/bdmdb002)・id(root)を確認。
+date; uname -n; id
+
+## rootへ移行
+su -
+**********
+id
+→rootユーザであること
+
+## 作業ディレクトリ作成
+mkdir -m 777 /work/houshiki/`date +%Y%m%d`
+ll -ld /work/houshiki/`date +%Y%m%d`
+→パーミッション777でディレクトリ作成できていること
+
+
+**********************************************
+① maintenance_work_mem 変更
+**********************************************
+## 設定ファイルバックアップ
+cp -p /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
+ls -l /work/houshiki/`date +%Y%m%d`/
+→ バックアップ取得を確認
+
+## maintenance_work_mem 変更
+vi /data/pgdata/data/postgresql.conf
+以下のように編集
+--------------------------------------
+maintenance_work_mem = 1GB
+↓  ↓  ↓
+maintenance_work_mem = 2GB
+--------------------------------------
+設定変更したら、:wqで保存して閉じる
+
+## タイムスタンプ更新確認
+ls -l /data/pgdata/data/postgresql.conf
+→タイムスタンプが編集した日時であることを確認
+
+## 差分確認
+diff /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
+→上記変更箇所が差分として確認できること
+
+
+
+**********************************************
+② 設定変更反映（DB再起動）
+**********************************************
+●反映前確認
+## postgresユーザへ移行
+su - postgres
+**********  ← rootからのsuなので、不要
+id
+→postgresユーザであること
+
+## 反映前設定値確認
+psql
+→プロンプトが postgres=# と表示されること
+show maintenance_work_mem;
+→ 設定値が1G であること
+\q
+→psqlを抜けること
+id
+→postgresユーザであること
+
+
+●DB再起動
+## rootに戻る
+exit
+id
+→rootユーザであること
+
+## 起動状態確認
+ps -ef | grep -v grep | grep postgres
+→プロセス起動していること
+
+## DB停止シェル実行
+ls -l /houshiki/unyou/shell/posgre_normalstop.sh
+/houshiki/unyou/shell/posgre_normalstop.sh
+→正常に処理が完了すること
+      
+      ※ シェルを使わずsystemctlで停止する場合
+         systemctl stop postgresql-11
+
+## DB停止確認
+ps -ef | grep -v grep | grep postgres
+→プロセス停止していること
+
+## DB起動シェル実行
+ls -l /houshiki/unyou/shell/posgre_starting.sh
+/houshiki/unyou/shell/posgre_starting.sh
+→正常に処理が完了すること
+      
+      ※ シェルを使わずsystemctlで起動する場合
+         systemctl start postgresql-11
+
+## DB起動確認
+ps -ef | grep -v grep | grep postgres
+→プロセス起動していること
+
+
+●設定反映確認
+## postgresユーザへ移行
+su - postgres
+id
+→postgresユーザであること
+
+## 反映前設定値確認
+psql
+→プロンプトが postgres=# と表示されること
+show maintenance_work_mem;
+→ 設定値が2G に変更されていること
+\q
+→psqlを抜けること
+
+## rootユーザまで戻る
+id
+→postgresユーザであること
+exit
+id
+→rootユーザであること
+
+
+
+
