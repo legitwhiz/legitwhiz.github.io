@@ -1,0 +1,12 @@
+
+# vi /etc/yum.repos.d/disk.repo
+
+[disk]
+name=disk
+baseurl=file:///tmp/java_pkg/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+# yum install --disablerepo=\* --enablerepo=disk java-1.8.0-openjdk.x86_64
+
