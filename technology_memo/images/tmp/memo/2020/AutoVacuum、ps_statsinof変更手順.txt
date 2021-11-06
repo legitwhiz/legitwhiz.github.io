@@ -3,12 +3,12 @@
 ###############################################################################
 ## 【作業概要】
 ##
-## 対象ホスト: bdmdb001, bdmdb002
+## 対象ホスト: 
 ## 設定対象ファイル：/data/pgdata/data/postgresql.conf
 ##
 ## ■ 作業の流れ
-## ① autovacuum,pg_statsinfo 変更(bdmdb002)
-## ② autovacuum,pg_statsinfo 変更(bdmdb001)
+## ① autovacuum,pg_statsinfo 変更()
+## ② autovacuum,pg_statsinfo 変更()
 ## ③ 設定変更反映（DB再起動）
 ##
 ###############################################################################
@@ -17,17 +17,17 @@
 ログイン・準備
 **********************************************
 ## 以下のログイン情報で、Teratermでホスト接続する
-【bdmdb001】
-10.115.94.162
-sudoope
+【】
+
+
 **********
 
-【bdmdb002】
-10.115.94.163
-sudoope
+【】
+
+
 **********
 
-## 以下のコマンドで、日時・ホスト(bdmdb001/bdmdb002)・id(root)を確認。
+## 以下のコマンドで、日時・ホスト(/)・id(root)を確認。
 date; uname -n; id
 
 ## rootへ移行
@@ -43,14 +43,14 @@ ll -ld /work/houshiki/`date +%Y%m%d`
 
 
 **********************************************
-① AutoVacuum、pg_statsinfo 変更(bdmdb002)
+① AutoVacuum、pg_statsinfo 変更()
 **********************************************
 ## 設定ファイルバックアップ
 cp -p /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
 ls -l /work/houshiki/`date +%Y%m%d`/
 → バックアップ取得を確認
 
-## maintenance_work_mem 変更(bdmdb002)
+## maintenance_work_mem 変更()
 vi /data/pgdata/data/postgresql.conf
 以下のように編集
 --------------------------------------
@@ -108,14 +108,14 @@ diff /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.
 > pg_statsinfo.repository_keepday = 7
 
 **********************************************
-② AutoVacuum、pg_statsinfo 変更(bdmdb001)
+② AutoVacuum、pg_statsinfo 変更()
 **********************************************
 ## 設定ファイルバックアップ
 cp -p /data/pgdata/data/postgresql.conf /work/houshiki/`date +%Y%m%d`/postgresql.conf.`date +%Y%m%d`
 ls -l /work/houshiki/`date +%Y%m%d`/
 → バックアップ取得を確認
 
-## maintenance_work_mem 変更(bdmdb001)
+## maintenance_work_mem 変更()
 vi /data/pgdata/data/postgresql.conf
 以下のように編集
 --------------------------------------

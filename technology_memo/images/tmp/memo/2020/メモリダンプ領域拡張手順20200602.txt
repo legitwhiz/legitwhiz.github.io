@@ -6,7 +6,7 @@ FGWサーバのメモリ増強による、メモリダンプの拡張
 /dump領域の拡張
 =====================================================================================
 【作業するサーバ情報】
-## bdmgw001 : FGW/バッチサーバ : 172.17.242.129
+
 
 =====================================================================================
 ■1-1) ログイン直後
@@ -14,15 +14,15 @@ FGWサーバのメモリ増強による、メモリダンプの拡張
 ## ログイン時刻を記録
 date
 
-## ホスト名が"bdmgw001"であることを確認
+## ホスト名が""であることを確認
 uname -n
 
-## sudoopeユーザであることを確認
+## ユーザであることを確認
 id
 
 ## rootユーザに移行
 su -
-Nttdata_0!
+
 
 ## rootユーザであることを確認
 id
@@ -48,15 +48,15 @@ df -h
 
 ■2-2)
 ##バックアップファイルを保存するため、バックアップログ収集サーバをnfsマウント
-mount -t nfs bdmbk001:/backup/bdmgw001 /backup
+mount -t nfs :/backup /backup
 
 ■2-3)
 ## 保存先ディレクトリを作成
-mkdir -m 777 /backup/houshiki_yyyymmdd
+mkdir -m 777 /backup/AAA_yyyymmdd
 
 ■2-4)
 ## 保存先ディレクトリができたことを確認
-ll -ld /backup/houshiki_yyyymmdd
+ll -ld /backup/AAA_yyyymmdd
 
 ■2-5)注
 ##/hulの構成情報を取得
@@ -66,7 +66,7 @@ find /hul -type d | xargs ls -ld
 
 ■2-6)
 ##/hulの内容をバックアップ
-tar -czvf /backup/houshiki_yyyymmdd/hul.tgz -C /hul .
+tar -czvf /backup/AAA_yyyymmdd/hul.tgz -C /hul .
 
 ****************************************************************************
  3./hulの論理ボリューム削除
@@ -126,7 +126,7 @@ df -h
 **************************************************************************
 ■6-1)
 ##バックアップの復元
-tar -xzvf /work/houshiki/yyyymmdd/hul.tgz -C /hul .
+tar -xzvf /work/AAA/yyyymmdd/hul.tgz -C /hul .
 
 ■6-2)
 ##ファイル確認
@@ -171,11 +171,11 @@ grep error /var/log/dmesg
 ***************************************************************************
 ■8-1)
 ##バックアップファイルを削除するため、バックアップログ収集サーバをnfsマウント
-mount -t nfs bdmbk001:/backup/bdmgw001 /backup
+mount -t nfs AAA:/backup/bdmgw001 /backup
 
 ■8-2)
 ##バックアップファイル・作業フォルダの削除
-rm -r /backup/houshiki_yyyymmdd
+rm -r /backup/AAA_yyyymmdd
 ***************************************************************************
 Δ ログアウト
 ***************************************************************************
@@ -185,7 +185,7 @@ id
 ## rootユーザを抜ける
 exit
 
-## sudoopeユーザであることを確認
+## ユーザであることを確認
 id
 
 ## 時刻を記録
@@ -202,7 +202,7 @@ exit
                                                                            *
 systemctl status hinemos_agent_job                                         *
                                                                            *
-/houshiki/unyou/shell/jobagent_starting.sh                                 *
+/AAA/unyou/shell/jobagent_starting.sh                                 *
                                                                            *
 systemctl status hinemos_agent                                             *
                                                                            *
