@@ -1,0 +1,53 @@
+# yum-utilsがインストールされているか確認する
+$ yum list installed yum-utils
+
+# yum-utilsをインストールする（既にインストールされている場合は、不要）
+$ yum install yum-utils
+
+mount /dev/cdrom /mnt
+mkdir -m 777 /tmp/openjdk7
+mkdir -m 777 /tmp/openjdk7/repodata
+mkdir -m 777 /tmp/openjdk7/Packages/
+
+cd /tmp/openjdk7/Packages/
+pwd
+yum list --disablerepo=\* --enablerepo=dvd | grep java
+yumdownloader --disablerepo=\* --enablerepo=dvd --resolve java-1.7.0-openjdk.x86_64
+
+cp -p /mnt/EULA /tmp/openjdk7/
+cp -p /mnt/GPL /tmp/openjdk7/
+cp -p /mnt/RPM-GPG-KEY-redhat-beta /tmp/openjdk7/
+cp -p /mnt/RPM-GPG-KEY-redhat-release /tmp/openjdk7/
+cp -p /mnt/TRANS.TBL /tmp/openjdk7/
+cp -p /mnt/extra_files.json /tmp/openjdk7/
+cp -p /mnt/media.repo /tmp/openjdk7/
+cp -p /mnt/repodata/* /tmp/openjdk7/repodata/
+
+ls -lR /tmp/openjdk7
+ 
+yum clean all
+
+vi /etc/yum.repos.d/disk.repo
+
+yum list --disablerepo=\* --enablerepo=disk | grep java
+
+cd /tmp/openjdk7/
+pwd
+
+tar zcvf /tmp/openjdk7.tar.gz ./*
+
+
+
+java-1.8.0-openjdk.x86_64
+
+
+
+
+mkdir -m 777 /tmp/openjdk7-2
+mkdir -m 777 /tmp/openjdk7-2/repodata
+mkdir -m 777 /tmp/openjdk7-2/Packages/
+
+cd /tmp/openjdk7-2/Packages/
+pwd
+yum list --disablerepo=\* --enablerepo=dvd | grep java
+yumdownloader --disablerepo=\* --enablerepo=dvd --resolve java-1.7.0-openjdk.x86_64
