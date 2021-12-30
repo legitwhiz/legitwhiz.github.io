@@ -1,0 +1,27 @@
+トップ
+
+【Megabass コアユ　スライドシンカー】
+mm,g
+type:シンキング
+range:0〜5cm
+action:ドッグウォーク
+cast:hight
+hook:
+ring:
+
+BKRP115
+
+TKRP90
+
+Aプロップ
+
+ガボッツ90
+
+【】
+mm、g
+type:
+range:〜cm
+action:
+cast:
+hook:#
+ring:#

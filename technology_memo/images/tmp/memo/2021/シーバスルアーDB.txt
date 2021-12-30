@@ -1,0 +1,71 @@
+シーバスルアーDB
+
+【Rapara CDSR8】
+80mm,14g
+レンジ:～cm
+Act:ウォブリング
+遠投性能:低
+
+【Ima P-ce100】
+mm,g
+type:
+range:〜cm
+action:
+cast:
+hook:
+ring:
+全長]100mm
+[重量]17g
+[タイプ]シンキング
+[レンジ]30 〜 60cm
+[アクション]スラローム
+[フック]#4
+[リング]#3
+
+
+【パズデザイン ween125】
+125mm,18g
+type:フローティング
+range:5〜20cm
+action:ナチュラルローリング
+cast:
+hook:ST-46#5
+ring:#3
+
+【ECLIPSE ASTRAIA SHALLOW 99F】
+99mm、12g
+type:フローティング
+range:10〜30cm
+action:ウォブンロール
+cast:
+hook:SP-MH#4
+ring:#3
+
+
+
+【K-TEN BlueOcean BKF125】
+125mm、16g
+type:フローティング
+range:max120cm
+action:ウォブンロール
+cast:
+hook:#6
+ring:#4
+
+【邪道 NI-SAN】
+100mm、13g
+type:シンキング
+range:〜50cm
+action:ローリング(タイトハイピッチ)
+cast:
+hook:ST-46 #3
+ring:#3
+
+【】
+mm、g
+type:
+range:〜cm
+action:
+cast:
+hook:#
+ring:#

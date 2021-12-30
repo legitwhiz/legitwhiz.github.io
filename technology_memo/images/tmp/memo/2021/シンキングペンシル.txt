@@ -1,0 +1,75 @@
+シンキングペンシル
+
+【Sera Zepher】
+85mm,16g
+range:20～50cm
+action:S字
+cast:mid
+
+【パズデザイン リバード90S】
+90mm、12.5g
+renge:20～50cm
+acrion:S字
+cast:hight
+ring:#2
+hook:RB-MH#8
+
+【ヒフミ rayrea95SS】
+125mm、14g
+type:スローシンキング
+range:0〜50cm
+action:フラフラ
+cast:mid
+hook:がまかつRB MH#6
+ring:#3
+
+【NORTHCRAFT AIR OGRE 70F】
+70mm、11.5g
+type:フローティング
+range:0〜30cm
+action:ウォブリング
+cast:
+hook:ST-41#6
+ring:#3
+
+【ファビラス バイパー90】
+90mm、18.5g
+type:シンキング
+range:20〜60cm
+action:ワイドS字
+cast:hight
+hook:ST-46#5
+ring:#3
+
+【ファビラス ボア120】
+120mm、29g
+type:シンキング
+range:10〜25cm
+action:S字
+cast:hight
+hook:ST-46#5
+ring:#3
+
+【ヒフミ sherry95SS】
+95mm、8.6g
+type:スローシンキング
+range:〜cm
+action:フラフラ
+cast:hight
+hook:がまかつRB　Mショートシャンク#8
+ring:#2
+
+【ヒフミ sherry 125F】
+95mm、16g
+type:フローティング
+range:20〜80cm
+action:S字
+cast:mid
+hook:がまかつRB MH#6x2
+ring:#3
+
+
+
+ブルーブルー スネコン90S
+
+ブルーブルー スネコン130S 

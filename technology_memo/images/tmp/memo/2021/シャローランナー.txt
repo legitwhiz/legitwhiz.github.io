@@ -1,0 +1,151 @@
+シャローランナー
+
+●90mm以下クラス
+
+【Apia Dover70F】
+70mm,8.5g
+type:フローティング
+range:0〜30cm
+action:ウォブンロール
+cast:hight
+hook:ST-46#8
+ring:#2
+
+邪道　スーサン
+ハイピッチローリングアクション
+水深50ｃｍまでの
+
+●90mmクラス
+
+【タックルハウス TKLM"9/11"】
+90mm,11g
+レンジ:0～4 0cm
+Act:ワイドウォブンロール
+遠投性能:高
+リング:#3
+フック:ST-46#4
+
+【Duo TERRIF DC-9】
+90mm,15g
+type:フローティング
+range:20～50cm
+action:ローリング
+cast:hight
+hook:SP-MH#4
+ring:#3
+
+【PUEBULO ピットブル】
+90mm,15g
+type:フローティング
+range:0〜30cm
+action:ウォブンロール
+cast:hight
+hook:ST-46#4
+ring:
+
+【PUEBULO マングース】
+100mm,15g
+type:フローティング
+range:0〜40cm
+action:
+cast:
+hook:
+ring:
+
+【メガバス カゲロウ100F】
+100mm、12g
+type:フローティング
+range:20〜60cm
+action:ウォブンロール
+cast:hight
+hook:#5x2
+ring:#
+
+【ロンジン フランキー90】
+90mm、13g
+type:フローティング
+range:0〜60cm
+action:ウォブンロール
+cast:
+hook:#6x2
+ring:#
+
+アイマ　サスケSF95
+１０～６０センチ
+ウォブンロール
+
+●110mmクラス
+【タックルハウス M108】
+108mm,9.5g
+type:フローティング
+range:max60cm
+action:ローリング
+cast:middle
+hook:ST-46#4
+ring:#3
+
+【Mangrove Studio サルディナ107F】
+107mm、13g
+type:フローティング
+renge:30～40cm
+action:ウォブンロール
+cast:hight
+fook:ST46#5
+ring:
+
+●120mクラス
+【タックルハウス M128】
+128mm,12g
+type:フローティング
+range:max50cm
+action:ローリング
+cast:middle
+hook:ST-46#4
+ring:#4
+
+【Mangrove Studio サルディナ127F】
+127mm、18g
+type:フローティング
+renge:30～40cm
+action:ウォブンロール
+cast:hight
+fook:ST46#5
+ring:
+
+【ザウルス シャロートプス】
+120mm,18g
+type:フローティング
+range:〜30cm
+action:ウォブンロール
+cast:hight
+hook:ST-46#5
+ring:#3
+
+【メガバス カゲロウ124F】
+100mm、22g
+type:フローティング
+range:0〜20cm
+action:ウォブンロール
+cast:hight
+hook:#4x3
+ring:#
+
+【ロンジン フランキー120】
+120mm、20g
+type:フローティング
+range:0〜60cm
+action:ウォブンロール
+cast:
+hook:#6x3
+ring:#
+
+
+●140mmクラス
+【ティファ TJフララ137F】
+137ｍｍ,18g
+深度:10〜30cm
+Act:ウォブンロール
+遠投性能:中
+リング:#
+フック:#
+ 

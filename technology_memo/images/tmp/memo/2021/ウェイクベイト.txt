@@ -1,0 +1,64 @@
+ウェイクベイト
+
+【エフテック エスフォー11】
+110mm、15g
+type:フローティング
+range:0〜30cm
+action:ウォブリング
+cast:
+hook:ST-46#4x2
+ring:#3
+
+【エフテック エスフォー9】
+90mm、10.5g
+type:フローティング
+range:0〜30cm
+action:ウォブリング
+cast:
+hook:ST-46#6x2
+ring:#3
+
+
+
+ダイワ クロスウェイク 75F-SSR
+クロスウェイク90（9ｃｍ/13.7ｇ）
+ダイワ クロスウェイク 111F-SSR（11.1ｃｍ/18ｇ）
+コモモⅡ　65（6.5ｃｍ/6ｇ）
+
+【PDG SPANK WALKER90F】
+90mm、14g
+type:フローティング
+range:0〜20cm
+action:ウォブリング
+cast:
+hook:ST-41#3
+ring:#3
+
+【エスフォーマークII128】
+128mm,g
+type:フローティング
+range:max50cm
+action:ワイドウォブリング
+cast:low
+hook:ST-46#4
+ring:
+speed:ハイスピード向き
+
+
+【パズデザイン グランソルジャー190F】
+190mm、50g
+type:フローティング
+range:0〜20cm
+action:ウォブンロール
+cast:
+hook:#1or#2
+ring:#4
+
+【ヒフミ Bless60F】
+60mm、5.5g
+type:フローティング
+range:0〜50cm
+action:ウォブンロール
+cast:
+hook:がまかつRB　Mショートシャンク#10
+ring:#2

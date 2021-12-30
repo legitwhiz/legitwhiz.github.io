@@ -1,0 +1,61 @@
+ミッドランナー
+
+【ティムコ スプラット130F】
+130mm,20g
+レンジ:60～70cm
+Act:ウォブリング
+遠投性能:中
+リング:#
+HOOK: ST-46 #5
+
+【パズデザイン ラブ・ラ 90S】
+90mm、12g
+type:シンキング
+range:80〜150cm
+action:ウォブンロール
+cast:
+hook:#8
+ring:#2
+
+
+【Apia Dover99F】
+99mm,15g
+type:フローティング
+range:60〜90cm
+action:ウォブンロール
+cast:
+hook:#4
+ring:
+
+【Apia ラムタラバデル105】
+105mm,15g
+type:スローフローティング
+range:30〜60cm
+action:バリアブルウォブンロール
+cast:
+hook:#4
+ring:
+
+【Rapara CDSR8】
+80mm,14g
+レンジ:～cm
+Act:ウォブリング
+遠投性能:低
+
+【パズデザイン パワード ラブ・ラ 125SFG】
+125mm、16.9g
+type:スローフローティング
+range:50〜100cm
+action:ウォブンロール
+cast:
+hook:がまかつ SP MH #5x3
+ring:#3
+
+【パズデザイン ラブ・ラ エボリューション 110SFG】
+110mm、15.4g
+type:スローフローティング
+range:50〜120cm
+action:ウォブンロール
+cast:
+hook:#5x2
+ring:#3

@@ -1,0 +1,105 @@
+ローリングミノー
+
+
+【ブルーブルー スカーナッシュ120F】
+強波動
+120mm、18g
+type:フローティング
+range:30～90㎝
+action:ローリング
+cast:
+hook:#3×2
+ring:#3
+
+【PDG フリルドスイマー115】
+115mm、16g
+type:フローティング
+range:max range 50cm
+action:ローリング
+cast:
+hook:#
+ring:#
+
+【PDG フリルドスイマー75】
+75mm、9g
+type:フローティング
+range:max range 40cm
+action:ローリング
+cast:
+hook:#
+ring:#
+
+【PDG ナンバーセブン117F】
+117mm、13g
+type:フローティング
+range:0〜40㎝ぐらい
+action:ローリング
+cast:
+hook:#4 ×2
+ring:#3
+
+【pueblo impara 135AAF】
+135mm、g
+type:
+range:〜cm
+action:
+cast:
+hook:#
+ring:#
+
+
+【ニコデザイン ラビッット90S】
+90mm、13.5g
+type:シンキング
+range:〜cm
+action:ローリング
+cast:
+hook:#ST46 #4x2
+ring:#3
+
+
+【ニコデザイン ラビッット90S】
+90mm、11.5g
+type:フローティング
+range:〜cm
+action:ローリング
+cast:
+hook:#ST46 #4x2
+ring:#3
+
+【ニコデザイン ラビッット109】
+109mm、16.5g
+type:フローティング
+range:〜cm
+action:ローリング
+cast:
+hook:#ST46 #3x2
+ring:#3
+
+【ニコデザイン パボラ130F】
+130mm、20g
+type:フローティング
+range:40〜80cm
+action:ローリング
+cast:
+hook:#ST46 #4x3
+ring:#3
+###
+
+komomo 125 counter
+全長 125mm
+重量 18g
+タイプ スローフローティング
+レンジ 30〜40cm
+アクション ローリング
+フック #4
+リング #3
+
+kosuke 110F
+全長 110mm
+重量 17g
+タイプ フローティング
+レンジ 40〜80cm
+アクション ローリング
+フック #4
+リング #3
