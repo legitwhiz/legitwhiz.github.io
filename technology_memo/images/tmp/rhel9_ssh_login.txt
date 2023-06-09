@@ -1,1 +1,0 @@
-ssh -i ./.ssh/keypair-my-ec2.pem ec2-user@ec2-54-65-52-25.ap-northeast-1.compute.amazonaws.com
