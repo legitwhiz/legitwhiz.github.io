@@ -3,13 +3,10 @@ layout: default
 title: 技術レポート
 ---
 
-# My Qiita posts
 [![My Qiita posts](https://qiita-badge.apiapi.app/s/legitwhiz/posts.svg)](http://qiita.com/legitwhiz)
 
-# My Qiita contributions
 [![My Qiita contributions](https://qiita-badge.apiapi.app/s/legitwhiz/contributions.svg)](http://qiita.com/legitwhiz)
 
-# My Qiita followers
 [![My Qiita followers](https://qiita-badge.apiapi.app/s/legitwhiz/followers.svg)](http://qiita.com/legitwhiz)
                 
 ### ● DevOps
