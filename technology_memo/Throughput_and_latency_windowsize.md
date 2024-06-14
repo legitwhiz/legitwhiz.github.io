@@ -89,15 +89,15 @@ Window size=(最大スループット*(RTT(ms)/1000))/8
 ```
 ・net.core.rmem_default: デフォルト受信ソケット・バッファ・サイズ
 
-・ net.core.rmem_max: 最大受信ソケット・バッファ・サイズ
+・net.core.rmem_max: 最大受信ソケット・バッファ・サイズ
 
 ・net.core.wmem_default: デフォルト送信ソケット・バッファ・サイズ
 
-・ net.core.wmem_max: 最大送信ソケット・バッファ・サイズを指定
+・net.core.wmem_max: 最大送信ソケット・バッファ・サイズを指定
 ```
 
-デフォルトは、[1.3. Window sizeの設定](#1.3. Window sizeの設定)で求めた値を設定してください。
-最大も同様に、[1.3. Window sizeの設定](#1.3. Window sizeの設定)で求めた値を設定してください。
+デフォルトは、[「1.3. Window sizeの設定」](#1.3.-window-sizeの設定)で求めた値を設定してください。
+最大も同様に、[「1.3. Window sizeの設定」](#1.3.-window-sizeの設定)で求めた値を設定してください。
 
 ### 1.5. クライアント側での送受信バッファサイズの調整
 
@@ -126,4 +126,3 @@ latencyが50msの場合、各I/F速度に合わせた送信Window sizeは以下�
 |1G|4K|32K|8M|
 |10G|4K|256K|64M|
 |40G|4K|1M|256M|
-
